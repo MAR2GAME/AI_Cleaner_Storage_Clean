@@ -1,0 +1,38 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="189dp"
+    android:height="32dp"
+    android:viewportWidth="189"
+    android:viewportHeight="32">
+  <path
+      android:pathData="M0,1.93H188.82V31.6H0V1.93Z">
+    <aapt:attr name="android:fillColor">
+      <gradient
+          android:centerX="94.41"
+          android:centerY="0.41"
+          android:gradientRadius="31.19"
+          android:type="radial">
+        <item android:offset="0" android:color="#595DD595"/>
+        <item android:offset="1" android:color="#005DD595"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M188.82,1.54C188.82,2.39 146.55,3.08 94.41,3.08C42.27,3.08 0,2.39 0,1.54C0,0.69 42.27,0 94.41,0C146.55,0 188.82,0.69 188.82,1.54Z"
+      android:fillColor="#5DD595"/>
+</vector>

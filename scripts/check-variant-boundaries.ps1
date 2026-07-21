@@ -32,7 +32,7 @@ function Invoke-RgCheck {
     }
 }
 
-$sourceRoot = 'app/src/main/java/com/quickcleanpro/phonecleaner/use'
+$sourceRoot = 'app/src/main/java/com/aicleanerstorage/spaceclean/use'
 
 foreach ($legacyDir in @('view', 'viewmodel', 'notification', 'theme')) {
     $path = Join-Path $sourceRoot $legacyDir
@@ -49,20 +49,20 @@ Invoke-RgCheck `
 
 Invoke-RgCheck `
     -Title 'feature layer imports skin' `
-    -Pattern 'import\s+com\.quickcleanpro\.phonecleaner\.use\.skin\.' `
-    -Paths @('app/src/main/java/com/quickcleanpro/phonecleaner/use/feature') `
+    -Pattern 'import\s+com\.aicleanerstorage\.spaceclean\.use\.skin\.' `
+    -Paths @('app/src/main/java/com/aicleanerstorage/spaceclean/use/feature') `
     -ExtraArgs @('-g', '*.kt', '-g', '*.java')
 
 Invoke-RgCheck `
     -Title 'feature layer imports app' `
-    -Pattern 'import\s+com\.quickcleanpro\.phonecleaner\.use\.app\.' `
-    -Paths @('app/src/main/java/com/quickcleanpro/phonecleaner/use/feature') `
+    -Pattern 'import\s+com\.aicleanerstorage\.spaceclean\.use\.app\.' `
+    -Paths @('app/src/main/java/com/aicleanerstorage/spaceclean/use/feature') `
     -ExtraArgs @('-g', '*.kt', '-g', '*.java')
 
 Invoke-RgCheck `
     -Title 'core layer imports upper layers' `
-    -Pattern 'import\s+com\.quickcleanpro\.phonecleaner\.use\.(feature|skin|app)\.' `
-    -Paths @('app/src/main/java/com/quickcleanpro/phonecleaner/use/core') `
+    -Pattern 'import\s+com\.aicleanerstorage\.spaceclean\.use\.(feature|skin|app)\.' `
+    -Paths @('app/src/main/java/com/aicleanerstorage/spaceclean/use/core') `
     -ExtraArgs @('-g', '*.kt', '-g', '*.java')
 
 if ($failures.Count -gt 0) {

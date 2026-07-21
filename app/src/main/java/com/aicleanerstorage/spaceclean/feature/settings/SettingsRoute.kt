@@ -1,0 +1,42 @@
+package com.aicleanerstorage.spaceclean.feature.settings
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.AppConfig
+import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.intent.openUrl
+import com.aicleanerstorage.spaceclean.feature.settings.ui.SettingsScreen
+import com.aicleanerstorage.spaceclean.feature.settings.ui.openGooglePlayRatePage
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun SettingsRoute(
+    navigator: AppNavigator,
+    externalActivities: ExternalActivityLauncher,
+    viewModel: SettingsViewModel = koinViewModel(),
+) {
+    val context = LocalContext.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    fun openLink(url: String) {
+        externalActivities.markLaunch()
+        if (!context.openUrl(url)) externalActivities.cancelLaunch()
+    }
+
+    SettingsScreen(
+        state = state,
+        onAction = { action ->
+            when (action) {
+                SettingsAction.Back -> navigator.back()
+                SettingsAction.OpenTerms -> openLink(AppConfig.TERMS_OF_SERVICE_URL)
+                SettingsAction.OpenPrivacy -> openLink(AppConfig.PRIVACY_POLICY_URL)
+                SettingsAction.RateApp -> openGooglePlayRatePage(context)
+                is SettingsAction.TemperatureUnitChanged -> viewModel.onAction(action)
+            }
+        },
+        onNavigate = navigator::open,
+    )
+}

@@ -13,7 +13,6 @@
     <string name="settings">Cài đặt</string>
     <string name="clean_now">Dọn ngay</string>
     <string name="scan_now">Quét ngay</string>
-    <string name="nav_home">Trang chủ</string>
     <string name="nav_settings">Cài đặt</string>
     <string name="nav_photos">Ảnh</string>
     <string name="nav_videos">Video</string>
@@ -52,7 +51,6 @@
     <string name="settings_temperature_unit">Đơn vị nhiệt độ</string>
     <string name="settings_terms_of_service">Điều khoản dịch vụ</string>
     <string name="settings_privacy_policy">Chính sách quyền riêng tư</string>
-    <string name="settings_ad_privacy_options">Tùy chọn quyền riêng tư quảng cáo</string>
     <string name="settings_rate_us">Đánh giá chúng tôi</string>
     <string name="file_select_all">Chọn tất cả</string>
     <string name="file_unselect_all">Bỏ chọn tất cả</string>
@@ -85,7 +83,6 @@
     <string name="stop">Dừng</string>
     <!-- App Lock -->
     <string name="app_lock">Khóa ứng dụng</string>
-    <string name="nav_app_lock">Khóa ứng dụng</string>
     <string name="setting">Cài đặt</string>
     <string name="enable">Bật</string>
     <string name="haptic_feedback">Phản hồi rung</string>
@@ -108,15 +105,15 @@
     <string name="turn_on_auto_lock">Bật khóa tự động</string>
     <string name="turn_on_auto_lock_hint">Tự động khóa ứng dụng mới sau khi cài đặt.</string>
     <string name="app_lock_usage_permission_title">Cần quyền dữ liệu sử dụng</string>
-    <string name="app_lock_usage_permission_desc">Tìm Quick Clean PRO và bật quyền.</string>
+    <string name="app_lock_usage_permission_desc">Tìm Storage Clean và bật quyền.</string>
     <string name="app_lock_usage_permission_grant">Cấp quyền truy cập dữ liệu sử dụng</string>
     <string name="app_lock_overlay_permission_message">Vui lòng cấp các quyền cần thiết để dùng tính năng này.</string>
     <string name="app_lock_overlay_permission_title">Cần quyền cửa sổ nổi</string>
-    <string name="app_lock_overlay_permission_desc">Tìm Quick Clean PRO và bật quyền.</string>
+    <string name="app_lock_overlay_permission_desc">Tìm Storage Clean và bật quyền.</string>
     <string name="app_lock_overlay_permission_grant">Cho phép hiển thị trên ứng dụng khác</string>
     <string name="manage_permission">Quản lý quyền</string>
     <string name="allow_now">Cho phép ngay</string>
-    <string name="permission_app_lock_usage_desc">Để phát hiện khi ứng dụng được bảo vệ mở ra, hãy cho phép Quick Clean PRO trong Truy cập sử dụng.</string>
+    <string name="permission_app_lock_usage_desc">Để phát hiện khi ứng dụng được bảo vệ mở ra, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
     <!-- Home exit prompts -->
     <string name="exit">Thoát</string>
     <string name="close">Đóng</string>
@@ -137,37 +134,21 @@
     <string name="notification_enable_step_find_suffix"></string>
     <string name="notification_enable_step_allow">2. Nhấn “Cho phép”</string>
     <!-- Recently added strings -->
-    <string name="continue_scan">Ti?p t?c</string>
     <string name="home_app_lock_title">Kh?a ?ng d?ng</string>
-    <string name="home_app_lock_desc">Kh?a ?ng d?ng ?? b?o v? quy?n ri?ng t?</string>
-    <string name="no_data_available">Kh?ng c? d? li?u</string>
-    <string name="virus_scan_notice_title">Th?ng b?o</string>
-    <string name="virus_scan_notice_message">Quick Clean PRO sẽ kiểm tra thông tin ứng dụng trên thiết bị này để quét rủi ro bảo mật.</string>
-    <string name="settings_overlay_permission">C?a s? n?i</string>
-    <string name="settings_post_notifications_permission">Th?ng b?o ?ng d?ng</string>
     <string name="file_unselect">B? ch?n</string>
     <string name="file_music">Nh?c</string>
-    <string name="app_usage_legend_other">Kh?c</string>
-    <string name="device_info_source_hint">Th?ng tin thi?t b? ???c hi?n th? d?a tr?n d? li?u do h? th?ng cung c?p v? c? th? kh?c v?i th?ng s? ch?nh th?c. V? d?, dung l??ng l?u tr? ho?c b? nh? c? th? ch?nh l?ch nh? do ph?n h? th?ng d?nh ri?ng ho?c c?u h?nh ph?n c?ng.</string>
 
-    <string name="app_name">Quick Clean PRO</string>
-    <string name="permission_usage_desc">Để hiển thị chi tiết sử dụng ứng dụng, hãy cho phép Quick Clean PRO trong Truy cập sử dụng.</string>
-    <string name="permission_network_usage_desc">Để hiển thị chi tiết sử dụng mạng, hãy cho phép Quick Clean PRO trong Truy cập sử dụng.</string>
-    <string name="permission_notification_desc">Để tự động sắp xếp thông báo, hãy cho phép Quick Clean PRO trong Truy cập thông báo.</string>
-    <string name="permission_overlay_desc">Để hiển thị màn hình PIN trên các ứng dụng được bảo vệ, hãy cho phép Quick Clean PRO hiển thị trên ứng dụng khác.</string>
-    <string name="rate_title">Bạn thích Quick Clean PRO chứ?</string>
-    <string name="rate_feedback_message">Cảm ơn phản hồi của bạn. Chúng tôi sẽ tiếp tục cải thiện Quick Clean PRO.</string>
-    <string name="notification_enable_step_find">1. Tìm Quick Clean PRO</string>
-    <string name="notification_channel_tools">Công cụ Quick Clean PRO</string>
-    <string name="notification_channel_tools_desc">Gợi ý công cụ Quick Clean PRO</string>
-    <string name="virus_installed_apps_access_title">Cách dùng dữ liệu quét virus</string>
-    <string name="virus_installed_apps_access_message">Quick Clean PRO gửi thông tin ứng dụng đã cài đặt của bạn (tên, tên gói, phiên bản) đến Trustlook Security để quét phần mềm độc hại và ứng dụng rủi ro.</string>
-    <string name="agree_and_continue">Đồng ý và tiếp tục</string>
+    <string name="app_name">Storage Clean</string>
+    <string name="permission_usage_desc">Để hiển thị chi tiết sử dụng ứng dụng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
+    <string name="permission_network_usage_desc">Để hiển thị chi tiết sử dụng mạng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
+    <string name="permission_notification_desc">Để tự động sắp xếp thông báo, hãy cho phép Storage Clean trong Truy cập thông báo.</string>
+    <string name="permission_overlay_desc">Để hiển thị màn hình PIN trên các ứng dụng được bảo vệ, hãy cho phép Storage Clean hiển thị trên ứng dụng khác.</string>
+    <string name="rate_title">Bạn thích Storage Clean chứ?</string>
+    <string name="rate_feedback_message">Cảm ơn phản hồi của bạn. Chúng tôi sẽ tiếp tục cải thiện Storage Clean.</string>
+    <string name="notification_enable_step_find">1. Tìm Storage Clean</string>
     <string name="not_now">Không phải bây giờ</string>
-    <string name="notification_intercepted_appear_here">Thông báo bị chặn sẽ xuất hiện ở đây</string>
     <string name="permission_installed_apps_desc">Để quét rủi ro bảo mật trong các ứng dụng đã cài đặt, hãy cho phép truy cập danh sách ứng dụng đã cài đặt trong cài đặt hệ thống.</string>
     <string name="running_in_background">Đang chạy nền</string>
-    <string name="too_many_attempts">Quá nhiều lần thử. Hãy thử lại sau</string>
     <string name="too_many_attempts_retry_seconds">Quá nhiều lần thử. Hãy thử lại sau %1$d giây</string>
     <string name="wait_seconds">Quá nhiều lần thử thất bại. Vui lòng đợi 30 giây</string>
     <string name="permission_hint_overlay">Chỉ hiển thị màn hình PIN của khóa ứng dụng.</string>
@@ -179,7 +160,6 @@
     <string name="device_progress_ram_label">RAM:</string>
     <string name="device_progress_storage_label">Bộ nhớ:</string>
     <string name="wifi_ssid_label">SSID</string>
-    <string name="network_link_speed_fallback">Đang dùng tốc độ liên kết làm phương án dự phòng</string>
     <string name="network_speed_testing">Đang kiểm tra...</string>
     <string name="network_speed_testing_latency">Đang kiểm tra độ trễ...</string>
     <string name="network_speed_testing_download">Đang kiểm tra tải xuống...</string>
@@ -195,11 +175,9 @@
     <string name="common_tool_notification_cleaner_desc">Tìm thông báo không mong muốn</string>
 
     <string name="virus_app_list_permission_title">Cách quét vi-rút sử dụng dữ liệu của bạn</string>
-    <string name="virus_app_list_permission_message">Khi bạn dùng Quét vi-rút, Quick Clean PRO thu thập và gửi thông tin về các ứng dụng đã cài trên thiết bị của bạn, bao gồm tên ứng dụng, tên gói và số phiên bản, đến Trustlook Security để quét phần mềm độc hại và phát hiện ứng dụng rủi ro.</string>
+    <string name="virus_app_list_permission_message">Khi bạn dùng Quét vi-rút, Storage Clean thu thập và gửi thông tin về các ứng dụng đã cài trên thiết bị của bạn, bao gồm tên ứng dụng, tên gói và số phiên bản, đến Trustlook Security để quét phần mềm độc hại và phát hiện ứng dụng rủi ro.</string>
     <string name="virus_app_list_permission_agree">Đồng ý và tiếp tục</string>
     <string name="virus_app_list_permission_not_now">Không phải bây giờ</string>
-    <string name="notification_permission_custom_message">Bật thông báo để nhận lời nhắc kịp thời về kiểm tra điện thoại và dọn rác.</string>
-    <string name="notification_permission_turn_on">Bật thông báo</string>
     <string name="submit">Submit</string>
     <string name="error">Error</string>
     <string name="unknown">Unknown</string>
@@ -217,23 +195,11 @@
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
     <string name="notification_app_selection_update_failed">Unable to update notification app selection.</string>
-    <string name="nav_splash">Splash</string>
-    <string name="nav_onboarding_scan">Onboarding Scan</string>
-    <string name="nav_scan">Scan</string>
-    <string name="nav_result">Kết quả quét</string>
-    <string name="nav_clean_result">Kết quả dọn dẹp</string>
-    <string name="nav_manage_permissions">Manage Permissions</string>
-    <string name="nav_anti_virus">Anti-virus</string>
-    <string name="nav_virus_quick_scan">Quick Scan</string>
-    <string name="nav_virus_deep_scan">Deep Scan</string>
-    <string name="nav_virus_result">Virus Result</string>
-    <string name="nav_no_virus_result">No Virus Result</string>
     <string name="nav_device_info">Device Info</string>
     <string name="nav_battery_info">Thông tin pin</string>
     <string name="nav_app_usage">App Usage</string>
     <string name="nav_network_usage">Network Usage</string>
     <string name="nav_network_scan">Network Scan</string>
-    <string name="nav_network_scan_devices">Network Scan Devices</string>
     <string name="nav_network_speed">Network Speed</string>
     <string name="nav_whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="nav_notification_cleaner">Notification Cleaner</string>
@@ -401,7 +367,6 @@
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_checking_device_info">Checking device\ninformation...</string>
     <string name="splash_accept_prefix">By proceeding, you confirm you accept our </string>
-    <string name="open_ad_loading">Đang tải quảng cáo</string>
     <string name="network_scan">Network Scan</string>
     <string name="whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="notification_cleaner">Notification Cleaner</string>

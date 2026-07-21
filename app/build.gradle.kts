@@ -1,15 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.ktlint)
 }
 
 apply(from = "product-config.gradle")
 
 android {
-    namespace = "com.quickcleanpro.phonecleaner"
+    namespace = "com.aicleanerstorage.spaceclean"
     compileSdk {
         version =
             release(36) {
@@ -20,8 +18,8 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 36
-        versionCode = 11
-        versionName = "1.0.10"
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,9 +43,6 @@ android {
         buildConfig = true
         resValues = true
     }
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
 }
 
 kotlin {
@@ -59,11 +54,6 @@ ktlint {
 }
 
 dependencies {
-    implementation(libs.pdffox.advertise) {
-        exclude(group = "com.pangle.global", module = "pag-sdk")
-    }
-    implementation(libs.pangle.pag.sdk.ad)
-    implementation(libs.tiktok.business.android.sdk.comp)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.graphics)

@@ -16,7 +16,6 @@
     <string name="settings">Pengaturan</string>
     <string name="clean_now">Bersihkan sekarang</string>
     <string name="scan_now">Pindai sekarang</string>
-    <string name="nav_home">Beranda</string>
     <string name="nav_settings">Pengaturan</string>
     <string name="nav_photos">Foto</string>
     <string name="nav_videos">Video</string>
@@ -53,7 +52,6 @@
     <string name="settings_temperature_unit">Satuan suhu</string>
     <string name="settings_terms_of_service">Ketentuan layanan</string>
     <string name="settings_privacy_policy">Kebijakan privasi</string>
-    <string name="settings_ad_privacy_options">Opsi privasi iklan</string>
     <string name="settings_rate_us">Beri rating</string>
     <string name="file_select_all">Pilih semua</string>
     <string name="file_unselect_all">Batal pilih semua</string>
@@ -86,7 +84,6 @@
     <string name="stop">Hentikan</string>
     <!-- App Lock -->
     <string name="app_lock">Kunci Aplikasi</string>
-    <string name="nav_app_lock">Kunci Aplikasi</string>
     <string name="setting">Pengaturan</string>
     <string name="enable">Aktifkan</string>
     <string name="haptic_feedback">Umpan balik haptik</string>
@@ -109,15 +106,15 @@
     <string name="turn_on_auto_lock">Aktifkan kunci otomatis</string>
     <string name="turn_on_auto_lock_hint">Kunci otomatis aplikasi baru setelah dipasang.</string>
     <string name="app_lock_usage_permission_title">Izin data penggunaan diperlukan</string>
-    <string name="app_lock_usage_permission_desc">Temukan Quick Clean PRO lalu aktifkan izin.</string>
+    <string name="app_lock_usage_permission_desc">Temukan Storage Clean lalu aktifkan izin.</string>
     <string name="app_lock_usage_permission_grant">Berikan akses ke data penggunaan</string>
     <string name="app_lock_overlay_permission_message">Berikan izin yang diperlukan untuk menggunakan fitur ini.</string>
     <string name="app_lock_overlay_permission_title">Izin jendela mengambang diperlukan</string>
-    <string name="app_lock_overlay_permission_desc">Temukan Quick Clean PRO lalu aktifkan izin.</string>
+    <string name="app_lock_overlay_permission_desc">Temukan Storage Clean lalu aktifkan izin.</string>
     <string name="app_lock_overlay_permission_grant">Izinkan tampil di atas aplikasi lain</string>
     <string name="manage_permission">Kelola izin</string>
     <string name="allow_now">Izinkan sekarang</string>
-    <string name="permission_app_lock_usage_desc">Agar aplikasi terlindungi dapat terdeteksi saat dibuka, izinkan Quick Clean PRO di Akses penggunaan.</string>
+    <string name="permission_app_lock_usage_desc">Agar aplikasi terlindungi dapat terdeteksi saat dibuka, izinkan Storage Clean di Akses penggunaan.</string>
     <!-- Home exit prompts -->
     <string name="exit">Keluar</string>
     <string name="close">Tutup</string>
@@ -138,37 +135,21 @@
     <string name="notification_enable_step_find_suffix"></string>
     <string name="notification_enable_step_allow">2. Ketuk “Izinkan”</string>
     <!-- Recently added strings -->
-    <string name="continue_scan">Lanjutkan</string>
     <string name="home_app_lock_title">Kunci App</string>
-    <string name="home_app_lock_desc">Kunci app untuk perlindungan privasi</string>
-    <string name="no_data_available">Tidak ada data tersedia</string>
-    <string name="virus_scan_notice_title">Pemberitahuan</string>
-    <string name="virus_scan_notice_message">Quick Clean PRO akan memeriksa informasi app di perangkat ini untuk memindai risiko keamanan.</string>
-    <string name="settings_overlay_permission">Jendela mengambang</string>
-    <string name="settings_post_notifications_permission">Notifikasi app</string>
     <string name="file_unselect">Batalkan pilihan</string>
     <string name="file_music">Musik</string>
-    <string name="app_usage_legend_other">Lainnya</string>
-    <string name="device_info_source_hint">Informasi perangkat yang ditampilkan didasarkan pada data yang disediakan sistem dan dapat berbeda dari spesifikasi resmi. Misalnya, kapasitas penyimpanan atau memori mungkin sedikit berbeda karena cadangan sistem atau konfigurasi perangkat keras.</string>
 
-    <string name="app_name">Quick Clean PRO</string>
-    <string name="permission_usage_desc">Untuk menampilkan detail penggunaan app, izinkan Quick Clean PRO di Akses penggunaan.</string>
-    <string name="permission_network_usage_desc">Untuk menampilkan detail penggunaan jaringan, izinkan Quick Clean PRO di Akses penggunaan.</string>
-    <string name="permission_notification_desc">Untuk merapikan notifikasi secara otomatis, izinkan Quick Clean PRO di Akses notifikasi.</string>
-    <string name="permission_overlay_desc">Untuk menampilkan layar PIN di atas aplikasi yang dilindungi, izinkan Quick Clean PRO tampil di atas aplikasi lain.</string>
-    <string name="rate_title">Suka Quick Clean PRO?</string>
-    <string name="rate_feedback_message">Terima kasih atas masukan Anda. Kami akan terus meningkatkan Quick Clean PRO.</string>
-    <string name="notification_enable_step_find">1. Temukan Quick Clean PRO</string>
-    <string name="notification_channel_tools">Alat Quick Clean PRO</string>
-    <string name="notification_channel_tools_desc">Saran alat Quick Clean PRO</string>
-    <string name="virus_installed_apps_access_title">Penggunaan Data Pemindaian Virus</string>
-    <string name="virus_installed_apps_access_message">Quick Clean PRO mengirim info aplikasi terpasang Anda (nama, nama paket, versi) ke Trustlook Security untuk memindai malware dan aplikasi berisiko.</string>
-    <string name="agree_and_continue">Setuju dan lanjutkan</string>
+    <string name="app_name">Storage Clean</string>
+    <string name="permission_usage_desc">Untuk menampilkan detail penggunaan app, izinkan Storage Clean di Akses penggunaan.</string>
+    <string name="permission_network_usage_desc">Untuk menampilkan detail penggunaan jaringan, izinkan Storage Clean di Akses penggunaan.</string>
+    <string name="permission_notification_desc">Untuk merapikan notifikasi secara otomatis, izinkan Storage Clean di Akses notifikasi.</string>
+    <string name="permission_overlay_desc">Untuk menampilkan layar PIN di atas aplikasi yang dilindungi, izinkan Storage Clean tampil di atas aplikasi lain.</string>
+    <string name="rate_title">Suka Storage Clean?</string>
+    <string name="rate_feedback_message">Terima kasih atas masukan Anda. Kami akan terus meningkatkan Storage Clean.</string>
+    <string name="notification_enable_step_find">1. Temukan Storage Clean</string>
     <string name="not_now">Nanti saja</string>
-    <string name="notification_intercepted_appear_here">Notifikasi yang dicegat akan muncul di sini</string>
     <string name="permission_installed_apps_desc">Untuk memindai risiko keamanan pada aplikasi terpasang, izinkan akses ke daftar aplikasi terpasang di pengaturan sistem.</string>
     <string name="running_in_background">Berjalan di latar belakang</string>
-    <string name="too_many_attempts">Terlalu banyak percobaan. Coba lagi nanti</string>
     <string name="too_many_attempts_retry_seconds">Terlalu banyak percobaan. Coba lagi dalam %1$d dtk</string>
     <string name="wait_seconds">Terlalu banyak percobaan gagal. Harap tunggu 30 detik</string>
     <string name="permission_hint_overlay">Hanya layar PIN kunci aplikasi yang akan ditampilkan.</string>
@@ -180,7 +161,6 @@
     <string name="device_progress_ram_label">RAM:</string>
     <string name="device_progress_storage_label">Penyimpanan:</string>
     <string name="wifi_ssid_label">SSID</string>
-    <string name="network_link_speed_fallback">Menggunakan kecepatan tautan sebagai cadangan</string>
     <string name="network_speed_testing">Menguji...</string>
     <string name="network_speed_testing_latency">Menguji latensi...</string>
     <string name="network_speed_testing_download">Menguji unduhan...</string>
@@ -196,11 +176,9 @@
     <string name="common_tool_notification_cleaner_desc">Temukan notifikasi yang tidak diinginkan</string>
 
     <string name="virus_app_list_permission_title">Cara pemindaian virus menggunakan data Anda</string>
-    <string name="virus_app_list_permission_message">Saat Anda menggunakan Pemindaian Virus, Quick Clean PRO mengumpulkan dan mengirim informasi tentang aplikasi yang terpasang di perangkat Anda, termasuk nama aplikasi, nama paket, dan nomor versi, ke Trustlook Security untuk memindai malware dan mendeteksi aplikasi berisiko.</string>
+    <string name="virus_app_list_permission_message">Saat Anda menggunakan Pemindaian Virus, Storage Clean mengumpulkan dan mengirim informasi tentang aplikasi yang terpasang di perangkat Anda, termasuk nama aplikasi, nama paket, dan nomor versi, ke Trustlook Security untuk memindai malware dan mendeteksi aplikasi berisiko.</string>
     <string name="virus_app_list_permission_agree">Setuju dan lanjutkan</string>
     <string name="virus_app_list_permission_not_now">Nanti saja</string>
-    <string name="notification_permission_custom_message">Aktifkan notifikasi untuk menerima pengingat tepat waktu tentang pemeriksaan ponsel dan pembersihan sampah.</string>
-    <string name="notification_permission_turn_on">Aktifkan notifikasi</string>
     <string name="submit">Submit</string>
     <string name="check_now">Check Now</string>
     <string name="clean_upper">CLEAN</string>
@@ -216,23 +194,11 @@
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
     <string name="notification_app_selection_update_failed">Unable to update notification app selection.</string>
-    <string name="nav_splash">Splash</string>
-    <string name="nav_onboarding_scan">Onboarding Scan</string>
-    <string name="nav_scan">Scan</string>
-    <string name="nav_result">Hasil pemindaian</string>
-    <string name="nav_clean_result">Hasil pembersihan</string>
-    <string name="nav_manage_permissions">Manage Permissions</string>
-    <string name="nav_anti_virus">Anti-virus</string>
-    <string name="nav_virus_quick_scan">Quick Scan</string>
-    <string name="nav_virus_deep_scan">Deep Scan</string>
-    <string name="nav_virus_result">Virus Result</string>
-    <string name="nav_no_virus_result">No Virus Result</string>
     <string name="nav_device_info">Device Info</string>
     <string name="nav_battery_info">Info baterai</string>
     <string name="nav_app_usage">App Usage</string>
     <string name="nav_network_usage">Network Usage</string>
     <string name="nav_network_scan">Network Scan</string>
-    <string name="nav_network_scan_devices">Network Scan Devices</string>
     <string name="nav_network_speed">Network Speed</string>
     <string name="nav_whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="nav_notification_cleaner">Notification Cleaner</string>
@@ -402,7 +368,6 @@
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_checking_device_info">Checking device\ninformation...</string>
     <string name="splash_accept_prefix">By proceeding, you confirm you accept our </string>
-    <string name="open_ad_loading">Memuat iklan</string>
     <string name="network_scan">Network Scan</string>
     <string name="whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="notification_cleaner">Notification Cleaner</string>

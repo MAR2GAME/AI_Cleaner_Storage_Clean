@@ -33,13 +33,7 @@
     <string name="device_info_load_failed">No se pudo cargar la información del dispositivo.</string>
     <string name="file_scan_failed">Error al escanear archivos.</string>
     <string name="duplicate_scan_failed">Error al escanear archivos duplicados.</string>
-    <string name="nav_home">Inicio</string>
-    <string name="nav_scan">Escanear</string>
     <string name="nav_settings">Ajustes</string>
-    <string name="nav_manage_permissions">Gestionar permisos</string>
-    <string name="nav_anti_virus">Antivirus</string>
-    <string name="nav_virus_quick_scan">Escaneo rápido</string>
-    <string name="nav_virus_deep_scan">Escaneo profundo</string>
     <string name="nav_device_info">Información del dispositivo</string>
     <string name="nav_battery_info">Información de batería</string>
     <string name="nav_app_usage">Uso de apps</string>
@@ -93,9 +87,9 @@
     <string name="permission_storage_desc">Para escanear y eliminar basura, concede acceso a archivos y multimedia.</string>
     <string name="permission_storage_files_desc">Para escanear y gestionar archivos, concede acceso a archivos y multimedia.</string>
     <string name="permission_location_desc">Para escanear dispositivos en tu red Wi-Fi, concede permiso de ubicación.</string>
-    <string name="permission_usage_desc">Para mostrar el uso de apps, permite Quick Clean PRO en Acceso de uso.</string>
-    <string name="permission_network_usage_desc">Para mostrar el uso de red, permite Quick Clean PRO en Acceso de uso.</string>
-    <string name="permission_notification_desc">Para ordenar notificaciones automáticamente, permite Quick Clean PRO en Acceso a notificaciones.</string>
+    <string name="permission_usage_desc">Para mostrar el uso de apps, permite Storage Clean en Acceso de uso.</string>
+    <string name="permission_network_usage_desc">Para mostrar el uso de red, permite Storage Clean en Acceso de uso.</string>
+    <string name="permission_notification_desc">Para ordenar notificaciones automáticamente, permite Storage Clean en Acceso a notificaciones.</string>
     <string name="permission_hint_junk_deleted">Solo se eliminarán archivos basura.</string>
     <string name="permission_hint_files_safe">Solo se gestionarán los archivos seleccionados.</string>
     <string name="permission_hint_no_personal">No se recopilará información personal.</string>
@@ -103,7 +97,6 @@
     <string name="settings_temperature_unit">Unidad de temperatura</string>
     <string name="settings_terms_of_service">Términos de servicio</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
-    <string name="settings_ad_privacy_options">Opciones de privacidad de anuncios</string>
     <string name="settings_rate_us">Califícanos</string>
     <string name="settings_storage_permission">Almacenamiento</string>
     <string name="settings_usage_data_permission">Datos de uso</string>
@@ -161,7 +154,6 @@
     <string name="stop">Detener</string>
     <!-- App Lock -->
     <string name="app_lock">Bloqueo de apps</string>
-    <string name="nav_app_lock">Bloqueo de apps</string>
     <string name="setting">Ajuste</string>
     <string name="enable">Activar</string>
     <string name="haptic_feedback">Respuesta háptica</string>
@@ -184,15 +176,15 @@
     <string name="turn_on_auto_lock">Activar bloqueo automático</string>
     <string name="turn_on_auto_lock_hint">Bloquea automáticamente las apps nuevas después de instalarlas.</string>
     <string name="app_lock_usage_permission_title">Permiso de datos de uso requerido</string>
-    <string name="app_lock_usage_permission_desc">Busca Quick Clean PRO y activa el permiso.</string>
+    <string name="app_lock_usage_permission_desc">Busca Storage Clean y activa el permiso.</string>
     <string name="app_lock_usage_permission_grant">Conceder acceso a datos de uso</string>
     <string name="app_lock_overlay_permission_message">Concede los permisos necesarios para usar esta función.</string>
     <string name="app_lock_overlay_permission_title">Permiso de ventana flotante requerido</string>
-    <string name="app_lock_overlay_permission_desc">Busca Quick Clean PRO y activa el permiso.</string>
+    <string name="app_lock_overlay_permission_desc">Busca Storage Clean y activa el permiso.</string>
     <string name="app_lock_overlay_permission_grant">Permitir mostrar sobre otras apps</string>
     <string name="manage_permission">Gestionar permiso</string>
     <string name="allow_now">Permitir ahora</string>
-    <string name="permission_app_lock_usage_desc">Para detectar cuándo se abren apps protegidas, permite Quick Clean PRO en Acceso de uso.</string>
+    <string name="permission_app_lock_usage_desc">Para detectar cuándo se abren apps protegidas, permite Storage Clean en Acceso de uso.</string>
     <!-- Home exit prompts -->
     <string name="exit">Salir</string>
     <string name="close">Cerrar</string>
@@ -211,34 +203,18 @@
     <string name="notification_enable_step_find_suffix"></string>
     <string name="notification_enable_step_allow">2. Toca “Permitir”</string>
     <!-- Recently added strings -->
-    <string name="continue_scan">Continuar</string>
     <string name="home_app_lock_title">Bloqueo de apps</string>
-    <string name="home_app_lock_desc">Bloqueo de apps para proteger la privacidad</string>
-    <string name="no_data_available">No hay datos disponibles</string>
-    <string name="virus_scan_notice_title">Aviso</string>
-    <string name="virus_scan_notice_message">Quick Clean PRO comprobará la información de las apps de este dispositivo para analizar riesgos de seguridad.</string>
-    <string name="settings_overlay_permission">Ventana flotante</string>
-    <string name="settings_post_notifications_permission">Notificaciones de la app</string>
     <string name="file_unselect">Deseleccionar</string>
     <string name="file_music">M?sica</string>
-    <string name="app_usage_legend_other">Otros</string>
-    <string name="device_info_source_hint">La informaci?n del dispositivo mostrada se basa en datos proporcionados por el sistema y puede variar respecto a las especificaciones oficiales. Por ejemplo, la capacidad de almacenamiento o memoria puede diferir ligeramente debido a reservas del sistema o a la configuraci?n del hardware.</string>
 
-    <string name="app_name">Quick Clean PRO</string>
-    <string name="permission_overlay_desc">Para mostrar la pantalla PIN sobre las apps protegidas, permite que Quick Clean PRO se muestre sobre otras apps.</string>
-    <string name="rate_title">¿Te gusta Quick Clean PRO?</string>
-    <string name="rate_feedback_message">Gracias por tus comentarios. Seguiremos mejorando Quick Clean PRO.</string>
-    <string name="notification_enable_step_find">1. Busca Quick Clean PRO</string>
-    <string name="notification_channel_tools">Herramientas de Quick Clean PRO</string>
-    <string name="notification_channel_tools_desc">Sugerencias de herramientas de Quick Clean PRO</string>
-    <string name="virus_installed_apps_access_title">Uso de datos del escaneo de virus</string>
-    <string name="virus_installed_apps_access_message">Quick Clean PRO envía información de tus apps instaladas (nombres, nombres de paquete, versiones) a Trustlook Security para escanear malware y apps de riesgo.</string>
-    <string name="agree_and_continue">Aceptar y continuar</string>
+    <string name="app_name">Storage Clean</string>
+    <string name="permission_overlay_desc">Para mostrar la pantalla PIN sobre las apps protegidas, permite que Storage Clean se muestre sobre otras apps.</string>
+    <string name="rate_title">¿Te gusta Storage Clean?</string>
+    <string name="rate_feedback_message">Gracias por tus comentarios. Seguiremos mejorando Storage Clean.</string>
+    <string name="notification_enable_step_find">1. Busca Storage Clean</string>
     <string name="not_now">Ahora no</string>
-    <string name="notification_intercepted_appear_here">Las notificaciones interceptadas aparecerán aquí</string>
     <string name="permission_installed_apps_desc">Para escanear las apps instaladas en busca de riesgos de seguridad, permite el acceso a la lista de apps instaladas en los ajustes del sistema.</string>
     <string name="running_in_background">Ejecutándose en segundo plano</string>
-    <string name="too_many_attempts">Demasiados intentos. Vuelve a intentarlo más tarde</string>
     <string name="too_many_attempts_retry_seconds">Demasiados intentos. Vuelve a intentarlo en %1$d s</string>
     <string name="wait_seconds">Demasiados intentos fallidos. Espera 30 segundos</string>
     <string name="permission_hint_overlay">Solo se mostrará la pantalla PIN del bloqueo de apps.</string>
@@ -250,7 +226,6 @@
     <string name="device_progress_ram_label">RAM:</string>
     <string name="device_progress_storage_label">Almacenamiento:</string>
     <string name="wifi_ssid_label">SSID</string>
-    <string name="network_link_speed_fallback">Usando velocidad de enlace como respaldo</string>
     <string name="network_speed_testing">Probando...</string>
     <string name="network_speed_testing_latency">Probando la latencia...</string>
     <string name="network_speed_testing_download">Probando la descarga...</string>
@@ -265,20 +240,11 @@
     <string name="common_tool_notification_cleaner_desc">Encontrar notificaciones no deseadas</string>
 
     <string name="virus_app_list_permission_title">Cómo usa tus datos el análisis antivirus</string>
-    <string name="virus_app_list_permission_message">Cuando usas el análisis antivirus, Quick Clean PRO recopila y envía información de las apps instaladas en tu dispositivo, incluidos nombres, paquetes y versiones, a Trustlook Security para detectar malware y apps de riesgo.</string>
+    <string name="virus_app_list_permission_message">Cuando usas el análisis antivirus, Storage Clean recopila y envía información de las apps instaladas en tu dispositivo, incluidos nombres, paquetes y versiones, a Trustlook Security para detectar malware y apps de riesgo.</string>
     <string name="virus_app_list_permission_agree">Aceptar y continuar</string>
     <string name="virus_app_list_permission_not_now">Ahora no</string>
-    <string name="notification_permission_custom_message">Activa las notificaciones para recibir recordatorios oportunos de revisión del teléfono y limpieza de basura.</string>
-    <string name="notification_permission_turn_on">Activar notificaciones</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
     <string name="notification_app_selection_update_failed">Unable to update notification app selection.</string>
-    <string name="nav_splash">Splash</string>
-    <string name="nav_onboarding_scan">Onboarding Scan</string>
-    <string name="nav_result">Resultado del escaneo</string>
-    <string name="nav_clean_result">Resultado de limpieza</string>
-    <string name="nav_virus_result">Virus Result</string>
-    <string name="nav_no_virus_result">No Virus Result</string>
-    <string name="nav_network_scan_devices">Network Scan Devices</string>
     <string name="whatsapp_not_found_title">WhatsApp not found</string>
     <string name="whatsapp_not_found_message">Please install WhatsApp first, then try WhatsApp Cleaner again.</string>
     <string name="category_cache">Cache Files</string>
@@ -413,7 +379,6 @@
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_checking_device_info">Checking device\ninformation...</string>
     <string name="splash_accept_prefix">By proceeding, you confirm you accept our </string>
-    <string name="open_ad_loading">Cargando anuncio</string>
     <string name="network_scan">Network Scan</string>
     <string name="whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="notification_cleaner">Notification Cleaner</string>

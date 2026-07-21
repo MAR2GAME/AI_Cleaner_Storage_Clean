@@ -1,0 +1,78 @@
+package com.aicleanerstorage.spaceclean.feature.notificationcleaner
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
+import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerAction
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.ui.NotificationCleanerScreen
+
+@Composable
+fun NotificationCleanerRoute(
+    navigator: AppNavigator,
+    viewModel: NotificationCleanerViewModel,
+    featureFlow: FeatureFlowRuntime,
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val permissionCoordinator = LocalPermissionCoordinator.current
+
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.onAction(NotificationCleanerAction.Refresh)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    LaunchedEffect(viewModel, featureFlow) {
+        viewModel.operationEvents.collect { event ->
+            if (event.isNotificationCleanerCompletionSuccess()) {
+                featureFlow.handleOperation(event) {
+                    viewModel.onAction(NotificationCleanerAction.ShowStatus)
+                }
+            } else {
+                featureFlow.handleOperation(event)
+            }
+        }
+    }
+
+    NotificationCleanerScreen(
+        state = state,
+        onAction = { action ->
+            when (action) {
+                NotificationCleanerAction.Back -> {
+                    featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
+                }
+                NotificationCleanerAction.EnableBlocking -> {
+                    permissionCoordinator.ensure(ProtectedAction.NotificationCleanerEnable) {
+                        viewModel.onAction(action)
+                    }
+                }
+                else -> viewModel.onAction(action)
+            }
+        },
+        onNavigate = navigator::open,
+    )
+}
+
+private fun FeatureOperationEvent.isNotificationCleanerCompletionSuccess(): Boolean =
+    this is FeatureOperationEvent.OperationFinished &&
+        feature == FeatureKey.NOTIFICATION_CLEANER &&
+        action == OperationAction.CLEAN &&
+        success

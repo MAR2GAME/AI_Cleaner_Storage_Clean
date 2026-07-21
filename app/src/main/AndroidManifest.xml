@@ -39,15 +39,15 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="com.quickcleanpro.phonecleaner.app.MyApp"
-        android:theme="@style/Theme.QuickCleanPRO">
+        android:name="com.aicleanerstorage.spaceclean.app.MyApp"
+        android:theme="@style/Theme.StorageClean">
         <activity
-            android:name="com.quickcleanpro.phonecleaner.app.MainActivity"
+            android:name="com.aicleanerstorage.spaceclean.app.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:launchMode="singleTop"
@@ -58,14 +58,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.quickcleanpro.phonecleaner.app.OpenAdHostActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:theme="@style/Theme.QuickCleanPRO.OpenAdHost" />
         <service
-            android:name="com.quickcleanpro.phonecleaner.feature.notificationcleaner.QuickCleanPRONotificationListener"
+            android:name="com.aicleanerstorage.spaceclean.feature.notificationcleaner.StorageCleanNotificationListener"
             android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -74,7 +68,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.quickcleanpro.phonecleaner.app.runtime.notification.AppBackgroundRuntimeService"
+            android:name="com.aicleanerstorage.spaceclean.app.runtime.notification.AppBackgroundRuntimeService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse">
@@ -83,21 +77,12 @@
                 android:value="Samples local battery history for Battery Info charts and monitors user-selected protected apps for App Lock." />
         </service>
         <service
-            android:name="com.quickcleanpro.phonecleaner.feature.applock.service.LockScreenOverlayService"
+            android:name="com.aicleanerstorage.spaceclean.feature.applock.service.LockScreenOverlayService"
             android:enabled="true"
             android:exported="false" />
         <meta-data
             android:name="com.trustlook.ApiKey"
             android:value="${trustlookApiKey}" />
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${advAdmobAppId}" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="${advFacebookAppId}" />
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="${advFacebookClientToken}" />
     </application>
 
 </manifest>

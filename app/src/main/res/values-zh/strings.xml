@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><resources>
-    <string name="app_name">Quick Clean PRO</string>
+    <string name="app_name">Storage Clean</string>
     <!-- Common -->
     <string name="back">返回</string>
     <string name="cancel">取消</string>
@@ -37,23 +37,12 @@
     <string name="notification_app_selection_update_failed">无法更新通知应用选择。</string>
 
     <!-- Navigation titles -->
-    <string name="nav_splash">启动页</string>
-    <string name="nav_onboarding_scan">引导扫描</string>
-    <string name="nav_home">首页</string>
-    <string name="nav_scan">扫描</string>
     <string name="nav_settings">设置</string>
-    <string name="nav_manage_permissions">管理权限</string>
-    <string name="nav_anti_virus">杀毒</string>
-    <string name="nav_virus_quick_scan">快速扫描</string>
-    <string name="nav_virus_deep_scan">深度扫描</string>
-    <string name="nav_virus_result">病毒结果</string>
-    <string name="nav_no_virus_result">无病毒结果</string>
     <string name="nav_device_info">设备信息</string>
     <string name="nav_battery_info">电池信息</string>
     <string name="nav_app_usage">应用使用详情</string>
     <string name="nav_network_usage">网络用量</string>
     <string name="nav_network_scan">网络扫描</string>
-    <string name="nav_network_scan_devices">网络扫描设备</string>
     <string name="nav_network_speed">网络测速</string>
     <string name="nav_whatsapp_cleaner">WhatsApp 清理</string>
     <string name="nav_notification_cleaner">通知清理</string>
@@ -165,9 +154,9 @@
     <string name="permission_virus_storage_desc">为了扫描文件风险，请授予手机文件和媒体访问权限。</string>
     <string name="permission_whatsapp_storage_desc">为了扫描并清理 WhatsApp 文件，请授予手机文件和媒体访问权限。</string>
     <string name="permission_location_desc">为了扫描 Wi-Fi 网络中的设备，请授予位置权限。</string>
-    <string name="permission_usage_desc">为了显示应用使用详情，请在使用情况访问设置中允许 Quick Clean PRO。</string>
-    <string name="permission_network_usage_desc">为了显示网络用量详情，请在使用情况访问设置中允许 Quick Clean PRO。</string>
-    <string name="permission_notification_desc">为了自动整理通知，请在通知访问设置中允许 Quick Clean PRO。</string>
+    <string name="permission_usage_desc">为了显示应用使用详情，请在使用情况访问设置中允许 Storage Clean。</string>
+    <string name="permission_network_usage_desc">为了显示网络用量详情，请在使用情况访问设置中允许 Storage Clean。</string>
+    <string name="permission_notification_desc">为了自动整理通知，请在通知访问设置中允许 Storage Clean。</string>
     <string name="permission_hint_junk_deleted">只会删除垃圾文件。</string>
     <string name="permission_hint_files_safe">只会管理你选择的文件。</string>
     <string name="permission_hint_threat_files">只会处理你选择的风险文件。</string>
@@ -187,20 +176,17 @@
     <string name="settings_temperature_unit">温度单位</string>
     <string name="settings_terms_of_service">服务条款</string>
     <string name="settings_privacy_policy">隐私政策</string>
-    <string name="settings_ad_privacy_options">广告隐私选项</string>
     <string name="settings_rate_us">给我们评分</string>
     <string name="settings_storage_permission">存储</string>
     <string name="settings_usage_data_permission">使用数据</string>
     <string name="settings_location_permission">位置</string>
     <string name="settings_notification_permission">通知</string>
-    <string name="settings_overlay_permission">悬浮窗</string>
-    <string name="settings_post_notifications_permission">应用通知</string>
     
 
     <!-- Rating -->
-    <string name="rate_title">喜欢 Quick Clean PRO 吗？</string>
+    <string name="rate_title">喜欢 Storage Clean 吗？</string>
     <string name="rate_feedback_title">感谢你的反馈</string>
-    <string name="rate_feedback_message">感谢你的反馈，我们会继续改进 Quick Clean PRO。</string>
+    <string name="rate_feedback_message">感谢你的反馈，我们会继续改进 Storage Clean。</string>
     <!-- Antivirus -->
     <string name="anti_virus">杀毒</string>
     <string name="engine_is_ready">引擎已准备就绪</string>
@@ -354,8 +340,8 @@
     <string name="onboarding_skip">跳过</string>
     <string name="onboarding_get_started">开始使用</string>
     <string name="onboarding_checking_device_info">正在检查设备\n信息...</string>
+    <string name="onboarding_device_info_disclaimer">显示的设备信息基于系统提供的数据，可能与官方规格有所不同。例如，由于系统预留空间或硬件配置差异，存储容量或内存可能会略有不同。</string>
     <string name="splash_accept_prefix">继续即表示你接受我们的</string>
-    <string name="open_ad_loading">广告正在加载中</string>
 
     <!-- Toolbox -->
     <string name="app_usage">应用使用详情</string>
@@ -450,7 +436,7 @@
 
     <!-- Notification -->
     <string name="notification_enable_title">如何启用通知权限？</string>
-    <string name="notification_enable_step_find">1. 找到 Quick Clean PRO</string>
+    <string name="notification_enable_step_find">1. 找到 Storage Clean</string>
     <string name="notification_enable_step_find_prefix">1. 找到\u0020</string>
     <string name="notification_enable_step_find_suffix"></string>
     <string name="notification_enable_step_allow">2. 点击“允许”</string>
@@ -471,15 +457,12 @@
     <string name="notification_blocked_notifications">拦截通知</string>
     <string name="notification_block_settings_desc">拦截所选应用在通知栏中的通知</string>
     <string name="notification_loading_animation">动画加载中...</string>
-    <string name="notification_channel_tools">Quick Clean PRO 工具</string>
-    <string name="notification_channel_tools_desc">Quick Clean PRO 工具建议</string>
     <string name="notification_tool_junk_desc">检查是否存在垃圾文件</string>
     <string name="notification_tool_network_scan_desc">网络扫描</string>
     <string name="notification_tool_network_usage_desc">查看你的数据用量</string>
     <string name="notification_tool_cleaner_desc">检查是否有不需要的通知</string>
     <!-- App Lock -->
     <string name="app_lock">应用锁</string>
-    <string name="nav_app_lock">应用锁</string>
     <string name="setting">设置</string>
     <string name="enable">开启</string>
     <string name="haptic_feedback">触感反馈</string>
@@ -502,15 +485,15 @@
     <string name="turn_on_auto_lock">开启自动锁定</string>
     <string name="turn_on_auto_lock_hint">安装新应用后自动锁定。</string>
     <string name="app_lock_usage_permission_title">需要使用数据权限</string>
-    <string name="app_lock_usage_permission_desc">找到 Quick Clean PRO 并开启权限。</string>
+    <string name="app_lock_usage_permission_desc">找到 Storage Clean 并开启权限。</string>
     <string name="app_lock_usage_permission_grant">授予使用数据访问权限</string>
     <string name="app_lock_overlay_permission_message">请授予所需权限以使用此功能。</string>
     <string name="app_lock_overlay_permission_title">需要悬浮窗权限</string>
-    <string name="app_lock_overlay_permission_desc">找到 Quick Clean PRO 并开启权限。</string>
+    <string name="app_lock_overlay_permission_desc">找到 Storage Clean 并开启权限。</string>
     <string name="app_lock_overlay_permission_grant">允许在其他应用上层显示</string>
     <string name="manage_permission">管理权限</string>
     <string name="allow_now">立即允许</string>
-    <string name="permission_app_lock_usage_desc">为了检测受保护应用是否打开，请在使用情况访问权限中允许 Quick Clean PRO。</string>
+    <string name="permission_app_lock_usage_desc">为了检测受保护应用是否打开，请在使用情况访问权限中允许 Storage Clean。</string>
     <!-- Home exit prompts -->
     <string name="exit">退出</string>
     <string name="close">关闭</string>
@@ -525,20 +508,13 @@
     <string name="exit_prompt_notification_tip_matters">只看重要内容</string>
     <string name="exit_prompt_notification_tip_focus">保持专注，减少打扰</string>
     <!-- Recently added strings -->
-    <string name="continue_scan">继续</string>
     <string name="home_app_lock_title">应用锁</string>
-    <string name="home_app_lock_desc">用于隐私保护的应用锁</string>
-    <string name="no_data_available">暂无数据</string>
-    <string name="virus_scan_notice_title">提示</string>
-    <string name="virus_scan_notice_message">Quick Clean PRO 会检查此设备上的应用信息，用于扫描安全风险。</string>
     <string name="file_unselect">取消选择</string>
     <string name="file_music">音乐</string>
-    <string name="app_usage_legend_other">其他</string>
     <string name="running_in_background">后台运行中</string>
-    <string name="too_many_attempts">尝试次数过多，请稍后重试</string>
     <string name="too_many_attempts_retry_seconds">尝试次数过多，请在 %1$d 秒后重试</string>
     <string name="wait_seconds">失败次数过多，请等待 30 秒</string>
-    <string name="permission_overlay_desc">为了在受保护应用上方显示 PIN 屏幕，请允许 Quick Clean PRO 显示在其他应用上层。</string>
+    <string name="permission_overlay_desc">为了在受保护应用上方显示 PIN 屏幕，请允许 Storage Clean 显示在其他应用上层。</string>
     <string name="permission_hint_overlay">只会显示应用锁 PIN 界面。</string>
     <string name="scan_virus_authorization_missing">此应用版本未配置病毒扫描授权。</string>
     <string name="whatsapp_category_audios">音频</string>
@@ -548,13 +524,7 @@
     <string name="device_progress_ram_label">RAM：</string>
     <string name="device_progress_storage_label">存储：</string>
     <string name="wifi_ssid_label">SSID</string>
-    <string name="network_link_speed_fallback">正在使用链路速度估算</string>
-    <string name="device_info_source_hint">显示的设备信息基于系统提供的数据，可能与官方规格略有不同。例如，由于系统预留空间或硬件配置差异，存储容量或内存可能会略有差异。</string>
-    <string name="virus_installed_apps_access_title">病毒扫描数据使用</string>
-    <string name="virus_installed_apps_access_message">Quick Clean PRO 会将你已安装应用的信息（名称、包名、版本）发送给 Trustlook Security，用于扫描恶意软件和风险应用。</string>
-    <string name="agree_and_continue">同意并继续</string>
     <string name="not_now">暂不</string>
-    <string name="notification_intercepted_appear_here">已拦截的通知会显示在这里</string>
     <string name="permission_installed_apps_desc">为了扫描已安装应用的安全风险，请在系统设置中允许访问已安装应用列表。</string>
     <string name="network_speed_testing">测速中...</string>
     <string name="network_speed_testing_latency">正在测试延迟...</string>
@@ -562,11 +532,7 @@
     <string name="network_speed_testing_upload">正在测试上传...</string>
 
     <string name="virus_app_list_permission_title">杀毒如何使用你的数据</string>
-    <string name="virus_app_list_permission_message">使用杀毒功能时，Quick Clean PRO 会收集并发送你设备上已安装应用的信息，包括应用名称、包名和版本号，用于 Trustlook Security 进行恶意软件扫描和风险应用检测。</string>
+    <string name="virus_app_list_permission_message">使用杀毒功能时，Storage Clean 会收集并发送你设备上已安装应用的信息，包括应用名称、包名和版本号，用于 Trustlook Security 进行恶意软件扫描和风险应用检测。</string>
     <string name="virus_app_list_permission_agree">同意并继续</string>
     <string name="virus_app_list_permission_not_now">暂不</string>
-    <string name="notification_permission_custom_message">开启通知，及时接收手机检查和垃圾清理提醒！</string>
-    <string name="notification_permission_turn_on">开启通知</string>
-    <string name="nav_result">扫描结果</string>
-    <string name="nav_clean_result">清理结果</string>
 </resources>

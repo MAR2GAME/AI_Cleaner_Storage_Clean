@@ -13,7 +13,6 @@
     <string name="settings">설정</string>
     <string name="clean_now">지금 정리</string>
     <string name="scan_now">지금 검사</string>
-    <string name="nav_home">홈</string>
     <string name="nav_settings">설정</string>
     <string name="nav_photos">사진</string>
     <string name="nav_videos">동영상</string>
@@ -69,7 +68,6 @@
     <string name="stop">중지</string>
     <!-- App Lock -->
     <string name="app_lock">앱 잠금</string>
-    <string name="nav_app_lock">앱 잠금</string>
     <string name="setting">설정</string>
     <string name="enable">사용</string>
     <string name="haptic_feedback">햅틱 피드백</string>
@@ -92,15 +90,15 @@
     <string name="turn_on_auto_lock">자동 잠금 켜기</string>
     <string name="turn_on_auto_lock_hint">설치 후 새 앱을 자동으로 잠급니다.</string>
     <string name="app_lock_usage_permission_title">사용 데이터 권한 필요</string>
-    <string name="app_lock_usage_permission_desc">Quick Clean PRO를 찾아 권한을 켜세요.</string>
+    <string name="app_lock_usage_permission_desc">Storage Clean를 찾아 권한을 켜세요.</string>
     <string name="app_lock_usage_permission_grant">사용 데이터 접근 허용</string>
     <string name="app_lock_overlay_permission_message">이 기능을 사용하려면 필요한 권한을 허용하세요.</string>
     <string name="app_lock_overlay_permission_title">플로팅 창 권한 필요</string>
-    <string name="app_lock_overlay_permission_desc">Quick Clean PRO를 찾아 권한을 켜세요.</string>
+    <string name="app_lock_overlay_permission_desc">Storage Clean를 찾아 권한을 켜세요.</string>
     <string name="app_lock_overlay_permission_grant">다른 앱 위에 표시 허용</string>
     <string name="manage_permission">권한 관리</string>
     <string name="allow_now">지금 허용</string>
-    <string name="permission_app_lock_usage_desc">보호된 앱이 열리는 것을 감지하려면 사용 접근 설정에서 Quick Clean PRO를 허용하세요.</string>
+    <string name="permission_app_lock_usage_desc">보호된 앱이 열리는 것을 감지하려면 사용 접근 설정에서 Storage Clean를 허용하세요.</string>
     <!-- Home exit prompts -->
     <string name="exit">종료</string>
     <string name="close">닫기</string>
@@ -121,37 +119,21 @@
     <string name="notification_enable_step_find_suffix"> 찾기</string>
     <string name="notification_enable_step_allow">2. “허용”을 탭하세요</string>
     <!-- Recently added strings -->
-    <string name="continue_scan">계속</string>
     <string name="home_app_lock_title">앱 잠금</string>
-    <string name="home_app_lock_desc">개인정보 보호를 위한 앱 잠금</string>
-    <string name="no_data_available">사용 가능한 데이터가 없습니다</string>
-    <string name="virus_scan_notice_title">알림</string>
-    <string name="virus_scan_notice_message">Quick Clean PRO는 보안 위험을 검사하기 위해 이 기기의 앱 정보를 확인합니다.</string>
-    <string name="settings_overlay_permission">플로팅 창</string>
-    <string name="settings_post_notifications_permission">앱 알림</string>
     <string name="file_unselect">선택 해제</string>
     <string name="file_music">음악</string>
-    <string name="app_usage_legend_other">기타</string>
-    <string name="device_info_source_hint">표시되는 기기 정보는 시스템에서 제공하는 데이터를 기반으로 하며 공식 사양과 다를 수 있습니다. 예를 들어 저장 공간이나 메모리는 시스템 예약 영역 또는 하드웨어 구성 차이로 인해 약간 다를 수 있습니다.</string>
 
-    <string name="app_name">Quick Clean PRO</string>
-    <string name="permission_usage_desc">앱 사용 세부 정보를 표시하려면 사용 접근 설정에서 Quick Clean PRO를 허용하세요.</string>
-    <string name="permission_network_usage_desc">네트워크 사용 세부 정보를 표시하려면 사용 접근 설정에서 Quick Clean PRO를 허용하세요.</string>
-    <string name="permission_notification_desc">알림을 자동으로 정리하려면 알림 접근 설정에서 Quick Clean PRO를 허용하세요.</string>
-    <string name="permission_overlay_desc">보호된 앱 위에 PIN 화면을 표시하려면 Quick Clean PRO가 다른 앱 위에 표시되도록 허용하세요.</string>
-    <string name="rate_title">Quick Clean PRO가 마음에 드시나요?</string>
-    <string name="rate_feedback_message">의견 감사합니다. Quick Clean PRO를 계속 개선하겠습니다.</string>
-    <string name="notification_enable_step_find">1. Quick Clean PRO 찾기</string>
-    <string name="notification_channel_tools">Quick Clean PRO 도구</string>
-    <string name="notification_channel_tools_desc">Quick Clean PRO 도구 추천</string>
-    <string name="virus_installed_apps_access_title">바이러스 검사 데이터 사용</string>
-    <string name="virus_installed_apps_access_message">Quick Clean PRO는 악성 코드와 위험 앱을 검사하기 위해 설치된 앱 정보(이름, 패키지 이름, 버전)를 Trustlook Security로 전송합니다.</string>
-    <string name="agree_and_continue">동의하고 계속</string>
+    <string name="app_name">Storage Clean</string>
+    <string name="permission_usage_desc">앱 사용 세부 정보를 표시하려면 사용 접근 설정에서 Storage Clean를 허용하세요.</string>
+    <string name="permission_network_usage_desc">네트워크 사용 세부 정보를 표시하려면 사용 접근 설정에서 Storage Clean를 허용하세요.</string>
+    <string name="permission_notification_desc">알림을 자동으로 정리하려면 알림 접근 설정에서 Storage Clean를 허용하세요.</string>
+    <string name="permission_overlay_desc">보호된 앱 위에 PIN 화면을 표시하려면 Storage Clean가 다른 앱 위에 표시되도록 허용하세요.</string>
+    <string name="rate_title">Storage Clean가 마음에 드시나요?</string>
+    <string name="rate_feedback_message">의견 감사합니다. Storage Clean를 계속 개선하겠습니다.</string>
+    <string name="notification_enable_step_find">1. Storage Clean 찾기</string>
     <string name="not_now">나중에</string>
-    <string name="notification_intercepted_appear_here">차단된 알림이 여기에 표시됩니다</string>
     <string name="permission_installed_apps_desc">설치된 앱의 보안 위험을 검사하려면 시스템 설정에서 설치된 앱 목록 접근을 허용하세요.</string>
     <string name="running_in_background">백그라운드에서 실행 중</string>
-    <string name="too_many_attempts">시도 횟수가 너무 많습니다. 나중에 다시 시도하세요</string>
     <string name="too_many_attempts_retry_seconds">시도 횟수가 너무 많습니다. %1$d초 후에 다시 시도하세요</string>
     <string name="wait_seconds">실패 횟수가 너무 많습니다. 30초 동안 기다려 주세요</string>
     <string name="permission_hint_overlay">앱 잠금 PIN 화면만 표시됩니다.</string>
@@ -163,7 +145,6 @@
     <string name="device_progress_ram_label">RAM:</string>
     <string name="device_progress_storage_label">저장공간:</string>
     <string name="wifi_ssid_label">SSID</string>
-    <string name="network_link_speed_fallback">링크 속도 대체값 사용 중</string>
     <string name="network_speed_testing">테스트 중...</string>
     <string name="network_speed_testing_latency">지연 시간 테스트 중...</string>
     <string name="network_speed_testing_download">다운로드 테스트 중...</string>
@@ -179,11 +160,9 @@
     <string name="common_tool_notification_cleaner_desc">원치 않는 알림 찾기</string>
 
     <string name="virus_app_list_permission_title">바이러스 검사가 데이터를 사용하는 방식</string>
-    <string name="virus_app_list_permission_message">바이러스 검사를 사용하면 Quick Clean PRO는 기기에 설치된 앱의 이름, 패키지 이름, 버전 번호 등 정보를 수집하여 Trustlook Security로 전송하고 악성 코드 및 위험 앱을 검사합니다.</string>
+    <string name="virus_app_list_permission_message">바이러스 검사를 사용하면 Storage Clean는 기기에 설치된 앱의 이름, 패키지 이름, 버전 번호 등 정보를 수집하여 Trustlook Security로 전송하고 악성 코드 및 위험 앱을 검사합니다.</string>
     <string name="virus_app_list_permission_agree">동의하고 계속</string>
     <string name="virus_app_list_permission_not_now">나중에</string>
-    <string name="notification_permission_custom_message">알림을 켜서 휴대폰 점검과 정크 정리에 대한 알림을 제때 받아보세요.</string>
-    <string name="notification_permission_turn_on">알림 켜기</string>
     <string name="submit">Submit</string>
     <string name="error">Error</string>
     <string name="unknown">Unknown</string>
@@ -201,23 +180,11 @@
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
     <string name="notification_app_selection_update_failed">Unable to update notification app selection.</string>
-    <string name="nav_splash">Splash</string>
-    <string name="nav_onboarding_scan">Onboarding Scan</string>
-    <string name="nav_scan">Scan</string>
-    <string name="nav_result">검사 결과</string>
-    <string name="nav_clean_result">정리 결과</string>
-    <string name="nav_manage_permissions">Manage Permissions</string>
-    <string name="nav_anti_virus">Anti-virus</string>
-    <string name="nav_virus_quick_scan">Quick Scan</string>
-    <string name="nav_virus_deep_scan">Deep Scan</string>
-    <string name="nav_virus_result">Virus Result</string>
-    <string name="nav_no_virus_result">No Virus Result</string>
     <string name="nav_device_info">Device Info</string>
     <string name="nav_battery_info">배터리 정보</string>
     <string name="nav_app_usage">App Usage</string>
     <string name="nav_network_usage">Network Usage</string>
     <string name="nav_network_scan">Network Scan</string>
-    <string name="nav_network_scan_devices">Network Scan Devices</string>
     <string name="nav_network_speed">Network Speed</string>
     <string name="nav_whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="nav_notification_cleaner">Notification Cleaner</string>
@@ -274,7 +241,6 @@
     <string name="settings_temperature_unit">Temperature Unit</string>
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
-    <string name="settings_ad_privacy_options">Ad Privacy Options</string>
     <string name="settings_rate_us">Rate Us</string>
     <string name="settings_storage_permission">Storage</string>
     <string name="settings_usage_data_permission">Usage Data</string>
@@ -399,7 +365,6 @@
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_checking_device_info">Checking device\ninformation...</string>
     <string name="splash_accept_prefix">By proceeding, you confirm you accept our </string>
-    <string name="open_ad_loading">광고를 불러오는 중입니다</string>
     <string name="network_scan">Network Scan</string>
     <string name="whatsapp_cleaner">WhatsApp Cleaner</string>
     <string name="notification_cleaner">Notification Cleaner</string>

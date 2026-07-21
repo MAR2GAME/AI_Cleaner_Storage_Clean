@@ -89,15 +89,15 @@ try {
         Check-Imports $file '^\s*import\s+.*RepositoryImpl\b' 'UI/presentation imports a concrete repository'
         Check-Imports $file '^\s*import\s+.*\.service\.' 'UI/presentation imports a Service implementation'
         Check-Imports $file '^\s*import\s+.*(SharedPreferencesUtils|GlobalContext)\b' 'UI/presentation accesses global storage or DI'
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.app\.monetization\.(?!AdPrivacyGateway\b)' 'UI/presentation imports a monetization adapter implementation'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.app\.monetization\.(?!AdPrivacyGateway\b)' 'UI/presentation imports a monetization adapter implementation'
         Check-Imports $file $thirdPartySdkPattern 'UI/presentation imports a third-party SDK directly'
     }
 
     # Legacy packages are still production code. Keep the default gate honest while
     # the directory migration is in progress instead of checking only future paths.
     foreach ($file in $legacyFeatureFiles) {
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.use\.app\.' 'feature imports app runtime'
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.use\.skin\.' 'feature imports skin UI'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.use\.app\.' 'feature imports app runtime'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.use\.skin\.' 'feature imports skin UI'
     }
 
     $screenFiles = @($allAppSourceFiles | Where-Object { $_.Name -like '*Screen.kt' })
@@ -111,12 +111,12 @@ try {
     # This incremental allowlist prevents migrated pages from drifting backwards while
     # legacy pages are converted feature by feature.
     $pureScreenRelativePaths = @(
-        'com/quickcleanpro/phonecleaner/use/skin/home/HomeScreen.kt',
-        'com/quickcleanpro/phonecleaner/use/skin/settings/SettingsScreen.kt',
-        'com/quickcleanpro/phonecleaner/use/skin/toolbox/battery/BatteryInfoScreen.kt',
-        'com/quickcleanpro/phonecleaner/use/skin/toolbox/deviceinfo/DeviceInfoScreen.kt',
-        'com/quickcleanpro/phonecleaner/use/skin/toolbox/networkscan/NetworkScanScreen.kt',
-        'com/quickcleanpro/phonecleaner/use/skin/toolbox/networkspeed/NetworkSpeedScreen.kt'
+        'com/aicleanerstorage/spaceclean/use/skin/home/HomeScreen.kt',
+        'com/aicleanerstorage/spaceclean/use/skin/settings/SettingsScreen.kt',
+        'com/aicleanerstorage/spaceclean/use/skin/toolbox/battery/BatteryInfoScreen.kt',
+        'com/aicleanerstorage/spaceclean/use/skin/toolbox/deviceinfo/DeviceInfoScreen.kt',
+        'com/aicleanerstorage/spaceclean/use/skin/toolbox/networkscan/NetworkScanScreen.kt',
+        'com/aicleanerstorage/spaceclean/use/skin/toolbox/networkspeed/NetworkSpeedScreen.kt'
     )
     foreach ($relativePath in $pureScreenRelativePaths) {
         $screenPath = Join-Path $javaRoot $relativePath
@@ -134,7 +134,7 @@ try {
     }
 
     # AppRoot stays a thin mount point. Runtime state and side-effect wiring belong in app/runtime.
-    $appRootFile = Join-Path $javaRoot 'com/quickcleanpro/phonecleaner/use/app/AppRoot.kt'
+    $appRootFile = Join-Path $javaRoot 'com/aicleanerstorage/spaceclean/use/app/AppRoot.kt'
     if (-not (Test-Path -LiteralPath $appRootFile -PathType Leaf)) {
         Fail 'app/AppRoot.kt is missing; keep a stable thin application mount point'
     } else {
@@ -179,9 +179,9 @@ try {
 
     # Core modules are below app and features. Activity/Service ownership stays at the app/platform edge.
     foreach ($file in $futureCoreFiles) {
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.(app|feature)\.' 'core imports app/feature'
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.use\.(app|feature|service)\.' 'new core code imports legacy upper layers'
-        Check-Imports $file '^\s*import\s+com\.quickcleanpro\.phonecleaner\.use\.skin\.(?!common\.theme\.)' 'new core code imports legacy upper layers'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.(app|feature)\.' 'core imports app/feature'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.use\.(app|feature|service)\.' 'new core code imports legacy upper layers'
+        Check-Imports $file '^\s*import\s+com\.aicleanerstorage\.spaceclean\.use\.skin\.(?!common\.theme\.)' 'new core code imports legacy upper layers'
         Check-Imports $file '^\s*import\s+android\.app\.(Activity|Service)\b' 'core imports Activity/Service'
     }
 

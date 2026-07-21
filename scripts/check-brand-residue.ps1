@@ -90,21 +90,12 @@ try {
         throw 'Expected applicationId could not be determined. Pass -ExpectedApplicationId explicitly.'
     }
 
-    $googleServices = Read-Json (Join-Path $RepositoryRoot 'app/google-services.json')
-    if ($null -eq $googleServices) {
-        Add-Failure 'app/google-services.json is missing or unreadable'
-    } else {
-        $firebasePackages = @($googleServices.client | ForEach-Object { $_.client_info.android_client_info.package_name })
-        if ($ExpectedApplicationId -notin $firebasePackages) {
-            Add-Failure ("app/google-services.json does not contain expected package '{0}'" -f $ExpectedApplicationId)
-        }
+    if (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'app/google-services.json') -PathType Leaf) {
+        Add-Failure 'app/google-services.json must not exist in the white package'
     }
 
-    $adPolicy = Read-Json (Join-Path $RepositoryRoot 'config/ad_policy.json')
-    if ($null -eq $adPolicy) {
-        Add-Failure 'config/ad_policy.json is missing or unreadable'
-    } elseif ($null -ne $adPolicy.package_name) {
-        Add-Failure 'config/ad_policy.json must not hardcode package_name'
+    if (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'config/ad_policy.json') -PathType Leaf) {
+        Add-Failure 'config/ad_policy.json must not exist'
     }
 
     foreach ($applicationId in $ForbiddenApplicationIds) {
@@ -117,10 +108,15 @@ try {
     if ($Strict) {
         $manifest = Join-Path $RepositoryRoot 'app/src/main/AndroidManifest.xml'
         if (Test-Path -LiteralPath $manifest -PathType Leaf) {
-            $hardcodedPackages = @(Select-String -LiteralPath $manifest -Pattern 'com\.quickcleanpro\.phonecleaner' -CaseSensitive:$false)
-            foreach ($match in $hardcodedPackages) {
-                if ($match.Line -match 'android:name=') { continue }
-                Add-Failure ("{0}:{1}: hardcoded package outside component class name" -f (Relative-Path $manifest), $match.LineNumber)
+            $manifestText = Get-Content -LiteralPath $manifest -Raw -Encoding UTF8
+            $componentPackages = [regex]::Matches(
+                $manifestText,
+                '<(?:application|activity|service|receiver|provider)\b[^>]*android:name="(com\.[^"]+)"'
+            )
+            foreach ($match in $componentPackages) {
+                if (-not $match.Groups[1].Value.StartsWith($ExpectedApplicationId + '.', [StringComparison]::Ordinal)) {
+                    Add-Failure ("{0}: component outside expected package: {1}" -f (Relative-Path $manifest), $match.Groups[1].Value)
+                }
             }
         }
     }

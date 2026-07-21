@@ -1,0 +1,12 @@
+{
+  "workflow": "copied-project-transform",
+  "motherProjectPath": "D:/pros/my/Quick_Clean_Pro_s",
+  "motherCommit": "d303d64d9df66da866c6f38a2db7b4c034de85d8",
+  "targetProjectPath": "D:/pros/my/AI_Cleaner_Storage_Clean_recovered_20260721",
+  "targetStartCommit": "d303d64d9df66da866c6f38a2db7b4c034de85d8",
+  "brandName": "Storage Clean",
+  "createdAt": "2026-07-20",
+  "motherWorkingTree": "dirty-at-recording",
+  "baselineScope": "committed-source-only",
+  "notes": "Recovered from the recorded mother baseline, Android Studio Shelf, and surviving variant files. Keep the mother project read-only and sync future functional changes selectively."
+}
