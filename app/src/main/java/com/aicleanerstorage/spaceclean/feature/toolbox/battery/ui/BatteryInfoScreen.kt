@@ -220,7 +220,15 @@ private fun BatteryInformationCard(uiState: DeviceInfoUiState) {
                 iconRes = R.drawable.temperature,
                 iconSizeDp = 32,
                 label = stringResource(R.string.battery_temperature),
-                value = String.format(Locale.US, "%.1f", uiState.displayTemperatureC),
+                value =
+                    String.format(
+                        Locale.US,
+                        "%.1f",
+                        displayBatteryTemperatureValue(
+                            uiState.displayTemperatureC,
+                            uiState.temperatureUnit,
+                        ),
+                    ),
                 unit = "\u00B0${uiState.temperatureUnit}",
             ),
             BatteryMetricUi(

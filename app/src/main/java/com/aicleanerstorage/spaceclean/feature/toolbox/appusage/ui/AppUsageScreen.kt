@@ -650,9 +650,8 @@ private fun AppUsageRow(
             enabled = item.isRunning,
             modifier = Modifier
                 .width(64.dp)
-                .height(32.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                .height(32.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = StopRed,

@@ -138,7 +138,7 @@ private fun ToolboxShortcut(
     Column(
         modifier =
             Modifier
-                .width(80.dp)
+                .width(96.dp)
                 .height(96.dp)
                 .cleanXPressable(
                     pressedAlpha = 0.9f,
@@ -157,7 +157,7 @@ private fun ToolboxShortcut(
             text = title,
             modifier =
                 Modifier
-                    .width(80.dp)
+                    .width(96.dp)
                     .height(48.dp),
             color = Color(0xFF121212),
             fontSize = 16.sp,
@@ -166,6 +166,7 @@ private fun ToolboxShortcut(
             textAlign = TextAlign.Center,
             softWrap = true,
             maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
