@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="215dp"
+    android:layout_height="178dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/cyumfsvnjnnzosu"
+        android:layout_width="302dp"
+        android:layout_height="739dp"
+        android:text="orshybgznnqlagzb" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <ToggleButton
+        android:id="@+id/wcigkrgqsqkrqrkayyjuqb"
+        android:layout_width="155dp"
+        android:layout_height="352dp"
+        android:text="misotxwzzwkdudwfueg" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <TableLayout
+        android:id="@+id/aemtqtdvnieflsvsnrhhsgufa"
+        android:layout_width="578dp"
+        android:layout_height="949dp"
+        android:text="unzryxdbajtmavvjlll" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <ToggleButton
+        android:id="@+id/azbnpzxyqeeaumndpj"
+        android:layout_width="642dp"
+        android:layout_height="780dp"
+        android:text="oxlzdqhtebpvtbbavmsgau" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <LinearLayout
+        android:id="@+id/yoppgwfiettrmzdbawhuha"
+        android:layout_width="737dp"
+        android:layout_height="820dp"
+        android:text="pmvuwmmtqefdbcssgc" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+android:orientation="horizontal"/>
+   <LinearLayout
+        android:id="@+id/pobbtyshvcwiskncbzlscry"
+        android:layout_width="581dp"
+        android:layout_height="563dp"
+        android:text="ordfheewhbdklccyqvkfkbh" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+android:orientation="horizontal"/>
+   <ViewFlipper
+        android:id="@+id/dkgvjksbrxgmdqhkz"
+        android:layout_width="76dp"
+        android:layout_height="818dp"
+        android:text="evtwrbbtynrofcswdbbxirgo" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <DatePicker
+        android:id="@+id/baeteritplmyrgcfvoxlia"
+        android:layout_width="661dp"
+        android:layout_height="348dp"
+        android:text="ienqngzqpvrmmltfpwad" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   <ImageView
+        android:id="@+id/nuxqwzbazpfphgpk"
+        android:layout_width="957dp"
+        android:layout_height="30dp"
+        android:text="nyvhjnvukqdjqux" 
+        android:src="@drawable/ghmjxibqpxxjjgvpxefdd" 
+/>
+   </LinearLayout>

@@ -1,67 +1,46 @@
 package com.aicleanerstorage.spaceclean.feature.home.ui
 
-import com.aicleanerstorage.spaceclean.feature.home.*
-
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.navigation.feature.iconRes
-import com.aicleanerstorage.spaceclean.app.navigation.feature.destinationOrNull
-import com.aicleanerstorage.spaceclean.app.navigation.feature.titleRes
-import com.aicleanerstorage.spaceclean.feature.toolbox.shared.device.model.BatteryInfo
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXIconTile
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXInfoPanel
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillShape
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSectionTitle
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXText
+import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.ui.components.cleanXPressable
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.CleanXSingleActionDialog
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXCompactButtonHeight
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXGridSpacing
 import com.aicleanerstorage.spaceclean.feature.home.HomeSummaryUiState
 
-private val ToolboxFeatures =
-    listOf(
-        FeatureKey.APP_USAGE,
-        FeatureKey.NOTIFICATION_CLEANER,
-        FeatureKey.WHATSAPP_CLEANER,
-        FeatureKey.NETWORK_USAGE,
-        FeatureKey.NETWORK_SCAN,
-        FeatureKey.NETWORK_SPEED,
-    )
-
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun ToolBoxTabContent(
     summaryState: HomeSummaryUiState,
@@ -69,71 +48,34 @@ fun ToolBoxTabContent(
 ) {
     val context = LocalContext.current
     var showWhatsAppMissingDialog by remember { mutableStateOf(false) }
-    val tools = remember { ToolboxFeatures.filter { feature -> feature.destinationOrNull() != null } }
+    val tools = remember { ToolboxFeatureKeys.filter { AppDestination.forFeature(it) != null } }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(CleanXGridSpacing),
-        verticalArrangement = Arrangement.spacedBy(CleanXGridSpacing),
-    ) {
-        item(key = "device_summary", span = { GridItemSpan(maxLineSpan) }) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(CleanXGridSpacing),
-            ) {
-                DeviceInfoCard(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.ic_device,
-                    labels =
-                        listOf(
-                            R.string.home_device_model to summaryState.deviceModel,
-                            R.string.home_system_version to summaryState.androidVersion,
-                        ),
-                    buttonText = stringResource(R.string.check_now),
-                    background = Color(0xFF5866E8),
-                    onClick = {
-                        onFeatureClick(FeatureKey.DEVICE_INFO)
-                    },
-                )
-                DeviceInfoCard(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.ic_battery,
-                    labels =
-                        listOf(
-                            R.string.home_battery_status to batteryStatus(summaryState.batteryInfo),
-                            R.string.home_health to summaryState.batteryInfo.health,
-                        ),
-                    buttonText = stringResource(R.string.check_now),
-                    background = Color(0xFF35C979),
-                    onClick = {
-                        onFeatureClick(FeatureKey.BATTERY_INFO)
-                    },
-                )
-            }
+    fun openTool(feature: FeatureKey) {
+        if (feature == FeatureKey.WHATSAPP_CLEANER && !context.hasWhatsAppInstalled()) {
+            showWhatsAppMissingDialog = true
+        } else {
+            onFeatureClick(feature)
         }
+    }
 
-        item(key = "toolbox_title", span = { GridItemSpan(maxLineSpan) }) {
-            CleanXSectionTitle(
-                text = stringResource(R.string.home_toolbox_title),
-                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp),
-            )
-        }
-
-        items(tools, key = { feature -> feature.name }) { feature ->
-            val title = stringResource(feature.titleRes())
-            CleanXIconTile(
-                title = title,
-                icon = painterResource(id = feature.iconRes()),
-                onClick = {
-                    if (feature == FeatureKey.WHATSAPP_CLEANER && !context.hasWhatsAppInstalled()) {
-                        showWhatsAppMissingDialog = true
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            ToolboxShortcutPanel(onFeatureClick = ::openTool)
+            Spacer(modifier = Modifier.height(20.dp))
+            HomeFeatureGridPanel(
+                title = stringResource(R.string.home_toolbox_title),
+                features = tools,
+                iconSize = { it.toolboxIconSize() },
+                titleRes = { feature ->
+                    if (feature == FeatureKey.NOTIFICATION_CLEANER) {
+                        R.string.home_notification_bar
                     } else {
-                        onFeatureClick(feature)
+                        feature.titleRes()
                     }
                 },
+                onFeatureClick = ::openTool,
             )
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 
@@ -148,87 +90,100 @@ fun ToolBoxTabContent(
     }
 }
 
+@Composable
+private fun ToolboxShortcutPanel(onFeatureClick: (FeatureKey) -> Unit) {
+    Surface(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(136.dp),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
+        ) {
+            ToolboxShortcut(
+                feature = FeatureKey.DEVICE_INFO,
+                title = stringResource(R.string.home_device_information),
+                onClick = { onFeatureClick(FeatureKey.DEVICE_INFO) },
+            )
+            Spacer(
+                modifier =
+                    Modifier
+                        .width(0.5.dp)
+                        .height(68.dp)
+                        .background(Color(0xFFE5E5E5)),
+            )
+            ToolboxShortcut(
+                feature = FeatureKey.BATTERY_INFO,
+                title = stringResource(R.string.home_battery_usage),
+                onClick = { onFeatureClick(FeatureKey.BATTERY_INFO) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ToolboxShortcut(
+    feature: FeatureKey,
+    title: String,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .width(80.dp)
+                .height(96.dp)
+                .cleanXPressable(
+                    pressedAlpha = 0.9f,
+                    pressedScale = 0.985f,
+                    onClick = onClick,
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(feature.iconRes()),
+            contentDescription = title,
+            modifier = Modifier.size(44.dp),
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            modifier =
+                Modifier
+                    .width(80.dp)
+                    .height(48.dp),
+            color = Color(0xFF121212),
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            softWrap = true,
+            maxLines = 2,
+        )
+    }
+}
+
+private fun FeatureKey.toolboxIconSize(): DpSize =
+    when (this) {
+        FeatureKey.APP_USAGE -> DpSize(39.dp, 41.dp)
+        FeatureKey.NOTIFICATION_CLEANER -> DpSize(39.dp, 44.dp)
+        FeatureKey.WHATSAPP_CLEANER -> DpSize(44.dp, 44.dp)
+        FeatureKey.NETWORK_USAGE -> DpSize(41.dp, 41.dp)
+        FeatureKey.NETWORK_SCAN -> DpSize(45.dp, 41.dp)
+        FeatureKey.NETWORK_SPEED -> DpSize(40.dp, 23.dp)
+        else -> DpSize(40.dp, 40.dp)
+    }
+
 private fun android.content.Context.hasWhatsAppInstalled(): Boolean =
     WhatsAppPackageNames.any { packageName ->
         packageManager.getLaunchIntentForPackage(packageName) != null
     }
 
 private val WhatsAppPackageNames = listOf("com.whatsapp", "com.whatsapp.w4b")
-
-private fun batteryStatus(batteryInfo: BatteryInfo): String =
-    "${batteryInfo.levelPercent}% ${batteryInfo.technology}".trim()
-
-@Composable
-private fun DeviceInfoCard(
-    modifier: Modifier,
-    icon: Int,
-    labels: List<Pair<Int, String>>,
-    buttonText: String,
-    background: Color,
-    onClick: () -> Unit,
-) {
-    CleanXInfoPanel(
-        modifier = modifier.heightIn(min = 184.dp),
-        background = background,
-        contentPadding = PaddingValues(14.dp),
-    ) {
-        Image(
-            painter = painterResource(id = icon),
-            contentDescription = null,
-            modifier = Modifier.size(40.dp),
-            colorFilter = ColorFilter.tint(Color.White),
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        labels.forEachIndexed { index, pair ->
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = stringResource(pair.first),
-                    color = Color.White.copy(alpha = 0.68f),
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp,
-                )
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(
-                    text = pair.second,
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            if (index != labels.lastIndex) {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = onClick,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(CleanXCompactButtonHeight),
-            shape = CleanXPillShape,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = CleanXText,
-                ),
-            contentPadding = PaddingValues(horizontal = 8.dp),
-        ) {
-            Text(
-                text = buttonText,
-                fontSize = 14.sp,
-                lineHeight = 17.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}

@@ -1,0 +1,41 @@
+package com.aicleanerstorage.spaceclean.common.feature
+
+interface FeatureFlow {
+    fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit = {})
+
+    fun exit(feature: FeatureKey, reason: FeatureExitReason, onContinue: () -> Unit)
+}
+
+sealed interface FeatureOperationEvent {
+    val feature: FeatureKey
+
+    data class ScanStarted(override val feature: FeatureKey) : FeatureOperationEvent
+
+    data class ScanFinished(
+        override val feature: FeatureKey,
+        val hasResult: Boolean,
+    ) : FeatureOperationEvent
+
+    data class OperationStarted(
+        override val feature: FeatureKey,
+        val action: OperationAction,
+    ) : FeatureOperationEvent
+
+    data class OperationFinished(
+        override val feature: FeatureKey,
+        val action: OperationAction,
+        val success: Boolean,
+    ) : FeatureOperationEvent
+}
+
+enum class FeatureExitReason {
+    Return,
+    PermissionRejected,
+}
+
+enum class OperationAction {
+    CLEAN,
+    DELETE,
+    REMOVE_LOCATION,
+    TEST,
+}

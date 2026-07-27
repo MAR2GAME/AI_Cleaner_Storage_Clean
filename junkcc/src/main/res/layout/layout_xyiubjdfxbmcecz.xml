@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="965dp"
+    android:layout_height="860dp"
+    android:orientation="vertical">
+   <ScrollView
+        android:id="@+id/uexldpxyqefcmjpotgsb"
+        android:layout_width="14dp"
+        android:layout_height="422dp"
+        android:text="iirzvbozazgicsjwgwiwoajbk" 
+        android:src="@drawable/cwtaqeutupaesrdsmvbr" 
+/>
+   <DatePicker
+        android:id="@+id/cbhctxjbagbrdnkstwdcnibur"
+        android:layout_width="85dp"
+        android:layout_height="885dp"
+        android:text="pwlvxlgukzqmwwqsvwjotno" 
+        android:src="@drawable/cwtaqeutupaesrdsmvbr" 
+/>
+   <LinearLayout
+        android:id="@+id/bctjheuesszgvhrhjjb"
+        android:layout_width="415dp"
+        android:layout_height="418dp"
+        android:text="eabltslubyirrghmsfzflhlgl" 
+        android:src="@drawable/cwtaqeutupaesrdsmvbr" 
+android:orientation="horizontal"/>
+   </LinearLayout>

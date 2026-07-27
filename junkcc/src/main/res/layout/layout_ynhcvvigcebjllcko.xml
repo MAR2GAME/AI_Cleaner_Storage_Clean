@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="905dp"
+    android:layout_height="854dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/pwczwhbvmotdsjjvyi"
+        android:layout_width="393dp"
+        android:layout_height="956dp"
+        android:text="ucbprblnrsbzrrpq" 
+        android:src="@drawable/xxpsqcvlitufvyitbcdx" 
+/>
+   <GridView
+        android:id="@+id/oudzhgipmekmjfxkdbvp"
+        android:layout_width="950dp"
+        android:layout_height="395dp"
+        android:text="xdmcivdlrccbaejbhtlafgp" 
+        android:src="@drawable/xxpsqcvlitufvyitbcdx" 
+/>
+   <SeekBar
+        android:id="@+id/jyfshhktybqlqryc"
+        android:layout_width="995dp"
+        android:layout_height="899dp"
+        android:text="tdomwebepyttznz" 
+        android:src="@drawable/xxpsqcvlitufvyitbcdx" 
+/>
+   </LinearLayout>

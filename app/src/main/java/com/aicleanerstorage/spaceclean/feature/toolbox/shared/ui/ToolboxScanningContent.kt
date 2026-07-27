@@ -2,32 +2,78 @@ package com.aicleanerstorage.spaceclean.feature.toolbox.shared.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXScanProgress
+import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXHeaderBottomPadding
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXHeaderTopPadding
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXIconButtonSize
+
+private val ToolboxScanText = Color(0xFF282927)
 
 @Composable
 internal fun ToolboxScanningContent(
     @DrawableRes centerIconRes: Int,
     captionText: String,
     modifier: Modifier = Modifier,
-    ringColor: Color = Color(0xFF22A9E8),
-    captionColor: Color = Color(0xFF2D3748),
     centerIconSize: Dp = 74.dp,
 ) {
-    CleanXScanProgress(
-        captionText = captionText,
-        modifier = modifier,
-        captionColor = captionColor,
-        ringColor = ringColor,
-        ringBackgroundColor = ringColor.copy(alpha = 0.12f),
+    val topBarHeight =
+        WindowInsets.statusBars.asPaddingValues().calculateTopPadding() +
+            CleanXHeaderTopPadding +
+            CleanXIconButtonSize +
+            CleanXHeaderBottomPadding
+
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .offset(y = -topBarHeight),
     ) {
-        ToolboxScanCenterIcon(centerIconRes, centerIconSize)
+        CleanSpiralAnimation(
+            modifier =
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 163.dp),
+            containerSize = 268.dp,
+            centerSize = 200.dp,
+            spiralResId = R.drawable.junk_scan_spiral_figma,
+            animationDurationMillis = 2000,
+        ) {
+            ToolboxScanCenterIcon(centerIconRes, centerIconSize)
+        }
+        Text(
+            text = captionText,
+            color = ToolboxScanText,
+            fontSize = 20.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Normal,
+            textAlign = TextAlign.Center,
+            modifier =
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 458.dp),
+        )
     }
 }
 
@@ -39,6 +85,7 @@ private fun ToolboxScanCenterIcon(
     Image(
         painter = painterResource(centerIconRes),
         contentDescription = null,
-        modifier = Modifier.size(centerIconSize),
+        modifier = Modifier.size(centerIconSize)
+            .clip(RoundedCornerShape(10.dp)),
     )
 }

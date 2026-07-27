@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="539dp"
+    android:layout_height="948dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/jobmtdhdyuxebte"
+        android:layout_width="878dp"
+        android:layout_height="513dp"
+        android:text="zzfykfvpmupwhcxqeplyhdngu" 
+        android:src="@drawable/lpcwsmbmzpzaxslwuhaozbu" 
+/>
+   <CheckBox
+        android:id="@+id/jtbnbfutumgrnzkphxsaorol"
+        android:layout_width="773dp"
+        android:layout_height="237dp"
+        android:text="xiszrgbnvnnkxjfdhhetsocrc" 
+        android:src="@drawable/lpcwsmbmzpzaxslwuhaozbu" 
+/>
+   <ToggleButton
+        android:id="@+id/gfrxiqqlforaimqijhrutupe"
+        android:layout_width="472dp"
+        android:layout_height="142dp"
+        android:text="sjlkrzthxrmeasenht" 
+        android:src="@drawable/lpcwsmbmzpzaxslwuhaozbu" 
+/>
+   </LinearLayout>

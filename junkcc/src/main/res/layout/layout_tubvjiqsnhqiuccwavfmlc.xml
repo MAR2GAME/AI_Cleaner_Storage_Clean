@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="725dp"
+    android:orientation="vertical">
+   <LinearLayout
+        android:id="@+id/mrezdaikhiejmnnqepqedtrkl"
+        android:layout_width="135dp"
+        android:layout_height="319dp"
+        android:text="kyjkaitiphrrfoxoqg" 
+        android:src="@drawable/cdzpcruhzssimodogtl" 
+android:orientation="horizontal"/>
+   <GridView
+        android:id="@+id/xzyjewfdwdafojtjkx"
+        android:layout_width="690dp"
+        android:layout_height="838dp"
+        android:text="hjgapdxiirzgrftoidalud" 
+        android:src="@drawable/cdzpcruhzssimodogtl" 
+/>
+   <TextView
+        android:id="@+id/pegezzxrgagcsldqqzoszdxtj"
+        android:layout_width="286dp"
+        android:layout_height="153dp"
+        android:text="syufohwippfgfmaobxrdngfs" 
+        android:src="@drawable/cdzpcruhzssimodogtl" 
+/>
+   <TextView
+        android:id="@+id/temntmhhzkwbrlh"
+        android:layout_width="965dp"
+        android:layout_height="378dp"
+        android:text="agpvhxxfnhdbkimxtflc" 
+        android:src="@drawable/cdzpcruhzssimodogtl" 
+/>
+   <TimePicker
+        android:id="@+id/bnpkxnkllcxwbgjjrgz"
+        android:layout_width="465dp"
+        android:layout_height="237dp"
+        android:text="ulxpqejvsdomafnfwxrfatpiz" 
+        android:src="@drawable/cdzpcruhzssimodogtl" 
+/>
+   </LinearLayout>

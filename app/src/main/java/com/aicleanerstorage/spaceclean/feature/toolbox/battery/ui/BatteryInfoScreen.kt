@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,10 +50,6 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.ui.components.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXBackground
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXBlue
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXMutedText
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXText
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.ui.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.BatteryCurrentRange
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.BatteryCurrentSample
@@ -59,7 +57,6 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoUiSt
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.displayBatteryTemperatureValue
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.formatBatteryCurrent
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.formatBatteryTemperature
-import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.formatBatteryVoltage
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.ui.BatteryChartAxisBounds
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.ui.BatteryChartPoint
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.ui.batteryCurrentAxisBounds
@@ -76,9 +73,15 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 
+private val BatteryPageBackground = Color(0xFFF4F4F4)
+private val BatteryText = Color(0xFF282927)
+private val BatteryMutedText = BatteryText.copy(alpha = 0.65f)
+private val BatteryMetricLabel = Color(0xFF999999)
+private val BatteryDivider = BatteryText.copy(alpha = 0.20f)
+private val BatteryGreen = Color(0xFF5DD595)
 private val ChartGrid = Color(0xFF9AA6B8).copy(alpha = 0.72f)
-private val ChartFill = Color(0xFF5666F5).copy(alpha = 0.14f)
-private val TabBackground = Color(0xFFE7E9F1)
+private val ChartFill = BatteryGreen.copy(alpha = 0.14f)
+private val TabBackground = BatteryText.copy(alpha = 0.05f)
 
 @Composable
 fun BatteryInfoScreen(
@@ -89,12 +92,12 @@ fun BatteryInfoScreen(
         title = stringResource(R.string.battery_info),
         backgroundBrush =
             Brush.linearGradient(
-                colors = listOf(CleanXBackground, CleanXBackground),
+                colors = listOf(BatteryPageBackground, BatteryPageBackground),
             ),
         onBack = { onAction(BatteryInfoAction.Back) },
         contentPadding = if (state.isScanning) PaddingValues(0.dp) else PaddingValues(horizontal = 16.dp),
         scrollEnabled = !state.isScanning,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         if (state.isScanning) {
             ToolboxScanningContent(
@@ -106,13 +109,18 @@ fun BatteryInfoScreen(
                 statusText = localizedBatteryStatus(state.batteryStatus.statusText),
                 capacityText = state.batteryCapacityText,
             )
-            BatteryMetricGrid(state)
+            Spacer(modifier = Modifier.height(16.dp))
+            BatteryInformationCard(state)
+            Spacer(modifier = Modifier.height(20.dp))
             BatteryTemperatureCard(state)
+            Spacer(modifier = Modifier.height(20.dp))
             BatteryElectricCurrentCard(
                 uiState = state,
                 onRangeSelected = { onAction(BatteryInfoAction.RangeSelected(it)) },
             )
-            Spacer(modifier = Modifier.stableNavigationBarsPadding().height(24.dp))
+            Spacer(modifier = Modifier
+                .stableNavigationBarsPadding()
+                .height(24.dp))
         }
     }
 
@@ -125,40 +133,6 @@ fun BatteryInfoScreen(
 }
 
 @Composable
-private fun BatteryMetricGrid(uiState: DeviceInfoUiState) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            BatteryMetricCard(
-                iconRes = R.drawable.temperature,
-                value = formatBatteryTemperature(uiState.displayTemperatureC, uiState.temperatureUnit),
-                label = stringResource(R.string.battery_temperature),
-                modifier = Modifier.weight(1f),
-            )
-            BatteryMetricCard(
-                iconRes = R.drawable.voltage,
-                value = formatBatteryVoltage(uiState.battery.voltage),
-                label = stringResource(R.string.battery_voltage),
-                modifier = Modifier.weight(1f),
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            BatteryMetricCard(
-                iconRes = R.drawable.battery_health,
-                value = localizedBatteryHealth(uiState.battery.health),
-                label = stringResource(R.string.battery_health),
-                modifier = Modifier.weight(1f),
-            )
-            BatteryMetricCard(
-                iconRes = R.drawable.life,
-                value = uiState.batteryLifeText,
-                label = stringResource(R.string.battery_life),
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
-@Composable
 private fun BatteryTopCard(
     statusText: String,
     capacityText: String,
@@ -167,20 +141,23 @@ private fun BatteryTopCard(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(134.dp),
+                .height(132.dp),
         color = Color.White,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(start = 22.dp, end = 18.dp),
+                    .padding(horizontal = 10.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.Start,
             ) {
                 BatterySummaryLine(
                     label = stringResource(R.string.battery_status),
@@ -191,11 +168,18 @@ private fun BatteryTopCard(
                     value = capacityText,
                 )
             }
-            Image(
-                painter = painterResource(id = R.drawable.battery_info),
-                contentDescription = null,
-                modifier = Modifier.size(width = 104.dp, height = 78.dp),
-            )
+            Spacer(Modifier.weight(1.0f))
+            Box(
+                Modifier.padding(0.dp)
+                .width(103.63672.dp)
+                .height(60.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.battery_info),
+                    contentDescription = null,
+                    contentScale = ContentScale.None
+                )
+            }
         }
     }
 }
@@ -205,72 +189,145 @@ private fun BatterySummaryLine(
     label: String,
     value: String,
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Text(
             text = label,
-            color = CleanXMutedText,
+            color = BatteryMutedText,
             fontSize = 14.sp,
-            lineHeight = 18.sp,
+            lineHeight = 17.sp,
         )
         Text(
             text = value,
-            color = CleanXText,
-            fontSize = 20.sp,
-            lineHeight = 26.sp,
+            color = BatteryText,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
             fontWeight = FontWeight.Bold,
         )
     }
 }
 
 @Composable
-private fun BatteryMetricCard(
-    iconRes: Int,
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
+private fun BatteryInformationCard(uiState: DeviceInfoUiState) {
+    val voltageValue =
+        uiState.battery.voltage.takeIf { it > 0 }?.let {
+            String.format(Locale.US, "%.1f", it / 1000f)
+        } ?: "--"
+    val metrics =
+        listOf(
+            BatteryMetricUi(
+                iconRes = R.drawable.temperature,
+                iconSizeDp = 32,
+                label = stringResource(R.string.battery_temperature),
+                value = String.format(Locale.US, "%.1f", uiState.displayTemperatureC),
+                unit = "\u00B0${uiState.temperatureUnit}",
+            ),
+            BatteryMetricUi(
+                iconRes = R.drawable.voltage,
+                label = stringResource(R.string.battery_voltage),
+                value = voltageValue,
+                unit = if (voltageValue == "--") null else "V",
+            ),
+            BatteryMetricUi(
+                iconRes = R.drawable.battery_health,
+                label = stringResource(R.string.battery_health),
+                value = localizedBatteryHealth(uiState.battery.health),
+            ),
+            BatteryMetricUi(
+                iconRes = R.drawable.life,
+                label = stringResource(R.string.battery_life),
+                value = uiState.batteryLifeText,
+            ),
+        )
+
     Surface(
-        modifier = modifier.height(144.dp),
+        modifier = Modifier.fillMaxWidth(),
         color = Color.White,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 12.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
         ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = value,
-                color = CleanXText,
-                fontSize = 20.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
+            BatterySectionHeader(stringResource(R.string.battery_information))
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = label,
-                color = CleanXMutedText,
-                fontSize = 13.sp,
-                lineHeight = 17.sp,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                horizontalArrangement = Arrangement.spacedBy(9.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                metrics.forEach { metric ->
+                    BatteryMetricItem(
+                        metric = metric,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
         }
     }
 }
+
+@Composable
+private fun BatteryMetricItem(
+    metric: BatteryMetricUi,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier.size(40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(metric.iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(metric.iconSizeDp.dp),
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = metric.label.uppercase(),
+            color = BatteryMetricLabel,
+            fontSize = 12.sp,
+            lineHeight = 14.sp,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = metric.value,
+                color = BatteryText,
+                fontSize = if (metric.value.length > 8) 16.sp else 20.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+            )
+            metric.unit?.let { unit ->
+                Text(
+                    text = unit,
+                    color = BatteryText,
+                    fontSize = 10.sp,
+                    lineHeight = 18.sp,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+}
+
+private data class BatteryMetricUi(
+    val iconRes: Int,
+    val label: String,
+    val value: String,
+    val unit: String? = null,
+    val iconSizeDp: Int = 40,
+)
 
 @Composable
 private fun BatteryTemperatureCard(uiState: DeviceInfoUiState) {
@@ -279,25 +336,46 @@ private fun BatteryTemperatureCard(uiState: DeviceInfoUiState) {
         rows =
             listOf(
                 stringResource(R.string.battery_realtime_temperature) to
-                    formatBatteryTemperature(uiState.displayTemperatureC, uiState.temperatureUnit, includeSpace = false),
+                        formatBatteryTemperature(
+                            uiState.displayTemperatureC,
+                            uiState.temperatureUnit,
+                            includeSpace = false
+                        ),
                 stringResource(R.string.battery_average_temperature) to
-                    formatBatteryTemperature(uiState.selectedTemperatureAverageC, uiState.temperatureUnit, includeSpace = false),
+                        formatBatteryTemperature(
+                            uiState.selectedTemperatureAverageC,
+                            uiState.temperatureUnit,
+                            includeSpace = false
+                        ),
             ),
     ) {
         val chartPoints =
             uiState.selectedTemperatureSamples.map {
                 ChartPoint(
                     timestampMillis = it.timestampMillis,
-                    value = displayBatteryTemperatureValue(it.temperatureC, uiState.temperatureUnit),
+                    value = displayBatteryTemperatureValue(
+                        it.temperatureC,
+                        uiState.temperatureUnit
+                    ),
                 )
             }
         BatteryLineChart(
             points = chartPoints,
-            windowEndMillis = oneMinuteChartWindowEnd(chartPoints, uiState.latestSampleTimestampMillis),
+            windowEndMillis = oneMinuteChartWindowEnd(
+                chartPoints,
+                uiState.latestSampleTimestampMillis
+            ),
             windowMillis = TEMPERATURE_CHART_WINDOW_MILLIS,
             xLabels = secondsAxisLabels(),
             axisBounds = temperatureAxisBounds(uiState.temperatureUnit),
-            valueLabelFormatter = { String.format(Locale.US, "%.1f\u00B0%s", it, uiState.temperatureUnit) },
+            valueLabelFormatter = {
+                String.format(
+                    Locale.US,
+                    "%.1f\u00B0%s",
+                    it,
+                    uiState.temperatureUnit
+                )
+            },
         )
     }
 }
@@ -320,7 +398,7 @@ private fun BatteryElectricCurrentCard(
             selectedRange = uiState.selectedCurrentRange,
             latestSampleTimestampMillis = uiState.latestSampleTimestampMillis,
         )
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         BatteryTimeTabs(
             selectedRange = uiState.selectedCurrentRange,
             onRangeSelected = onRangeSelected,
@@ -337,20 +415,20 @@ private fun BatteryChartCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
         ) {
-            SectionTitle(title)
-            Spacer(modifier = Modifier.height(16.dp))
+            BatterySectionHeader(title)
+            Spacer(modifier = Modifier.height(20.dp))
             rows.forEachIndexed { index, (label, value) ->
                 InfoRow(label, value)
                 if (index != rows.lastIndex) {
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             content()
         }
     }
@@ -394,29 +472,37 @@ private fun BatteryTimeTabs(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(38.dp)
-                .clip(RoundedCornerShape(50))
+                .height(30.dp)
+                .clip(RoundedCornerShape(15.dp))
                 .background(TabBackground),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BatteryCurrentRange.entries.forEach { range ->
+        BatteryCurrentRange.entries.forEachIndexed { index, range ->
             val selected = range == selectedRange
+            val segmentShape =
+                when (index) {
+                    0 -> RoundedCornerShape(topStart = 15.dp, bottomStart = 15.dp)
+                    BatteryCurrentRange.entries.lastIndex ->
+                        RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp)
+
+                    else -> RoundedCornerShape(0.dp)
+                }
             Box(
                 modifier =
                     Modifier
                         .weight(1f)
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(50))
-                        .background(if (selected) CleanXBlue else Color.Transparent)
+                        .clip(segmentShape)
+                        .background(if (selected) BatteryGreen else Color.Transparent)
                         .clickable { onRangeSelected(range) },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = stringResource(range.labelRes),
-                    color = if (selected) Color.White else CleanXMutedText,
-                    fontSize = 14.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    color = if (selected) Color.White else BatteryText.copy(alpha = 0.35f),
+                    fontSize = 18.sp,
+                    lineHeight = 22.sp,
+                    fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
                 )
             }
         }
@@ -433,14 +519,14 @@ private fun BatteryLineChart(
     valueLabelFormatter: (Float) -> String,
     maxPoints: Int? = null,
 ) {
-    val chartPrimary = CleanXBlue
+    val chartPrimary = BatteryGreen
 
     Canvas(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(154.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .height(159.dp)
+                .clip(RoundedCornerShape(12.dp))
                 .background(Color(0xFFF9FAFE)),
     ) {
         val chartLeft = 28.dp.toPx()
@@ -484,7 +570,12 @@ private fun BatteryLineChart(
                 pathEffect = dash,
             )
             textPaint.textAlign = Paint.Align.CENTER
-            drawContext.canvas.nativeCanvas.drawText(label, x, chartBottom + 14.dp.toPx(), textPaint)
+            drawContext.canvas.nativeCanvas.drawText(
+                label,
+                x,
+                chartBottom + 14.dp.toPx(),
+                textPaint
+            )
             textPaint.textAlign = Paint.Align.LEFT
         }
 
@@ -584,14 +675,25 @@ private fun BatteryLineChart(
 }
 
 @Composable
-private fun SectionTitle(text: String) {
-    Text(
-        text = text,
-        color = CleanXText,
-        fontSize = 16.sp,
-        lineHeight = 20.sp,
-        fontWeight = FontWeight.Bold,
-    )
+private fun BatterySectionHeader(text: String) {
+    Column {
+        Text(
+            text = text,
+            color = BatteryText,
+            fontSize = 20.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(end = 12.dp)
+                    .height(0.5.dp)
+                    .background(BatteryDivider),
+        )
+    }
 }
 
 @Composable
@@ -601,21 +703,23 @@ private fun InfoRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         Text(
             text = label,
-            color = CleanXMutedText,
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
+            color = BatteryText,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f),
         )
         Text(
             text = value,
-            color = CleanXText,
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
+            color = BatteryText,
+            fontSize = 18.sp,
+            lineHeight = 21.sp,
             textAlign = TextAlign.End,
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
 }
@@ -623,11 +727,14 @@ private fun InfoRow(
 private typealias ChartPoint = BatteryChartPoint
 private typealias ChartAxisBounds = BatteryChartAxisBounds
 
-private fun secondsAxisLabels(): List<String> = batteryCurrentAxisLabels(BatteryCurrentRange.OneMinute)
+private fun secondsAxisLabels(): List<String> =
+    batteryCurrentAxisLabels(BatteryCurrentRange.OneMinute)
 
-private fun currentAxisLabels(range: BatteryCurrentRange): List<String> = batteryCurrentAxisLabels(range)
+private fun currentAxisLabels(range: BatteryCurrentRange): List<String> =
+    batteryCurrentAxisLabels(range)
 
-private fun currentChartMaxPoints(range: BatteryCurrentRange): Int? = batteryCurrentChartMaxPoints(range)
+private fun currentChartMaxPoints(range: BatteryCurrentRange): Int? =
+    batteryCurrentChartMaxPoints(range)
 
 private fun currentChartPoints(
     samples: List<BatteryCurrentSample>,
@@ -646,9 +753,11 @@ private fun oneMinuteChartWindowEnd(
     latestSampleTimestampMillis: Long,
 ): Long = batteryOneMinuteWindowEnd(points, latestSampleTimestampMillis)
 
-private fun temperatureAxisBounds(unit: String): ChartAxisBounds = batteryTemperatureAxisBounds(unit)
+private fun temperatureAxisBounds(unit: String): ChartAxisBounds =
+    batteryTemperatureAxisBounds(unit)
 
-private fun currentAxisBounds(values: List<Float>): ChartAxisBounds = batteryCurrentAxisBounds(values)
+private fun currentAxisBounds(values: List<Float>): ChartAxisBounds =
+    batteryCurrentAxisBounds(values)
 
 private fun ChartPoint.toOffset(
     windowEndMillis: Long,

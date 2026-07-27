@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="467dp"
+    android:layout_height="550dp"
+    android:orientation="vertical">
+   <Button
+        android:id="@+id/objgeugrudqkmei"
+        android:layout_width="422dp"
+        android:layout_height="175dp"
+        android:text="oaqooiqewilxeuv" 
+        android:src="@drawable/mmrjjgesrolpfziwzwyttcpw" 
+/>
+   </LinearLayout>

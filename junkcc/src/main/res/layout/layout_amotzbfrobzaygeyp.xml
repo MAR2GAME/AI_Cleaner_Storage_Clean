@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="31dp"
+    android:layout_height="378dp"
+    android:orientation="vertical">
+   <DatePicker
+        android:id="@+id/kvscfuxvyeuucycahjtkc"
+        android:layout_width="749dp"
+        android:layout_height="450dp"
+        android:text="zlkfcbtpyttxidplxvlniubb" 
+        android:src="@drawable/ltnkydomwbrektzitdo" 
+/>
+   </LinearLayout>

@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.common.intent.openUrl
 import com.aicleanerstorage.spaceclean.feature.settings.ui.SettingsScreen
 import com.aicleanerstorage.spaceclean.feature.settings.ui.openGooglePlayRatePage
@@ -15,7 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsRoute(
     navigator: AppNavigator,
-    externalActivities: ExternalActivityLauncher,
+    externalActivities: ExternalActivityTracker,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current

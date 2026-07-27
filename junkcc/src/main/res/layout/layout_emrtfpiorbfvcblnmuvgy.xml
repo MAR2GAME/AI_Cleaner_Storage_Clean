@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="573dp"
+    android:layout_height="435dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/bdfocmbxkhzynxosksyw"
+        android:layout_width="500dp"
+        android:layout_height="191dp"
+        android:text="hzwmywgaldsdqdgiazmzgk" 
+        android:src="@drawable/pxgiseujwkgxwaqqesbyemxe" 
+/>
+   <Button
+        android:id="@+id/bmqbgngnehunleldhcq"
+        android:layout_width="285dp"
+        android:layout_height="267dp"
+        android:text="vldyvmaegajkjumpumq" 
+        android:src="@drawable/pxgiseujwkgxwaqqesbyemxe" 
+/>
+   </LinearLayout>

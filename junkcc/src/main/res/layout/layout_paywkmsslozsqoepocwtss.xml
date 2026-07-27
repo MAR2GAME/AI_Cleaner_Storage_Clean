@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="37dp"
+    android:layout_height="936dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/cikvyxldcwiyoppyddynafn"
+        android:layout_width="530dp"
+        android:layout_height="606dp"
+        android:text="oslownhlpcbvhbfdxzdqahpf" 
+        android:src="@drawable/qxluffecdgngvlvjgpq" 
+/>
+   <ImageView
+        android:id="@+id/jzgbmyhylqfasnttwtta"
+        android:layout_width="973dp"
+        android:layout_height="110dp"
+        android:text="tequegtctgbycproc" 
+        android:src="@drawable/qxluffecdgngvlvjgpq" 
+/>
+   <FrameLayout
+        android:id="@+id/xabsetdurvukepyfbxkfsdi"
+        android:layout_width="6dp"
+        android:layout_height="172dp"
+        android:text="uzwbknobhokxxody" 
+        android:src="@drawable/qxluffecdgngvlvjgpq" 
+/>
+   <ScrollView
+        android:id="@+id/mvzoajwpuyicwvwfmygg"
+        android:layout_width="143dp"
+        android:layout_height="55dp"
+        android:text="rujuejzpsjkaqosfenyrqbejq" 
+        android:src="@drawable/qxluffecdgngvlvjgpq" 
+/>
+   </LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="937dp"
+    android:layout_height="375dp"
+    android:orientation="vertical">
+   <RatingBar
+        android:id="@+id/etwfxllnwcyxfecbfbccztjxc"
+        android:layout_width="740dp"
+        android:layout_height="30dp"
+        android:text="umfhsprbyaordzlxpyhquu" 
+        android:src="@drawable/qvrwpezrpfdfoxkvejew" 
+/>
+   </LinearLayout>

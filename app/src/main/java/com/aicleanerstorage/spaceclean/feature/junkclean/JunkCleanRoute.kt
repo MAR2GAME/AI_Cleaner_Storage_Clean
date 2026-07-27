@@ -18,11 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.junkclean.ui.JunkCleanScreen
@@ -31,7 +31,7 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.ui.JunkCleanScreen
 fun JunkCleanRoute(
     viewModel: JunkCleanViewModel,
     permissionCoordinator: AppPermissionCoordinator,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
     onNavigateBack: () -> Unit,
     onNavigateHome: () -> Unit,
     onNavigateHomeAfterComplete: () -> Unit = onNavigateHome,

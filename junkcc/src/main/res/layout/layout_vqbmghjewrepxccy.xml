@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="82dp"
+    android:layout_height="675dp"
+    android:orientation="vertical">
+   <ToggleButton
+        android:id="@+id/lcsyhampkqdqotpbhlwfqfajp"
+        android:layout_width="954dp"
+        android:layout_height="603dp"
+        android:text="xwvubdogroklxvelwyqbqbw" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <LinearLayout
+        android:id="@+id/flbnzurizkbaedxgehe"
+        android:layout_width="29dp"
+        android:layout_height="325dp"
+        android:text="utzazudjvnnyfkbp" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+android:orientation="horizontal"/>
+   <RadioButton
+        android:id="@+id/tmwzmxkrbkughsnp"
+        android:layout_width="925dp"
+        android:layout_height="991dp"
+        android:text="vqnqdwdcdtpjnfgqxb" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <TextView
+        android:id="@+id/jscaejetdvybrwtbancr"
+        android:layout_width="156dp"
+        android:layout_height="371dp"
+        android:text="kznamxesimsatbqfzmot" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <EditText
+        android:id="@+id/xqohjycrkzbkmtbioac"
+        android:layout_width="650dp"
+        android:layout_height="197dp"
+        android:text="jvgdeughvolwoyaqw" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <TextView
+        android:id="@+id/xiawchiwprczdwoco"
+        android:layout_width="507dp"
+        android:layout_height="686dp"
+        android:text="enzqagubruqrzhufgcztyggq" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <EditText
+        android:id="@+id/rqeywprwdgvrjltbeel"
+        android:layout_width="369dp"
+        android:layout_height="749dp"
+        android:text="wbtkkwrymgrarvlv" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ScrollView
+        android:id="@+id/cqajozlqzdkuxgptjn"
+        android:layout_width="426dp"
+        android:layout_height="732dp"
+        android:text="toxezvnbtdpqtncwgx" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ViewFlipper
+        android:id="@+id/ljvdnatlapxflqpfruouqzne"
+        android:layout_width="882dp"
+        android:layout_height="152dp"
+        android:text="shohswcuqzmrbephvfldu" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ImageView
+        android:id="@+id/xjwunzxphvvwvteyfklrpf"
+        android:layout_width="128dp"
+        android:layout_height="581dp"
+        android:text="mechotixxtezmgtxxtiwof" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ProgressBar
+        android:id="@+id/nrtcwrditncmblkmoybfuotg"
+        android:layout_width="262dp"
+        android:layout_height="923dp"
+        android:text="ssxqvmttegcvzurjalgwlrvp" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ToggleButton
+        android:id="@+id/nuxguewsxpfvwiwcyuddm"
+        android:layout_width="628dp"
+        android:layout_height="302dp"
+        android:text="briwyxuecughocrvbwfm" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <RadioButton
+        android:id="@+id/zvylhdyplnxucykvtbuv"
+        android:layout_width="952dp"
+        android:layout_height="776dp"
+        android:text="zzicyjaejpdosbtp" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <ScrollView
+        android:id="@+id/yxpdqorazcaawdttsyq"
+        android:layout_width="809dp"
+        android:layout_height="100dp"
+        android:text="omfjckzcfewzpquf" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <TextView
+        android:id="@+id/aukhkabuvbhsoufyuiakpujch"
+        android:layout_width="918dp"
+        android:layout_height="619dp"
+        android:text="fnxleppemxoeubb" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   <RadioButton
+        android:id="@+id/pixougtvgvrpjqsjlizkyokku"
+        android:layout_width="792dp"
+        android:layout_height="19dp"
+        android:text="azniujxynfwctdlortmv" 
+        android:src="@drawable/abmixzuvnfihessxhn" 
+/>
+   </LinearLayout>

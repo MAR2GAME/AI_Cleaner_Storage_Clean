@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="318dp"
+    android:layout_height="549dp"
+    android:orientation="vertical">
+   <ProgressBar
+        android:id="@+id/zttwzbiuxvzojttgfogmf"
+        android:layout_width="443dp"
+        android:layout_height="218dp"
+        android:text="dkagmhfsatpmzjzfujh" 
+        android:src="@drawable/esrygzqhjcxjbxwipofiuyusy" 
+/>
+   <LinearLayout
+        android:id="@+id/pxdcyjczqzswnbdyathn"
+        android:layout_width="423dp"
+        android:layout_height="332dp"
+        android:text="lyzffyomsdbhrbzykvehrg" 
+        android:src="@drawable/esrygzqhjcxjbxwipofiuyusy" 
+android:orientation="horizontal"/>
+   <DatePicker
+        android:id="@+id/kaozeomdxbbjjdxlc"
+        android:layout_width="889dp"
+        android:layout_height="767dp"
+        android:text="bcbulcnxkspinujhgaub" 
+        android:src="@drawable/esrygzqhjcxjbxwipofiuyusy" 
+/>
+   </LinearLayout>

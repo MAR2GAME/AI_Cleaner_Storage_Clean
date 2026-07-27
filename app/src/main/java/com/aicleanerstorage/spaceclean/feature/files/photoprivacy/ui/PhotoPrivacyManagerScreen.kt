@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXGradientBottomActionBar
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerBottomActionBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -45,9 +45,12 @@ internal fun PhotoPrivacyManagerScreen(
         title = stringResource(R.string.nav_photo_privacy),
         onBack = { onAction(FileManagerAction.Back) },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing) {
-                CleanXGradientBottomActionBar(
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults)
+            ) {
+                FileManagerBottomActionBar(
                     enabled = state.selectedIds.isNotEmpty(),
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     text = stringResource(R.string.file_remove_location_data),
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
@@ -59,6 +62,7 @@ internal fun PhotoPrivacyManagerScreen(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_photo_privacy),
                 deletingText = stringResource(R.string.file_removing_location_data_progress),
+                completeText = stringResource(R.string.file_location_data_removed),
                 resultAmount = state.removedLocationCount.toString(),
                 resultUnit = stringResource(R.string.file_photos),
                 resultCaption = stringResource(R.string.file_location_data_removed),
@@ -66,10 +70,11 @@ internal fun PhotoPrivacyManagerScreen(
                 onContinue = { onAction(FileManagerAction.ContinueManaging) },
             ) {
                 FileManagerPhotoPrivacyView(
-                    items = state.displayItems,
+                    groups = state.displayGroups,
                     selectedIds = state.selectedIds,
                     allSelected = state.allSelected,
                     onToggleAll = { onAction(FileManagerAction.ToggleVisibleItems) },
+                    onToggleGroup = { ids -> onAction(FileManagerAction.ToggleVisibleIds(ids)) },
                     onSelect = { onAction(FileManagerAction.ToggleSelection(it)) },
                 )
             }

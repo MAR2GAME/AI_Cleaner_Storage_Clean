@@ -48,6 +48,30 @@ try {
         Add-Failure 'app/google-services.json must not exist in the white package'
     }
 
+    $commercialSourcePatterns = @(
+        'com\.aicleanerstorage\.spaceclean\.common\.(ads|analytics)',
+        'com\.pdffox\.adv',
+        'com\.google\.android\.gms\.ads',
+        'com\.google\.firebase',
+        'com\.singular'
+    )
+    $sourceFiles = Get-ChildItem -LiteralPath (Join-Path $rootPath 'app/src') -Recurse -File -Filter '*.kt'
+    foreach ($pattern in $commercialSourcePatterns) {
+        if (Select-String -LiteralPath $sourceFiles.FullName -Pattern $pattern -Quiet) {
+            Add-Failure "white package source must not reference commercial integration: $pattern"
+        }
+    }
+
+    $buildFiles = @(
+        (Join-Path $rootPath 'app/build.gradle.kts'),
+        (Join-Path $rootPath 'gradle/libs.versions.toml')
+    ) | Where-Object { Test-Path -LiteralPath $_ }
+    foreach ($pattern in @('pdffox-advertise', 'pdffox\.advertise', 'firebase-crashlytics', 'google-services')) {
+        if (Select-String -LiteralPath $buildFiles -Pattern $pattern -Quiet) {
+            Add-Failure "white package build must not include commercial integration: $pattern"
+        }
+    }
+
     $localPath = Join-Path $rootPath 'config/product.local.properties'
     if (Test-Path -LiteralPath $localPath) {
         $local = Get-Content -LiteralPath $localPath -Raw | ConvertFrom-StringData

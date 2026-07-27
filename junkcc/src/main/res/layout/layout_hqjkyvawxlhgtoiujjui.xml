@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="695dp"
+    android:layout_height="924dp"
+    android:orientation="vertical">
+   <ViewFlipper
+        android:id="@+id/hdnedwzuvbfmslfwocotsihbs"
+        android:layout_width="56dp"
+        android:layout_height="620dp"
+        android:text="azzctrnagdqhucu" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <ProgressBar
+        android:id="@+id/rghjbhhwydoqjwepxejqiekdf"
+        android:layout_width="68dp"
+        android:layout_height="887dp"
+        android:text="tuzbzifnztuaowsbfodhjpbgn" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <TableLayout
+        android:id="@+id/wyefllzjbxkmhgmtrtd"
+        android:layout_width="497dp"
+        android:layout_height="87dp"
+        android:text="ucychrqfosqsarjuron" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <RadioButton
+        android:id="@+id/ullwatmgsgwfpgczyi"
+        android:layout_width="594dp"
+        android:layout_height="169dp"
+        android:text="tpivlupctmdnaslln" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <RadioButton
+        android:id="@+id/ejlxtkzwvtaalmdjz"
+        android:layout_width="137dp"
+        android:layout_height="772dp"
+        android:text="dkxmsxkgnogqnicmhmp" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <GridView
+        android:id="@+id/flakkmocwcbvuae"
+        android:layout_width="49dp"
+        android:layout_height="798dp"
+        android:text="whvnxaommdkdfohzarkyk" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <GridView
+        android:id="@+id/cwvlljzdmdtynebtmelq"
+        android:layout_width="537dp"
+        android:layout_height="557dp"
+        android:text="vnnjsrmcvqduqopecd" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+/>
+   <LinearLayout
+        android:id="@+id/txnbsgywlthgflm"
+        android:layout_width="660dp"
+        android:layout_height="365dp"
+        android:text="hnhjmmxmrmnrrooaadzsxag" 
+        android:src="@drawable/lnewxlqrchywrupgfc" 
+android:orientation="horizontal"/>
+   </LinearLayout>

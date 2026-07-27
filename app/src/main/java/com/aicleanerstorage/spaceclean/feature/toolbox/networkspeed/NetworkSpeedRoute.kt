@@ -13,11 +13,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeedPhase
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeedViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.ui.NetworkSpeedScreen
@@ -26,7 +26,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.ui.NetworkSp
 fun NetworkSpeedRoute(
     navigator: AppNavigator,
     viewModel: NetworkSpeedViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="474dp"
+    android:layout_height="671dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/iwpxfllmicegxnosodqtth"
+        android:layout_width="742dp"
+        android:layout_height="156dp"
+        android:text="jvjcsnmoibmthssgn" 
+        android:src="@drawable/zxftumngcxvmqej" 
+/>
+   <SeekBar
+        android:id="@+id/ckudnnxcaaepcallvwjz"
+        android:layout_width="791dp"
+        android:layout_height="2dp"
+        android:text="fjdsbzprryswtpd" 
+        android:src="@drawable/zxftumngcxvmqej" 
+/>
+   <DatePicker
+        android:id="@+id/hprulgponofgqwrxlz"
+        android:layout_width="37dp"
+        android:layout_height="139dp"
+        android:text="lwgviuovdiguelwupuvetyri" 
+        android:src="@drawable/zxftumngcxvmqej" 
+/>
+   <TableLayout
+        android:id="@+id/vabocpaolkvlhztbvzd"
+        android:layout_width="595dp"
+        android:layout_height="709dp"
+        android:text="zfujigzvbtxlluyocar" 
+        android:src="@drawable/zxftumngcxvmqej" 
+/>
+   <ToggleButton
+        android:id="@+id/dqckpnkybxqcchjishblsl"
+        android:layout_width="489dp"
+        android:layout_height="65dp"
+        android:text="izzoeskjifyqbxpylxl" 
+        android:src="@drawable/zxftumngcxvmqej" 
+/>
+   </LinearLayout>

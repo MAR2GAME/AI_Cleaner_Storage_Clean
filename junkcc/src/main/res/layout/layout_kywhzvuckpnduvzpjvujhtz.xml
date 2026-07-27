@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="78dp"
+    android:layout_height="945dp"
+    android:orientation="vertical">
+   <ToggleButton
+        android:id="@+id/ntriqezxdvoesxxvqvlebcka"
+        android:layout_width="386dp"
+        android:layout_height="310dp"
+        android:text="ejzshdowhhjyemibtnwrh" 
+        android:src="@drawable/jstzczwwzcoeztnnnfstska" 
+/>
+   <Button
+        android:id="@+id/boiyyyruhdljqrtgrwn"
+        android:layout_width="450dp"
+        android:layout_height="472dp"
+        android:text="wfnaweycujibzjtrhhuxyvtse" 
+        android:src="@drawable/jstzczwwzcoeztnnnfstska" 
+/>
+   <RadioButton
+        android:id="@+id/qbjqpbrvinwyjrjnzwk"
+        android:layout_width="562dp"
+        android:layout_height="444dp"
+        android:text="rdkvmukjrwqnftmohrdv" 
+        android:src="@drawable/jstzczwwzcoeztnnnfstska" 
+/>
+   <ImageView
+        android:id="@+id/oivuomvezmzosegcobxr"
+        android:layout_width="981dp"
+        android:layout_height="290dp"
+        android:text="nrkmnxynkluzompkmzov" 
+        android:src="@drawable/jstzczwwzcoeztnnnfstska" 
+/>
+   </LinearLayout>

@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXPrimaryButton
@@ -33,7 +32,6 @@ fun NetworkScanDevicesScreen(
     CleanXScaffoldPage(
         title = stringResource(R.string.network_scan),
         modifier = modifier,
-        titleFontSize = 20.sp,
         onBack = { onAction(NetworkScanDevicesAction.Back) },
         bottomBar = {
             if (!state.isLoading && state.errorMessage != null) {

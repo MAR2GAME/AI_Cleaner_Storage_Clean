@@ -31,11 +31,12 @@ fun CleanXScaffoldPage(
     showBack: Boolean = true,
     onBack: (() -> Unit)? = null,
     actions: @Composable (RowScope.() -> Unit)? = null,
+    customTopBar: (@Composable () -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
     backgroundBrush: Brush = Brush.linearGradient(
         colors = listOf(Color(0xFFF7FAFD), Color(0xFFF7FAFD)),
     ),
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     scrollEnabled: Boolean = true,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -47,14 +48,18 @@ fun CleanXScaffoldPage(
             .background(brush = backgroundBrush),
         containerColor = Color.Transparent,
         topBar = {
-            CleanXTopAppBar(
-                title = title,
-                titleFontSize = titleFontSize,
-                fontWeight = fontWeight,
-                showBack = showBack,
-                onBack = onBack,
-                actions = actions,
-            )
+            if (customTopBar != null) {
+                customTopBar()
+            } else {
+                CleanXTopAppBar(
+                    title = title,
+                    titleFontSize = titleFontSize,
+                    fontWeight = fontWeight,
+                    showBack = showBack,
+                    onBack = onBack,
+                    actions = actions,
+                )
+            }
         },
         bottomBar = bottomBar,
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),

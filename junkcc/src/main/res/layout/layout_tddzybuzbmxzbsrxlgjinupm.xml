@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="321dp"
+    android:layout_height="599dp"
+    android:orientation="vertical">
+   <ToggleButton
+        android:id="@+id/iydbwmlcoiqegjwij"
+        android:layout_width="308dp"
+        android:layout_height="86dp"
+        android:text="xuduzhhfecnvazbubrhvblvth" 
+        android:src="@drawable/gavyvbghpaunovqighpm" 
+/>
+   <Spinner
+        android:id="@+id/ctczdzbjmgqzmqxotzdvpy"
+        android:layout_width="284dp"
+        android:layout_height="558dp"
+        android:text="olfbmuppjvpqtdpnbyagws" 
+        android:src="@drawable/gavyvbghpaunovqighpm" 
+/>
+   <GridView
+        android:id="@+id/gmneqdegtmuoeel"
+        android:layout_width="372dp"
+        android:layout_height="636dp"
+        android:text="yirkeuljzrynpvw" 
+        android:src="@drawable/gavyvbghpaunovqighpm" 
+/>
+   </LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="480dp"
+    android:layout_height="992dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/kltfgcgpfcmybhipabhvhr"
+        android:layout_width="37dp"
+        android:layout_height="890dp"
+        android:text="keqwpwizrlvjxjcsep" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   <RadioButton
+        android:id="@+id/jgaepavbddkajuuolmk"
+        android:layout_width="529dp"
+        android:layout_height="273dp"
+        android:text="bnklboymkkyogzhmmmuqq" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   <Spinner
+        android:id="@+id/xkowvohymrsgqomoy"
+        android:layout_width="72dp"
+        android:layout_height="981dp"
+        android:text="azzmtxxkzqoyqfnicbpvm" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   <FrameLayout
+        android:id="@+id/vcflovwugzvpecame"
+        android:layout_width="351dp"
+        android:layout_height="866dp"
+        android:text="oeyksdbghbyewftcr" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   <FrameLayout
+        android:id="@+id/colyknuqobspnfdezypy"
+        android:layout_width="846dp"
+        android:layout_height="763dp"
+        android:text="ywjlkogpybvotkhbrl" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   <RelativeLayout
+        android:id="@+id/yltasbixrwbhywsakyqyiw"
+        android:layout_width="227dp"
+        android:layout_height="335dp"
+        android:text="sisggcyixtinrwixkafwppqz" 
+        android:src="@drawable/tbxlqbpkeuilxwhcnht" 
+/>
+   </LinearLayout>

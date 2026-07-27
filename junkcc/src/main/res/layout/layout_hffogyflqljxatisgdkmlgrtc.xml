@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="261dp"
+    android:layout_height="490dp"
+    android:orientation="vertical">
+   <Button
+        android:id="@+id/zignklfydqflfrwnibuqoxbzc"
+        android:layout_width="885dp"
+        android:layout_height="658dp"
+        android:text="ftaywiharebhbckjbvjmknil" 
+        android:src="@drawable/zrycetvcokxwtijublqw" 
+/>
+   <ScrollView
+        android:id="@+id/svoolxenqoxxmqyjppv"
+        android:layout_width="226dp"
+        android:layout_height="899dp"
+        android:text="pgcrvbdfkwdqlosmm" 
+        android:src="@drawable/zrycetvcokxwtijublqw" 
+/>
+   <Switch
+        android:id="@+id/hgkzwllusbbvzyyxkz"
+        android:layout_width="501dp"
+        android:layout_height="919dp"
+        android:text="pffexgtlawrdpaoxionbpmn" 
+        android:src="@drawable/zrycetvcokxwtijublqw" 
+/>
+   </LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="889dp"
+    android:layout_height="296dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/nvnlptevshtqmjwzrryjl"
+        android:layout_width="598dp"
+        android:layout_height="339dp"
+        android:text="zhfjoorghmlqftozwyh" 
+        android:src="@drawable/oecykttiobrjjeqcuvprmuflj" 
+/>
+   <ListView
+        android:id="@+id/yflyhmxwsigbeyqckzss"
+        android:layout_width="409dp"
+        android:layout_height="724dp"
+        android:text="rcevgbafbqelkgjjduutoey" 
+        android:src="@drawable/oecykttiobrjjeqcuvprmuflj" 
+/>
+   <Button
+        android:id="@+id/nkozzxhneeurggt"
+        android:layout_width="598dp"
+        android:layout_height="411dp"
+        android:text="fztsqonwthwtpepkfwzkzzd" 
+        android:src="@drawable/oecykttiobrjjeqcuvprmuflj" 
+/>
+   <ProgressBar
+        android:id="@+id/yycbeivhlaxlbkkgusq"
+        android:layout_width="481dp"
+        android:layout_height="881dp"
+        android:text="nhquhcpelkyiqrsfkgmssgj" 
+        android:src="@drawable/oecykttiobrjjeqcuvprmuflj" 
+/>
+   </LinearLayout>

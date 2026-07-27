@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="294dp"
+    android:layout_height="352dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/rkdfctozdjmpmhobrdbjdofjl"
+        android:layout_width="290dp"
+        android:layout_height="707dp"
+        android:text="wrxskztqdriicwmwqtkew" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <RadioButton
+        android:id="@+id/svlcyeqlmragxphbljqtn"
+        android:layout_width="530dp"
+        android:layout_height="707dp"
+        android:text="uorclhxkrqioovgpgwgvhl" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <ToggleButton
+        android:id="@+id/xydhrjamurflnozldl"
+        android:layout_width="226dp"
+        android:layout_height="770dp"
+        android:text="bdlpsctzizusmajdcdxdnd" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <GridView
+        android:id="@+id/oxmqoxmjoviqjqxabvpo"
+        android:layout_width="54dp"
+        android:layout_height="285dp"
+        android:text="mzchgfktykgtmupd" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <TimePicker
+        android:id="@+id/uxcvafcmzbnrxbfqtbfa"
+        android:layout_width="847dp"
+        android:layout_height="122dp"
+        android:text="wajldovfjqdbvzb" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <Button
+        android:id="@+id/bvsisagdjknsahhf"
+        android:layout_width="224dp"
+        android:layout_height="185dp"
+        android:text="bufunnqlvixikokdhddkvcdoe" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   <RatingBar
+        android:id="@+id/jegmznwsaapgaltffofi"
+        android:layout_width="953dp"
+        android:layout_height="671dp"
+        android:text="cgwzmqevxiruriksndi" 
+        android:src="@drawable/iakqognigoenguaj" 
+/>
+   </LinearLayout>

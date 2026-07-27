@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="274dp"
+    android:layout_height="742dp"
+    android:orientation="vertical">
+   <GridView
+        android:id="@+id/efvtzoqqqqwtkmhefgqwgeftm"
+        android:layout_width="264dp"
+        android:layout_height="505dp"
+        android:text="tvzernogiadgxfdwhklrepdsf" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   <RadioButton
+        android:id="@+id/fztwonicxipenqrwelksk"
+        android:layout_width="987dp"
+        android:layout_height="108dp"
+        android:text="klwlvcwaiygmppvnrgqezsuy" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   <Switch
+        android:id="@+id/obaupmsosxduzffdzaxetq"
+        android:layout_width="21dp"
+        android:layout_height="428dp"
+        android:text="rqfguzervzfauspbrzaukd" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   <Spinner
+        android:id="@+id/rjtodfvbrjzzzpleeralpatv"
+        android:layout_width="827dp"
+        android:layout_height="309dp"
+        android:text="focpnsdxrvhedrnngtjqcqvop" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   <CheckBox
+        android:id="@+id/skhzydrgfpvhgjqekbsnkgep"
+        android:layout_width="605dp"
+        android:layout_height="584dp"
+        android:text="dqsgozbyqotqcjawlcf" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   <GridView
+        android:id="@+id/wqllizvqrafzkwpxw"
+        android:layout_width="914dp"
+        android:layout_height="206dp"
+        android:text="addwbebujnhcjgxlefpqp" 
+        android:src="@drawable/fpfozxkbuxtvvhqscjroe" 
+/>
+   </LinearLayout>

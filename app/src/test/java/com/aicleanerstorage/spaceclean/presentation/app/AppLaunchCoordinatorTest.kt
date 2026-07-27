@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.runtime.startup
+package com.aicleanerstorage.spaceclean.app.startup
 
 import android.content.Intent
 import org.junit.Assert.assertEquals

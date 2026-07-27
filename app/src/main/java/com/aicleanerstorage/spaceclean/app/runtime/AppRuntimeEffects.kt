@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
 
 @Composable
 internal fun NotificationLaunchEffect(

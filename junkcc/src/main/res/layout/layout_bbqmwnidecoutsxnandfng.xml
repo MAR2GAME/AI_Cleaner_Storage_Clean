@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="42dp"
+    android:layout_height="990dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/ayflaceugnbpcit"
+        android:layout_width="552dp"
+        android:layout_height="82dp"
+        android:text="bimabmdlrhfdbnazufmwlt" 
+        android:src="@drawable/xwhxcjejqazmsnef" 
+/>
+   <EditText
+        android:id="@+id/szxohvrhukblltlaxsxfuu"
+        android:layout_width="408dp"
+        android:layout_height="363dp"
+        android:text="fhwmdahuwsrfxroxyhgmahg" 
+        android:src="@drawable/xwhxcjejqazmsnef" 
+/>
+   <TextView
+        android:id="@+id/oanfsgictxailmodd"
+        android:layout_width="593dp"
+        android:layout_height="687dp"
+        android:text="azstyomfzresbot" 
+        android:src="@drawable/xwhxcjejqazmsnef" 
+/>
+   <LinearLayout
+        android:id="@+id/ywkxgoiusujwiriqfauwuzs"
+        android:layout_width="141dp"
+        android:layout_height="587dp"
+        android:text="wtdpuksbukokqbzrsiytnzily" 
+        android:src="@drawable/xwhxcjejqazmsnef" 
+android:orientation="horizontal"/>
+   </LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="591dp"
+    android:layout_height="874dp"
+    android:orientation="vertical">
+   <ScrollView
+        android:id="@+id/takoltpumdmgssjgapemfvjd"
+        android:layout_width="266dp"
+        android:layout_height="354dp"
+        android:text="ohvfzcgvgvaygnbam" 
+        android:src="@drawable/wjkjlcrligywakekvoebq" 
+/>
+   <SeekBar
+        android:id="@+id/edgfkvlamcdqwpjereiown"
+        android:layout_width="566dp"
+        android:layout_height="545dp"
+        android:text="dnaylomkexjcpzfs" 
+        android:src="@drawable/wjkjlcrligywakekvoebq" 
+/>
+   <ViewFlipper
+        android:id="@+id/ewtjiezhdubmrhqdtky"
+        android:layout_width="135dp"
+        android:layout_height="685dp"
+        android:text="ivbyphtyiadatxg" 
+        android:src="@drawable/wjkjlcrligywakekvoebq" 
+/>
+   <RadioButton
+        android:id="@+id/tucdkwacmbaungvlezckpm"
+        android:layout_width="317dp"
+        android:layout_height="542dp"
+        android:text="lsjyxxepkmfmtcfsbi" 
+        android:src="@drawable/wjkjlcrligywakekvoebq" 
+/>
+   </LinearLayout>

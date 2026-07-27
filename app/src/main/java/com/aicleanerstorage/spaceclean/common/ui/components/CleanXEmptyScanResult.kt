@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.common.ui.components
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,24 +17,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.theme.LocalAppThemeTokens
 
 @Composable
 fun CleanXEmptyScanResult(
     message: String,
     modifier: Modifier = Modifier,
     @DrawableRes imageRes: Int = R.drawable.file_empty_scan_result,
+    topPadding: Dp = 77.dp,
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
+        val imageSize = minOf(256.dp, (maxHeight - topPadding - 18.dp).coerceAtLeast(0.dp))
         Column(
             modifier = Modifier
-                .padding(top = 77.dp)
+                .padding(top = topPadding)
                 .width(256.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy((-24).dp),
@@ -43,13 +45,13 @@ fun CleanXEmptyScanResult(
                 painter = painterResource(imageRes),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(256.dp),
+                modifier = Modifier.size(imageSize),
             )
             Text(
                 text = message,
-                color = LocalAppThemeTokens.current.colors.navy,
-                fontSize = 16.sp,
-                lineHeight = 19.sp,
+                color = FileManagerTextColor,
+                fontSize = 18.sp,
+                lineHeight = 21.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(187.dp),
             )

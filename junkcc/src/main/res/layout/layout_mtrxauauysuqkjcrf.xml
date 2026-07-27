@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="213dp"
+    android:layout_height="519dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/vdogjtvgofhvsppvpk"
+        android:layout_width="925dp"
+        android:layout_height="844dp"
+        android:text="ujefkiyxzadjqzsczvt" 
+        android:src="@drawable/nuhvlueoiqugfkyx" 
+/>
+   <ToggleButton
+        android:id="@+id/rysanffusgncbrhourouu"
+        android:layout_width="236dp"
+        android:layout_height="16dp"
+        android:text="fwevktccytlahxuksdiwx" 
+        android:src="@drawable/nuhvlueoiqugfkyx" 
+/>
+   </LinearLayout>

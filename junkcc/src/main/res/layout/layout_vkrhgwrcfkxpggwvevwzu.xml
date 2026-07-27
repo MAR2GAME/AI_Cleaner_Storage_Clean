@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="879dp"
+    android:layout_height="556dp"
+    android:orientation="vertical">
+   <SeekBar
+        android:id="@+id/dimrlstctsrnorhwlke"
+        android:layout_width="138dp"
+        android:layout_height="736dp"
+        android:text="sjsiqemsnfmnesrkazlpebaub" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <GridView
+        android:id="@+id/yfjpkdvhdwoudghfmxtyqkh"
+        android:layout_width="899dp"
+        android:layout_height="611dp"
+        android:text="ywzpgnzndkwqxdlfe" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <RatingBar
+        android:id="@+id/xgfympswhnxyvdbzdh"
+        android:layout_width="541dp"
+        android:layout_height="470dp"
+        android:text="ckhxhothlmcpbcqw" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <ProgressBar
+        android:id="@+id/ohanfyltephmhsc"
+        android:layout_width="946dp"
+        android:layout_height="675dp"
+        android:text="zrxhxcimsxrytxvhq" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <SeekBar
+        android:id="@+id/mnizyaxpxbpbwuv"
+        android:layout_width="58dp"
+        android:layout_height="880dp"
+        android:text="ennjpvbabyginein" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <CheckBox
+        android:id="@+id/jmhbzxhmytxnicjwy"
+        android:layout_width="190dp"
+        android:layout_height="186dp"
+        android:text="dnrjvcticjknxkbsl" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <GridView
+        android:id="@+id/hnezflsncfbjdddrs"
+        android:layout_width="724dp"
+        android:layout_height="921dp"
+        android:text="wzcgnksumgdjabbgyijfo" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <RatingBar
+        android:id="@+id/qyubkqgjkutrobjjikhk"
+        android:layout_width="262dp"
+        android:layout_height="305dp"
+        android:text="lvksxaywwhamxeqputhbucxi" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <FrameLayout
+        android:id="@+id/lyxshmopyhydyhk"
+        android:layout_width="742dp"
+        android:layout_height="157dp"
+        android:text="rryosadlttmvzylfq" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <ViewFlipper
+        android:id="@+id/kilptwwmlhegevhfdehzl"
+        android:layout_width="320dp"
+        android:layout_height="164dp"
+        android:text="uetjvfnufzygppchnuizt" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <RelativeLayout
+        android:id="@+id/pixcuvcxwxxvwrehwdj"
+        android:layout_width="163dp"
+        android:layout_height="119dp"
+        android:text="jmsrpblfayxjumtxuayp" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <TimePicker
+        android:id="@+id/evqaimyodihwbnigbb"
+        android:layout_width="745dp"
+        android:layout_height="50dp"
+        android:text="cjjyaaxfmazinjxecrpaq" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <ScrollView
+        android:id="@+id/rjsnshrtykjecgds"
+        android:layout_width="529dp"
+        android:layout_height="877dp"
+        android:text="xnegucqcjpbweuuuqsghdieub" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <ProgressBar
+        android:id="@+id/eczjvlhwpikhwtzmli"
+        android:layout_width="742dp"
+        android:layout_height="695dp"
+        android:text="glolpcfcsrwkhdvhpplgu" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   <LinearLayout
+        android:id="@+id/oylbuziexdzudghoexpxiw"
+        android:layout_width="786dp"
+        android:layout_height="553dp"
+        android:text="fkdmhhnhhujwfutnuzwpum" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+android:orientation="horizontal"/>
+   <FrameLayout
+        android:id="@+id/agygbkuivtfnjvwc"
+        android:layout_width="153dp"
+        android:layout_height="699dp"
+        android:text="cqknzlvkqbpaiiqeyq" 
+        android:src="@drawable/xkgnrxrwugptokt" 
+/>
+   </LinearLayout>

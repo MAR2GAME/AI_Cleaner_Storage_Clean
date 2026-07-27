@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -34,6 +34,7 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerFlowDialo
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerFlowEffects
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerAction
+import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerNoResultsContent
 
 @Composable
 internal fun AudiosManagerScreen(
@@ -52,10 +53,14 @@ internal fun AudiosManagerScreen(
         title = stringResource(R.string.nav_audios),
         onBack = { onAction(FileManagerAction.Back) },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing && !isDetailMode) {
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
+                !isDetailMode
+            ) {
                 FileManagerDeleteBottomBar(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
             }
@@ -66,12 +71,19 @@ internal fun AudiosManagerScreen(
             FileOperationPhaseContent(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_audios),
-                deletingText = stringResource(R.string.file_cleanup_completed),
+                deletingText = stringResource(R.string.file_deleting_files),
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
                 onNavigateTool = onNavigate,
                 onContinue = { onAction(FileManagerAction.ContinueManaging) },
+                noResultsContent = {
+                    FileManagerNoResultsContent(
+                        tabs = state.displayTabs,
+                        selectedTabIndex = state.selectedTabIndex,
+                        onTabSelected = { onAction(FileManagerAction.SelectTab(it)) },
+                    )
+                },
             ) {
                 FileManagerAudioListView(
                     tabs = state.displayTabs,

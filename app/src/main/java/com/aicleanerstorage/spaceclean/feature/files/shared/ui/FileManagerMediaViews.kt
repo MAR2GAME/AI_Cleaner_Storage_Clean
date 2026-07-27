@@ -56,10 +56,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.common.format.FileSizeFormatter
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillTabs
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXTabItem
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileImageDisplayItem
+import com.aicleanerstorage.spaceclean.feature.files.shared.FileImageDateGroupDisplayItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileImageGroupDisplayItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerListBottomPadding
@@ -145,8 +148,12 @@ internal fun FileManagerScreenshotGridView(
 @Composable
 internal fun FileManagerSimilarPhotosView(
     groups: List<FileImageGroupDisplayItem>,
+    totalCount: Int,
+    totalSizeBytes: Long,
     selectedIds: Set<Int>,
+    allSelected: Boolean,
     scrollState: ScrollState,
+    onToggleAll: () -> Unit,
     onToggleGroup: (FileImageGroupDisplayItem) -> Unit,
     onSelect: (Int) -> Unit,
     onOpenDetail: (FileImageDisplayItem) -> Unit
@@ -157,42 +164,98 @@ internal fun FileManagerSimilarPhotosView(
             .verticalScroll(scrollState)
             .padding(bottom = FileManagerListBottomPadding)
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.White,
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(18.dp)
-            ) {
-                groups.forEach { group ->
-                    val groupIds = group.items.map { it.id }.toSet()
-                    val groupSelected = selectedIds.containsAll(groupIds)
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        FileManagerGroupHeader(
-                            leading = group.count.toString(),
-                            trailing = stringResource(R.string.file_similar),
-                            selected = groupSelected,
-                            onClick = { onToggleGroup(group) }
-                        )
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            group.items.chunked(3).forEach { rowItems ->
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    rowItems.forEach { item ->
-                                        FileManagerThumbnail(
-                                            item = item,
-                                            selected = item.id in selectedIds,
-                                            onOpen = { onOpenDetail(item) },
-                                            onToggleSelection = { onSelect(item.id) },
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    }
-                                    repeat(3 - rowItems.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                            }
+        FileManagerSelectAllAction(
+            selected = allSelected,
+            onClick = onToggleAll,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FileManagerSimilarPhotosTotalRow(
+            totalCount = totalCount,
+            totalSizeBytes = totalSizeBytes,
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            groups.forEach { group ->
+                val groupIds = group.items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+                val groupSelected = groupIds.isNotEmpty() && selectedIds.containsAll(groupIds)
+                FileManagerSimilarPhotoGroupCard(
+                    group = group,
+                    selectedIds = selectedIds,
+                    selected = groupSelected,
+                    onToggleGroup = { onToggleGroup(group) },
+                    onSelect = onSelect,
+                    onOpenDetail = onOpenDetail,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FileManagerSimilarPhotosTotalRow(
+    totalCount: Int,
+    totalSizeBytes: Long,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = totalCount.toString(),
+            color = FileManagerTextColor,
+            fontSize = 20.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = "${stringResource(R.string.file_photos)} ${FileSizeFormatter.format(totalSizeBytes)} ${stringResource(R.string.file_in_total)}",
+            color = FileManagerMutedNavy,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Normal,
+        )
+    }
+}
+
+@Composable
+private fun FileManagerSimilarPhotoGroupCard(
+    group: FileImageGroupDisplayItem,
+    selectedIds: Set<Int>,
+    selected: Boolean,
+    onToggleGroup: () -> Unit,
+    onSelect: (Int) -> Unit,
+    onOpenDetail: (FileImageDisplayItem) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            FileManagerSimilarPhotoGroupHeader(
+                count = group.count,
+                selected = selected,
+                onClick = onToggleGroup,
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(3.5.dp)) {
+                group.items.chunked(3).forEach { rowItems ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(3.5.dp),
+                    ) {
+                        rowItems.forEach { item ->
+                            FileManagerSimilarPhotoTile(
+                                item = item,
+                                selected = item.id in selectedIds,
+                                onOpen = { onOpenDetail(item) },
+                                onToggleSelection = { onSelect(item.id) },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        repeat(3 - rowItems.size) {
+                            Spacer(modifier = Modifier.weight(1f))
                         }
                     }
                 }
@@ -202,30 +265,108 @@ internal fun FileManagerSimilarPhotosView(
 }
 
 @Composable
+private fun FileManagerSimilarPhotoGroupHeader(
+    count: Int,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp, top = 16.dp, end = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = count.toString(),
+            color = FileManagerTextColor,
+            fontSize = 20.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(R.string.file_similar),
+            color = Color(0xFF999999),
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Normal,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Row(
+            modifier = Modifier.clickable { onClick() },
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(if (selected) R.string.file_unselect_all else R.string.file_select_all),
+                color = FileManagerPrimaryGreen,
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Normal,
+            )
+            SelectionCircle(selected = selected)
+        }
+    }
+}
+
+@Composable
+private fun FileManagerSimilarPhotoTile(
+    item: FileImageDisplayItem,
+    selected: Boolean,
+    onOpen: () -> Unit,
+    onToggleSelection: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(112f / 114f)
+            .background(Brush.linearGradient(item.colors))
+            .clickable { onOpen() },
+    ) {
+        FileManagerRealImage(item = item)
+        if (item.bestPhoto) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 18.dp, bottom = 10.dp)
+                    .background(FileManagerPrimaryGreen, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.file_best_photo),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+        SelectionCircle(
+            selected = selected,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 4.dp, end = 4.dp)
+                .clickable { onToggleSelection() },
+        )
+    }
+}
+
+@Composable
 internal fun FileManagerPhotoPrivacyView(
-    items: List<FileImageDisplayItem>,
+    groups: List<FileImageDateGroupDisplayItem>,
     selectedIds: Set<Int>,
     allSelected: Boolean,
     onToggleAll: () -> Unit,
+    onToggleGroup: (Set<Int>) -> Unit,
     onSelect: (Int) -> Unit
 ) {
+    val itemCount = groups.sumOf { it.items.size }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(bottom = FileManagerListBottomPadding)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-        Text("${items.size}", color = FileManagerNavy, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(stringResource(R.string.file_photos), color = FileManagerMutedNavy, fontSize = 16.sp)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Color.White,
@@ -233,56 +374,66 @@ internal fun FileManagerPhotoPrivacyView(
         ) {
             Text(
                 text = stringResource(R.string.file_photo_privacy_desc),
-                color = Color(0xFF7D8EA8),
-                fontSize = 14.sp,
-                lineHeight = 16.sp,
-                modifier = Modifier.padding(16.dp)
+                color = Color(0xFF282927),
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)
             )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(itemCount.toString(), color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(stringResource(R.string.file_photos), color = FileManagerMutedNavy, fontSize = 18.sp)
+            Spacer(modifier = Modifier.weight(1f))
+            FileManagerSelectAllAction(selected = allSelected, onClick = onToggleAll)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.White,
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                val dateLabel = items.firstOrNull()
-                    ?.meta
-                    ?.substringBefore(" ")
-                    ?.takeIf { it.isNotBlank() }
-                    ?: stringResource(R.string.file_photos)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            groups.forEach { group ->
+                val groupIds = group.items.map { it.id }.toSet()
+                val groupSelected = groupIds.isNotEmpty() && selectedIds.containsAll(groupIds)
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White,
+                    shape = RoundedCornerShape(12.dp),
                 ) {
-                    Text(dateLabel, color = FileManagerNavy, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        stringResource(if (allSelected) R.string.file_unselect_all else R.string.file_select_all),
-                        color = FileManagerPrimaryGreen,
-                        fontSize = 16.sp,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    SelectionCircle(selected = allSelected, modifier = Modifier.clickable { onToggleAll() })
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items.chunked(3).forEach { rowItems ->
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            rowItems.forEach { item ->
-                                FileManagerThumbnail(
-                                    item = item,
-                                    selected = item.id in selectedIds,
-                                    onOpen = { onSelect(item.id) },
-                                    onToggleSelection = { onSelect(item.id) },
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                            repeat(3 - rowItems.size) {
-                                Spacer(modifier = Modifier.weight(1f))
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Row(
+                            modifier = Modifier.padding(start = 10.dp, top = 16.dp, end = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(group.title, color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                            Spacer(modifier = Modifier.weight(1f))
+                            FileManagerSelectAllAction(
+                                selected = groupSelected,
+                                onClick = { onToggleGroup(groupIds) },
+                                compact = true,
+                            )
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            group.items.chunked(3).forEach { rowItems ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    rowItems.forEach { item ->
+                                        FileManagerThumbnail(
+                                            item = item,
+                                            selected = item.id in selectedIds,
+                                            onOpen = { onSelect(item.id) },
+                                            onToggleSelection = { onSelect(item.id) },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                    repeat(3 - rowItems.size) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                }
                             }
                         }
                     }

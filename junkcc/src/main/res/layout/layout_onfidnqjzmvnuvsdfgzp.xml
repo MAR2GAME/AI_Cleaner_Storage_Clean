@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="459dp"
+    android:layout_height="593dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/xiwekenbgxsukoopomtihd"
+        android:layout_width="659dp"
+        android:layout_height="739dp"
+        android:text="hpgftbaiwpdhauszed" 
+        android:src="@drawable/vuxnuwmlhxheyggb" 
+/>
+   <ProgressBar
+        android:id="@+id/dwcjklaoydrdjeu"
+        android:layout_width="548dp"
+        android:layout_height="604dp"
+        android:text="iuegdmdcrghmyehyw" 
+        android:src="@drawable/vuxnuwmlhxheyggb" 
+/>
+   <CheckBox
+        android:id="@+id/ujlrvwngddhsvwdf"
+        android:layout_width="323dp"
+        android:layout_height="252dp"
+        android:text="moshdezvprkhyfm" 
+        android:src="@drawable/vuxnuwmlhxheyggb" 
+/>
+   </LinearLayout>

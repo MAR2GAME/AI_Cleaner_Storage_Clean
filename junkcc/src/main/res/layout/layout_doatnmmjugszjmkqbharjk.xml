@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="98dp"
+    android:layout_height="640dp"
+    android:orientation="vertical">
+   <ProgressBar
+        android:id="@+id/cbztofcoeeaqaoxm"
+        android:layout_width="303dp"
+        android:layout_height="953dp"
+        android:text="aooyeknrzwieusejohn" 
+        android:src="@drawable/sbaqckthtojkbgwxfctobyuvs" 
+/>
+   <Switch
+        android:id="@+id/hbstttvsxkdemsyitehm"
+        android:layout_width="708dp"
+        android:layout_height="219dp"
+        android:text="ftcieyqvecvmkfcpwxqdi" 
+        android:src="@drawable/sbaqckthtojkbgwxfctobyuvs" 
+/>
+   <ScrollView
+        android:id="@+id/apwmlkiruodoscjjcq"
+        android:layout_width="78dp"
+        android:layout_height="677dp"
+        android:text="lcbcllkpjaxpyikgabkvffy" 
+        android:src="@drawable/sbaqckthtojkbgwxfctobyuvs" 
+/>
+   </LinearLayout>

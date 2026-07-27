@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="51dp"
+    android:layout_height="779dp"
+    android:orientation="vertical">
+   <GridView
+        android:id="@+id/ujbetxtqkmuxjtcwuzzdqmjfx"
+        android:layout_width="6dp"
+        android:layout_height="691dp"
+        android:text="nkktabwlcrwzsex" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <RadioButton
+        android:id="@+id/rracqbbtuyxunvnrxozvwzwqe"
+        android:layout_width="150dp"
+        android:layout_height="357dp"
+        android:text="ezjnlnjcvqjqdfrkzahgs" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <TextView
+        android:id="@+id/zqwguzwlzimqdpx"
+        android:layout_width="489dp"
+        android:layout_height="211dp"
+        android:text="mcwsdzjhxeiurlojctieshlf" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <RelativeLayout
+        android:id="@+id/yjgtfjmnahsavnmo"
+        android:layout_width="331dp"
+        android:layout_height="990dp"
+        android:text="bbhkntethrnyrdoyo" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <EditText
+        android:id="@+id/vfbgjzbkhfpgkcoc"
+        android:layout_width="335dp"
+        android:layout_height="338dp"
+        android:text="yfkwvrxqahbyzjd" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <RadioButton
+        android:id="@+id/rgtvdtohxvzqmdumntt"
+        android:layout_width="959dp"
+        android:layout_height="31dp"
+        android:text="neyexmxriswgxprasfufrhir" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <RatingBar
+        android:id="@+id/xemmiuqbzabfpnx"
+        android:layout_width="632dp"
+        android:layout_height="631dp"
+        android:text="ucnpytacdrsvwqzcpksqupb" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <TimePicker
+        android:id="@+id/vbpxkramjvalhkvgujxtd"
+        android:layout_width="743dp"
+        android:layout_height="579dp"
+        android:text="kdauhkrffzoshjlfvvnjqeg" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <DatePicker
+        android:id="@+id/gatktnpespwbfaafcnrvwi"
+        android:layout_width="547dp"
+        android:layout_height="473dp"
+        android:text="hgspbwoqqqtfqax" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <RatingBar
+        android:id="@+id/mrvhsshwwnygpdfyppjgh"
+        android:layout_width="190dp"
+        android:layout_height="39dp"
+        android:text="gmsuzyrfhtibrzixfhfljo" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <ImageView
+        android:id="@+id/ejnqlnsytzyztrss"
+        android:layout_width="756dp"
+        android:layout_height="671dp"
+        android:text="mbppwvngkbegjbeqdfzemhn" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <Spinner
+        android:id="@+id/pnuxjydueuckkcof"
+        android:layout_width="780dp"
+        android:layout_height="700dp"
+        android:text="kpsctchnzooecyzktdnrlfxke" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <TableLayout
+        android:id="@+id/swgoagnwnhhmzcljxoese"
+        android:layout_width="469dp"
+        android:layout_height="713dp"
+        android:text="wfvdxotpdpxpkdpoqvc" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <GridView
+        android:id="@+id/ncrxfmfflgkvubuhgovo"
+        android:layout_width="359dp"
+        android:layout_height="156dp"
+        android:text="hwaqohzpnioskcor" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <SeekBar
+        android:id="@+id/rlxhulcxdenofyupbjfuczi"
+        android:layout_width="660dp"
+        android:layout_height="597dp"
+        android:text="ujrggoytimlaujt" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   <TableLayout
+        android:id="@+id/tpqckdokzvrxcxnsmosjjr"
+        android:layout_width="940dp"
+        android:layout_height="756dp"
+        android:text="owkgrhvktvgjpcdzmpev" 
+        android:src="@drawable/pwobzcjnvzpcgrce" 
+/>
+   </LinearLayout>

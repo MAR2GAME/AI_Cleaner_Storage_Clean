@@ -1,6 +1,12 @@
 # Storage Clean release shrink baseline.
 # Keep this file brand-neutral where possible so copied shell apps can reuse it.
 
+-repackageclasses com.aicleanerstorage.spaceclean.obf
+-adaptclassstrings
+-obfuscationdictionary proguard/storageclean-obfuscation-dictionary.txt
+-classobfuscationdictionary proguard/storageclean-obfuscation-dictionary.txt
+-packageobfuscationdictionary proguard/storageclean-obfuscation-dictionary.txt
+
 # Kotlin, generic signatures, annotations and inner classes are used by Koin,
 # Compose, SDK builders, callbacks and reflective platform integrations.
 -keepattributes Signature,*Annotation*,InnerClasses,EnclosingMethod,AnnotationDefault
@@ -17,7 +23,7 @@
 # package names so variant apps can change applicationId/package names safely.
 -keep class * extends android.app.Application { public <init>(); }
 -keep class * extends android.app.Activity { public <init>(); }
--keep class * extends android.app.Service { public <init>(); }
+-keep class * extends android.app.Service { public <init>();
 -keep class * extends android.content.BroadcastReceiver { public <init>(); }
 -keep class * extends android.content.ContentProvider { public <init>(); }
 -keep class * extends android.service.notification.NotificationListenerService { public <init>(); }
@@ -55,12 +61,15 @@
 
 # App code that is commonly reached through DI, manifest services, notifications,
 # or system callbacks. Avoid keeping feature/skin pages wholesale so R8 can still shrink.
--keep class **.use.app.MyApp { *; }
--keep class **.use.app.MainActivity { *; }
--keep class **.use.app.di.** { *; }
--keep class **.use.service.notification.** { *; }
--keep class **.use.service.applock.** { *; }
--keep class **.use.core.navigation.NotificationRouteAliases { *; }
+-keep class com.aicleanerstorage.spaceclean.app.MyApp { public <init>(); }
+-keep class com.aicleanerstorage.spaceclean.app.MainActivity { public <init>(); }
+-keep class com.aicleanerstorage.spaceclean.app.background.AppBackgroundRuntimeService { public <init>(); }
+-keep class com.aicleanerstorage.spaceclean.feature.notificationcleaner.StorageCleanNotificationListener { public <init>(); }
+-keep class com.aicleanerstorage.spaceclean.feature.applock.service.LockScreenOverlayService { public <init>(); }
+
+-keep class com.aicleanerstorage.spaceclean.junkcc.** { *; }
+-keep class com.aicleanerstorage.spaceclean.junkcc.R { *; }
+-keep class com.aicleanerstorage.spaceclean.junkcc.R$* { *; }
 
 # Local Trustlook cloud scan AAR. Keep conservatively because it is a binary SDK.
 -keep class com.trustlook.** { *; }

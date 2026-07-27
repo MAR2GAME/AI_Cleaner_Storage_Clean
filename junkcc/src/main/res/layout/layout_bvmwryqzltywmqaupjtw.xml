@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="842dp"
+    android:layout_height="220dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/tnpxkfvclauomompsabnxhg"
+        android:layout_width="264dp"
+        android:layout_height="819dp"
+        android:text="bcycliyxmttylcllor" 
+        android:src="@drawable/sfnxbsuyuhxmkctyrb" 
+/>
+   <RatingBar
+        android:id="@+id/xpskhybbsvoycklied"
+        android:layout_width="845dp"
+        android:layout_height="813dp"
+        android:text="igyrdykunkhtrrlsyojqcuhak" 
+        android:src="@drawable/sfnxbsuyuhxmkctyrb" 
+/>
+   <Spinner
+        android:id="@+id/gsmyotlluzahswtmygfvx"
+        android:layout_width="487dp"
+        android:layout_height="500dp"
+        android:text="mkkhlutbultpgdd" 
+        android:src="@drawable/sfnxbsuyuhxmkctyrb" 
+/>
+   <RelativeLayout
+        android:id="@+id/ersrdkllnyrudteygsfu"
+        android:layout_width="419dp"
+        android:layout_height="860dp"
+        android:text="etrqvcfddegdddutxvvovbn" 
+        android:src="@drawable/sfnxbsuyuhxmkctyrb" 
+/>
+   <ScrollView
+        android:id="@+id/burwuihlleizlahvnixmpdxo"
+        android:layout_width="426dp"
+        android:layout_height="487dp"
+        android:text="tvblhvqjpklmkegdqf" 
+        android:src="@drawable/sfnxbsuyuhxmkctyrb" 
+/>
+   </LinearLayout>

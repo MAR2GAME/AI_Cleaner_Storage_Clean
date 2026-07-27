@@ -16,8 +16,8 @@ import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchCoordinator
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
 import com.aicleanerstorage.spaceclean.common.intent.openUrl
 import com.aicleanerstorage.spaceclean.feature.startup.SplashAction
 import com.aicleanerstorage.spaceclean.feature.startup.SplashEffect
@@ -29,7 +29,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun NavGraphBuilder.registerSplashRoute(
     navigator: AppNavigator,
     launchCoordinator: AppLaunchCoordinator,
-    externalActivityLauncher: ExternalActivityLauncher,
+    externalActivityTracker: ExternalActivityTracker,
     splashPermissionPaused: Boolean,
 ) {
     composable(AppDestination.Splash.route) {
@@ -74,14 +74,14 @@ internal fun NavGraphBuilder.registerSplashRoute(
             onOpenLegalDocument = { document ->
                 externalLinkActive = true
                 viewModel.onAction(SplashAction.ExternalLinkStateChanged(active = true))
-                externalActivityLauncher.markLaunch()
+                externalActivityTracker.markLaunch()
                 val opened =
                     when (document) {
                         SplashLegalDocument.Terms -> context.openUrl(AppConfig.TERMS_OF_SERVICE_URL)
                         SplashLegalDocument.Privacy -> context.openUrl(AppConfig.PRIVACY_POLICY_URL)
                     }
                 if (!opened) {
-                    externalActivityLauncher.cancelLaunch()
+                    externalActivityTracker.cancelLaunch()
                     externalLinkActive = false
                     viewModel.onAction(SplashAction.ExternalLinkStateChanged(active = false))
                 }

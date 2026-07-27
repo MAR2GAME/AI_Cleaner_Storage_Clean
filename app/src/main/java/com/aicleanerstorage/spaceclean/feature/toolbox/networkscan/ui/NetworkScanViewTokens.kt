@@ -10,4 +10,6 @@ internal val NetworkScanNavyMuted = Color(0xFF282927)
 internal val NetworkScanDivider = Color(0xFFE8E8E8)
 internal val NetworkScanButtonOutline = Color(0xFF999999)
 internal val NetworkScanDanger = Color(0xFFFF6B3D)
+internal val NetworkScanStatusGreen = Color(0xFF5DD595)
+internal val NetworkScanStatusTrack = Color(0xFFC8D2DE)
 internal val NetworkScanCardRadius = 12.dp

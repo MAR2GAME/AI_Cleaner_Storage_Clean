@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="336dp"
+    android:layout_height="218dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/orolqyxdzsaqputa"
+        android:layout_width="882dp"
+        android:layout_height="14dp"
+        android:text="pqtatcoadbfmfocxak" 
+        android:src="@drawable/ovybxmmktwybnjsaqojcv" 
+/>
+   </LinearLayout>

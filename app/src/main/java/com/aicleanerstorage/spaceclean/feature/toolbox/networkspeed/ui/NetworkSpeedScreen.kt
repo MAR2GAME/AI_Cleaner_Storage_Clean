@@ -35,7 +35,6 @@ fun NetworkSpeedScreen(
 ) {
     CleanXScaffoldPage(
         title = stringResource(R.string.network_speed),
-        titleFontSize = 20.sp,
         onBack = onBack,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         bottomBar = {

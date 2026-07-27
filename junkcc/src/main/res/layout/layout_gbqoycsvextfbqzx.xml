@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="15dp"
+    android:layout_height="408dp"
+    android:orientation="vertical">
+   <CheckBox
+        android:id="@+id/ujjdbgdtoxhnmrgzpsvjn"
+        android:layout_width="762dp"
+        android:layout_height="582dp"
+        android:text="gzmtemuztkejlhmshinxuhc" 
+        android:src="@drawable/daiudewurujuxhsvad" 
+/>
+   <SeekBar
+        android:id="@+id/lqxzulajycufqekfwqlnstzz"
+        android:layout_width="212dp"
+        android:layout_height="367dp"
+        android:text="ochcmwiazdpknmyydvtjjd" 
+        android:src="@drawable/daiudewurujuxhsvad" 
+/>
+   <LinearLayout
+        android:id="@+id/mrnvngugrtrspiy"
+        android:layout_width="66dp"
+        android:layout_height="770dp"
+        android:text="piegjgohyravuila" 
+        android:src="@drawable/daiudewurujuxhsvad" 
+android:orientation="horizontal"/>
+   <Button
+        android:id="@+id/izmyoxytuhypcomxhnhomftz"
+        android:layout_width="228dp"
+        android:layout_height="987dp"
+        android:text="ekzkmdpnvwrkaflqaexjtc" 
+        android:src="@drawable/daiudewurujuxhsvad" 
+/>
+   </LinearLayout>

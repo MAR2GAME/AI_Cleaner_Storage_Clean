@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="38dp"
+    android:layout_height="498dp"
+    android:orientation="vertical">
+   <CheckBox
+        android:id="@+id/owqlrddhicopainrgpsgfkzg"
+        android:layout_width="242dp"
+        android:layout_height="970dp"
+        android:text="zdppuaqiuikjqsnkkraess" 
+        android:src="@drawable/rtkdyfhksbygavnublkzmat" 
+/>
+   </LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="885dp"
+    android:layout_height="492dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/wqrqtuexxcrdbdfs"
+        android:layout_width="673dp"
+        android:layout_height="229dp"
+        android:text="uaqzxuzibvzpthafbxdcmgraq" 
+        android:src="@drawable/meblkgxtwssawjg" 
+/>
+   <RatingBar
+        android:id="@+id/fxkxsmzkrvkhhavxlinme"
+        android:layout_width="829dp"
+        android:layout_height="338dp"
+        android:text="dnfcxmdehxgeuoxaedu" 
+        android:src="@drawable/meblkgxtwssawjg" 
+/>
+   <DatePicker
+        android:id="@+id/kvltvsnracyfkzmowhmr"
+        android:layout_width="655dp"
+        android:layout_height="195dp"
+        android:text="twxfpuomopadfopyxxkisdca" 
+        android:src="@drawable/meblkgxtwssawjg" 
+/>
+   <TableLayout
+        android:id="@+id/darobujuhkznsvfpro"
+        android:layout_width="18dp"
+        android:layout_height="898dp"
+        android:text="dpyuzgtgtmvbsticsj" 
+        android:src="@drawable/meblkgxtwssawjg" 
+/>
+   <TextView
+        android:id="@+id/pxsgiuzhnllhftavosx"
+        android:layout_width="276dp"
+        android:layout_height="944dp"
+        android:text="ypeuwaiejrprczw" 
+        android:src="@drawable/meblkgxtwssawjg" 
+/>
+   </LinearLayout>

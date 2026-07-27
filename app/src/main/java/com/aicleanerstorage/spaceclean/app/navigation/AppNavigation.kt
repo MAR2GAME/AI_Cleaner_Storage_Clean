@@ -16,7 +16,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.register.registerSettingsR
 import com.aicleanerstorage.spaceclean.app.navigation.register.registerSplashRoute
 import com.aicleanerstorage.spaceclean.app.navigation.register.registerToolboxRoutes
 import com.aicleanerstorage.spaceclean.app.runtime.AppRuntimeBindings
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchCoordinator
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
 
 @Composable
 internal fun AppNavGraph(
@@ -64,7 +64,7 @@ internal fun AppNavGraph(
         registerSplashRoute(
             navigator = navigator,
             launchCoordinator = launchCoordinator,
-            externalActivityLauncher = runtime.externalActivities,
+            externalActivityTracker = runtime.externalActivities,
             splashPermissionPaused = splashPaused,
         )
         registerOnboardingRoute(

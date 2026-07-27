@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="153dp"
+    android:layout_height="804dp"
+    android:orientation="vertical">
+   <LinearLayout
+        android:id="@+id/iwvisnjselzzxhpiveoc"
+        android:layout_width="138dp"
+        android:layout_height="409dp"
+        android:text="epnwyrlyppiyrzgaqyh" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+android:orientation="horizontal"/>
+   <LinearLayout
+        android:id="@+id/vjqnrmeugyjutjimfp"
+        android:layout_width="892dp"
+        android:layout_height="764dp"
+        android:text="bfzmntrutzwvehgyhqflj" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+android:orientation="horizontal"/>
+   <ToggleButton
+        android:id="@+id/jrjuychdjcqvofuq"
+        android:layout_width="822dp"
+        android:layout_height="829dp"
+        android:text="xunsexlhdaxrhfnfpj" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+/>
+   <TableLayout
+        android:id="@+id/bjddgofwgnfhzvhlpegtmbjpc"
+        android:layout_width="861dp"
+        android:layout_height="114dp"
+        android:text="lckgxbijcwiplnbyegk" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+/>
+   <TimePicker
+        android:id="@+id/ljjxojegvxbjiqqif"
+        android:layout_width="810dp"
+        android:layout_height="395dp"
+        android:text="ugrbtnvccpeuarilntdzzrg" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+/>
+   <TimePicker
+        android:id="@+id/kmpjyktfezobobxm"
+        android:layout_width="385dp"
+        android:layout_height="421dp"
+        android:text="dyjrybjokeyqdttmq" 
+        android:src="@drawable/tmilvnxctaajfhkrlebkkci" 
+/>
+   </LinearLayout>

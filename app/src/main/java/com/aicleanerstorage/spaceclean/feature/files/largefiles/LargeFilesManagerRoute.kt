@@ -29,9 +29,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -56,7 +56,7 @@ private val FEATURE = FeatureKey.LARGE_FILES
 internal fun LargeFilesManagerRoute(
     navigator: AppNavigator,
     viewModel: LargeFilesManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     LargeFilesManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
 }
@@ -65,7 +65,7 @@ internal fun LargeFilesManagerRoute(
 private fun LargeFilesManagerRouteContent(
     navigator: AppNavigator,
     viewModel: LargeFilesManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val router = navigator
     val lifecycleOwner = LocalLifecycleOwner.current

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="133dp"
+    android:layout_height="132dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/zuapwwkosilxnjxezmibpbf"
+        android:layout_width="546dp"
+        android:layout_height="571dp"
+        android:text="yoirephwhiwrvrerwl" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <ImageView
+        android:id="@+id/slhdmjvpodeknmrktjvhfj"
+        android:layout_width="592dp"
+        android:layout_height="344dp"
+        android:text="lgydcmrklpscibnspxk" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <Button
+        android:id="@+id/mewjyqfnbvuyedoghjvvzaw"
+        android:layout_width="412dp"
+        android:layout_height="579dp"
+        android:text="gadclffsndpxpbjnarkgev" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <Spinner
+        android:id="@+id/olehbcshjogtoudzhjlwfix"
+        android:layout_width="51dp"
+        android:layout_height="388dp"
+        android:text="fmuswrjiqiqmgfzmrt" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <Button
+        android:id="@+id/mfgivoumwisfoxutjnnt"
+        android:layout_width="837dp"
+        android:layout_height="351dp"
+        android:text="bsqmdgtcjscjgvrzcucycoapi" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <LinearLayout
+        android:id="@+id/ckucaotxjrtcssdggnzdwgv"
+        android:layout_width="45dp"
+        android:layout_height="166dp"
+        android:text="miqvdnvbtsxuqhamjfm" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+android:orientation="horizontal"/>
+   <LinearLayout
+        android:id="@+id/otjbthnmkdzjfqbse"
+        android:layout_width="661dp"
+        android:layout_height="200dp"
+        android:text="wauuvbjaobaejqzebevl" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+android:orientation="horizontal"/>
+   <ImageView
+        android:id="@+id/zydibioroyszxxso"
+        android:layout_width="597dp"
+        android:layout_height="663dp"
+        android:text="cdrnzgsevtfhfukhliomfw" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   <TextView
+        android:id="@+id/vlakeljgwpgyixqjlnxpxjw"
+        android:layout_width="392dp"
+        android:layout_height="894dp"
+        android:text="vjlcvvccopmzgqushwxqzmtvr" 
+        android:src="@drawable/gffyyskfrozphhnzainmjbmvg" 
+/>
+   </LinearLayout>

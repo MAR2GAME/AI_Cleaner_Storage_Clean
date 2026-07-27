@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="98dp"
+    android:layout_height="692dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/fwvrqgcaujgvffgesxnbakigt"
+        android:layout_width="212dp"
+        android:layout_height="518dp"
+        android:text="gxjvmsfkmtawzwlgsmlbu" 
+        android:src="@drawable/iefbsothopexkrbjfqxqnnht" 
+/>
+   <SeekBar
+        android:id="@+id/mekqojijxodtjpjkeinja"
+        android:layout_width="832dp"
+        android:layout_height="630dp"
+        android:text="ipidcelakbqeujr" 
+        android:src="@drawable/iefbsothopexkrbjfqxqnnht" 
+/>
+   </LinearLayout>

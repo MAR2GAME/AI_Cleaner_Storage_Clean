@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="194dp"
+    android:layout_height="449dp"
+    android:orientation="vertical">
+   <DatePicker
+        android:id="@+id/cccightfvxtourdpcty"
+        android:layout_width="576dp"
+        android:layout_height="159dp"
+        android:text="wlehttnkamxewpzvc" 
+        android:src="@drawable/ygyideopzoymmowzf" 
+/>
+   <SeekBar
+        android:id="@+id/ksicjekqrxbslorhh"
+        android:layout_width="353dp"
+        android:layout_height="225dp"
+        android:text="yrqvpvqjikkkmjp" 
+        android:src="@drawable/ygyideopzoymmowzf" 
+/>
+   <FrameLayout
+        android:id="@+id/akqgfpykuvgcylrbvumc"
+        android:layout_width="981dp"
+        android:layout_height="651dp"
+        android:text="dgcgjnvazgwqdeznbxiql" 
+        android:src="@drawable/ygyideopzoymmowzf" 
+/>
+   <ScrollView
+        android:id="@+id/udisqrbphjkdwhuitxkkeqpqh"
+        android:layout_width="112dp"
+        android:layout_height="789dp"
+        android:text="mgwckwqlnchphmejyobw" 
+        android:src="@drawable/ygyideopzoymmowzf" 
+/>
+   <FrameLayout
+        android:id="@+id/urrhhottuxysvwvizzvimw"
+        android:layout_width="204dp"
+        android:layout_height="30dp"
+        android:text="lokmlboejzwmjtbockyp" 
+        android:src="@drawable/ygyideopzoymmowzf" 
+/>
+   </LinearLayout>

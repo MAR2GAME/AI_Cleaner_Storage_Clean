@@ -1,16 +1,9 @@
 package com.aicleanerstorage.spaceclean.feature.files.shared.ui
 
-import com.aicleanerstorage.spaceclean.feature.files.shared.*
-
-import com.aicleanerstorage.spaceclean.feature.files.shared.*
-
-import com.aicleanerstorage.spaceclean.feature.files.shared.*
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXEmptyScanResult
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXDeleteCompleteStage
 
@@ -19,11 +12,13 @@ internal fun FileOperationPhaseContent(
     phase: FileOperationPhase,
     scanningText: String,
     deletingText: String? = null,
+    completeText: String? = null,
     resultAmount: String,
     resultUnit: String,
     resultCaption: String,
     onNavigateTool: (AppDestination) -> Unit,
     onContinue: () -> Unit,
+    noResultsContent: @Composable () -> Unit = { FileManagerNoResultsContent() },
     browsingContent: @Composable () -> Unit,
 ) {
     when (phase) {
@@ -32,7 +27,8 @@ internal fun FileOperationPhaseContent(
         FileOperationPhase.ConfirmDelete -> browsingContent()
         FileOperationPhase.Deleting,
         FileOperationPhase.CompleteAnimation -> FileManagerDeletingView(
-            fallbackText = deletingText ?: stringResource(R.string.file_deleting_files),
+            deletingText = deletingText ?: stringResource(R.string.file_deleting_files),
+            completeText = completeText ?: stringResource(R.string.file_cleanup_completed),
             stage =
                 if (phase == FileOperationPhase.CompleteAnimation) {
                     CleanXDeleteCompleteStage.Complete
@@ -47,8 +43,6 @@ internal fun FileOperationPhaseContent(
             onNavigateTool = onNavigateTool,
             onContinue = onContinue,
         )
-        FileOperationPhase.NoResults -> CleanXEmptyScanResult(
-            message = stringResource(R.string.file_scan_completed_no_results),
-        )
+        FileOperationPhase.NoResults -> noResultsContent()
     }
 }

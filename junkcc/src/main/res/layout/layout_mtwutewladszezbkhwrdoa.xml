@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="935dp"
+    android:layout_height="769dp"
+    android:orientation="vertical">
+   <ProgressBar
+        android:id="@+id/hgzmyvmsmymnvvxawdvhay"
+        android:layout_width="715dp"
+        android:layout_height="702dp"
+        android:text="gvqkgjaqeiwrlbx" 
+        android:src="@drawable/qymdanxinrudtqjw" 
+/>
+   <FrameLayout
+        android:id="@+id/fwlrmtxpxnlpcfkvpyqbcbp"
+        android:layout_width="129dp"
+        android:layout_height="166dp"
+        android:text="lvghawxeeswpujbj" 
+        android:src="@drawable/qymdanxinrudtqjw" 
+/>
+   <FrameLayout
+        android:id="@+id/laobjrgwsqxnrydkkhuu"
+        android:layout_width="211dp"
+        android:layout_height="985dp"
+        android:text="yrrphebwylyumitl" 
+        android:src="@drawable/qymdanxinrudtqjw" 
+/>
+   <RadioButton
+        android:id="@+id/rqzveigxepqdjmpa"
+        android:layout_width="733dp"
+        android:layout_height="810dp"
+        android:text="ajovwchifjqosjnlwfls" 
+        android:src="@drawable/qymdanxinrudtqjw" 
+/>
+   </LinearLayout>

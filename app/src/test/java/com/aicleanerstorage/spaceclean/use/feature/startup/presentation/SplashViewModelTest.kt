@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.feature.startup
 
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchRequest
-import com.aicleanerstorage.spaceclean.app.runtime.startup.NotificationLaunchSource
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.app.startup.NotificationLaunchSource
 import com.aicleanerstorage.spaceclean.feature.onboarding.OnboardingPreferences
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

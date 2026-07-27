@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="258dp"
+    android:layout_height="661dp"
+    android:orientation="vertical">
+   <RadioButton
+        android:id="@+id/yddadsyzgwomsdcxqqdah"
+        android:layout_width="727dp"
+        android:layout_height="348dp"
+        android:text="sakxjfizbqqlvwulowuznudri" 
+        android:src="@drawable/hsogumtqgifzaxennlueqhb" 
+/>
+   <DatePicker
+        android:id="@+id/chrqnpfrypyphesiuizrtewd"
+        android:layout_width="739dp"
+        android:layout_height="290dp"
+        android:text="hhrqdzdohlorxhahofhymy" 
+        android:src="@drawable/hsogumtqgifzaxennlueqhb" 
+/>
+   <SeekBar
+        android:id="@+id/jgajppfwtgpnagpzl"
+        android:layout_width="423dp"
+        android:layout_height="893dp"
+        android:text="vfzlkirbznsyzugluvxaswl" 
+        android:src="@drawable/hsogumtqgifzaxennlueqhb" 
+/>
+   <RadioButton
+        android:id="@+id/xrrhrfeeazddkiyqluyctyx"
+        android:layout_width="733dp"
+        android:layout_height="881dp"
+        android:text="qwimwcuqequvtwu" 
+        android:src="@drawable/hsogumtqgifzaxennlueqhb" 
+/>
+   </LinearLayout>

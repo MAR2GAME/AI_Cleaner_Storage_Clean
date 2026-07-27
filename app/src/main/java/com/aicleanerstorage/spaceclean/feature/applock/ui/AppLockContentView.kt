@@ -24,11 +24,7 @@ internal fun AppLockContentView(
                 uiState = uiState,
                 onTogglePackage = { onAction(AppLockAction.TogglePackage(it)) }
             )
-            AppLockPage.Pin -> AppLockPinView(
-                uiState = uiState,
-                onDigit = { onAction(AppLockAction.AddPinDigit(it)) },
-                onDelete = { onAction(AppLockAction.RemovePinDigit) }
-            )
+            AppLockPage.Pin -> Unit
             AppLockPage.Manage -> AppLockManageView(
                 uiState = uiState,
                 onOpenSearch = { onAction(AppLockAction.OpenSearch) },

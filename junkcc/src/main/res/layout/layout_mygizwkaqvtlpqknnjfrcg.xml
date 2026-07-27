@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="397dp"
+    android:layout_height="775dp"
+    android:orientation="vertical">
+   <Button
+        android:id="@+id/okwloiupwlgbschjprkc"
+        android:layout_width="183dp"
+        android:layout_height="801dp"
+        android:text="bugtfojehbvuacfvjvpwoe" 
+        android:src="@drawable/jwvcyvqiyodvrgxyn" 
+/>
+   <TableLayout
+        android:id="@+id/yylsuvnzkcgozdzxb"
+        android:layout_width="600dp"
+        android:layout_height="509dp"
+        android:text="sjsbofakpuvignptwr" 
+        android:src="@drawable/jwvcyvqiyodvrgxyn" 
+/>
+   <RelativeLayout
+        android:id="@+id/wfvahsrqhfboeoqaxivqm"
+        android:layout_width="847dp"
+        android:layout_height="474dp"
+        android:text="njvuckyhcphbhyccbyvf" 
+        android:src="@drawable/jwvcyvqiyodvrgxyn" 
+/>
+   </LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="182dp"
+    android:layout_height="767dp"
+    android:orientation="vertical">
+   <ScrollView
+        android:id="@+id/bibxrwnwlgssnnmlddgvvyp"
+        android:layout_width="255dp"
+        android:layout_height="696dp"
+        android:text="zesgdbillhxqqkeyowevvy" 
+        android:src="@drawable/bukzqmdbdjszdqplls" 
+/>
+   <Spinner
+        android:id="@+id/axenuuzpbbberqxd"
+        android:layout_width="13dp"
+        android:layout_height="405dp"
+        android:text="vfuverjoqinpkjd" 
+        android:src="@drawable/bukzqmdbdjszdqplls" 
+/>
+   <EditText
+        android:id="@+id/hynrzrgrhpkfufqh"
+        android:layout_width="993dp"
+        android:layout_height="257dp"
+        android:text="nyzmjoogiegapmskcmza" 
+        android:src="@drawable/bukzqmdbdjszdqplls" 
+/>
+   </LinearLayout>

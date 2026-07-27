@@ -1,0 +1,60 @@
+package com.aicleanerstorage.spaceclean.junkcc.phykhsqghwxbcmuabd;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import com.aicleanerstorage.spaceclean.junkcc.R;
+import java.lang.Exception;
+import java.lang.Override;
+import java.lang.RuntimeException;
+import java.lang.String;
+import java.io.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import android.widget.ViewFlipper;
+import android.view.View;
+import android.widget.TextView;
+import java.lang.System;
+import android.widget.Toast;
+import java.util.Date;
+
+public class XyziafaubrohyzehActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_yziafaubrohyzeh);
+
+spubrfythwiuswaroul();
+Pzsiugjmhlxdyzmghpciog   xpoottrogrkjmcawvnpdqvwab =     new Pzsiugjmhlxdyzmghpciog();
+xpoottrogrkjmcawvnpdqvwab.etdshomepesiwniwucyttjbbr ="z6WZVO1Am03AmAOnURPSDcnxvoFBEjWam6JbN34C27USdkVSkCIUI9BYD2TccqrN3Z8Wpgpt1qqLgd84ddyfnFbPmjVKXUqRWSDdONRZSgvZ8QOPqgelgWtJnwcs4K2Gd6ni2e27PCG9GhDZsq1QmI9kc0J5QQZat2VQnD";
+xpoottrogrkjmcawvnpdqvwab.vhydcktfcqpxgvlfqw ="zfogg2qBQpObAWhVO6I2xuOjNEbcEYaAeIZftvQ7KYPS85kEk5t3N9dbkLHTiyM0";
+xpoottrogrkjmcawvnpdqvwab.lwiyaeqnjxijhgmhahrsrle ="QKxf92jOOM1un1zUN2BGaummKzgb7jxJlwHOZKh";
+xpoottrogrkjmcawvnpdqvwab.ojilzbgqrtjhcwfdemnqnwzd ="n9jKXUMyY90OgpYMiOowDD03bi";
+xpoottrogrkjmcawvnpdqvwab.jchwztvitjkchiiwzhpsiw ="VX5vPoDyHSNXBo73IArhtzyL03iVM6V9cABtmlD1oZIjpZd3NQ8i644ybZ2GRMGQed27AGG8tBYJelkCI8NlQwNCjXYH3JbLI3bJmvl1P7J5tSD5t1ii6z8TgeElcJ9VoZkzMoUu1AbZ6YOYUlKOEJekZ4A1cSf9zMUTMFG7qxitnRG23Qyis4UJCMO9luZD";
+xpoottrogrkjmcawvnpdqvwab.iadcigchfanrvjujkqtq ="jwX7CdqPrK2Wzy3JisQve3Lj40dt9Oayfv7jhv9A9A";
+xpoottrogrkjmcawvnpdqvwab.lznzxczhvmamtexwvqqijpog ="WwLG6MIQj5nzVjrvd11qzHE0YiUYNSp2DpEMkAlHOLVAdXzk39NzO4fM07N1DvPHfcrHqEDZnho1QRozQZpDSdRB6iyTvTxt165k59w1wADm90GQSYsQLO08jjvo4YYXxfCRuSkKVmRPsRL6nmPssEs4OlD7jLgdfgAsxCvLLKQEhb";
+xpoottrogrkjmcawvnpdqvwab.lhjitrayxajzllsofakwlfg ="DuYi0etRRTwHlIYQpEX3EJCl3unbgZBNB3eC3ZOMvVl9O3Gft4oDiz";
+xpoottrogrkjmcawvnpdqvwab.ifrzkkbqeimqlfqzfa ="aP2f7twwk5yu0M23VstoLivF1qpt7XzGdIqpRywTLzNUxJgxTpL8PmkugpAP17M";
+xpoottrogrkjmcawvnpdqvwab.jqifizrlloarxuawro ="WpCZc3j72GZeyizffN5her8KwkH7Qc9cjFY3wPs0l2y2lHwg0sq4TP7Ant8tlw3KfqZruBeXaBaCDzKHdod8i5oygy9NaBOV7DnHT1EOWwus9T0xsIjjbuk49IzWUTv7l4KT0KekNEosuEi9YuTVouqxaaUJmBzriPqDqmlbv5KIxZMkRYS68LSwnqCQZ1GV4RQ";
+xpoottrogrkjmcawvnpdqvwab.izweaidntnfckjqmqc ="fGIoHFESEKc9bu5MYSfF";
+xpoottrogrkjmcawvnpdqvwab.lkefhrukyegmwxjahtwcaws ="BIAUQKWt58HMUTFyz9jaNNDycKmwuWoC3ACY3ObaLCzy4dR0HEzoIhN7Qh3IzLo1SawmW81V7NXQcVqkdFTBWkG4JVrVWl8xjh9cwumPyJfB3f7KU43WKhPZTC0HDJNdylTL3cSN00NPsYplxdUptlOi6hkVOtvWAg4KXEIaFJOj27tjqYAbpXYheKa";
+xpoottrogrkjmcawvnpdqvwab.okrxblmqtkphnblwozu ="xeRKvBL0ayFl6icNYUIbrVlrewdjspYaUXRyD6YvoAGsOhyFEyLEBDXQSCoCZrHmdd4KxvaG3M6wZR85rWhkjxMr1hn4hEJTke2GolfLioN7xuHfZR2VvtAldQHRRadwfjicum10";
+xpoottrogrkjmcawvnpdqvwab.ukjwapbkfxzbrgijdsllajmxw ="rnRPkxuXTMyVLJLhXdT5lrKMLff98GzKEtijrmyW5EltpdxpeWeRXHio6UnsG0bcjnxVeci4oUg4scyQBdiGnfzhXmeTEPQOfsupbwXYMAhbeid1RRWCKDlog62jOXR0";
+xpoottrogrkjmcawvnpdqvwab.bkidwfwdkixvmesavkauune ="QFtg3EYQxsEDpY8FLmqS9LY0j56q9ijvkAKyMyXuXHVs76CEuWUtDcTkyiwk3JadcVDbMfe3Hs4LYWw85TWltJldSCq1S2Az513QxGwaSIQeX5aU7SjYXjHsbp180QrNsnNzrm";
+xpoottrogrkjmcawvnpdqvwab.eqnlslccsawzgypmnvuljo ="whjIt8GILVfOVJA";
+xpoottrogrkjmcawvnpdqvwab.jxkjrlynsgccndpl ="pH0X1yZFaohf6gfg0hpQzqCLz7thOGrpEh4EWCAiT7yffHOqUdeWoj2TNY8STM7MKn3H9BYSmBvk8zHOxs4p2as";
+ Toast.makeText(XyziafaubrohyzehActivity.this,getString(R.string.kbfnkuczcoffiqkeb),Toast.LENGTH_SHORT).show();
+    }
+ void spubrfythwiuswaroul() {
+     long gorrsjigwtbsmaqj = System.currentTimeMillis();
+     Date date = new Date(gorrsjigwtbsmaqj);
+     String time = date.toString();
+}}

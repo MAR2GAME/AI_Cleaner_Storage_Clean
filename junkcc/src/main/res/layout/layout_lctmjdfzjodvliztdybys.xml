@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="439dp"
+    android:layout_height="860dp"
+    android:orientation="vertical">
+   <ImageView
+        android:id="@+id/otetwdriogahprh"
+        android:layout_width="956dp"
+        android:layout_height="672dp"
+        android:text="ehbtqaqsitbxajg" 
+        android:src="@drawable/mvuxxtbmnrjvcqedk" 
+/>
+   <CheckBox
+        android:id="@+id/shhflviogrfdjhlej"
+        android:layout_width="362dp"
+        android:layout_height="286dp"
+        android:text="pwkjhowdekmzaiwhjpd" 
+        android:src="@drawable/mvuxxtbmnrjvcqedk" 
+/>
+   <DatePicker
+        android:id="@+id/thigjvxlqciwazca"
+        android:layout_width="672dp"
+        android:layout_height="986dp"
+        android:text="pzejdwtxzjodilifnmlrryu" 
+        android:src="@drawable/mvuxxtbmnrjvcqedk" 
+/>
+   <Button
+        android:id="@+id/mhdhqgvxjvireelrzate"
+        android:layout_width="518dp"
+        android:layout_height="827dp"
+        android:text="aaxexltsnjhgdnxculbst" 
+        android:src="@drawable/mvuxxtbmnrjvcqedk" 
+/>
+   </LinearLayout>

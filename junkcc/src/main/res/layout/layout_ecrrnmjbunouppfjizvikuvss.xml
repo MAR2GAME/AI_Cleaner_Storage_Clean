@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="391dp"
+    android:layout_height="663dp"
+    android:orientation="vertical">
+   <LinearLayout
+        android:id="@+id/gxrltchjbfawszggcsktxgan"
+        android:layout_width="425dp"
+        android:layout_height="285dp"
+        android:text="dbhygwxxbxdczonifcelakl" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+android:orientation="horizontal"/>
+   <Spinner
+        android:id="@+id/vhmlcppctrsetwzvpltta"
+        android:layout_width="202dp"
+        android:layout_height="854dp"
+        android:text="cpipthpjqfvmlktnbwdlzsv" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <SeekBar
+        android:id="@+id/jnjpiabxofdbruyrzpuu"
+        android:layout_width="796dp"
+        android:layout_height="382dp"
+        android:text="ekslzuuzhylsytsiatgyk" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <ListView
+        android:id="@+id/mogwtrifecapahm"
+        android:layout_width="930dp"
+        android:layout_height="103dp"
+        android:text="zoorffzkuxcqbzk" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <ScrollView
+        android:id="@+id/lfnzlbkdhoykyty"
+        android:layout_width="458dp"
+        android:layout_height="106dp"
+        android:text="oaquqwruqljjbfziwfzl" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <RatingBar
+        android:id="@+id/izpipjpxtulzhfgrv"
+        android:layout_width="533dp"
+        android:layout_height="7dp"
+        android:text="wpimjhmjrhhejeg" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <RelativeLayout
+        android:id="@+id/uydrvxutclbdyux"
+        android:layout_width="882dp"
+        android:layout_height="453dp"
+        android:text="jmbudhwuvxngomluwjsgjev" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <ListView
+        android:id="@+id/qnrhgecqplkjipyil"
+        android:layout_width="725dp"
+        android:layout_height="258dp"
+        android:text="efljntkgdarywuwu" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   <Spinner
+        android:id="@+id/etoteyapfvcnfdfceleps"
+        android:layout_width="203dp"
+        android:layout_height="365dp"
+        android:text="kwappenldszirghpppltwcu" 
+        android:src="@drawable/fspqyncruttdlxmvvdu" 
+/>
+   </LinearLayout>

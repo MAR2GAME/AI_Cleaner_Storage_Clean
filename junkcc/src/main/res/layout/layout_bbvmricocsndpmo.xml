@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="569dp"
+    android:layout_height="685dp"
+    android:orientation="vertical">
+   <SeekBar
+        android:id="@+id/lnakcnnclosvyildfnl"
+        android:layout_width="72dp"
+        android:layout_height="140dp"
+        android:text="lwcesdsduhqdtaxehw" 
+        android:src="@drawable/cpqngzjkoembsfolgjeuaptf" 
+/>
+   </LinearLayout>

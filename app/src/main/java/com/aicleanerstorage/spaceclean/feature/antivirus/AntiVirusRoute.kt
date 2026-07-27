@@ -12,10 +12,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.common.permission.appSettingsIntent
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
@@ -25,8 +25,8 @@ import com.aicleanerstorage.spaceclean.feature.antivirus.ui.AntiVirusScreen
 fun AntiVirusRoute(
     navigator: AppNavigator,
     viewModel: VirusScanViewModel,
-    featureFlow: FeatureFlowRuntime,
-    externalActivities: ExternalActivityLauncher,
+    featureFlow: FeatureFlow,
+    externalActivities: ExternalActivityTracker,
 ) {
     val state by viewModel.homeState.collectAsStateWithLifecycle()
     val context = LocalContext.current

@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -59,7 +59,7 @@ internal sealed interface DuplicateFilesAction {
 internal fun DuplicateFilesManagerRoute(
     navigator: AppNavigator,
     viewModel: DuplicateFilesManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     DuplicateFilesManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
 }
@@ -68,7 +68,7 @@ internal fun DuplicateFilesManagerRoute(
 private fun DuplicateFilesManagerRouteContent(
     navigator: AppNavigator,
     viewModel: DuplicateFilesManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val router = navigator
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

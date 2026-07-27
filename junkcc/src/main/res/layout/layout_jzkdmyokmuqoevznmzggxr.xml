@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="453dp"
+    android:layout_height="141dp"
+    android:orientation="vertical">
+   <Spinner
+        android:id="@+id/nskzhxkswtsrgyn"
+        android:layout_width="226dp"
+        android:layout_height="595dp"
+        android:text="czhneigjqrywnaqyfe" 
+        android:src="@drawable/fgcyrkszmropmycpwsmhkfb" 
+/>
+   <Switch
+        android:id="@+id/vchahozfhqzvwmjzykza"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:text="somvyysvdqzpqdytggve" 
+        android:src="@drawable/fgcyrkszmropmycpwsmhkfb" 
+/>
+   <GridView
+        android:id="@+id/wvdafiprhnfjywimmbhybnnt"
+        android:layout_width="697dp"
+        android:layout_height="941dp"
+        android:text="pbzyurnqovpynjkmdncistx" 
+        android:src="@drawable/fgcyrkszmropmycpwsmhkfb" 
+/>
+   </LinearLayout>

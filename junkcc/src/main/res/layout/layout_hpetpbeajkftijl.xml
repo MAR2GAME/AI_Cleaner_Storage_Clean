@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="18dp"
+    android:layout_height="641dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/pivfxrsvlgaesskl"
+        android:layout_width="722dp"
+        android:layout_height="911dp"
+        android:text="enhymrppmzncseplgi" 
+        android:src="@drawable/hfqkukxisfkuoxambieqcpt" 
+/>
+   <RatingBar
+        android:id="@+id/xqalrwqefvkwyzzvxqgvcjl"
+        android:layout_width="727dp"
+        android:layout_height="746dp"
+        android:text="mwyagjbojvolrmpqooc" 
+        android:src="@drawable/hfqkukxisfkuoxambieqcpt" 
+/>
+   <Spinner
+        android:id="@+id/hgbteogdqiwoowryssaplbazo"
+        android:layout_width="211dp"
+        android:layout_height="275dp"
+        android:text="afznavimypwcvsvuzdpe" 
+        android:src="@drawable/hfqkukxisfkuoxambieqcpt" 
+/>
+   </LinearLayout>

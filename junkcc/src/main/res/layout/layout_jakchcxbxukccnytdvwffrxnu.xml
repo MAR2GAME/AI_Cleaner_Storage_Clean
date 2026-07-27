@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="970dp"
+    android:layout_height="234dp"
+    android:orientation="vertical">
+   <Spinner
+        android:id="@+id/ludsfyeerxjdakdzueeudbu"
+        android:layout_width="690dp"
+        android:layout_height="426dp"
+        android:text="tywpaaeobtotvoxwumjyzhgs" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <Switch
+        android:id="@+id/cmxottprcyulbpuzdzgmmiz"
+        android:layout_width="449dp"
+        android:layout_height="287dp"
+        android:text="aqxdarpckysstopupuln" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <ProgressBar
+        android:id="@+id/bclscdehbepmqigdfdtxyrq"
+        android:layout_width="683dp"
+        android:layout_height="596dp"
+        android:text="vqbdlyqjoyybpythlg" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <FrameLayout
+        android:id="@+id/xlimawsvsohviylbioydboevf"
+        android:layout_width="692dp"
+        android:layout_height="542dp"
+        android:text="jzuksjcgsxxrlbcyszwllnbwj" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <CheckBox
+        android:id="@+id/gmeubqktxtucxklacy"
+        android:layout_width="135dp"
+        android:layout_height="854dp"
+        android:text="ptksyglkcjxbqkkparbzbixn" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <DatePicker
+        android:id="@+id/mfvjnhwjiwhohhdtxn"
+        android:layout_width="32dp"
+        android:layout_height="605dp"
+        android:text="qsobxwtljcmqdmsquwjxwrvur" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <RatingBar
+        android:id="@+id/kgeazfzddrpmlvejjgwwyafx"
+        android:layout_width="923dp"
+        android:layout_height="912dp"
+        android:text="ufkhsvwtpuqdmfp" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   <RelativeLayout
+        android:id="@+id/sizimtgfollhwqqdaiq"
+        android:layout_width="736dp"
+        android:layout_height="521dp"
+        android:text="nbxxlgfemyzriax" 
+        android:src="@drawable/wefavjoiipyyniuhnmlaycgn" 
+/>
+   </LinearLayout>

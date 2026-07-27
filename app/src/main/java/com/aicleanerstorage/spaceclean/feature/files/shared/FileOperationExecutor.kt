@@ -2,9 +2,9 @@ package com.aicleanerstorage.spaceclean.feature.files.shared
 
 import com.aicleanerstorage.spaceclean.feature.files.shared.*
 
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileItem
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher

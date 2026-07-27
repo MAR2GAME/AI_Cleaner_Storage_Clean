@@ -31,9 +31,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillShape
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
@@ -47,7 +47,7 @@ import com.aicleanerstorage.spaceclean.feature.applock.ui.AppLockScreen
 internal fun AppLockRoute(
     navigator: AppNavigator,
     viewModel: AppLockViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current

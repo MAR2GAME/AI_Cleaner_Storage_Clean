@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="914dp"
+    android:layout_height="989dp"
+    android:orientation="vertical">
+   <EditText
+        android:id="@+id/xdrcwzscasnsmjkul"
+        android:layout_width="897dp"
+        android:layout_height="639dp"
+        android:text="wfwsxgiystleszdeusn" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <EditText
+        android:id="@+id/ooirahgktjrrhaagz"
+        android:layout_width="853dp"
+        android:layout_height="168dp"
+        android:text="chcmyzddhrmlidcundytiytie" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <TextView
+        android:id="@+id/ntgbppezocscddbkl"
+        android:layout_width="621dp"
+        android:layout_height="202dp"
+        android:text="pkbmagyihwlevxqpck" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <DatePicker
+        android:id="@+id/pvzbaorxhqlnyntqyk"
+        android:layout_width="284dp"
+        android:layout_height="974dp"
+        android:text="vjpmyuyufclerbahmb" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <ImageView
+        android:id="@+id/hvndwekubpjmeqezcuspjuft"
+        android:layout_width="505dp"
+        android:layout_height="996dp"
+        android:text="vrkymjaemqvagpjghe" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <ProgressBar
+        android:id="@+id/tbfmgazdaldaqwx"
+        android:layout_width="413dp"
+        android:layout_height="125dp"
+        android:text="gwzopzazksmjycqzp" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <Spinner
+        android:id="@+id/rhklqtjsyhqqhnmoyusyq"
+        android:layout_width="365dp"
+        android:layout_height="747dp"
+        android:text="etogzdmlrwutvghrubb" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <RelativeLayout
+        android:id="@+id/dslfzcsvzyjyixcz"
+        android:layout_width="164dp"
+        android:layout_height="896dp"
+        android:text="gewitivrahdrmvjh" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <Spinner
+        android:id="@+id/xhjhreapxrbyjfqdtaec"
+        android:layout_width="678dp"
+        android:layout_height="645dp"
+        android:text="zzjalgwuogakhtj" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <CheckBox
+        android:id="@+id/fztudtjbzksmdhudamr"
+        android:layout_width="204dp"
+        android:layout_height="134dp"
+        android:text="ulkdelaotrzlgyrmgyjhms" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <Spinner
+        android:id="@+id/soabbhieahpfbdrtx"
+        android:layout_width="173dp"
+        android:layout_height="852dp"
+        android:text="yybztaapqztqyyqj" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <RatingBar
+        android:id="@+id/blsgfyvdxhykrhcbyfvnhtmy"
+        android:layout_width="715dp"
+        android:layout_height="795dp"
+        android:text="qzwtgofntejmullghwmpsqz" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <CheckBox
+        android:id="@+id/lrmswatkyzxjspardhwyiqp"
+        android:layout_width="930dp"
+        android:layout_height="261dp"
+        android:text="txuzgphjngyxcuwccmefbmef" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <Button
+        android:id="@+id/gtwcrtesbnfuvbqw"
+        android:layout_width="256dp"
+        android:layout_height="375dp"
+        android:text="eglrptmunataexdguign" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <Switch
+        android:id="@+id/slqgygzzyhxantbnlfhpxqm"
+        android:layout_width="727dp"
+        android:layout_height="529dp"
+        android:text="vinnlffjrhiwtusx" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   <RatingBar
+        android:id="@+id/grsaigagotwrikgmjfkcwhgc"
+        android:layout_width="733dp"
+        android:layout_height="967dp"
+        android:text="fuzqqqddsliwkmeygot" 
+        android:src="@drawable/ikypfpvjvgqisjsshqm" 
+/>
+   </LinearLayout>

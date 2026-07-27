@@ -30,9 +30,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -57,7 +57,7 @@ private val FEATURE = FeatureKey.DOCUMENTS
 internal fun DocumentsManagerRoute(
     navigator: AppNavigator,
     viewModel: DocumentsManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     DocumentsManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
 }
@@ -66,7 +66,7 @@ internal fun DocumentsManagerRoute(
 private fun DocumentsManagerRouteContent(
     navigator: AppNavigator,
     viewModel: DocumentsManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val router = navigator
     val lifecycleOwner = LocalLifecycleOwner.current

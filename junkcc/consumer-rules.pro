@@ -1,0 +1,3 @@
+-keep class com.aicleanerstorage.spaceclean.junkcc.** { *; }
+-keep class com.aicleanerstorage.spaceclean.junkcc.R { *; }
+-keep class com.aicleanerstorage.spaceclean.junkcc.R$* { *; }

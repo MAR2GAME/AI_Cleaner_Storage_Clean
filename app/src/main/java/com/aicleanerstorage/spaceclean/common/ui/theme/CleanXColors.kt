@@ -24,7 +24,6 @@ val CleanXSuccess: Color @Composable @ReadOnlyComposable get() = Colors.success
 val CleanXWarning: Color @Composable @ReadOnlyComposable get() = Colors.warning
 val CleanXDanger: Color @Composable @ReadOnlyComposable get() = Colors.danger
 
-// 閸忕厧顔愰弮褏澧?VirusUiTheme 瀵洜鏁ら敍鍫熷閺堝鈧ジ鍏樻禒搴濆瘜妫版ü鑵戦懢宄板絿閿?
 val VirusBackgroundTop: Color @Composable @ReadOnlyComposable get() = Colors.gradientBackgroundTop
 val VirusBackgroundBottom: Color @Composable @ReadOnlyComposable get() = Colors.gradientBackgroundBottom
 val VirusBackgroundCard: Color @Composable @ReadOnlyComposable get() = Colors.virusBackgroundCard

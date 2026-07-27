@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="141dp"
+    android:layout_height="27dp"
+    android:orientation="vertical">
+   <RadioButton
+        android:id="@+id/yajnctsdgyeiqezkhe"
+        android:layout_width="521dp"
+        android:layout_height="859dp"
+        android:text="zktpzsvdlkxwhwru" 
+        android:src="@drawable/rnwjkmtwhriwdcnknomiydw" 
+/>
+   </LinearLayout>

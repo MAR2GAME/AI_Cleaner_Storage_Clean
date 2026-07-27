@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.components.AllToolFeatures
 import com.aicleanerstorage.spaceclean.common.ui.components.CommonResultCheckIcon
 import com.aicleanerstorage.spaceclean.common.ui.components.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
@@ -47,10 +46,7 @@ internal fun NetworkSpeedResultView(
     Spacer(modifier = Modifier.height(40.dp))
     ToolFeatureBanners(
         onNavigateTool = onNavigateTool,
-        features =
-            AllToolFeatures.filter {
-                it.destination == AppDestination.DeviceInfo || it.destination == AppDestination.NetworkScan
-            },
+        excludedDestinations = setOf(AppDestination.NetworkSpeed),
     )
     Spacer(modifier = Modifier.height(32.dp))
 }

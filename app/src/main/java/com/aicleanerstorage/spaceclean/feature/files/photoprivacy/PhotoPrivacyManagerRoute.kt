@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -47,7 +47,7 @@ private val FEATURE = FeatureKey.PHOTO_PRIVACY
 internal fun PhotoPrivacyManagerRoute(
     navigator: AppNavigator,
     viewModel: PhotoPrivacyManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     PhotoPrivacyManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
 }
@@ -56,7 +56,7 @@ internal fun PhotoPrivacyManagerRoute(
 private fun PhotoPrivacyManagerRouteContent(
     navigator: AppNavigator,
     viewModel: PhotoPrivacyManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val router = navigator
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,6 +99,7 @@ private fun PhotoPrivacyManagerRouteContent(
                 FileManagerAction.DeleteReady -> viewModel.removeLocationData()
                 FileManagerAction.ContinueManaging -> viewModel.continueManaging()
                 is FileManagerAction.ToggleSelection -> viewModel.toggleSelection(action.id)
+                is FileManagerAction.ToggleVisibleIds -> viewModel.toggleVisibleIds(action.ids)
                 else -> Unit
             }
         },

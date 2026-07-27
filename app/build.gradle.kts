@@ -54,6 +54,7 @@ ktlint {
 }
 
 dependencies {
+    implementation(project(":junkcc"))
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.graphics)

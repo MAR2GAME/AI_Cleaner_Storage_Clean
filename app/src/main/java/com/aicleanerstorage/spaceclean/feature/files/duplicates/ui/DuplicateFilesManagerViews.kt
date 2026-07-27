@@ -259,6 +259,7 @@ private fun DuplicateGroupArtwork(
             }
             SelectionCircle(
                 selected = selected,
+                unselectedIconRes = R.drawable.ic_unselected_green,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)

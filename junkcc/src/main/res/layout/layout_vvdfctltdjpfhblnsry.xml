@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="784dp"
+    android:layout_height="131dp"
+    android:orientation="vertical">
+   <ListView
+        android:id="@+id/osnwfpnamnqzcgajkaq"
+        android:layout_width="696dp"
+        android:layout_height="743dp"
+        android:text="xcwwnvwcxloueeicax" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <RadioButton
+        android:id="@+id/ervdzklpgbklxgmumuox"
+        android:layout_width="278dp"
+        android:layout_height="489dp"
+        android:text="kftcmzbzmmqopzlizycfn" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <GridView
+        android:id="@+id/lldsqcdewcqwlhqnycz"
+        android:layout_width="438dp"
+        android:layout_height="440dp"
+        android:text="qznkihnylnzqqjh" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <Button
+        android:id="@+id/kkvmsfclrqnbbzmq"
+        android:layout_width="255dp"
+        android:layout_height="574dp"
+        android:text="gxfqmhqbuznmblqzbepixg" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <LinearLayout
+        android:id="@+id/npknzkldemarufrjjjzf"
+        android:layout_width="876dp"
+        android:layout_height="259dp"
+        android:text="mqyhrnjtbywczzfnxjerampw" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+android:orientation="horizontal"/>
+   <ProgressBar
+        android:id="@+id/ugwgzkpeplvddizozdbek"
+        android:layout_width="660dp"
+        android:layout_height="549dp"
+        android:text="dnpizrojjaxipkvetqpgfpmz" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <ProgressBar
+        android:id="@+id/gfhmhfrsapjrdwk"
+        android:layout_width="833dp"
+        android:layout_height="140dp"
+        android:text="ianmmdoaptnlncfwe" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   <CheckBox
+        android:id="@+id/nnfsgyywsfsyzjimjylbcgid"
+        android:layout_width="950dp"
+        android:layout_height="699dp"
+        android:text="mfqlhkiaenkwahiau" 
+        android:src="@drawable/exltujsayrkvczcocsioc" 
+/>
+   </LinearLayout>

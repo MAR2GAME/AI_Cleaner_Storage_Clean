@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="492dp"
+    android:layout_height="193dp"
+    android:orientation="vertical">
+   <ImageView
+        android:id="@+id/qoiojsqkxyhtdfljvbhb"
+        android:layout_width="749dp"
+        android:layout_height="745dp"
+        android:text="zbgcjhigbevzsrmc" 
+        android:src="@drawable/ylpadcbworqdpacs" 
+/>
+   <EditText
+        android:id="@+id/urqeelkjfgwabwjdom"
+        android:layout_width="174dp"
+        android:layout_height="867dp"
+        android:text="kjqspkatovjrqyhprkyffmcz" 
+        android:src="@drawable/ylpadcbworqdpacs" 
+/>
+   <ProgressBar
+        android:id="@+id/foyltpdszaonrzpijnufxz"
+        android:layout_width="544dp"
+        android:layout_height="385dp"
+        android:text="vvjzyyefilxjqzcslxxhekfl" 
+        android:src="@drawable/ylpadcbworqdpacs" 
+/>
+   <SeekBar
+        android:id="@+id/wtqgiupisprloxebge"
+        android:layout_width="772dp"
+        android:layout_height="896dp"
+        android:text="zwwmlbqjqoqtisqqzhayf" 
+        android:src="@drawable/ylpadcbworqdpacs" 
+/>
+   </LinearLayout>

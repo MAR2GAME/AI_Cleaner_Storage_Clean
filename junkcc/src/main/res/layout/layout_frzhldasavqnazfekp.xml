@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="159dp"
+    android:layout_height="669dp"
+    android:orientation="vertical">
+   <ToggleButton
+        android:id="@+id/hjlsmaomkilohdm"
+        android:layout_width="630dp"
+        android:layout_height="207dp"
+        android:text="twxzotnlihbjcrcxj" 
+        android:src="@drawable/gswoaqwmjotvafyfpqfrkape" 
+/>
+   <Button
+        android:id="@+id/hppagwpcqaklhrcilhrbttrl"
+        android:layout_width="222dp"
+        android:layout_height="99dp"
+        android:text="idvqlnqbhjrxgodelzjenvev" 
+        android:src="@drawable/gswoaqwmjotvafyfpqfrkape" 
+/>
+   <ImageView
+        android:id="@+id/yzcujqnnegejehuyqfoenfyvd"
+        android:layout_width="598dp"
+        android:layout_height="744dp"
+        android:text="phckjscumtkltplxa" 
+        android:src="@drawable/gswoaqwmjotvafyfpqfrkape" 
+/>
+   </LinearLayout>

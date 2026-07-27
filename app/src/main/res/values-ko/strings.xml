@@ -20,12 +20,16 @@
     <string name="nav_documents">문서</string>
     <string name="home_tab_home">홈</string>
     <string name="home_tab_file_manager">파일</string>
+    <string name="home_file_manager_title">관리</string>
     <string name="home_tab_toolbox">도구</string>
     <string name="home_storage_label">저장공간:</string>
     <string name="home_remove_junk">정크 제거</string>
     <string name="home_virus_title">바이러스</string>
     <string name="home_virus_desc">바이러스, 악성 앱,\n위험 파일을 정밀 검사</string>
     <string name="home_toolbox_title">도구</string>
+    <string name="home_device_information">기기 정보</string>
+    <string name="home_battery_usage">배터리 사용량</string>
+    <string name="home_notification_bar">알림 표시줄</string>
     <string name="home_device_model">기기 모델</string>
     <string name="home_system_version">시스템 버전</string>
     <string name="home_battery_status">배터리 상태</string>
@@ -49,6 +53,7 @@
     <string name="file_items">항목</string>
     <string name="file_all">전체</string>
     <string name="file_photos">사진</string>
+    <string name="file_in_total">총계</string>
     <string name="file_download">다운로드</string>
     <string name="file_other">기타</string>
     <string name="file_got_it">확인</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">데이터 개인정보 보호</string>
+    <string name="device_battery">배터리</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">배터리 정보</string>
+    <string name="onboarding_device_info_disclaimer">표시된 기기 정보는 시스템에서 제공하는 데이터를 기반으로 하며 공식 사양과 다를 수 있습니다. 예를 들어 시스템 예약 공간이나 하드웨어 구성 차이로 인해 저장 용량 또는 메모리가 약간 다를 수 있습니다.</string>
+    <string name="notification_status_empty_title">알림 차단이 활성화됨</string>
+    <string name="notification_status_empty_message">차단된 알림이 여기에 표시됩니다</string>
 </resources>

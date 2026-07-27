@@ -7,8 +7,8 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.*
 import com.aicleanerstorage.spaceclean.feature.files.shared.*
 
 import androidx.compose.runtime.Composable
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileUri
@@ -16,7 +16,6 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerDeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerErrorToastEffect
-import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerNoResultsDialog
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerOperationEventsEffect
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerStartEffect
@@ -27,7 +26,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 @Composable
 internal fun FileManagerFlowEffects(
     viewModel: BaseFileManagerViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
     permissionCoordinator: AppPermissionCoordinator,
     feature: FeatureKey,
     permissionState: FileManagerPermissionState,
@@ -55,7 +54,7 @@ internal fun FileManagerFlowDialogs(
     viewModel: BaseFileManagerViewModel,
     permissionState: FileManagerPermissionState,
     router: AppNavigator,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
     permissionCoordinator: AppPermissionCoordinator,
     feature: FeatureKey,
     phase: FileOperationPhase,
@@ -90,7 +89,7 @@ internal fun FileManagerFlowDialogs(
     )
 
     FileManagerNoResultsDialog(
-        visible = phase == FileOperationPhase.NoResults,
+        visible = phase == FileOperationPhase.NoResults && !permissionState.leavingPage,
         permissionGranted = permissionState.granted,
         onBack = { permissionState.leaveBack(router, feature, featureFlow) },
     )

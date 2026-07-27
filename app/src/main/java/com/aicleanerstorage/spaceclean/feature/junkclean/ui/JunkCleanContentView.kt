@@ -22,7 +22,6 @@ internal fun JunkCleanContentView(
     uiState: JunkCleanUiState,
     onToggleCategorySelection: (List<JunkCategory>) -> Unit,
     onToggleItem: (CleanItem) -> Unit,
-    onClean: () -> Unit,
     onNavigateTool: (AppDestination) -> Unit,
     onContinueFromResult: () -> Unit,
 ) {
@@ -35,7 +34,6 @@ internal fun JunkCleanContentView(
                 selectedSummary = uiState.selectedSummary,
                 onToggleCategorySelection = onToggleCategorySelection,
                 onToggleItem = onToggleItem,
-                onClean = onClean,
             )
         JunkCleanPhase.Cleaning,
         JunkCleanPhase.CompleteAnimation -> JunkCleaningView(

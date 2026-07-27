@@ -2,16 +2,13 @@ package com.aicleanerstorage.spaceclean.feature.home.ui
 
 import com.aicleanerstorage.spaceclean.feature.home.*
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,19 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,8 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.activity.compose.BackHandler
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -63,10 +52,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.home.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.feature.home.HomeViewModel
-import com.aicleanerstorage.spaceclean.feature.home.ui.ToolNotificationSpec
 import com.aicleanerstorage.spaceclean.common.ui.theme.LocalAppThemeTokens
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPagePadding
@@ -76,10 +64,8 @@ import com.aicleanerstorage.spaceclean.feature.settings.ui.SettingsRateDialog
 import com.aicleanerstorage.spaceclean.feature.settings.ui.openGooglePlayRatePage
 import com.aicleanerstorage.spaceclean.common.ui.components.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.common.ui.components.stableStatusBarsPadding
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXBlue
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXText
 import kotlinx.coroutines.launch
-import com.aicleanerstorage.spaceclean.app.navigation.feature.destinationOrNull
+
 
 private val PrimaryText: Color @Composable @ReadOnlyComposable get() = LocalAppThemeTokens.current.colors.textPrimary
 
@@ -100,7 +86,7 @@ fun HomeScreen(
     val showAutoRateDialog = state.showAutoRateDialog
 
     fun openFeature(feature: FeatureKey) {
-        feature.destinationOrNull()?.let(onNavigate)
+        AppDestination.forFeature(feature)?.let(onNavigate)
     }
 
     BackHandler(
@@ -260,7 +246,13 @@ private fun HomeTabBar(
                 Box(
                     modifier =
                         Modifier
-                            .width(39.dp)
+                            .width(
+                                when (index) {
+                                    1 -> 89.dp
+                                    2 -> 60.dp
+                                    else -> 39.dp
+                                },
+                            )
                             .height(2.dp)
                             .background(if (selected) Color(0xFF5DD595) else Color.Transparent),
                 )
@@ -294,256 +286,12 @@ private fun HomeHeader(onSettingsClick: () -> Unit) {
                     .cleanXDebouncedClick(onClick = onSettingsClick),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = stringResource(R.string.settings),
-                tint = PrimaryText,
-                modifier = Modifier.size(28.dp),
+            Image(
+                painter = painterResource(id = R.drawable.ic_settings),
+                contentDescription = "image description",
+                contentScale = ContentScale.None
             )
         }
     }
 }
 
-@Composable
-private fun HomeExitPromptDialog(
-    spec: ToolNotificationSpec,
-    onExit: () -> Unit,
-    onViewNow: () -> Unit,
-) {
-    if (spec.route == AppDestination.NotificationCleaner.route) {
-        NotificationCleanerExitPromptDialog(
-            onEnableNow = onViewNow,
-            onClose = onExit,
-        )
-    } else {
-        ToolExitPromptDialog(
-            spec = spec,
-            onExit = onExit,
-            onViewNow = onViewNow,
-        )
-    }
-}
-
-@Composable
-private fun ToolExitPromptDialog(
-    spec: ToolNotificationSpec,
-    onExit: () -> Unit,
-    onViewNow: () -> Unit,
-) {
-    Dialog(
-        onDismissRequest = {},
-        properties =
-            DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-                usePlatformDefaultWidth = false,
-            ),
-    ) {
-        Surface(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .widthIn(max = 343.dp),
-            color = Color.White,
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    painter = painterResource(spec.iconRes),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(44.dp),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(toolExitPromptMessageRes(spec.route)),
-                    color = CleanXText,
-                    fontSize = 18.sp,
-                    lineHeight = 21.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .height(34.dp)
-                                .clip(RoundedCornerShape(50))
-                                .clickable { onExit() }
-                                .padding(horizontal = 18.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.exit),
-                            color = LocalAppThemeTokens.current.colors.textSecondary,
-                            fontSize = 15.sp,
-                            lineHeight = 18.sp,
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    OutlinedButton(
-                        onClick = onViewNow,
-                        modifier = Modifier.height(34.dp),
-                        shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, CleanXBlue),
-                        colors =
-                            ButtonDefaults.outlinedButtonColors(
-                                containerColor = Color.White,
-                                contentColor = CleanXBlue,
-                            ),
-                        contentPadding = PaddingValues(horizontal = 19.dp),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.view_now),
-                            fontSize = 16.sp,
-                            lineHeight = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun NotificationCleanerExitPromptDialog(
-    onEnableNow: () -> Unit,
-    onClose: () -> Unit,
-) {
-    Dialog(
-        onDismissRequest = {},
-        properties =
-            DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-                usePlatformDefaultWidth = false,
-            ),
-    ) {
-        Surface(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .widthIn(max = 343.dp),
-            color = Color.White,
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = stringResource(R.string.exit_prompt_notification_title),
-                    color = CleanXText,
-                    fontSize = 18.sp,
-                    lineHeight = 21.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-                NotificationPromptTip(text = stringResource(R.string.exit_prompt_notification_tip_block))
-                Spacer(modifier = Modifier.height(13.dp))
-                NotificationPromptTip(text = stringResource(R.string.exit_prompt_notification_tip_matters))
-                Spacer(modifier = Modifier.height(13.dp))
-                NotificationPromptTip(text = stringResource(R.string.exit_prompt_notification_tip_focus))
-                Spacer(modifier = Modifier.height(14.dp))
-                Button(
-                    onClick = onEnableNow,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                    shape = RoundedCornerShape(50),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = CleanXBlue,
-                            contentColor = Color.White,
-                        ),
-                    contentPadding = PaddingValues(horizontal = 18.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.enable_now),
-                        fontSize = 20.sp,
-                        lineHeight = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Spacer(modifier = Modifier.height(13.dp))
-                OutlinedButton(
-                    onClick = onClose,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                    shape = RoundedCornerShape(50),
-                    border = BorderStroke(1.dp, CleanXBlue),
-                    colors =
-                        ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.White,
-                            contentColor = CleanXBlue,
-                        ),
-                ) {
-                    Text(
-                        text = stringResource(R.string.close),
-                        fontSize = 20.sp,
-                        lineHeight = 22.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun NotificationPromptTip(text: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(19.dp)
-                    .clip(RoundedCornerShape(50))
-                    .background(CleanXBlue),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(13.dp),
-            )
-        }
-        Spacer(modifier = Modifier.width(11.dp))
-        Text(
-            text = text,
-            color = LocalAppThemeTokens.current.colors.textSecondary,
-            fontSize = 16.sp,
-            lineHeight = 19.sp,
-            fontWeight = FontWeight.Medium,
-        )
-    }
-}
-
-@StringRes
-private fun toolExitPromptMessageRes(route: String): Int =
-    when (route) {
-        AppDestination.DeviceInfo.route -> R.string.exit_prompt_device_info
-        AppDestination.JunkClean.route -> R.string.exit_prompt_junk_removal
-        AppDestination.BatteryInfo.route -> R.string.exit_prompt_battery_info
-        AppDestination.NetworkScan.route -> R.string.exit_prompt_network_scan
-        AppDestination.NetworkUsage.route -> R.string.exit_prompt_network_usage
-        else -> R.string.exit_prompt_device_info
-    }

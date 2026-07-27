@@ -11,6 +11,8 @@ class NotificationRepositoryImpl(
 
     override fun hasNotificationListenerAccess(): Boolean = NotificationDataSource.hasNotificationListenerAccess(appContext)
 
+    override fun notificationSnapshot(): NotificationCleanerSnapshot = NotificationDataSource.snapshot(appContext)
+
     override fun isNotificationBlockingEnabled(): Boolean = NotificationDataSource.isEnabled(appContext)
 
     override fun setNotificationBlockingEnabled(enabled: Boolean) {

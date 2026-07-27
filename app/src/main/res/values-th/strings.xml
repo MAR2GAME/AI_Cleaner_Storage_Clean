@@ -20,12 +20,16 @@
     <string name="nav_documents">เอกสาร</string>
     <string name="home_tab_home">หน้าแรก</string>
     <string name="home_tab_file_manager">ไฟล์</string>
+    <string name="home_file_manager_title">ตัวจัดการ</string>
     <string name="home_tab_toolbox">เครื่องมือ</string>
     <string name="home_storage_label">พื้นที่จัดเก็บ:</string>
     <string name="home_remove_junk">ลบขยะ</string>
     <string name="home_virus_title">ไวรัส</string>
     <string name="home_virus_desc">สแกนไวรัสเชิงลึก,\nแอปอันตรายและไฟล์เสี่ยง</string>
     <string name="home_toolbox_title">เครื่องมือ</string>
+    <string name="home_device_information">ข้อมูลอุปกรณ์</string>
+    <string name="home_battery_usage">การใช้แบตเตอรี่</string>
+    <string name="home_notification_bar">แถบการแจ้งเตือน</string>
     <string name="home_device_model">รุ่นอุปกรณ์</string>
     <string name="home_system_version">เวอร์ชันระบบ</string>
     <string name="home_battery_status">สถานะแบตเตอรี่</string>
@@ -49,6 +53,7 @@
     <string name="file_items">รายการ</string>
     <string name="file_all">ทั้งหมด</string>
     <string name="file_photos">รูปภาพ</string>
+    <string name="file_in_total">ทั้งหมด</string>
     <string name="file_download">ดาวน์โหลด</string>
     <string name="file_other">อื่นๆ</string>
     <string name="file_got_it">เข้าใจแล้ว</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">ความเป็นส่วนตัวของข้อมูล</string>
+    <string name="device_battery">แบตเตอรี่</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">ข้อมูลแบตเตอรี่</string>
+    <string name="onboarding_device_info_disclaimer">ข้อมูลอุปกรณ์ที่แสดงอาศัยข้อมูลจากระบบและอาจแตกต่างจากข้อมูลจำเพาะที่เป็นทางการ ตัวอย่างเช่น ความจุพื้นที่จัดเก็บหรือหน่วยความจำอาจแตกต่างเล็กน้อยเนื่องจากการสำรองของระบบหรือความแตกต่างของการกำหนดค่าฮาร์ดแวร์</string>
+    <string name="notification_status_empty_title">เปิดการบล็อกการแจ้งเตือนแล้ว</string>
+    <string name="notification_status_empty_message">การแจ้งเตือนที่ถูกบล็อกจะแสดงที่นี่</string>
 </resources>

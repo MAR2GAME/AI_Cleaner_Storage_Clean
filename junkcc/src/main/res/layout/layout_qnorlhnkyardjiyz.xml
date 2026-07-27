@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="273dp"
+    android:layout_height="843dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/zxgnvjkczksmwpgikba"
+        android:layout_width="268dp"
+        android:layout_height="232dp"
+        android:text="bqihxmxleooploqcbhvkst" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   <ProgressBar
+        android:id="@+id/cudfxdpnqdsmyxpdizoigir"
+        android:layout_width="766dp"
+        android:layout_height="731dp"
+        android:text="rxcinglahtlmuubpulzrdnu" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   <Button
+        android:id="@+id/pxlxzwqyqirugxprfbqmpybz"
+        android:layout_width="451dp"
+        android:layout_height="982dp"
+        android:text="dyzkahaoatgwpnnaroclw" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   <ProgressBar
+        android:id="@+id/xijevizczdxldike"
+        android:layout_width="469dp"
+        android:layout_height="60dp"
+        android:text="mfjyjtippumrvbsaeinio" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   <TimePicker
+        android:id="@+id/sazrffwcfwoveuccyavjuoqq"
+        android:layout_width="830dp"
+        android:layout_height="461dp"
+        android:text="auucsyeaenhymmkujnmhvyva" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   <RadioButton
+        android:id="@+id/alptdpumtcbhnwroev"
+        android:layout_width="407dp"
+        android:layout_height="679dp"
+        android:text="uzqimfmtoxfmajmch" 
+        android:src="@drawable/qrsouyymsuspawrefvptjjny" 
+/>
+   </LinearLayout>

@@ -7,11 +7,12 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.*
 import com.aicleanerstorage.spaceclean.feature.files.shared.toggleAllVisible
 
 import com.aicleanerstorage.spaceclean.feature.files.shared.toggleId
+import com.aicleanerstorage.spaceclean.feature.files.shared.toggleIds
 
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepository
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -31,7 +32,7 @@ internal class PhotoPrivacyManagerViewModel(
     testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val removeDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 700L
+    private val completeDelayMillis: Long = 800L
 ) : BaseFileManagerViewModel(FeatureKey.PHOTO_PRIVACY, ioDispatcher, testLoader) {
 
     private val _uiState = MutableStateFlow(PhotoPrivacyManagerUiState())
@@ -71,6 +72,12 @@ internal class PhotoPrivacyManagerViewModel(
     fun toggleVisibleItems() {
         _uiState.update { state ->
             state.copy(selectedIds = toggleAllVisible(state.selectedIds, state.visibleIds))
+        }
+    }
+
+    fun toggleVisibleIds(ids: Set<Int>) {
+        _uiState.update { state ->
+            state.copy(selectedIds = toggleIds(state.selectedIds, ids))
         }
     }
 

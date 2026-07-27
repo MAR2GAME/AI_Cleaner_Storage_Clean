@@ -5,7 +5,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanRoute
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanViewModel
@@ -13,7 +13,7 @@ import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerCleanRoutes(
     navigator: AppNavigator,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     composable(AppDestination.JunkClean.route) {
         val viewModel: JunkCleanViewModel = koinViewModel()

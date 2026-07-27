@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="10dp"
+    android:layout_height="452dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/bgncoqyzvqhwntdnacfiasqzg"
+        android:layout_width="634dp"
+        android:layout_height="803dp"
+        android:text="dqtwysqjibcawnvr" 
+        android:src="@drawable/expjxderhznobssdgsyzy" 
+/>
+   <SeekBar
+        android:id="@+id/kmahbebkozptzouktcjjeckx"
+        android:layout_width="334dp"
+        android:layout_height="115dp"
+        android:text="ykbfavmagwslmlsdetjblmau" 
+        android:src="@drawable/expjxderhznobssdgsyzy" 
+/>
+   <RatingBar
+        android:id="@+id/fwvjzshpdlurydoduqnpo"
+        android:layout_width="778dp"
+        android:layout_height="244dp"
+        android:text="bxwnvszyrrxsbskayosotyf" 
+        android:src="@drawable/expjxderhznobssdgsyzy" 
+/>
+   <CheckBox
+        android:id="@+id/etlkudrtienbqknzc"
+        android:layout_width="279dp"
+        android:layout_height="471dp"
+        android:text="oqgdnqqqosbpzwtbegoxcto" 
+        android:src="@drawable/expjxderhznobssdgsyzy" 
+/>
+   </LinearLayout>

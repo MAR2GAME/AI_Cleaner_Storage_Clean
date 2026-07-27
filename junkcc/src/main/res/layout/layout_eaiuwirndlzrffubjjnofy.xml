@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="252dp"
+    android:layout_height="843dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/rjqmackhhvztwkpqihkyyeygt"
+        android:layout_width="521dp"
+        android:layout_height="912dp"
+        android:text="jsoljkmunkhdsmmh" 
+        android:src="@drawable/mbfuuvrpyszqjxj" 
+/>
+   <Button
+        android:id="@+id/thrgsqgtlxmygesrw"
+        android:layout_width="137dp"
+        android:layout_height="890dp"
+        android:text="ytwelbbmuxhazhmbafddtdmp" 
+        android:src="@drawable/mbfuuvrpyszqjxj" 
+/>
+   <Switch
+        android:id="@+id/ajtpepecurrpqarxscq"
+        android:layout_width="606dp"
+        android:layout_height="224dp"
+        android:text="atfedoefzjwoxcmuventckc" 
+        android:src="@drawable/mbfuuvrpyszqjxj" 
+/>
+   <RadioButton
+        android:id="@+id/cqamaurictklftp"
+        android:layout_width="842dp"
+        android:layout_height="352dp"
+        android:text="fslyvkusuktebqmhgorhsk" 
+        android:src="@drawable/mbfuuvrpyszqjxj" 
+/>
+   <SeekBar
+        android:id="@+id/hmdomcbcradohsbmnwxksjtpr"
+        android:layout_width="166dp"
+        android:layout_height="810dp"
+        android:text="jsprhfyhlshibjbmwqz" 
+        android:src="@drawable/mbfuuvrpyszqjxj" 
+/>
+   </LinearLayout>

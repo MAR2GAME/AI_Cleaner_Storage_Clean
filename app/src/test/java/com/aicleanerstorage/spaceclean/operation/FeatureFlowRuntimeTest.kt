@@ -1,16 +1,16 @@
 package com.aicleanerstorage.spaceclean.operation
 
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.DefaultFeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.app.runtime.LocalFeatureFlow
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class FeatureFlowRuntimeTest {
+class FeatureFlowTest {
     @Test
     fun `scan lifecycle updates busy state and continues immediately`() {
         val history = FakeCleanupHistoryStore()
@@ -43,9 +43,15 @@ class FeatureFlowRuntimeTest {
                 success = true,
             ),
         ) { continued = true }
+        runtime.handleOperation(
+            FeatureOperationEvent.ScanFinished(
+                feature = FeatureKey.ANTI_VIRUS,
+                hasResult = false,
+            ),
+        )
 
         assertTrue(continued)
-        assertEquals(1, history.completedCount)
+        assertEquals(2, history.completedCount)
     }
 
     @Test
@@ -64,7 +70,7 @@ class FeatureFlowRuntimeTest {
         history: CleanupHistoryStore,
         busyStates: MutableList<Boolean> = mutableListOf(),
     ) =
-        DefaultFeatureFlowRuntime(
+        LocalFeatureFlow(
             cleanupHistory = history,
             onOperationBusyChanged = busyStates::add,
         )

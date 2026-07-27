@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileType
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepository
@@ -230,6 +230,7 @@ class WhatsAppCleanerViewModel(
                 .flatMap { it.files }
                 .distinctBy { it.path ?: it.uri.toString() }
         val expectedBytes = selectedFiles.sumOf { it.sizeBytes }
+        val cleaningStartedAt = System.currentTimeMillis()
 
         trackOperationEvent(FeatureOperationEvent.OperationStarted(FeatureKey.WHATSAPP_CLEANER, OperationAction.CLEAN))
         _uiState.update {
@@ -246,7 +247,7 @@ class WhatsAppCleanerViewModel(
                 try {
                     val result = repository.deleteFiles(selectedFiles)
                     if (result.deletedCount <= 0) error(appString(R.string.whatsapp_clean_unavailable))
-                    delay(RESULT_DELAY_MILLIS)
+                    delayRemainingCleaningAnimation(cleaningStartedAt)
                     _uiState.value =
                         WhatsAppCleanerUiState(
                             phase = WhatsAppCleanerPhase.CompleteAnimation,
@@ -279,6 +280,11 @@ class WhatsAppCleanerViewModel(
                     }
                 }
             }
+    }
+
+    private suspend fun delayRemainingCleaningAnimation(startedAtMillis: Long) {
+        val remainingMillis = CLEANING_ANIMATION_MIN_MILLIS - (System.currentTimeMillis() - startedAtMillis)
+        if (remainingMillis > 0L) delay(remainingMillis)
     }
 
     fun retry() {
@@ -401,7 +407,7 @@ class WhatsAppCleanerViewModel(
 
     private companion object {
         private const val SCAN_DELAY_MILLIS = 650L
-        private const val RESULT_DELAY_MILLIS = 1200L
+        private const val CLEANING_ANIMATION_MIN_MILLIS = 1600L
         private const val COMPLETE_ANIMATION_MILLIS = 800L
         val DATABASE_EXTENSIONS = setOf("db", "crypt", "crypt5", "crypt7", "crypt8", "crypt12", "crypt14", "crypt15")
         val DOCUMENT_EXTENSIONS = setOf(

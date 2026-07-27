@@ -47,7 +47,7 @@ object NotificationDataSource {
         decodeBlockedCounts(prefs(context).getString(KEY_BLOCKED_COUNTS_BY_PACKAGE, null))
 
     fun selectedPackages(context: Context): Set<String> =
-        prefs(context).getStringSet(KEY_SELECTED_PACKAGES, defaultPackages(context)) ?: emptySet()
+        prefs(context).getStringSet(KEY_SELECTED_PACKAGES, null) ?: defaultPackages(context)
 
     fun setPackageSelected(
         context: Context,
@@ -59,14 +59,53 @@ object NotificationDataSource {
         prefs(context).edit().putStringSet(KEY_SELECTED_PACKAGES, current).apply()
     }
 
-    fun apps(context: Context): List<BlockableNotificationApp> {
+    fun snapshot(context: Context): NotificationCleanerSnapshot {
+        val hasAccess = hasNotificationListenerAccess(context)
+        if (!hasAccess) {
+            return NotificationCleanerSnapshot(
+                hasAccess = false,
+                enabled = false,
+                blockedCount = 0,
+                blockedCountsByPackage = emptyMap(),
+                apps = emptyList(),
+                selectedPackages = emptySet(),
+            )
+        }
         val pm = context.packageManager
-        val defaults = defaultPackages(context)
-        val selected = selectedPackages(context)
         val installedAppInfos =
             pm
                 .getInstalledApplications(0)
                 .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+        val defaults = defaultPackages(installedAppInfos)
+        val selected = selectedPackages(context, defaults)
+        return NotificationCleanerSnapshot(
+            hasAccess = true,
+            enabled = prefs(context).getBoolean(KEY_ENABLED, false),
+            blockedCount = blockedCount(context),
+            blockedCountsByPackage = blockedCountsByPackage(context),
+            apps = apps(context, installedAppInfos, defaults, selected),
+            selectedPackages = selected,
+        )
+    }
+
+    fun apps(context: Context): List<BlockableNotificationApp> {
+        val pm = context.packageManager
+        val installedAppInfos =
+            pm
+                .getInstalledApplications(0)
+                .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+        val defaults = defaultPackages(installedAppInfos)
+        val selected = selectedPackages(context, defaults)
+        return apps(context, installedAppInfos, defaults, selected)
+    }
+
+    private fun apps(
+        context: Context,
+        installedAppInfos: List<ApplicationInfo>,
+        defaults: Set<String>,
+        selected: Set<String>,
+    ): List<BlockableNotificationApp> {
+        val pm = context.packageManager
         val installed =
             installedAppInfos
                 .map { BlockableNotificationApp(it.loadLabel(pm).toString(), it.packageName) }
@@ -109,10 +148,22 @@ object NotificationDataSource {
                 .getInstalledApplications(0)
                 .map { it.packageName }
                 .toSet()
-        return listOf("com.tencent.wemeet.app", "com.google.android.youtube", "com.spotify.music")
-            .filter { it in installed }
-            .toSet()
+        return defaultPackages(installed)
     }
+
+    private fun defaultPackages(installedApps: List<ApplicationInfo>): Set<String> =
+        defaultPackages(installedApps.map { it.packageName }.toSet())
+
+    private fun defaultPackages(installedPackages: Set<String>): Set<String> =
+        listOf("com.tencent.wemeet.app", "com.google.android.youtube", "com.spotify.music")
+            .filter { it in installedPackages }
+            .toSet()
+
+    private fun selectedPackages(
+        context: Context,
+        defaults: Set<String>,
+    ): Set<String> =
+        prefs(context).getStringSet(KEY_SELECTED_PACKAGES, defaults) ?: emptySet()
 
     private fun notificationsAllowed(
         context: Context,

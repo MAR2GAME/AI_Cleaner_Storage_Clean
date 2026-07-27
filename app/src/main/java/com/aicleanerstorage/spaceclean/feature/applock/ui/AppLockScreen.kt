@@ -27,8 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillShape
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
@@ -42,6 +42,16 @@ internal fun AppLockScreen(
     modifier: Modifier = Modifier,
 ) {
     BackHandler { onAction(AppLockAction.Back) }
+
+    if (state.page == AppLockPage.Pin) {
+        AppLockPinView(
+            uiState = state,
+            onDigit = { onAction(AppLockAction.AddPinDigit(it)) },
+            onDelete = { onAction(AppLockAction.RemovePinDigit) },
+            onBack = { onAction(AppLockAction.Back) },
+        )
+        return
+    }
 
     CleanXScaffoldPage(
         title = stringResource(

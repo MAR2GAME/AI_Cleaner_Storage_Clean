@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="650dp"
+    android:layout_height="910dp"
+    android:orientation="vertical">
+   <TextView
+        android:id="@+id/ybgepztxlphtuwodxznpmqour"
+        android:layout_width="349dp"
+        android:layout_height="985dp"
+        android:text="rzwphpslmznddbpxomfryckqq" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <TimePicker
+        android:id="@+id/exuprvtirvqfzmicgpyqb"
+        android:layout_width="41dp"
+        android:layout_height="67dp"
+        android:text="jszcmssxkjxuratespu" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <RadioButton
+        android:id="@+id/jujuxdufekpycmfxhycvrippy"
+        android:layout_width="599dp"
+        android:layout_height="917dp"
+        android:text="qkmhgxtxzscutshgiksh" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <TimePicker
+        android:id="@+id/qefehllfjvevbpvzdgrgh"
+        android:layout_width="55dp"
+        android:layout_height="328dp"
+        android:text="cntygivahguwrbabsewrsjrd" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <DatePicker
+        android:id="@+id/vjntxrdrqodwjaqfh"
+        android:layout_width="59dp"
+        android:layout_height="127dp"
+        android:text="eaqrgibgorsgjrvrugetyjh" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <ToggleButton
+        android:id="@+id/ipchndrkikykvjeqcfe"
+        android:layout_width="413dp"
+        android:layout_height="646dp"
+        android:text="habixmwdnnhysdcwbi" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <LinearLayout
+        android:id="@+id/cdpjjmbdioyesaxvvpjligaw"
+        android:layout_width="717dp"
+        android:layout_height="358dp"
+        android:text="hbkygpphkqybycqihynonf" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+android:orientation="horizontal"/>
+   <ToggleButton
+        android:id="@+id/ndvtdwxzbzuxchwl"
+        android:layout_width="647dp"
+        android:layout_height="711dp"
+        android:text="pbsmwmaahpvufbuwzabgnguv" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <Button
+        android:id="@+id/vklskiculvqgxcavrecz"
+        android:layout_width="305dp"
+        android:layout_height="595dp"
+        android:text="vwuhhqqddcimkuauueopm" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <RelativeLayout
+        android:id="@+id/qnbtmasqypwbqmtpk"
+        android:layout_width="253dp"
+        android:layout_height="57dp"
+        android:text="zikzrmywscupppfzgy" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <ListView
+        android:id="@+id/fgrvzlolsdlwabdudf"
+        android:layout_width="241dp"
+        android:layout_height="378dp"
+        android:text="weosvakamjumqbvylqjewadd" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   <ImageView
+        android:id="@+id/xxircxnhqndanvjj"
+        android:layout_width="458dp"
+        android:layout_height="680dp"
+        android:text="siskcvltehqohykdgpjay" 
+        android:src="@drawable/mqllmnkmpfzowgfuckhigrhs" 
+/>
+   </LinearLayout>

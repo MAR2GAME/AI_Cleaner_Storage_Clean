@@ -55,7 +55,7 @@ val AllToolFeatures
                 R.string.junk_removal,
                 R.string.file_suggestion_junk_desc,
                 AppDestination.JunkClean,
-                R.drawable.ic_n_junk_removal,
+                R.drawable.junk_cleaning_trash_figma,
                 Brush.linearGradient(listOf(Color(0xFFFF6B4A), Color(0xFFFF3D2E))),
                 R.string.scan_now,
             ),
@@ -63,7 +63,7 @@ val AllToolFeatures
                 R.string.nav_device_info,
                 R.string.common_tool_device_desc,
                 AppDestination.DeviceInfo,
-                R.drawable.ic_n_device_info,
+                R.drawable.ic_device_phone,
                 Brush.linearGradient(listOf(Color(0xFF7F6CFF), Color(0xFF462BF9))),
                 R.string.view_now,
             ),
@@ -89,7 +89,7 @@ val AllToolFeatures
                 R.string.nav_notification_cleaner,
                 R.string.common_tool_notification_cleaner_desc,
                 AppDestination.NotificationCleaner,
-                R.drawable.ic_n_notification_cleaner,
+                R.drawable.ic_notification_cleaner,
                 Brush.linearGradient(listOf(Color(0xFFFF9A80), Color(0xFFFF6E40))),
                 R.string.view_now,
             ),
@@ -105,7 +105,7 @@ val AllToolFeatures
                 R.string.nav_network_usage,
                 R.string.common_tool_network_usage_desc,
                 AppDestination.NetworkUsage,
-                R.drawable.ic_n_network_usage,
+                R.drawable.ic_network_usage,
                 Brush.linearGradient(listOf(Color(0xFF64B5F6), Color(0xFF1976D2))),
                 R.string.view_now,
             ),
@@ -114,7 +114,7 @@ val AllToolFeatures
                 R.string.common_tool_network_scan_desc,
                 AppDestination.NetworkScan,
                 R.drawable.ic_network_scan,
-                Brush.linearGradient(listOf(Color(0xFFFFC745), Color(0xFFFE9915))),
+                Brush.linearGradient(listOf(Color(0xFFD0FD91), Color(0xFF5DD595))),
                 R.string.scan_now,
             ),
             /*
@@ -133,13 +133,18 @@ val AllToolFeatures
 fun ToolFeatureBanners(
     onNavigateTool: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
-    excludeRoutes: Set<String> = emptySet(),
-    seed: Long = System.currentTimeMillis(),
+    excludedDestinations: Set<AppDestination> = emptySet(),
+    seed: Long? = null,
 ) {
+    val generatedSeed = remember { Random.nextLong() }
+    val effectiveSeed = seed ?: generatedSeed
     val features =
-        remember(seed) {
-            val pool = AllToolFeatures.filter { it.destination.route !in excludeRoutes }
-            pool.shuffled(Random(seed)).take(2)
+        remember(excludedDestinations, effectiveSeed) {
+            selectRecommendedToolFeatures(
+                features = AllToolFeatures,
+                excludedDestinations = excludedDestinations,
+                seed = effectiveSeed,
+            )
         }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -244,3 +249,15 @@ private fun ToolFeatureBanner(
         )
     }
 }
+
+internal fun selectRecommendedToolFeatures(
+    features: List<ToolFeature>,
+    excludedDestinations: Set<AppDestination> = emptySet(),
+    seed: Long,
+    limit: Int = 2,
+): List<ToolFeature> =
+    features
+        .distinctBy { it.destination.route }
+        .filterNot { it.destination in excludedDestinations }
+        .shuffled(Random(seed))
+        .take(limit.coerceAtLeast(0))

@@ -28,7 +28,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHisto
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockMonitoringController
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockMonitoringService
-import com.aicleanerstorage.spaceclean.app.runtime.notification.BackgroundAppLockMonitoringService
+import com.aicleanerstorage.spaceclean.app.background.BackgroundAppLockMonitoringService
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.data.AppUsageRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistorySampler
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistoryRepository

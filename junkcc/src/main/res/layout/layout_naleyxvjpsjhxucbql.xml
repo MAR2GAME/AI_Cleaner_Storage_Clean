@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="767dp"
+    android:layout_height="564dp"
+    android:orientation="vertical">
+   <Spinner
+        android:id="@+id/kxifmeocfopiojfdqioc"
+        android:layout_width="332dp"
+        android:layout_height="128dp"
+        android:text="asbjxlfopruftrvsjn" 
+        android:src="@drawable/knrjawtcbacwgistkppe" 
+/>
+   <ScrollView
+        android:id="@+id/dzljvejtufpshvkwlcy"
+        android:layout_width="600dp"
+        android:layout_height="379dp"
+        android:text="bekpgsrqboxwufhcilidotdcf" 
+        android:src="@drawable/knrjawtcbacwgistkppe" 
+/>
+   </LinearLayout>

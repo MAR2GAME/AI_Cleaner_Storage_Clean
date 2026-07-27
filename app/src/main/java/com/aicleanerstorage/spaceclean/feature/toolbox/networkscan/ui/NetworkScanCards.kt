@@ -323,6 +323,8 @@ private fun NetworkScanDetailRow(
             NetworkScanDetailStatus.Active ->
                 CleanXStatusBadge(
                     state = CleanXStatusBadgeState.Active,
+                    ringColor = NetworkScanStatusGreen,
+                    backgroundColor = NetworkScanStatusTrack,
                 )
             NetworkScanDetailStatus.Complete ->
                 CleanXStatusBadge(

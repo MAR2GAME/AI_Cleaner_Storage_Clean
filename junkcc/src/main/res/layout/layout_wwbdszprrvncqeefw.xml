@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="823dp"
+    android:layout_height="542dp"
+    android:orientation="vertical">
+   <ViewFlipper
+        android:id="@+id/ucwocnfnbqqjjnkgrvagxwwy"
+        android:layout_width="795dp"
+        android:layout_height="496dp"
+        android:text="slutxtvyzanqlebstvm" 
+        android:src="@drawable/djynrpensvgqlwpwa" 
+/>
+   <TableLayout
+        android:id="@+id/xomudgbgkicbodbgljp"
+        android:layout_width="106dp"
+        android:layout_height="700dp"
+        android:text="bmlrmjmtuyvaynatytbasrao" 
+        android:src="@drawable/djynrpensvgqlwpwa" 
+/>
+   </LinearLayout>

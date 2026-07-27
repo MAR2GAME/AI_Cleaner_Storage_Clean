@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="702dp"
+    android:layout_height="19dp"
+    android:orientation="vertical">
+   <GridView
+        android:id="@+id/aekisnvjsusmlwhrtbz"
+        android:layout_width="201dp"
+        android:layout_height="640dp"
+        android:text="kxdniljymblexdvydhqjpf" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <TextView
+        android:id="@+id/scwnqnigzucvjvjgzkpywqmwe"
+        android:layout_width="37dp"
+        android:layout_height="571dp"
+        android:text="zeyjhzwfmqbnwfatui" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <ToggleButton
+        android:id="@+id/suxqntxmxzuretcrold"
+        android:layout_width="669dp"
+        android:layout_height="74dp"
+        android:text="nzvevnmcdaydzngotejhc" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <Switch
+        android:id="@+id/ewiviwyoiaywuex"
+        android:layout_width="634dp"
+        android:layout_height="626dp"
+        android:text="bnluvkjjqmdnkiuvboxxii" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <LinearLayout
+        android:id="@+id/cqnjjsbksxikxto"
+        android:layout_width="962dp"
+        android:layout_height="176dp"
+        android:text="ajqlgcictwznolqjtlsawjk" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+android:orientation="horizontal"/>
+   <RelativeLayout
+        android:id="@+id/xfqhgdaeventlvxgqnhddevre"
+        android:layout_width="189dp"
+        android:layout_height="653dp"
+        android:text="vvrujkqpvxkixhdszlpkta" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <ProgressBar
+        android:id="@+id/uspgrgynsrffjwfotz"
+        android:layout_width="746dp"
+        android:layout_height="826dp"
+        android:text="oirfkvfktsbhnnxdpwy" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <CheckBox
+        android:id="@+id/trasptzvjmrjuryyfydix"
+        android:layout_width="636dp"
+        android:layout_height="731dp"
+        android:text="yoluvwcydbbmzpzoukbvufot" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   <SeekBar
+        android:id="@+id/byisuxftcghgjrau"
+        android:layout_width="159dp"
+        android:layout_height="275dp"
+        android:text="epuayqctuoojblkylhooiqoln" 
+        android:src="@drawable/yedyzomqrucqgqo" 
+/>
+   </LinearLayout>

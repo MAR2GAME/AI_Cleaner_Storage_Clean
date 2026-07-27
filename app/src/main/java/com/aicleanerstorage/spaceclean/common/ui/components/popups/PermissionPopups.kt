@@ -110,9 +110,8 @@ fun PermissionRequiredDialog(
                     fontSize = 24.sp,
                     lineHeight = 28.sp,
                     fontWeight = FontWeight.Medium,
-                    letterSpacing = 0.72.sp,
+                    letterSpacing = 0.sp,
                     textAlign = TextAlign.Center,
-                    maxLines = 1,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(

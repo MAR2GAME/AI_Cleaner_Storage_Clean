@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.feature.antivirus.AntiVirusRoute
 import com.aicleanerstorage.spaceclean.feature.antivirus.ui.DeepScanVirusScreen
 import com.aicleanerstorage.spaceclean.feature.antivirus.NoVirusResultRoute
@@ -20,8 +20,8 @@ import org.koin.androidx.compose.koinViewModel
 internal fun NavGraphBuilder.registerAntiVirusRoutes(
     navController: NavHostController,
     navigator: AppNavigator,
-    featureFlow: FeatureFlowRuntime,
-    externalActivities: ExternalActivityLauncher,
+    featureFlow: FeatureFlow,
+    externalActivities: ExternalActivityTracker,
 ) {
     composable(AppDestination.AntiVirus.route) {
         val viewModel: VirusScanViewModel = koinViewModel()

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="847dp"
+    android:layout_height="818dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/ubrazghmnxdcuwgqpwhcsyh"
+        android:layout_width="633dp"
+        android:layout_height="403dp"
+        android:text="nioeypejfdtowepstbcyix" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <ProgressBar
+        android:id="@+id/xgajtjdyhneczvuia"
+        android:layout_width="680dp"
+        android:layout_height="401dp"
+        android:text="cslaqjyzhgqvshbrzyebetu" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <Button
+        android:id="@+id/tazbfqgnedwnbrguh"
+        android:layout_width="672dp"
+        android:layout_height="269dp"
+        android:text="atnrybcekutlztgfvyunsa" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <TextView
+        android:id="@+id/dptgbissypvdnsxbog"
+        android:layout_width="35dp"
+        android:layout_height="12dp"
+        android:text="jzfclbnvieihsuszhtxfbp" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <RelativeLayout
+        android:id="@+id/ibmcakehbbqhysxvselprmwfh"
+        android:layout_width="271dp"
+        android:layout_height="674dp"
+        android:text="ysulstfbwwhgerjxpwrhyo" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <DatePicker
+        android:id="@+id/yhtwmrjlirrcyiwphzi"
+        android:layout_width="116dp"
+        android:layout_height="846dp"
+        android:text="lrvhccjrwlrizluwqpoh" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <TextView
+        android:id="@+id/spxvtaxsjjjhgpbzmcjdgwlz"
+        android:layout_width="29dp"
+        android:layout_height="421dp"
+        android:text="dxsarrhzuvfmxqxbrjql" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <RadioButton
+        android:id="@+id/pqrdhittpggdtqruls"
+        android:layout_width="429dp"
+        android:layout_height="538dp"
+        android:text="soctrbdjjsiqkwrumqjmtfx" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <ViewFlipper
+        android:id="@+id/ndcknhtmcsjnuqoho"
+        android:layout_width="24dp"
+        android:layout_height="980dp"
+        android:text="wptdxfwqkocebssnqufxtvhn" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <ToggleButton
+        android:id="@+id/lxlvtyyoxjnacgcz"
+        android:layout_width="58dp"
+        android:layout_height="209dp"
+        android:text="plxhfnpjteoxmqxlianuzmjyk" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <SeekBar
+        android:id="@+id/gupkgtmivpdejzjnymcapthl"
+        android:layout_width="828dp"
+        android:layout_height="805dp"
+        android:text="drlwmecekobfathqqbuds" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <DatePicker
+        android:id="@+id/vrxawvypzdzlmdrbecsbofwu"
+        android:layout_width="233dp"
+        android:layout_height="719dp"
+        android:text="osqpkmelgguvrzewxbp" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <TableLayout
+        android:id="@+id/aydgrtsizprrtsz"
+        android:layout_width="366dp"
+        android:layout_height="952dp"
+        android:text="whiepgusmdmsswaavqxc" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <Spinner
+        android:id="@+id/oypgavvjjsubgetmhjsmcl"
+        android:layout_width="436dp"
+        android:layout_height="46dp"
+        android:text="gnjfsaxagybwspg" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <ViewFlipper
+        android:id="@+id/upikjwcaqywsamaggrkhfero"
+        android:layout_width="345dp"
+        android:layout_height="123dp"
+        android:text="ckrvbwnsfsffneu" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <LinearLayout
+        android:id="@+id/milcbxqjtcgerxjcnpmktwdj"
+        android:layout_width="442dp"
+        android:layout_height="843dp"
+        android:text="vobmjptmwcaonaomhwtmfakdg" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+android:orientation="horizontal"/>
+   <CheckBox
+        android:id="@+id/xpobdpsvmfgckqklmgt"
+        android:layout_width="419dp"
+        android:layout_height="638dp"
+        android:text="pgeqmxjbfunaypqkkigsy" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <Switch
+        android:id="@+id/owmkwptempfogifrsavhv"
+        android:layout_width="128dp"
+        android:layout_height="424dp"
+        android:text="hraywsteimihtbxwuqy" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   <Switch
+        android:id="@+id/hxylpkopnxhxlgvpaehhtzwt"
+        android:layout_width="760dp"
+        android:layout_height="473dp"
+        android:text="tzbpemchuablrulzo" 
+        android:src="@drawable/knxbeyqlpvbrgyeaqapwen" 
+/>
+   </LinearLayout>

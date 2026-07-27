@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.runtime.permission
+package com.aicleanerstorage.spaceclean.app.permission
 
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 

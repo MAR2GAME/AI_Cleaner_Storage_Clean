@@ -34,12 +34,16 @@
     <string name="nav_documents">Documentos</string>
     <string name="home_tab_home">Início</string>
     <string name="home_tab_file_manager">Arquivos</string>
+    <string name="home_file_manager_title">Gerenciador</string>
     <string name="home_tab_toolbox">Ferramentas</string>
     <string name="home_storage_label">Armazenamento:</string>
     <string name="home_remove_junk">Remover lixo</string>
     <string name="home_virus_title">Vírus</string>
     <string name="home_virus_desc">Escaneamento profundo de vírus,\napps maliciosos e arquivos de risco</string>
     <string name="home_toolbox_title">Ferramentas</string>
+    <string name="home_device_information">Informações do dispositivo</string>
+    <string name="home_battery_usage">Uso da bateria</string>
+    <string name="home_notification_bar">Barra de notificações</string>
     <string name="home_device_model">Modelo do dispositivo</string>
     <string name="home_system_version">Versão do sistema</string>
     <string name="home_battery_status">Estado da bateria</string>
@@ -83,6 +87,7 @@
     <string name="file_all">Todos</string>
     <string name="file_photo">Foto</string>
     <string name="file_photos">Fotos</string>
+    <string name="file_in_total">ao todo</string>
     <string name="file_pictures">Imagens</string>
     <string name="file_download">Download</string>
     <string name="file_other">Outros</string>
@@ -455,4 +460,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">Privacidade dos dados</string>
+    <string name="device_battery">Bateria</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">Informações da bateria</string>
+    <string name="onboarding_device_info_disclaimer">As informações do dispositivo exibidas baseiam-se nos dados fornecidos pelo sistema e podem diferir das especificações oficiais. Por exemplo, a capacidade de armazenamento ou a memória podem variar ligeiramente devido a reservas do sistema ou diferenças na configuração do hardware.</string>
+    <string name="notification_status_empty_title">Intercepção de notificações ativada</string>
+    <string name="notification_status_empty_message">As notificações interceptadas aparecem aqui</string>
 </resources>

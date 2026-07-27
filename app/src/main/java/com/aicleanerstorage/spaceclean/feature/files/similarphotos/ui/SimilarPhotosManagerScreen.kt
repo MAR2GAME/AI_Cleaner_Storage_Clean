@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileImageGroupDisplayItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
@@ -52,10 +52,14 @@ internal fun SimilarPhotosManagerScreen(
         title = stringResource(R.string.nav_similar_photos),
         onBack = { onAction(FileManagerAction.Back) },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing && !isDetailMode) {
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
+                !isDetailMode
+            ) {
                 FileManagerDeleteBottomBar(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
             }
@@ -66,7 +70,7 @@ internal fun SimilarPhotosManagerScreen(
             FileOperationPhaseContent(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_similar_photos),
-                deletingText = stringResource(R.string.file_cleanup_completed),
+                deletingText = stringResource(R.string.file_deleting_files),
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
@@ -75,10 +79,15 @@ internal fun SimilarPhotosManagerScreen(
             ) {
                 FileManagerSimilarPhotosView(
                     groups = state.displayGroups,
+                    totalCount = state.totalPhotoCount,
+                    totalSizeBytes = state.totalSizeBytes,
                     selectedIds = state.selectedIds,
+                    allSelected = state.allSelected,
                     scrollState = scrollState,
+                    onToggleAll = { onAction(FileManagerAction.ToggleVisibleItems) },
                     onToggleGroup = { group ->
-                        onAction(FileManagerAction.ToggleGroupIds(group.items.map { it.id }.toSet()))
+                        val bulkSelectableIds = group.items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+                        onAction(FileManagerAction.ToggleGroupIds(bulkSelectableIds))
                     },
                     onSelect = { onAction(FileManagerAction.ToggleSelection(it)) },
                     onOpenDetail = { item ->

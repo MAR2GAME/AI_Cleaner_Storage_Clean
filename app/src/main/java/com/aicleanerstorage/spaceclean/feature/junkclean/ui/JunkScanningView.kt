@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanScanState
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
+import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 
 private val JunkScanText = Color(0xFF282927)
 private val JunkScanNumber = Color(0xFF2D3748)
@@ -26,6 +28,10 @@ private val JunkScanUnit = Color(0xA62D3748)
 
 @Composable
 internal fun JunkScanningView(uiState: JunkCleanUiState) {
+    val categoryLabel = uiState.currentCategory?.let { stringResource(it.titleRes) }
+    val scanningText =
+        categoryLabel?.let { stringResource(R.string.scan_scanning_category, it) }
+            ?: stringResource(R.string.scan_loading_fallback)
     val errorText =
         uiState.errorMessage ?: uiState.errorMessageRes?.let { stringResource(it) }
             ?: stringResource(R.string.scan_failed)
@@ -33,7 +39,7 @@ internal fun JunkScanningView(uiState: JunkCleanUiState) {
         if (uiState.scanState == JunkCleanScanState.Error) {
             errorText
         } else {
-            stringResource(R.string.scan_loading_fallback)
+            scanningText
         }
     val foundSize = normalizeScanSize(uiState.formattedFoundSize)
 
@@ -74,17 +80,15 @@ private fun ScanSizeLabel(formattedSize: String) {
         Text(
             text = sizeMainValue(formattedSize),
             color = JunkScanNumber,
-            fontSize = 44.sp,
-            lineHeight = 52.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontSize = 40.sp,
+            fontWeight = FontWeight.W600,
             textAlign = TextAlign.Center,
         )
         Text(
             text = sizeUnitValue(formattedSize).ifBlank { "kB" },
             color = JunkScanUnit,
-            fontSize = 24.sp,
-            lineHeight = 28.sp,
-            fontWeight = FontWeight.Medium,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.W500,
             textAlign = TextAlign.Center,
         )
     }
@@ -100,3 +104,15 @@ private fun normalizeScanSize(formattedSize: String): String {
     val trimmed = formattedSize.trim()
     return if (trimmed.isBlank() || trimmed == "0 B") "0 kB" else trimmed
 }
+
+private val JunkCategory.titleRes: Int
+    @StringRes
+    get() =
+        when (this) {
+            JunkCategory.CACHE -> R.string.category_cache
+            JunkCategory.TEMP_FILE -> R.string.category_temp
+            JunkCategory.RESIDUAL -> R.string.category_residual
+            JunkCategory.APK -> R.string.category_apk
+            JunkCategory.DUPLICATE -> R.string.category_duplicate
+            JunkCategory.LARGE_FILE -> R.string.category_large
+        }

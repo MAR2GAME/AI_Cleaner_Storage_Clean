@@ -23,12 +23,16 @@
     <string name="nav_documents">Dokumen</string>
     <string name="home_tab_home">Beranda</string>
     <string name="home_tab_file_manager">File</string>
+    <string name="home_file_manager_title">Pengelola</string>
     <string name="home_tab_toolbox">Alat</string>
     <string name="home_storage_label">Penyimpanan:</string>
     <string name="home_remove_junk">Hapus sampah</string>
     <string name="home_virus_title">Virus</string>
     <string name="home_virus_desc">Pindai virus,\naplikasi berbahaya &amp; file berisiko</string>
     <string name="home_toolbox_title">Alat</string>
+    <string name="home_device_information">Informasi perangkat</string>
+    <string name="home_battery_usage">Penggunaan baterai</string>
+    <string name="home_notification_bar">Bilah notifikasi</string>
     <string name="home_device_model">Model perangkat</string>
     <string name="home_system_version">Versi sistem</string>
     <string name="home_battery_status">Status baterai</string>
@@ -59,6 +63,7 @@
     <string name="file_items">Item</string>
     <string name="file_all">Semua</string>
     <string name="file_photos">Foto</string>
+    <string name="file_in_total">total</string>
     <string name="file_pictures">Gambar</string>
     <string name="file_download">Unduhan</string>
     <string name="file_other">Lainnya</string>
@@ -453,4 +458,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">Privasi Data</string>
+    <string name="device_battery">Baterai</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">Informasi Baterai</string>
+    <string name="onboarding_device_info_disclaimer">Informasi perangkat yang ditampilkan didasarkan pada data yang disediakan sistem dan mungkin berbeda dari spesifikasi resmi. Misalnya, kapasitas penyimpanan atau memori mungkin sedikit berbeda karena pencadangan sistem atau variasi konfigurasi perangkat keras.</string>
+    <string name="notification_status_empty_title">Pemblokiran notifikasi diaktifkan</string>
+    <string name="notification_status_empty_message">Notifikasi yang diblokir akan muncul di sini</string>
 </resources>

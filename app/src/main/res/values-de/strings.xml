@@ -20,12 +20,16 @@
     <string name="nav_documents">Dokumente</string>
     <string name="home_tab_home">Start</string>
     <string name="home_tab_file_manager">Dateien</string>
+    <string name="home_file_manager_title">Manager</string>
     <string name="home_tab_toolbox">Tools</string>
     <string name="home_storage_label">Speicher:</string>
     <string name="home_remove_junk">Datenmüll entfernen</string>
     <string name="home_virus_title">Virus</string>
     <string name="home_virus_desc">Tiefenscan nach Viren,\nbösartigen Apps und riskanten Dateien</string>
     <string name="home_toolbox_title">Tools</string>
+    <string name="home_device_information">Geräteinformationen</string>
+    <string name="home_battery_usage">Akkunutzung</string>
+    <string name="home_notification_bar">Benachrichtigungsleiste</string>
     <string name="home_device_model">Gerätemodell</string>
     <string name="home_system_version">Systemversion</string>
     <string name="home_battery_status">Akkustatus</string>
@@ -49,6 +53,7 @@
     <string name="file_items">Elemente</string>
     <string name="file_all">Alle</string>
     <string name="file_photos">Fotos</string>
+    <string name="file_in_total">insgesamt</string>
     <string name="file_download">Downloads</string>
     <string name="file_other">Andere</string>
     <string name="file_got_it">Verstanden</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">Datenschutz</string>
+    <string name="device_battery">Akku</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">Akkuinformationen</string>
+    <string name="onboarding_device_info_disclaimer">Die angezeigten Geräteinformationen basieren auf vom System bereitgestellten Daten und können von den offiziellen Spezifikationen abweichen. Beispielsweise können Speicherkapazität oder Arbeitsspeicher aufgrund von Systemreservierungen oder Unterschieden in der Hardwarekonfiguration leicht abweichen.</string>
+    <string name="notification_status_empty_title">Benachrichtigungsblockierung aktiviert</string>
+    <string name="notification_status_empty_message">Blockierte Benachrichtigungen werden hier angezeigt</string>
 </resources>

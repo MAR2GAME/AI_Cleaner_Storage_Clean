@@ -22,12 +22,16 @@
     <string name="nav_duplicate_files">Tệp trùng lặp</string>
     <string name="home_tab_home">Trang chủ</string>
     <string name="home_tab_file_manager">Tệp</string>
+    <string name="home_file_manager_title">Trình quản lý</string>
     <string name="home_tab_toolbox">Công cụ</string>
     <string name="home_storage_label">Bộ nhớ:</string>
     <string name="home_remove_junk">Xóa rác</string>
     <string name="home_virus_title">Virus</string>
     <string name="home_virus_desc">Quét sâu virus,\nứng dụng độc hại và tệp rủi ro</string>
     <string name="home_toolbox_title">Công cụ</string>
+    <string name="home_device_information">Thông tin thiết bị</string>
+    <string name="home_battery_usage">Mức sử dụng pin</string>
+    <string name="home_notification_bar">Thanh thông báo</string>
     <string name="home_device_model">Mẫu thiết bị</string>
     <string name="home_system_version">Phiên bản hệ thống</string>
     <string name="home_battery_status">Trạng thái pin</string>
@@ -58,6 +62,7 @@
     <string name="file_items">Mục</string>
     <string name="file_all">Tất cả</string>
     <string name="file_photos">Ảnh</string>
+    <string name="file_in_total">tổng cộng</string>
     <string name="file_pictures">Hình ảnh</string>
     <string name="file_download">Tải xuống</string>
     <string name="file_other">Khác</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">Quyền riêng tư dữ liệu</string>
+    <string name="device_battery">Pin</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">Thông tin pin</string>
+    <string name="onboarding_device_info_disclaimer">Thông tin thiết bị hiển thị dựa trên dữ liệu do hệ thống cung cấp và có thể khác với thông số chính thức. Ví dụ: dung lượng lưu trữ hoặc bộ nhớ có thể chênh lệch nhẹ do phần dành riêng cho hệ thống hoặc khác biệt về cấu hình phần cứng.</string>
+    <string name="notification_status_empty_title">Đã bật chặn thông báo</string>
+    <string name="notification_status_empty_message">Thông báo bị chặn sẽ xuất hiện tại đây</string>
 </resources>

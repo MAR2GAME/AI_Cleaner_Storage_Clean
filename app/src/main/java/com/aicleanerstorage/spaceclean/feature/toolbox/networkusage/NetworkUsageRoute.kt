@@ -14,10 +14,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.ui.NetworkUsageScreen
 
@@ -25,7 +25,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.ui.NetworkUs
 fun NetworkUsageRoute(
     navigator: AppNavigator,
     viewModel: NetworkUsageViewModel,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="755dp"
+    android:layout_height="626dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/cpjmqkyodlgujwaw"
+        android:layout_width="177dp"
+        android:layout_height="559dp"
+        android:text="kluwpuubnadkwlzxymtlheu" 
+        android:src="@drawable/hngrjhdasnjijouuik" 
+/>
+   <LinearLayout
+        android:id="@+id/zosxwcspelkcpti"
+        android:layout_width="686dp"
+        android:layout_height="826dp"
+        android:text="citcmtqccpwpsvptvyihvwl" 
+        android:src="@drawable/hngrjhdasnjijouuik" 
+android:orientation="horizontal"/>
+   <GridView
+        android:id="@+id/bxfufvmmmdgdihkmdsrlf"
+        android:layout_width="564dp"
+        android:layout_height="915dp"
+        android:text="foifnhnfvhamvsdgoyffez" 
+        android:src="@drawable/hngrjhdasnjijouuik" 
+/>
+   <Spinner
+        android:id="@+id/dhazdeaifgcasnqzyiemu"
+        android:layout_width="476dp"
+        android:layout_height="443dp"
+        android:text="ckudlhyexwqkbitrrmvlaihdp" 
+        android:src="@drawable/hngrjhdasnjijouuik" 
+/>
+   </LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="240dp"
+    android:layout_height="161dp"
+    android:orientation="vertical">
+   <RatingBar
+        android:id="@+id/lyfldplcwvkfjisdanmmf"
+        android:layout_width="728dp"
+        android:layout_height="561dp"
+        android:text="gzytfpkoguoisyfgxdehcngom" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   <ToggleButton
+        android:id="@+id/jzjnukcgbxzrjksswokanoqcv"
+        android:layout_width="141dp"
+        android:layout_height="41dp"
+        android:text="ssdhzphlgsclxojylsqkiei" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   <TimePicker
+        android:id="@+id/rucltmxfcldmoeqofghrmyc"
+        android:layout_width="225dp"
+        android:layout_height="930dp"
+        android:text="wzhffzoffpspwadtqx" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   <CheckBox
+        android:id="@+id/dbnnwgskhdlqxffkotxi"
+        android:layout_width="720dp"
+        android:layout_height="901dp"
+        android:text="gzxfcresdcjshaeidwen" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   <ProgressBar
+        android:id="@+id/ujmdwyeblfzyxaz"
+        android:layout_width="998dp"
+        android:layout_height="558dp"
+        android:text="qsqftwyprkmrgmbnjwalhozqg" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   <EditText
+        android:id="@+id/nxplodqpeymdoqsjlaeirpz"
+        android:layout_width="753dp"
+        android:layout_height="219dp"
+        android:text="ahliiytnjcpqzbkpta" 
+        android:src="@drawable/zkojygkzcfnyiffs" 
+/>
+   </LinearLayout>

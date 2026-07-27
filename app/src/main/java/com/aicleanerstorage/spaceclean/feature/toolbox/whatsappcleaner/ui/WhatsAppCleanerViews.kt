@@ -5,7 +5,6 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.*
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,8 +44,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXMutedText
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXText
@@ -59,9 +60,9 @@ import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXPrimar
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.ui.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerCategory
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerGroup
@@ -72,7 +73,6 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppC
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.common.format.FileSizeFormatter
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBlue
 
 private val CardBg = Color.White
 private val ResultCardBg = Color.White
@@ -80,7 +80,6 @@ private val Navy = Color(0xFF2D3748)
 private val NavyMuted = Color(0xFF8190A5)
 private val Divider15 = Color(0xFFE1E6EF)
 private val CardRadius = 10.dp
-private val WhatsAppScanProgressHeight = 424.dp
 private val WhatsAppScanCenterIconSize = 74.dp
 private val WhatsAppResultBottomPadding = 104.dp
 private val WhatsAppResultHeroHeight = 126.dp
@@ -95,7 +94,6 @@ private val WhatsAppCategoryIconBoxSize = 36.dp
 private val WhatsAppCategoryIconSize = 23.dp
 private val WhatsAppSelectionSize = 22.dp
 private val WhatsAppSelectionSmallSize = 16.dp
-private val WhatsAppSelectionCheckSize = 15.dp
 private val WhatsAppUnitBottomPadding = 5.dp
 
 @Composable
@@ -136,13 +134,17 @@ internal fun WhatsAppCleanerScreen(
             if (
                 state.phase == WhatsAppCleanerPhase.ScanResult ||
                 state.phase == WhatsAppCleanerPhase.Result ||
+                state.phase == WhatsAppCleanerPhase.Scanning ||
                 isCleaningAnimationPhase
             ) {
                 PaddingValues(0.dp)
             } else {
                 PaddingValues(horizontal = 16.dp, vertical = 16.dp)
             },
-        scrollEnabled = state.phase != WhatsAppCleanerPhase.Result && !isCleaningAnimationPhase,
+        scrollEnabled =
+            state.phase != WhatsAppCleanerPhase.Scanning &&
+                state.phase != WhatsAppCleanerPhase.Result &&
+                !isCleaningAnimationPhase,
         bottomBar = {
             if (state.phase == WhatsAppCleanerPhase.ScanResult) {
                 WhatsAppScanResultBottomBar(
@@ -171,7 +173,10 @@ internal fun WhatsAppCleanerScreen(
                 },
                 onToggleExpanded = { onAction(WhatsAppCleanerAction.ToggleExpanded(it)) },
             )
-            WhatsAppCleanerPhase.Result -> WhatsAppResultContent(uiState = state)
+            WhatsAppCleanerPhase.Result -> WhatsAppResultContent(
+                uiState = state,
+                onNavigateTool = onNavigate,
+            )
             WhatsAppCleanerPhase.Error -> WhatsAppErrorContent(
                 message = state.errorMessage ?: stringResource(R.string.whatsapp_clean_unavailable),
                 onRetry = { onAction(WhatsAppCleanerAction.Retry) },
@@ -205,10 +210,7 @@ private fun WhatsAppLoadingContent() {
     ToolboxScanningContent(
         centerIconRes = R.drawable.ic_scan_whatsapp_cleanner,
         captionText = stringResource(R.string.scanning_whatsapp_files),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(WhatsAppScanProgressHeight),
+        modifier = Modifier.fillMaxSize(),
         centerIconSize = WhatsAppScanCenterIconSize,
     )
 }
@@ -217,7 +219,7 @@ private fun WhatsAppLoadingContent() {
 private fun WhatsAppCleaningContent(stage: CleanXDeleteCompleteStage) {
     CleanXDeleteCompleteAnimation(
         stage = stage,
-        fallbackText = stringResource(R.string.cleaning_whatsapp_files),
+        cleaningText = stringResource(R.string.cleaning_whatsapp_files),
         drawBackground = false,
     )
 }
@@ -229,16 +231,16 @@ private fun WhatsAppScanResultContent(
     onToggleCategory: (WhatsAppCleanerGroup, WhatsAppCleanerCategory) -> Unit,
     onToggleExpanded: (WhatsAppCleanerGroup) -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(WhatsAppResultHeroHeight)
-                .background(
-                    Color(0xFFE7EAF4),
-                    RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
-                ),
-    )
+//    Box(
+//        modifier =
+//            Modifier
+//                .fillMaxWidth()
+//                .height(WhatsAppResultHeroHeight)
+//                .background(
+//                    Color(0xFFE7EAF4),
+//                    RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+//                ),
+//    )
     Spacer(modifier = Modifier.height(WhatsAppHeaderTopGap))
     SummaryCard(totalBytes = uiState.scannedBytes)
     Spacer(modifier = Modifier.height(WhatsAppHeaderBottomGap))
@@ -460,13 +462,12 @@ private fun CategoryTile(
                     modifier = Modifier.size(WhatsAppCategoryIconSize),
                 )
             }
-            if (item.hasFiles && item.selected) {
-                SelectionBadge(
-                    selected = true,
-                    enabled = true,
-                    modifier = Modifier.size(WhatsAppSelectionSmallSize),
-                )
-            }
+            SelectionBadge(
+                selected = item.hasFiles && item.selected,
+                enabled = item.hasFiles,
+                modifier = Modifier.size(WhatsAppSelectionSmallSize),
+                size = WhatsAppSelectionSmallSize,
+            )
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(
@@ -494,46 +495,27 @@ private fun SelectionBadge(
     selected: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
+    size: Dp = WhatsAppSelectionSize,
 ) {
-    Box(
-        modifier =
-            modifier
-                .size(WhatsAppSelectionSize)
-                .clip(CircleShape)
-                .then(
-                    if (!selected && enabled) {
-                        Modifier.border(1.5.dp, Color(0xFFC8D2DE), CircleShape)
-                    } else {
-                        Modifier
-                    },
-                )
-                .background(
-                    when {
-                        selected -> CleanXBlue
-                        enabled -> Color.Transparent
-                        else -> Color(0xFFE1E6EF)
-                    },
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (selected) {
-            Image(
-                painter = painterResource(R.drawable.ic_ok),
-                contentDescription = null,
-                modifier = Modifier.size(WhatsAppSelectionCheckSize),
-            )
-        }
-    }
+    CleanXSelectionCircle(
+        selected = selected,
+        enabled = enabled,
+        modifier = modifier,
+        size = size,
+    )
 }
 
 @Composable
-private fun WhatsAppResultContent(uiState: WhatsAppCleanerUiState) {
+private fun WhatsAppResultContent(
+    uiState: WhatsAppCleanerUiState,
+    onNavigateTool: (AppDestination) -> Unit,
+) {
     val sizeLabel = splitSizeLabel(uiState.deletedBytes)
 
     CommonResultContent(
-        onNavigateTool = {},
+        onNavigateTool = onNavigateTool,
         modifier = Modifier.fillMaxWidth(),
-        excludedToolRoutes = setOf(AppDestination.WhatsAppCleaner.route),
+        excludedToolDestinations = setOf(AppDestination.WhatsAppCleaner),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

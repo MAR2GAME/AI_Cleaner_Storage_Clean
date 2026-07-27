@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="556dp"
+    android:layout_height="420dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/vokcwqqhvhpiocwmpcdvju"
+        android:layout_width="290dp"
+        android:layout_height="505dp"
+        android:text="giwioihwczdvqizigmdjnq" 
+        android:src="@drawable/wmqlmgyvmrlmnop" 
+/>
+   <ViewFlipper
+        android:id="@+id/icmbmahjkufgvqmwsjtbstfn"
+        android:layout_width="542dp"
+        android:layout_height="153dp"
+        android:text="jrhlyeryfithbawromfqw" 
+        android:src="@drawable/wmqlmgyvmrlmnop" 
+/>
+   </LinearLayout>

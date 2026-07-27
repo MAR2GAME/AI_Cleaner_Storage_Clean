@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="164dp"
+    android:layout_height="413dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/ryvevexkduzqkhrtwafnq"
+        android:layout_width="155dp"
+        android:layout_height="835dp"
+        android:text="qsyhobpsamteuycykojmt" 
+        android:src="@drawable/akyrsrsabzbcknfhogh" 
+/>
+   <TableLayout
+        android:id="@+id/vpzuxisaqggqkuvezdc"
+        android:layout_width="240dp"
+        android:layout_height="847dp"
+        android:text="tnbnteezgdgxpatjzampb" 
+        android:src="@drawable/akyrsrsabzbcknfhogh" 
+/>
+   <RelativeLayout
+        android:id="@+id/skhrzcxvenunrwzro"
+        android:layout_width="299dp"
+        android:layout_height="374dp"
+        android:text="syctefktauhngoqylyyphkzh" 
+        android:src="@drawable/akyrsrsabzbcknfhogh" 
+/>
+   </LinearLayout>

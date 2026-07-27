@@ -1,222 +1,106 @@
 package com.aicleanerstorage.spaceclean.common.ui.permission
 
-import com.aicleanerstorage.spaceclean.common.ui.components.popups.InlinePermissionOverlay
-
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBlue
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXMutedText
-import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXText
 import com.aicleanerstorage.spaceclean.common.ui.components.CircularAppLogo
+import com.aicleanerstorage.spaceclean.common.ui.components.popups.InlinePermissionOverlay
+
+private val PermissionGreen = Color(0xFF5DD595)
+private val PermissionLime = Color(0xFFD0FD91)
 
 @Composable
-internal fun AppLockUsageAccessPermissionDialog(
-    onManagePermission: () -> Unit,
-    onDismissToHome: () -> Unit,
-) {
+internal fun AppLockUsageAccessPermissionDialog(onManagePermission: () -> Unit, onDismissToHome: () -> Unit) {
     BackHandler(onBack = onDismissToHome)
     InlinePermissionOverlay(onDismiss = onDismissToHome) {
-        AppLockUsageAccessPermissionCard(
-            onManagePermission = onManagePermission,
-        )
-    }
-}
-
-@Composable
-private fun AppLockUsageAccessPermissionCard(
-    onManagePermission: () -> Unit,
-) {
-    Surface(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .widthIn(max = 360.dp),
-        color = Color.White,
-        shape = RoundedCornerShape(10.dp),
-    ) {
         Column(
-            modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 24.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).widthIn(max = 360.dp)
+                .clip(RoundedCornerShape(12.dp)).background(permissionPanelBrush()).padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = stringResource(R.string.app_lock_usage_permission_title),
-                color = CleanXText,
-                fontSize = 18.sp,
-                lineHeight = 22.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = stringResource(R.string.app_lock_usage_permission_desc),
-                color = CleanXMutedText,
-                fontSize = 16.sp,
-                lineHeight = 19.sp,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            AppPermissionCard(
-                grantText = stringResource(R.string.app_lock_usage_permission_grant),
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            CleanXPrimaryButton(
-                text = stringResource(R.string.allow_now),
-                onClick = onManagePermission,
-            )
+            Text(stringResource(R.string.app_lock_usage_permission_title), color = CleanXText, fontSize = 24.sp, lineHeight = 28.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.72.sp, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
+            Text(stringResource(R.string.app_lock_usage_permission_desc), color = CleanXText, fontSize = 18.sp, lineHeight = 21.sp, letterSpacing = 0.54.sp, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(16.dp))
+            AppPermissionCard()
+            Spacer(Modifier.height(20.dp))
+            PermissionGradientButton(stringResource(R.string.submit), onManagePermission, 44.dp)
         }
     }
 }
 
 @Composable
-internal fun AppLockOverlayPermissionDialog(
-    onAllowNow: () -> Unit,
-    onCancel: () -> Unit,
-) {
-    Dialog(
-        onDismissRequest = {},
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-    ) {
-        Surface(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .widthIn(max = 360.dp),
-            color = Color.White,
-            shape = RoundedCornerShape(10.dp),
+internal fun AppLockOverlayPermissionDialog(onAllowNow: () -> Unit, onCancel: () -> Unit) {
+    BackHandler(onBack = onCancel)
+    InlinePermissionOverlay(onDismiss = onCancel) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).widthIn(max = 360.dp)
+                .clip(RoundedCornerShape(12.dp)).background(permissionPanelBrush()).padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                PermissionHeroImage()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.app_lock_overlay_permission_message),
-                    color = CleanXText,
-                    fontSize = 20.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                CleanXPrimaryButton(
-                    text = stringResource(R.string.manage_permission),
-                    onClick = onAllowNow,
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                PermissionCancelButton(onClick = onCancel)
-            }
+            PermissionHeroImage()
+            Spacer(Modifier.height(16.dp))
+            Text(stringResource(R.string.app_lock_overlay_permission_message), color = CleanXText, fontSize = 24.sp, lineHeight = 28.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.72.sp, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(20.dp))
+            PermissionGradientButton(stringResource(R.string.manage_permission), onAllowNow, 46.dp)
+            Spacer(Modifier.height(12.dp))
+            PermissionCancelButton(onCancel)
         }
     }
 }
+
+private fun permissionPanelBrush() = Brush.verticalGradient(*arrayOf(0f to Color(0xFFDFFFDC), 0.26381f to Color.White, 1f to Color.White))
 
 @Composable
 private fun PermissionHeroImage() {
-    Image(
-        painter = painterResource(R.drawable.app_lock),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(136.dp)
-                .clip(RoundedCornerShape(8.dp)),
-    )
+    Image(painterResource(R.drawable.app_lock_permission_figma), null, contentScale = ContentScale.Crop, modifier = Modifier.size(215.dp, 128.dp))
+}
+
+@Composable
+private fun PermissionGradientButton(text: String, onClick: () -> Unit, height: Dp) {
+    Box(Modifier.fillMaxWidth().height(height).clip(CircleShape).background(Brush.horizontalGradient(listOf(PermissionLime, PermissionGreen))).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Text(text, color = CleanXText, fontSize = 18.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+    }
 }
 
 @Composable
 private fun PermissionCancelButton(onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-        shape = RoundedCornerShape(50),
-        border = BorderStroke(1.dp, CleanXBlue),
-        colors =
-            ButtonDefaults.outlinedButtonColors(
-                containerColor = Color.White,
-                contentColor = CleanXBlue,
-            ),
-    ) {
-        Text(
-            text = stringResource(R.string.cancel),
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-        )
+    Box(Modifier.fillMaxWidth().height(46.dp).border(1.56.dp, Color(0xFF999999), CircleShape).clickable(onClick = onClick), contentAlignment = Alignment.Center) {
+        Text(stringResource(R.string.cancel), color = Color(0xFF999999), fontSize = 20.sp, textAlign = TextAlign.Center)
     }
 }
 
 @Composable
-private fun AppPermissionCard(grantText: String) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = Color(0xFFF0F5FB),
-        shape = RoundedCornerShape(10.dp),
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CircularAppLogo(
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp),
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = stringResource(R.string.app_name),
-                    color = Color(0xFF1B6DFF),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            Spacer(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, bottom = 10.dp)
-                        .height(1.dp)
-                        .background(Color(0xFFD4DDE9)),
-            )
-            Text(
-                text = grantText,
-                color = CleanXText,
-                fontSize = 16.sp,
-            )
+private fun AppPermissionCard() {
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Color(0xFFF8FFF8)).padding(horizontal = 16.dp, vertical = 18.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CircularAppLogo(contentDescription = null, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.app_name), color = PermissionGreen, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         }
+        Spacer(Modifier.height(12.dp))
+        Text(stringResource(R.string.app_lock_usage_permission_grant), color = CleanXText, fontSize = 16.sp)
     }
 }

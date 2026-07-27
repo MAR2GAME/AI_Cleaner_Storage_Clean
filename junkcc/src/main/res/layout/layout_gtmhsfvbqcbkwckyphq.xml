@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="182dp"
+    android:layout_height="596dp"
+    android:orientation="vertical">
+   <ViewFlipper
+        android:id="@+id/rtmdbegysjpltthtxqscd"
+        android:layout_width="742dp"
+        android:layout_height="871dp"
+        android:text="boecmkjiuzsrqtiv" 
+        android:src="@drawable/lsohawbtyklulxpgxtfy" 
+/>
+   </LinearLayout>

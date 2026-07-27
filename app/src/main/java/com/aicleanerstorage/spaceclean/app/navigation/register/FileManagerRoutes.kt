@@ -8,7 +8,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.app.navigation.DETAIL_INITIAL_INDEX_ARG
 import com.aicleanerstorage.spaceclean.feature.files.audios.AudiosManagerViewModel
@@ -41,7 +41,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun NavGraphBuilder.registerFileManagerRoutes(
     navController: NavHostController,
     navigator: AppNavigator,
-    featureFlow: FeatureFlowRuntime,
+    featureFlow: FeatureFlow,
 ) {
     composable(AppDestination.PhotosManager.route) {
         PhotosManagerRoute(navigator, koinViewModel<PhotosManagerViewModel>(), featureFlow)

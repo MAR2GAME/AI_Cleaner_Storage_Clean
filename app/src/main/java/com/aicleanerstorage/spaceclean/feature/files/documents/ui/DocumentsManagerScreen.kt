@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -38,6 +38,7 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerFlowDialo
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerFlowEffects
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerAction
+import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerNoResultsContent
 
 @Composable
 internal fun DocumentsManagerScreen(
@@ -56,10 +57,14 @@ internal fun DocumentsManagerScreen(
         title = stringResource(R.string.nav_documents),
         onBack = { onAction(FileManagerAction.Back) },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing && !isDetailMode) {
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
+                !isDetailMode
+            ) {
                 FileManagerDeleteBottomBar(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
             }
@@ -76,6 +81,13 @@ internal fun DocumentsManagerScreen(
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
                 onNavigateTool = onNavigate,
                 onContinue = { onAction(FileManagerAction.ContinueManaging) },
+                noResultsContent = {
+                    FileManagerNoResultsContent(
+                        tabs = state.displayTabs,
+                        selectedTabIndex = state.selectedTabIndex,
+                        onTabSelected = { onAction(FileManagerAction.SelectTab(it)) },
+                    )
+                },
             ) {
                 FileManagerListView(
                     tabs = state.displayTabs,

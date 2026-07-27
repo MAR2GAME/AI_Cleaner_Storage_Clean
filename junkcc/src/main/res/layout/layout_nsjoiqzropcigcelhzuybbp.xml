@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="974dp"
+    android:layout_height="479dp"
+    android:orientation="vertical">
+   <ImageView
+        android:id="@+id/wivxvspeazoxypq"
+        android:layout_width="19dp"
+        android:layout_height="914dp"
+        android:text="mnphvwpplgtgocggcwugvt" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <ViewFlipper
+        android:id="@+id/fjyyjnzkvzjcfox"
+        android:layout_width="665dp"
+        android:layout_height="278dp"
+        android:text="ncudaqigpaznlbgqhassi" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <Button
+        android:id="@+id/amhuleopzhzqvws"
+        android:layout_width="855dp"
+        android:layout_height="541dp"
+        android:text="wxhmbcqusninqbfyr" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <ProgressBar
+        android:id="@+id/woxstafxayqpigdz"
+        android:layout_width="891dp"
+        android:layout_height="742dp"
+        android:text="cqusymcggjiaekhksgjeb" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <EditText
+        android:id="@+id/huwcoybxyqdpkualncnmvjda"
+        android:layout_width="476dp"
+        android:layout_height="263dp"
+        android:text="pcfyzfesexednokifiyt" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <Switch
+        android:id="@+id/utvrietzijqqndmsjsxpwg"
+        android:layout_width="588dp"
+        android:layout_height="125dp"
+        android:text="rlyauyfqrlivrjut" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <ListView
+        android:id="@+id/pxacbmvdowlvlpzlaa"
+        android:layout_width="343dp"
+        android:layout_height="150dp"
+        android:text="iijhxbqkyqkvrzwibnsbizmnf" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <RadioButton
+        android:id="@+id/dhnssztnnpmtqbapgjjaiuz"
+        android:layout_width="908dp"
+        android:layout_height="434dp"
+        android:text="ldvinpkxiscdqrhbobkzgce" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <TextView
+        android:id="@+id/igfthjapbeezfys"
+        android:layout_width="214dp"
+        android:layout_height="796dp"
+        android:text="hikgdcmrcpxjgsfltnhzurtwf" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <RatingBar
+        android:id="@+id/ephfcbyxbgakiijaqckmkgcy"
+        android:layout_width="289dp"
+        android:layout_height="348dp"
+        android:text="rdddlhxksnmrgqyt" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <ListView
+        android:id="@+id/urpgoyljcmkkbaxuepp"
+        android:layout_width="725dp"
+        android:layout_height="594dp"
+        android:text="jqfwhnbgohwiaiq" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <RelativeLayout
+        android:id="@+id/lujkjkebwkzdkkhqttn"
+        android:layout_width="743dp"
+        android:layout_height="75dp"
+        android:text="yzzwkkumxwrfsvgzyrnpyz" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <GridView
+        android:id="@+id/flubgzqunkpnmezkdnktfmmag"
+        android:layout_width="769dp"
+        android:layout_height="921dp"
+        android:text="rzxpimchtsdctyqu" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <ProgressBar
+        android:id="@+id/ihqutgzinehfrrwqgrt"
+        android:layout_width="263dp"
+        android:layout_height="767dp"
+        android:text="qsdjqlasblsezbvdznrxlhfke" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <TableLayout
+        android:id="@+id/ehadmlaqgcarpmgrp"
+        android:layout_width="45dp"
+        android:layout_height="637dp"
+        android:text="mvxwtevktbvuzflnhmx" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   <DatePicker
+        android:id="@+id/mlkqarmaywrkkps"
+        android:layout_width="539dp"
+        android:layout_height="659dp"
+        android:text="qeggyoorbfhrwiwylhdmgc" 
+        android:src="@drawable/qqlrwhyngbeilblaew" 
+/>
+   </LinearLayout>

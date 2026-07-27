@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="956dp"
+    android:layout_height="149dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/xjhprnocbdtvcrj"
+        android:layout_width="847dp"
+        android:layout_height="49dp"
+        android:text="ygjyngjlbqxyoqk" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <Switch
+        android:id="@+id/ekjpdonnnanlzxfcigblqp"
+        android:layout_width="826dp"
+        android:layout_height="463dp"
+        android:text="kgsufujepgivphboelqywb" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <Spinner
+        android:id="@+id/cgkgekzhdsicnvndjld"
+        android:layout_width="961dp"
+        android:layout_height="493dp"
+        android:text="xksjftyubohniqkopkvlqmj" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <EditText
+        android:id="@+id/bpjzkwnzkvujbfbrayxt"
+        android:layout_width="833dp"
+        android:layout_height="860dp"
+        android:text="gpqadfjgpwqhvutoarcqrmlt" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <ViewFlipper
+        android:id="@+id/soyraknddilwvpbmuwy"
+        android:layout_width="308dp"
+        android:layout_height="626dp"
+        android:text="wjzqxgplnxschio" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <RadioButton
+        android:id="@+id/wwikxhgmdwiliaflewxxnsd"
+        android:layout_width="302dp"
+        android:layout_height="496dp"
+        android:text="olqkwxtfdwmzalgknbeckchae" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <RatingBar
+        android:id="@+id/kqyirdqnrqljpnpz"
+        android:layout_width="59dp"
+        android:layout_height="529dp"
+        android:text="gmrzfdcnbldvflzge" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <ListView
+        android:id="@+id/uujbuzeomacgqlsxouk"
+        android:layout_width="523dp"
+        android:layout_height="191dp"
+        android:text="emnkwpppwjspsqqlpktmqqmi" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   <CheckBox
+        android:id="@+id/kgxbkanmptvuucasheonu"
+        android:layout_width="605dp"
+        android:layout_height="150dp"
+        android:text="acshmjpxvkyydecttrgedumy" 
+        android:src="@drawable/eigwcgqzfrfutcoflkxlswtjk" 
+/>
+   </LinearLayout>

@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.runtime.notification
+package com.aicleanerstorage.spaceclean.app.background
 
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.model.BatteryHistorySample
 import com.aicleanerstorage.spaceclean.feature.applock.service.AppLockServiceActions

@@ -35,6 +35,11 @@ internal data class FileImageGroupDisplayItem(
     val items: List<FileImageDisplayItem>
 )
 
+internal data class FileImageDateGroupDisplayItem(
+    val title: String,
+    val items: List<FileImageDisplayItem>,
+)
+
 internal enum class FileListDisplayStyle {
     Default,
     Documents

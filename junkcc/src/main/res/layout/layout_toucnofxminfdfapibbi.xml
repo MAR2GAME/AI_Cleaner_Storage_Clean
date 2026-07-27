@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="895dp"
+    android:layout_height="618dp"
+    android:orientation="vertical">
+   <RatingBar
+        android:id="@+id/kqxjdtnfhudkyll"
+        android:layout_width="478dp"
+        android:layout_height="847dp"
+        android:text="ejazbuczjhxeofw" 
+        android:src="@drawable/smntlzwseskyxehypwjuswx" 
+/>
+   <TextView
+        android:id="@+id/nfonpmdfpvlxjpewcmf"
+        android:layout_width="785dp"
+        android:layout_height="687dp"
+        android:text="svnhrgkwfwppzzfcpa" 
+        android:src="@drawable/smntlzwseskyxehypwjuswx" 
+/>
+   </LinearLayout>

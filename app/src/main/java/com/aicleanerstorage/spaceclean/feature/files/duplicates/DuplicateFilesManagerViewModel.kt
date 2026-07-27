@@ -10,11 +10,11 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.toggleId
 
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileUri
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepository
 import com.aicleanerstorage.spaceclean.feature.files.duplicates.data.DuplicateFilesPreferences
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -87,7 +87,7 @@ internal class DuplicateFilesManagerViewModel(
     testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 700L
+    private val completeDelayMillis: Long = 800L
 ) : BaseFileManagerViewModel(FeatureKey.DUPLICATE_FILES, ioDispatcher, testLoader) {
 
     constructor(
@@ -101,7 +101,7 @@ internal class DuplicateFilesManagerViewModel(
         testLoader = null,
         scanDelayMillis = 900L,
         deleteDelayMillis = FILE_DELETE_ANIMATION_MIN_MILLIS,
-        completeDelayMillis = 700L
+        completeDelayMillis = 800L
     )
 
     private val _uiState =

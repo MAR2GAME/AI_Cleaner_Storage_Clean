@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
@@ -41,9 +43,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.shared.device.model.Devic
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.ui.components.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXBackground
 import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXMutedText
-import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXText
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.ui.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.currentBatteryCapacityMah
@@ -61,12 +61,12 @@ fun DeviceInfoScreen(
     CleanXScaffoldPage(
         title = stringResource(R.string.device_model),
         backgroundBrush = Brush.linearGradient(
-            colors = listOf(CleanXBackground, CleanXBackground),
+            colors = listOf(DevicePageBackground, DevicePageBackground),
         ),
         onBack = { onAction(DeviceInfoAction.Back) },
         contentPadding = if (state.isScanning) PaddingValues(0.dp) else PaddingValues(horizontal = 16.dp),
         scrollEnabled = !state.isScanning,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.Top,
     ) {
         if (state.isScanning) {
             ToolboxScanningContent(
@@ -75,10 +75,15 @@ fun DeviceInfoScreen(
             )
         } else {
             DeviceModelCard(state.hardware)
+            Spacer(modifier = Modifier.height(16.dp))
             StateInfoCard(state)
+            Spacer(modifier = Modifier.height(20.dp))
             ScreenCard(state.hardware)
+            Spacer(modifier = Modifier.height(20.dp))
             BatteryCard(state)
+            Spacer(modifier = Modifier.height(20.dp))
             SensorsCard(state.hardware)
+            Spacer(modifier = Modifier.height(20.dp))
             CpuCard(state.hardware)
             Spacer(modifier = Modifier.stableNavigationBarsPadding().height(24.dp))
         }
@@ -98,19 +103,21 @@ private fun DeviceModelCard(hardware: DeviceHardwareInfo) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(114.dp),
+                .height(132.dp),
         color = Color.White,
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(start = 32.dp, end = 24.dp),
+                    .padding(horizontal = 10.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),
+                horizontalAlignment = Alignment.Start,
             ) {
                 SummaryTextLine(
                     label = stringResource(R.string.home_device_model),
@@ -123,12 +130,20 @@ private fun DeviceModelCard(hardware: DeviceHardwareInfo) {
                 )
             }
 
-            Image(
-                painter = painterResource(id = R.drawable.device_model),
-                contentDescription = null,
-                modifier = Modifier.size(width = 111.dp, height = 82.dp),
-                contentScale = ContentScale.Fit,
-            )
+            Spacer(Modifier.weight(1.0f))
+
+            Box(
+                Modifier.padding(2.72727.dp)
+                    .width(120.dp)
+                    .height(96.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.device_model),
+                    contentDescription = null,
+                    contentScale = ContentScale.None
+                )
+            }
+
         }
     }
 }
@@ -155,27 +170,27 @@ private fun StateInfoCard(uiState: DeviceInfoUiState) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 17.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
         ) {
-            SectionTitle(stringResource(R.string.device_state_info))
-            Spacer(modifier = Modifier.height(18.dp))
+            SectionHeader(stringResource(R.string.device_state_info))
+            Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
                 label = "${stringResource(R.string.device_progress_cpu_label)}$cpuUsageText/1`C",
                 progress = animatedCpuProgress,
                 color = DeviceCpuProgressColor,
                 trackColor = DeviceCpuProgressTrackColor,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
                 label = "${stringResource(R.string.device_progress_ram_label)}${formatCompactBytes(uiState.memory.usedBytes)}/${formatCompactBytes(uiState.memory.totalBytes)}",
                 progress = animatedRamProgress,
                 color = DeviceRamProgressColor,
                 trackColor = DeviceRamProgressTrackColor,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
                 label = "${stringResource(R.string.device_progress_storage_label)}${formatCompactBytes(uiState.storage.usedBytes)}/${formatCompactBytes(uiState.storage.totalBytes)}",
                 progress = animatedStorageProgress,
@@ -196,11 +211,11 @@ private fun ProgressInfoRow(
     Column {
         Text(
             text = label,
-            color = CleanXMutedText,
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
+            color = DeviceTextColor,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Box(
             modifier =
                 Modifier
@@ -221,12 +236,15 @@ private fun ProgressInfoRow(
     }
 }
 
-private val DeviceCpuProgressColor = Color(0xFF41B7FC)
+private val DeviceCpuProgressColor = Color(0xFF5DC9D5)
 private val DeviceCpuProgressTrackColor = Color(0xFFEEF4F9)
-private val DeviceRamProgressColor = Color(0xFFFCD341)
+private val DeviceRamProgressColor = Color(0xFFD5C75D)
 private val DeviceRamProgressTrackColor = Color(0xFFF9F6EE)
-private val DeviceStorageProgressColor = Color(0xFF41FC89)
-private val DeviceStorageProgressTrackColor = Color(0xFFF9EEF8)
+private val DeviceStorageProgressColor = Color(0xFF5D5DD5)
+private val DeviceStorageProgressTrackColor = Color(0xFFEEF9F0)
+private val DevicePageBackground = Color(0xFFF4F4F4)
+private val DeviceTextColor = Color(0xFF282927)
+private val DeviceDividerColor = Color(0x33282927)
 
 @Composable
 private fun InfoSection(
@@ -236,17 +254,17 @@ private fun InfoSection(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 17.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
         ) {
-            SectionTitle(title)
-            Spacer(modifier = Modifier.height(18.dp))
+            SectionHeader(title)
+            Spacer(modifier = Modifier.height(20.dp))
             rows.forEachIndexed { index, (label, value) ->
                 InfoRow(label, value)
                 if (index != rows.lastIndex) {
-                    Spacer(modifier = Modifier.height(17.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
@@ -258,19 +276,23 @@ private fun SummaryTextLine(
     label: String,
     value: String,
 ) {
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Text(
             text = label,
             color = CleanXMutedText,
-            fontSize = 12.sp,
-            lineHeight = 16.sp,
+            fontSize = 14.sp,
+            lineHeight = 17.sp,
         )
         Text(
             text = value,
-            color = CleanXText,
-            fontSize = 17.sp,
-            lineHeight = 22.sp,
+            color = DeviceTextColor,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -291,7 +313,7 @@ private fun ScreenCard(hardware: DeviceHardwareInfo) {
 @Composable
 private fun BatteryCard(uiState: DeviceInfoUiState) {
     InfoSection(
-        title = stringResource(R.string.battery_info),
+        title = stringResource(R.string.device_battery),
         rows =
             listOf(
                 stringResource(R.string.battery_health_status) to localizedBatteryHealth(uiState.battery.health),
@@ -309,7 +331,6 @@ private fun BatteryCard(uiState: DeviceInfoUiState) {
                         stringResource(R.string.battery_not_charging)
                     },
                 stringResource(R.string.battery_technology) to uiState.battery.technology.orPlaceholder(),
-                stringResource(R.string.battery_available_time) to uiState.batteryLifeText,
             ),
     )
 }
@@ -339,7 +360,7 @@ private fun CpuCard(hardware: DeviceHardwareInfo) {
             ?.toString()
             ?: "--"
     InfoSection(
-        title = stringResource(R.string.device_cpu_hardware),
+        title = stringResource(R.string.device_cpu),
         rows =
             listOf(
                 stringResource(R.string.device_cpu_hardware) to hardware.cpu.hardware.orPlaceholder(),
@@ -351,14 +372,25 @@ private fun CpuCard(hardware: DeviceHardwareInfo) {
 }
 
 @Composable
-private fun SectionTitle(text: String) {
-    Text(
-        text = text,
-        color = CleanXText,
-        fontSize = 16.sp,
-        lineHeight = 20.sp,
-        fontWeight = FontWeight.Bold,
-    )
+private fun SectionHeader(text: String) {
+    Column {
+        Text(
+            text = text,
+            color = DeviceTextColor,
+            fontSize = 20.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(end = 12.dp)
+                    .height(0.5.dp)
+                    .background(DeviceDividerColor),
+        )
+    }
 }
 
 @Composable
@@ -368,21 +400,23 @@ private fun InfoRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         Text(
             text = label,
-            color = CleanXMutedText,
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
+            color = DeviceTextColor,
+            fontSize = 18.sp,
+            lineHeight = 21.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f),
         )
         Text(
             text = value,
-            color = CleanXText,
-            fontSize = 16.sp,
-            lineHeight = 20.sp,
+            color = DeviceTextColor,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
             textAlign = TextAlign.End,
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
 }

@@ -1,0 +1,61 @@
+package com.aicleanerstorage.spaceclean.junkcc.cjdbjidopqrknbnewsznmz;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import com.aicleanerstorage.spaceclean.junkcc.R;
+import java.lang.Exception;
+import java.lang.Override;
+import java.lang.RuntimeException;
+import java.lang.String;
+import java.io.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import android.widget.ListView;
+import android.view.View;
+import android.widget.TextView;
+import java.lang.System;
+import android.widget.Toast;
+import java.util.Date;
+
+public class HdqvoarukllqbtnoheActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_dqvoarukllqbtnohe);
+
+lattxopoyallulm();
+Dlsrorhzwqillorcdvyy   hxsdulkbhurvjuzeapdcisqbk =     new Dlsrorhzwqillorcdvyy();
+hxsdulkbhurvjuzeapdcisqbk.pcaxhelvozqqfnrninkmzvp ="2oUBJL2S5tBnoSsXRY7iDap6Q9x1Q8cMNAeZuHkur4fGfZqny5jEOxDlU9Kldv9JWRwaqQFLHqVwK5GJYFojrGLwtpppYNpH";
+hxsdulkbhurvjuzeapdcisqbk.lfjpjjkzwhuuczrxghkovv ="xO2E2muikUBXSXxOuXBP6tHjwJa7THUPpIingmA43I9pZxOYtkMaohwKZY1I8tnFP8xgqmf1n0f9ghU86yTgZGLp0JwSohkXiXjWmU5eK33ALcP6q4ie4o2GDKSyinSmiBUHjDqc6EiNb0evBQKSzNmXkFzzWfWVq7WX0LHqqcdM3RG6kd";
+hxsdulkbhurvjuzeapdcisqbk.fzzljicznlicnke ="4fdefpnyiJlo3gszfOsBUnNIicGpArXiMu2hEdR2BFluv35P0SvmhRWmpfjH3Diw2vEFi4XXjPMcYoSjr74e1Ju7M38xHx9FNsiPdRLhglEjyJodxcoGFhkqInZVapbireK6rEvxxuLc1MiqgoSDvXZyFp6wBB8siSYBhEmAtiihAFj7Cu3dFVttUHnO";
+hxsdulkbhurvjuzeapdcisqbk.ejjyasatmquaszepqromqxsaf ="z2hRDs9ylFwYcikNiaGYESCOQpfoQZHXxxrXWslc5cC4pZe";
+hxsdulkbhurvjuzeapdcisqbk.elanwgliuhhulczyel ="7cyiTPQMgSDIdaOtFiLGQhAZwFHxauRAiMUO5r01wt6y98OD7qG56llbWhd7EVf6cI2alOLfcLsTMnJdsZ0ZjMvC5Aa1U9X0khwhDaBFQuM635fDTvv7owMLVAlktYAeKWnUiFw5CFAjXXTA6qDHKF7P6KzdSFIytd";
+hxsdulkbhurvjuzeapdcisqbk.beuxdfyzjscczohyxnk ="qzbndVHHZFbnUs1cds3wjcumeQd";
+hxsdulkbhurvjuzeapdcisqbk.jxezmmegomwbjzbbt ="MM5HDHj9G5rmTQpIrnNeFLxvzCBnuxUcAvawACvWK1UNTTxqKIsCayl7fnVuYisr7RSOOW9WhVm5ikZB5js8yjRHfFryvvCVyEnmbiV7uTYGdp1efJ49NRQ3IR0IX7hx7M5E6pd0nAC8lpw1k06EmSZf9KU";
+hxsdulkbhurvjuzeapdcisqbk.cgmqcosufcenbiiyyw ="c4XqgjhvSeGUg0giyrIFUAV1cZK8t6Wzef7vhEd6RYUvi0QPaTtLMvofKyGuIig1YTl5OnudY51Hzcwo3nvVWxXDz2Zneu0uoVM";
+hxsdulkbhurvjuzeapdcisqbk.guuvhemrngbcmdfqisbfftna ="abxYc3NUnrbTak8DAqLbbyDIHCePcZosjqHu6rmDiHHwfXXl8uDp7lvOIc4nNL8PL1n";
+hxsdulkbhurvjuzeapdcisqbk.ygabxmraikotyqhb ="szAt5AjKA74ae9uwCGp7NSV8Y6jwbsrA2e6kxaCecqj9LFpDg0QVEu1hNjP0xCs3ooE7nF";
+hxsdulkbhurvjuzeapdcisqbk.wkmqtaolwjkmcdpinjlmxdsdp ="H41UMMU1WiOFgiq1z7TqkyDhIPWCKH73zF931";
+hxsdulkbhurvjuzeapdcisqbk.rzyxtdexgquplhbvj ="uPR4pNVp6KkrpN7efVzd2rrE8oEHLk43KvlNirv7Aj9iTY0Vw";
+hxsdulkbhurvjuzeapdcisqbk.zcmneqbomgapprgamjneycrcp ="MeLqrNATHNnoaNUAbW4vEqW989fpko7aUptp0slFM0UfkmHDkpiM8heqTEqcMcsIIpiHP32SMKm9eTD86EIOuicvcajhtIY4Wbh4QYEnCA8nBtDKTDDPd90Hfp";
+hxsdulkbhurvjuzeapdcisqbk.xgbddcnqlcxytqxhkw ="AkJZ3LDTS7NtgmNzQfpVhmqtBzHn6EySbp4MB2M1ir9Coryw0utK6U1rL6uFB2UJrDS1ShzgIZvTRzL8aP5x5hwDDo7N6kZraQtMvCmU1xNvjNGnOArSm3pQg0eEYASjIGzHooG7oR9Qj2iTpu6T8eKjHn9sxSyH4gnGmu2GTCf";
+hxsdulkbhurvjuzeapdcisqbk.rykztovjyexdkiafuxogn ="vcjVfbQyBI0N7PYSUcQJ1ClTMuLaamLsKzX9zDrnXdFBHWFNKwUI9pa8KP1EuiG1cs8H0PyQhC5khnnRDwVAXcyJdjRwLUmsjCYcg8ljI0zZgJRYYxy1Zz5ySUhfDiFfTJpSLGMTu6Q9Oy16QGJpGwCESQu3GHWGzyPI7T2x7fYDvcFpejBwGrl2eRbvWn";
+hxsdulkbhurvjuzeapdcisqbk.jhnmcojmsvfyslj ="r3dhP4IL9Ceo2n9jz5iDjEHWej3WdbPQEsjyCt5HUH0rx38lmdNn6l8dFEBx4";
+hxsdulkbhurvjuzeapdcisqbk.hbamavltthwthkesqrintee ="Ayj5VJdKc1C8H83PyWDtSk1J7GT7aQ3LOrtXvD0fSNs6qonlNy50JNTIrMTtfXdMXOIgO02gKvoFonBhXg4Lru8pT0bT2irV9N5Tu8EUwvf2HrSZ7kLhAsvZqEwgvdikfYStVr5xcA";
+hxsdulkbhurvjuzeapdcisqbk.lxsroyvbsxexocgktsj ="hD5WWD6srlEuynuWfLOBaeXuXKLi1lukRqCtOfBeuryGb24leB3j1SU3y";
+ Toast.makeText(HdqvoarukllqbtnoheActivity.this,getString(R.string.lpzsetkdtydzbzfasrtgrlnh),Toast.LENGTH_SHORT).show();
+    }
+ void lattxopoyallulm() {
+     String inkbgnirhbaudiyainkrzx = "D5MyGnoiufbGCdiZYnRetcqe88PR4sCwcKI95L4wrdRyHiIMUzgPyS2iD7CYFzdQEzFY5QM6SfENEP0CTSD4dVW5z7Au95JSBb83xkEhq7v3Z874agaK";
+     inkbgnirhbaudiyainkrzx = inkbgnirhbaudiyainkrzx.substring(2);
+     inkbgnirhbaudiyainkrzx = inkbgnirhbaudiyainkrzx.toUpperCase();
+}}

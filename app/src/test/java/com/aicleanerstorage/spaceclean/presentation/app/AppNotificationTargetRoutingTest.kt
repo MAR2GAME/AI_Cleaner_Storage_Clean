@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.runtime
 
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchRequest
-import com.aicleanerstorage.spaceclean.app.runtime.startup.NotificationLaunchSource
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.app.startup.NotificationLaunchSource
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

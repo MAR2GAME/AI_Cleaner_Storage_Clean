@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.feature.files.shared.ui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -46,19 +47,19 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.FileListDisplayStyle
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileListIconKind
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.filterMediaGridItems
-import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerRealImage
 
 @Composable
 internal fun FileManagerTopAction(
     actionText: String?,
     actionEnabled: Boolean = true,
+    keepActiveAppearance: Boolean = false,
     onAction: () -> Unit = {},
 ) {
     if (actionText == null) return
 
     Text(
         text = actionText,
-        color = FileManagerPrimaryGreen.copy(alpha = if (actionEnabled) 1f else 0.45f),
+        color = FileManagerPrimaryGreen.copy(alpha = if (actionEnabled || keepActiveAppearance) 1f else 0.45f),
         fontSize = 16.sp,
         modifier = Modifier.clickable(enabled = actionEnabled) { onAction() },
     )
@@ -153,6 +154,7 @@ internal fun FileManagerListView(
     onTabSelected: (Int) -> Unit,
     onToggleAll: () -> Unit,
     onSelect: (Int) -> Unit,
+    @DrawableRes leadingIconRes: Int? = null,
     onOpenDetail: (FileListDisplayItem) -> Unit = {}
 ) {
     Column(
@@ -193,6 +195,7 @@ internal fun FileManagerListView(
                         item = item,
                         selected = item.id in selectedIds,
                         style = style,
+                        leadingIconRes = leadingIconRes,
                         onOpen = { onOpenDetail(item) },
                         onToggleSelection = { onSelect(item.id) }
                     )
@@ -278,6 +281,7 @@ internal fun FileManagerListRow(
     item: FileListDisplayItem,
     selected: Boolean,
     style: FileListDisplayStyle,
+    @DrawableRes leadingIconRes: Int? = null,
     onOpen: () -> Unit,
     onToggleSelection: () -> Unit
 ) {
@@ -289,7 +293,13 @@ internal fun FileManagerListRow(
             .clickable { onOpen() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (isDocumentsStyle) {
+        if (leadingIconRes != null) {
+            Image(
+                painter = painterResource(id = leadingIconRes),
+                contentDescription = null,
+                modifier = Modifier.size(34.dp)
+            )
+        } else if (isDocumentsStyle) {
             Image(
                 painter = painterResource(id = R.drawable.ic_file_yellow),
                 contentDescription = null,
@@ -466,7 +476,7 @@ private fun FileManagerMediaFileRow(
         Image(
             painter = painterResource(id = iconResId),
             contentDescription = null,
-            modifier = Modifier.size(34.dp),
+            modifier = Modifier.size(44.dp),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(

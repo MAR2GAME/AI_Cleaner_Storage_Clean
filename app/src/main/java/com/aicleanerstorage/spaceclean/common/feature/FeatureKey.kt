@@ -1,0 +1,23 @@
+package com.aicleanerstorage.spaceclean.common.feature
+enum class FeatureKey(val group: FeatureGroup) {
+    JUNK_CLEAN(FeatureGroup.HOME),
+    ANTI_VIRUS(FeatureGroup.HOME),
+    APP_LOCK(FeatureGroup.HOME),
+    DEVICE_INFO(FeatureGroup.TOOLBOX),
+    BATTERY_INFO(FeatureGroup.TOOLBOX),
+    APP_USAGE(FeatureGroup.TOOLBOX),
+    NOTIFICATION_CLEANER(FeatureGroup.TOOLBOX),
+    WHATSAPP_CLEANER(FeatureGroup.TOOLBOX),
+    NETWORK_USAGE(FeatureGroup.TOOLBOX),
+    NETWORK_SCAN(FeatureGroup.TOOLBOX),
+    NETWORK_SPEED(FeatureGroup.TOOLBOX),
+    PHOTOS(FeatureGroup.FILES),
+    SIMILAR_PHOTOS(FeatureGroup.FILES),
+    PHOTO_PRIVACY(FeatureGroup.FILES),
+    SCREENSHOTS(FeatureGroup.FILES),
+    VIDEOS(FeatureGroup.FILES),
+    AUDIOS(FeatureGroup.FILES),
+    LARGE_FILES(FeatureGroup.FILES),
+    DUPLICATE_FILES(FeatureGroup.FILES),
+    DOCUMENTS(FeatureGroup.FILES),
+}

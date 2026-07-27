@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="744dp"
+    android:layout_height="76dp"
+    android:orientation="vertical">
+   <EditText
+        android:id="@+id/isewsjukdzsjlat"
+        android:layout_width="231dp"
+        android:layout_height="695dp"
+        android:text="bstdsqdnaescvkgpd" 
+        android:src="@drawable/vtoinejdbocrlrtgn" 
+/>
+   <ViewFlipper
+        android:id="@+id/cfysghuqnfvepybkiwbqzkt"
+        android:layout_width="791dp"
+        android:layout_height="23dp"
+        android:text="tvtupjbdylppwmrmxikzaer" 
+        android:src="@drawable/vtoinejdbocrlrtgn" 
+/>
+   <Spinner
+        android:id="@+id/tevjickalkbrvnlfdyfs"
+        android:layout_width="150dp"
+        android:layout_height="761dp"
+        android:text="nvtwrebzfpmqfgfjfqpncr" 
+        android:src="@drawable/vtoinejdbocrlrtgn" 
+/>
+   <RatingBar
+        android:id="@+id/lfkaxsgnfgphdumgwneurv"
+        android:layout_width="12dp"
+        android:layout_height="261dp"
+        android:text="vuvmjvcvasfvesy" 
+        android:src="@drawable/vtoinejdbocrlrtgn" 
+/>
+   <TextView
+        android:id="@+id/icihdukkwouzondqjuj"
+        android:layout_width="989dp"
+        android:layout_height="315dp"
+        android:text="icggmevwnhrcqipuuc" 
+        android:src="@drawable/vtoinejdbocrlrtgn" 
+/>
+   </LinearLayout>

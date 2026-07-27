@@ -10,11 +10,11 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavGraph
 import com.aicleanerstorage.spaceclean.app.runtime.AppSessionCoordinator
 import com.aicleanerstorage.spaceclean.app.runtime.NotificationLaunchEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RuntimeBusyReason
-import com.aicleanerstorage.spaceclean.app.runtime.permission.AppPermissionHost
-import com.aicleanerstorage.spaceclean.app.runtime.permission.NotificationPermissionHost
-import com.aicleanerstorage.spaceclean.app.runtime.permission.NotificationPermissionViewModel
+import com.aicleanerstorage.spaceclean.app.permission.AppPermissionHost
+import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionHost
+import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
 import com.aicleanerstorage.spaceclean.app.runtime.rememberAppRuntimeBindings
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchCoordinator
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
 import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -37,7 +37,7 @@ fun AppRoot(launchCoordinator: AppLaunchCoordinator) {
         )
 
     AppPermissionHost(
-        externalActivityLauncher = runtimeBindings.externalActivities,
+        externalActivityTracker = runtimeBindings.externalActivities,
         onPermissionFlowActiveChange = { sessionCoordinator.set(RuntimeBusyReason.Permission, it) },
     ) {
         AppNavGraph(
@@ -50,7 +50,7 @@ fun AppRoot(launchCoordinator: AppLaunchCoordinator) {
         NotificationPermissionHost(
             viewModel = notificationPermissionViewModel,
             currentRoute = currentRoute,
-            externalActivityLauncher = runtimeBindings.externalActivities,
+            externalActivityTracker = runtimeBindings.externalActivities,
             onPermissionGranted = {},
         )
         NotificationLaunchEffect(pendingRequest, currentRoute, navController)

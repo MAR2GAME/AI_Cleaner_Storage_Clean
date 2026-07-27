@@ -1,8 +1,7 @@
 package com.aicleanerstorage.spaceclean.navigation
 
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureCatalog
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -27,20 +26,20 @@ class AppDestinationTest {
     }
 
     @Test
-    fun featureCatalogUsesDestinationOwnershipForEntryAndNestedRoutes() {
+    fun destinationsOwnFeatureEntryAndNestedRouteMappings() {
         AppDestination.featureEntries.forEach { destination ->
             val feature = requireNotNull(destination.featureKey)
-            assertEquals(destination.route, FeatureCatalog.routeFor(feature))
-            assertEquals(feature, FeatureCatalog.featureForRoute(destination.route))
+            assertEquals(destination.route, AppDestination.forFeature(feature)?.route)
+            assertEquals(feature, AppDestination.featureForRoute(destination.route))
         }
 
         assertEquals(
             FeatureKey.ANTI_VIRUS,
-            FeatureCatalog.featureForRoute(AppDestination.VirusQuickScan.route),
+            AppDestination.featureForRoute(AppDestination.VirusQuickScan.route),
         )
         assertEquals(
             FeatureKey.PHOTOS,
-            FeatureCatalog.featureForRoute("${AppDestination.PhotosDetail.route}/3"),
+            AppDestination.featureForRoute("${AppDestination.PhotosDetail.route}/3"),
         )
     }
 

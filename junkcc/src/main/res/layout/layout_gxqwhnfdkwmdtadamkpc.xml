@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="45dp"
+    android:layout_height="183dp"
+    android:orientation="vertical">
+   <ImageView
+        android:id="@+id/cqkymjchfwcjsezivtisysfms"
+        android:layout_width="89dp"
+        android:layout_height="216dp"
+        android:text="jobwuywfzuiaqymmelhvyvpmz" 
+        android:src="@drawable/nzrnjpmspgcqmowfgjnde" 
+/>
+   <ViewFlipper
+        android:id="@+id/ywbfkzsarxgvygetnaci"
+        android:layout_width="110dp"
+        android:layout_height="105dp"
+        android:text="girvpzdwgjnwbxoqwlzurnkdt" 
+        android:src="@drawable/nzrnjpmspgcqmowfgjnde" 
+/>
+   </LinearLayout>

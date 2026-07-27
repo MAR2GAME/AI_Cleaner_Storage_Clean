@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
 
 val CleanXBackground = Color(0xFFF7FAFD)
 val CleanXText = Color(0xFF2D3748)
@@ -321,7 +320,7 @@ fun CleanXBottomActionBar(
 fun CommonResultContent(
     onNavigateTool: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
-    excludedToolRoutes: Set<String> = emptySet(),
+    excludedToolDestinations: Set<AppDestination> = emptySet(),
     completionContent: @Composable () -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -340,7 +339,7 @@ fun CommonResultContent(
             Spacer(modifier = Modifier.height(24.dp))
             ToolFeatureBanners(
                 onNavigateTool = onNavigateTool,
-                excludeRoutes = excludedToolRoutes,
+                excludedDestinations = excludedToolDestinations,
             )
         }
     }

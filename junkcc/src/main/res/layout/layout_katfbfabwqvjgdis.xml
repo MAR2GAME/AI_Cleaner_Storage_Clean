@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="549dp"
+    android:layout_height="524dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/iycwtkcwohrktqjabelquznr"
+        android:layout_width="682dp"
+        android:layout_height="772dp"
+        android:text="ngfyknzsqjzumyv" 
+        android:src="@drawable/ppqatjpaneigneosm" 
+/>
+   <CheckBox
+        android:id="@+id/vxsspyrwedbtpqdixbugoee"
+        android:layout_width="116dp"
+        android:layout_height="299dp"
+        android:text="enitzxltdqfhbtazvia" 
+        android:src="@drawable/ppqatjpaneigneosm" 
+/>
+   </LinearLayout>

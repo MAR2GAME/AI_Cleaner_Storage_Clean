@@ -349,15 +349,16 @@ internal fun VirusProgressTrack(
 
         visualIcons.forEachIndexed { index, icon ->
             val circleLeft = (circleDiameter + connectorWidth) * index
+            val visualIconSize = if (icon == R.mipmap.ic_file_small) 26.dp else iconSize
             Image(
                 painter = painterResource(icon),
                 contentDescription = null,
                 modifier = Modifier
                     .offset(
-                        x = circleLeft + (circleDiameter - iconSize) / 2,
-                        y = (circleDiameter - iconSize) / 2,
+                        x = circleLeft + (circleDiameter - visualIconSize) / 2,
+                        y = (circleDiameter - visualIconSize) / 2,
                     )
-                    .size(iconSize),
+                    .size(visualIconSize),
             )
 
             val badgeCount = badgeCounts.getOrElse(index) { 0 }

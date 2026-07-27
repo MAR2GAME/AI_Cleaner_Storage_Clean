@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="263dp"
+    android:layout_height="490dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/jqiorzywknhnvmchsltdcxxb"
+        android:layout_width="978dp"
+        android:layout_height="176dp"
+        android:text="gxfrnrmkxiohowvuciygzcspl" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <ProgressBar
+        android:id="@+id/ojogiuzoyqaynmhixpeot"
+        android:layout_width="46dp"
+        android:layout_height="529dp"
+        android:text="rtkeiuqtxqnzxczjsbnlevw" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <ImageView
+        android:id="@+id/dxcrpzdozlodedl"
+        android:layout_width="209dp"
+        android:layout_height="838dp"
+        android:text="xfsjrrtnlqgqnzyh" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <DatePicker
+        android:id="@+id/tvntwjdwmmkbkux"
+        android:layout_width="456dp"
+        android:layout_height="294dp"
+        android:text="apryizfohjwgzflhq" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <DatePicker
+        android:id="@+id/ustulnpfnllpezhrdtkgeyoqz"
+        android:layout_width="596dp"
+        android:layout_height="463dp"
+        android:text="izzlorhlgkacdrdahjyszvft" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <RatingBar
+        android:id="@+id/ohxwlptcucohyvuvuy"
+        android:layout_width="216dp"
+        android:layout_height="831dp"
+        android:text="fsxovrgosijwtga" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <FrameLayout
+        android:id="@+id/uopyaolwkygirvrgiog"
+        android:layout_width="530dp"
+        android:layout_height="688dp"
+        android:text="mzcvtjxflwcxysprjy" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <ViewFlipper
+        android:id="@+id/icyniuydsluzalpovlr"
+        android:layout_width="431dp"
+        android:layout_height="439dp"
+        android:text="erborwjimoyjpylqu" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   <TextView
+        android:id="@+id/hmbntacdrttelxsdlw"
+        android:layout_width="240dp"
+        android:layout_height="146dp"
+        android:text="ztdjyrhpadqqhadohwkmniwt" 
+        android:src="@drawable/nwmpdfwgyzpqrzlid" 
+/>
+   </LinearLayout>

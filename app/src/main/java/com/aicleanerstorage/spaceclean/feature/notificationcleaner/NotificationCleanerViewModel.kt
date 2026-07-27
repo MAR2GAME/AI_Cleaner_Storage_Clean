@@ -6,16 +6,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.coroutines.runSuspendCatching
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.BlockableNotificationApp
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationRepository
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.AndroidNotificationSettingsGateway
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationSettingsGateway
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +43,7 @@ data class NotificationCleanerUiState(
     val selectedPackages: Set<String> = emptySet(),
     val page: NotificationCleanerPage = NotificationCleanerPage.Onboarding,
     val isLoading: Boolean = true,
+    val scanInProgress: Boolean = false,
     val isInitialized: Boolean = false,
     val errorMessage: String? = null,
 )
@@ -64,7 +68,7 @@ class NotificationCleanerViewModel(
 ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(NotificationCleanerUiState())
     private val operationEventsChannel = Channel<FeatureOperationEvent>(Channel.BUFFERED)
-    private var hasShownAccessScan = false
+    private var scanJob: Job? = null
     private var scanningCompletionPending = false
 
     val uiState: StateFlow<NotificationCleanerUiState> = _uiState.asStateFlow()
@@ -89,47 +93,12 @@ class NotificationCleanerViewModel(
     }
 
     fun refreshState() {
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch(ioDispatcher) {
-            runSuspendCatching { readSnapshot() }
-                .onSuccess { snapshot ->
-                    _uiState.update { state ->
-                        if (!snapshot.hasAccess) {
-                            hasShownAccessScan = false
-                            scanningCompletionPending = false
-                        }
-                        val nextPage =
-                            when {
-                                state.page == NotificationCleanerPage.Settings -> NotificationCleanerPage.Settings
-                                state.page == NotificationCleanerPage.Scanning -> NotificationCleanerPage.Scanning
-                                snapshot.hasAccess && !hasShownAccessScan -> {
-                                    hasShownAccessScan = true
-                                    NotificationCleanerPage.Scanning
-                                }
-                                snapshot.hasAccess -> NotificationCleanerPage.Status
-                                else -> NotificationCleanerPage.Onboarding
-                            }
-                        state.copy(
-                            hasAccess = snapshot.hasAccess,
-                            enabled = snapshot.enabled,
-                            blockedCount = snapshot.blockedCount,
-                            blockedCountsByPackage = snapshot.blockedCountsByPackage,
-                            apps = snapshot.apps,
-                            selectedPackages = snapshot.selectedPackages,
-                            page = nextPage,
-                            isLoading = false,
-                            isInitialized = true,
-                            errorMessage = null,
-                        )
-                    }
+            runSuspendCatching { repository.hasNotificationListenerAccess() }
+                .onSuccess { hasAccess ->
+                    handleAccessRefresh(hasAccess)
                 }.onFailure { error ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            isInitialized = true,
-                            errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
-                        )
-                    }
+                    failRefresh(error)
                 }
         }
     }
@@ -138,7 +107,7 @@ class NotificationCleanerViewModel(
         val hasAccess = repository.hasNotificationListenerAccess()
         if (checked && !hasAccess) {
             _uiState.update {
-                it.copy(hasAccess = false, enabled = false, isLoading = false)
+                it.copy(hasAccess = false, enabled = false, isLoading = false, scanInProgress = false)
             }
             return true
         }
@@ -174,7 +143,188 @@ class NotificationCleanerViewModel(
     }
 
     fun finishScanning() {
-        if (_uiState.value.page != NotificationCleanerPage.Scanning || scanningCompletionPending) return
+        finishScanIfReady()
+    }
+
+    fun showStatus() {
+        scanningCompletionPending = false
+        _uiState.update {
+            if (it.page == NotificationCleanerPage.Scanning) {
+                it.copy(page = NotificationCleanerPage.Status, scanInProgress = false)
+            } else {
+                it
+            }
+        }
+    }
+
+    fun cancelScanning() {
+        scanJob?.cancel()
+        scanJob = null
+        scanningCompletionPending = false
+        _uiState.update {
+            if (it.page == NotificationCleanerPage.Scanning) {
+                it.copy(page = NotificationCleanerPage.Status, scanInProgress = false, isLoading = false)
+            } else {
+                it
+            }
+        }
+    }
+
+    fun restartScanning() {
+        startAccessScan()
+    }
+
+    fun notificationListenerSettingsIntent(): Intent = settingsGateway.notificationListenerSettingsIntent()
+
+    fun appDetailsSettingsIntent(packageName: String): Intent = settingsGateway.appDetailsSettingsIntent(packageName)
+
+    private fun handleAccessRefresh(hasAccess: Boolean) {
+        val state = _uiState.value
+        if (!hasAccess) {
+            scanJob?.cancel()
+            scanJob = null
+            scanningCompletionPending = false
+            _uiState.update {
+                it.copy(
+                    hasAccess = false,
+                    enabled = false,
+                    blockedCount = 0,
+                    blockedCountsByPackage = emptyMap(),
+                    apps = emptyList(),
+                    selectedPackages = emptySet(),
+                    page = NotificationCleanerPage.Onboarding,
+                    isLoading = false,
+                    scanInProgress = false,
+                    isInitialized = true,
+                    errorMessage = null,
+                )
+            }
+            return
+        }
+
+        if (state.page == NotificationCleanerPage.Scanning && state.scanInProgress) {
+            return
+        }
+
+        val shouldScan =
+            !state.isInitialized ||
+                !state.hasAccess ||
+                state.apps.isEmpty()
+
+        if (shouldScan) {
+            startAccessScan()
+        } else {
+            refreshLightState()
+        }
+    }
+
+    private fun refreshLightState() {
+        runCatching { readLightSnapshot() }
+            .onSuccess { snapshot ->
+                _uiState.update { state ->
+                    state.copy(
+                        hasAccess = true,
+                        enabled = snapshot.enabled,
+                        blockedCount = snapshot.blockedCount,
+                        blockedCountsByPackage = snapshot.blockedCountsByPackage,
+                        isLoading = false,
+                        scanInProgress = false,
+                        isInitialized = true,
+                        errorMessage = null,
+                    )
+                }
+            }.onFailure { error ->
+                failRefresh(error)
+            }
+    }
+
+    private fun startAccessScan() {
+        scanJob?.cancel()
+        scanJob = null
+        scanningCompletionPending = false
+        _uiState.update {
+            it.copy(
+                hasAccess = true,
+                page = NotificationCleanerPage.Scanning,
+                isLoading = true,
+                scanInProgress = true,
+                isInitialized = true,
+                errorMessage = null,
+            )
+        }
+        scanJob =
+            viewModelScope.launch(ioDispatcher) {
+                val startedAtMillis = System.currentTimeMillis()
+                try {
+                    val snapshot = repository.notificationSnapshot()
+                    val remainingMillis = MIN_SCAN_DURATION_MILLIS - (System.currentTimeMillis() - startedAtMillis)
+                    if (remainingMillis > 0L) delay(remainingMillis)
+                    _uiState.update { state ->
+                        if (!snapshot.hasAccess) {
+                            state.copy(
+                                hasAccess = false,
+                                enabled = false,
+                                blockedCount = 0,
+                                blockedCountsByPackage = emptyMap(),
+                                apps = emptyList(),
+                                selectedPackages = emptySet(),
+                                page = NotificationCleanerPage.Onboarding,
+                                isLoading = false,
+                                scanInProgress = false,
+                                isInitialized = true,
+                                errorMessage = null,
+                            )
+                        } else {
+                            state.copy(
+                                hasAccess = true,
+                                enabled = snapshot.enabled,
+                                blockedCount = snapshot.blockedCount,
+                                blockedCountsByPackage = snapshot.blockedCountsByPackage,
+                                apps = snapshot.apps,
+                                selectedPackages = snapshot.selectedPackages,
+                                page = NotificationCleanerPage.Scanning,
+                                isLoading = false,
+                                scanInProgress = false,
+                                isInitialized = true,
+                                errorMessage = null,
+                            )
+                        }
+                    }
+                    scanJob = null
+                    finishScanIfReady()
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    scanJob = null
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            scanInProgress = false,
+                            isInitialized = true,
+                            errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+                        )
+                    }
+                }
+            }
+    }
+
+    private fun readLightSnapshot(): NotificationCleanerLightSnapshot =
+        NotificationCleanerLightSnapshot(
+            enabled = repository.isNotificationBlockingEnabled(),
+            blockedCount = repository.blockedNotificationCount(),
+            blockedCountsByPackage = repository.blockedNotificationCountsByPackage(),
+        )
+
+    private fun finishScanIfReady() {
+        val state = _uiState.value
+        if (
+            state.page != NotificationCleanerPage.Scanning ||
+            state.isLoading ||
+            state.scanInProgress ||
+            scanningCompletionPending
+        ) {
+            return
+        }
         scanningCompletionPending = true
         trackOperationEvent(
             FeatureOperationEvent.OperationFinished(
@@ -185,66 +335,36 @@ class NotificationCleanerViewModel(
         )
     }
 
-    fun showStatus() {
-        scanningCompletionPending = false
+    private fun failRefresh(error: Throwable) {
         _uiState.update {
-            if (it.page == NotificationCleanerPage.Scanning) {
-                it.copy(page = NotificationCleanerPage.Status)
-            } else {
-                it
-            }
+            it.copy(
+                isLoading = false,
+                scanInProgress = false,
+                isInitialized = true,
+                errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+            )
         }
     }
-
-    fun cancelScanning() {
-        scanningCompletionPending = false
-        _uiState.update {
-            if (it.page == NotificationCleanerPage.Scanning) {
-                it.copy(page = NotificationCleanerPage.Status)
-            } else {
-                it
-            }
-        }
-    }
-
-    fun restartScanning() {
-        scanningCompletionPending = false
-        _uiState.update {
-            if (it.page != NotificationCleanerPage.Scanning) {
-                it.copy(page = NotificationCleanerPage.Scanning)
-            } else {
-                it
-            }
-        }
-    }
-
-    fun notificationListenerSettingsIntent(): Intent = settingsGateway.notificationListenerSettingsIntent()
-
-    fun appDetailsSettingsIntent(packageName: String): Intent = settingsGateway.appDetailsSettingsIntent(packageName)
-
-    private fun readSnapshot(): NotificationCleanerSnapshot =
-        NotificationCleanerSnapshot(
-            hasAccess = repository.hasNotificationListenerAccess(),
-            enabled = repository.isNotificationBlockingEnabled(),
-            blockedCount = repository.blockedNotificationCount(),
-            blockedCountsByPackage = repository.blockedNotificationCountsByPackage(),
-            apps = repository.notificationApps(),
-            selectedPackages = repository.selectedNotificationPackages(),
-        )
 
     private fun appString(resId: Int): String = getApplication<Application>().getString(resId)
 
     private fun trackOperationEvent(event: FeatureOperationEvent) {
         operationEventsChannel.trySend(event)
     }
+
+    override fun onCleared() {
+        scanJob?.cancel()
+        super.onCleared()
+    }
+
+    private companion object {
+        private const val MIN_SCAN_DURATION_MILLIS = 1_800L
+    }
 }
 
-private data class NotificationCleanerSnapshot(
-    val hasAccess: Boolean,
+private data class NotificationCleanerLightSnapshot(
     val enabled: Boolean,
     val blockedCount: Int,
     val blockedCountsByPackage: Map<String, Int>,
-    val apps: List<BlockableNotificationApp>,
-    val selectedPackages: Set<String>,
 )
 

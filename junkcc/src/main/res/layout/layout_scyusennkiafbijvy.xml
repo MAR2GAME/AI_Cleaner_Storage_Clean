@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="222dp"
+    android:layout_height="70dp"
+    android:orientation="vertical">
+   <SeekBar
+        android:id="@+id/wgerfmjpgcenxizuwzqfuc"
+        android:layout_width="319dp"
+        android:layout_height="196dp"
+        android:text="dtgbpcddxgmbvhmfeyjohqb" 
+        android:src="@drawable/rjafchbwuvgvuqfxd" 
+/>
+   <FrameLayout
+        android:id="@+id/fqosfgofeeeevnh"
+        android:layout_width="127dp"
+        android:layout_height="394dp"
+        android:text="zulggwvmtdrgznjvkvhxbtljn" 
+        android:src="@drawable/rjafchbwuvgvuqfxd" 
+/>
+   <ProgressBar
+        android:id="@+id/ygsileylqosxynamm"
+        android:layout_width="763dp"
+        android:layout_height="335dp"
+        android:text="akeihaualniwqnizms" 
+        android:src="@drawable/rjafchbwuvgvuqfxd" 
+/>
+   <CheckBox
+        android:id="@+id/zqwipndqndalrfgk"
+        android:layout_width="894dp"
+        android:layout_height="561dp"
+        android:text="hcpbkpxcwgkijmzvyzdclwmp" 
+        android:src="@drawable/rjafchbwuvgvuqfxd" 
+/>
+   </LinearLayout>

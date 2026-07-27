@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="355dp"
+    android:layout_height="448dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/ritbfuywkyeywyjeixvfv"
+        android:layout_width="644dp"
+        android:layout_height="61dp"
+        android:text="oiakzookhfktcmavlmyqfmx" 
+        android:src="@drawable/qigqiehfergynxvhnzh" 
+/>
+   <FrameLayout
+        android:id="@+id/ciwkunolrpguqrpowgvmpqjcq"
+        android:layout_width="993dp"
+        android:layout_height="233dp"
+        android:text="qqnxpvskzaokwabqdzkueju" 
+        android:src="@drawable/qigqiehfergynxvhnzh" 
+/>
+   <RadioButton
+        android:id="@+id/dzhimwbyebhufixqndduevhtv"
+        android:layout_width="915dp"
+        android:layout_height="309dp"
+        android:text="bvlyaiufwleggyncqhjktiv" 
+        android:src="@drawable/qigqiehfergynxvhnzh" 
+/>
+   </LinearLayout>

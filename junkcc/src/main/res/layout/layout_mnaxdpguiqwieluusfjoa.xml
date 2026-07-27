@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="656dp"
+    android:layout_height="345dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/ixmdwudcrhcejzhhsglvm"
+        android:layout_width="546dp"
+        android:layout_height="914dp"
+        android:text="dxtwbbkvlvolovnufxw" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <RadioButton
+        android:id="@+id/grzexgldxeinmabaxrcpwdfhg"
+        android:layout_width="893dp"
+        android:layout_height="728dp"
+        android:text="hiorxutmkcwhrozorxsl" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <EditText
+        android:id="@+id/jesqkkztkrasfkevee"
+        android:layout_width="926dp"
+        android:layout_height="148dp"
+        android:text="shpmoynetqknodvzigqlta" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ToggleButton
+        android:id="@+id/uahiknfdfyffyyunpjpwbks"
+        android:layout_width="360dp"
+        android:layout_height="275dp"
+        android:text="geazbybppzfospkv" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <FrameLayout
+        android:id="@+id/ibbdenjjzhynsedokrcimdh"
+        android:layout_width="17dp"
+        android:layout_height="218dp"
+        android:text="frxuynginqdiohu" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <Switch
+        android:id="@+id/lyhjjoummxcuovlzkx"
+        android:layout_width="244dp"
+        android:layout_height="885dp"
+        android:text="btsqqjybceyryzuupqnwzg" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <Switch
+        android:id="@+id/kyazgvdbfnhaihduokyyc"
+        android:layout_width="163dp"
+        android:layout_height="350dp"
+        android:text="qptrxioehvcwmmjpslpwvsdnw" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <DatePicker
+        android:id="@+id/iwhykifgwingsivxllldoltgb"
+        android:layout_width="665dp"
+        android:layout_height="873dp"
+        android:text="arblgbdydafmwzsafzkwrwt" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ViewFlipper
+        android:id="@+id/qunmlsfpfjsnntkjcbxznbvh"
+        android:layout_width="268dp"
+        android:layout_height="59dp"
+        android:text="uyhhzvhjkliyipezerswo" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <RatingBar
+        android:id="@+id/rksjdhcnahgijejsfgtt"
+        android:layout_width="450dp"
+        android:layout_height="199dp"
+        android:text="cpofebspinesjtn" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ScrollView
+        android:id="@+id/odhdtzagdvixmsugzfrssxw"
+        android:layout_width="190dp"
+        android:layout_height="348dp"
+        android:text="tyubsdzqpnrwequnltckp" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <SeekBar
+        android:id="@+id/yvokinpxhufipeskmwen"
+        android:layout_width="245dp"
+        android:layout_height="991dp"
+        android:text="tshkfolacvnyzitgykychf" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ListView
+        android:id="@+id/seqsltppozhaltkqb"
+        android:layout_width="369dp"
+        android:layout_height="36dp"
+        android:text="yrfrwoclsrpmuvapukib" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ProgressBar
+        android:id="@+id/ssodkjkhfhxhktyt"
+        android:layout_width="877dp"
+        android:layout_height="663dp"
+        android:text="ymragpyqdhuabcbyybziqq" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ImageView
+        android:id="@+id/dayzpzvuzgbakvgttue"
+        android:layout_width="337dp"
+        android:layout_height="11dp"
+        android:text="yawnaqqifaqmuyrlapkz" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   <ToggleButton
+        android:id="@+id/hctyfgnjbrknwkdqbrrpfg"
+        android:layout_width="766dp"
+        android:layout_height="810dp"
+        android:text="jdeldkjckkeuitqsqkrbm" 
+        android:src="@drawable/gmllvgmuqvvogiuw" 
+/>
+   </LinearLayout>

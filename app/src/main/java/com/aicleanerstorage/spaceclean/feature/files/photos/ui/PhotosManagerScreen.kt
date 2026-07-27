@@ -24,10 +24,10 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerDelete
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerTopAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerGalleryBrowserView
+import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerNoResultsContent
 
 @Composable
 internal fun PhotosManagerScreen(
@@ -45,20 +45,15 @@ internal fun PhotosManagerScreen(
     FileManagerScaffold(
         title = stringResource(R.string.nav_photos),
         onBack = { onAction(FileManagerAction.Back) },
-        actions = {
-            val actionText = when (state.phase) {
-                FileOperationPhase.Browsing,
-                FileOperationPhase.ConfirmDelete ->
-                    stringResource(if (state.allSelected) R.string.file_unselect_all else R.string.file_select_all)
-                else -> null
-            }
-            FileManagerTopAction(actionText = actionText) { onAction(FileManagerAction.ToggleVisibleItems) }
-        },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing && !isDetailMode) {
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
+                !isDetailMode
+            ) {
                 FileManagerDeleteBottomBar(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
             }
@@ -69,12 +64,19 @@ internal fun PhotosManagerScreen(
             FileOperationPhaseContent(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_photos),
-                deletingText = stringResource(R.string.file_cleanup_completed),
+                deletingText = stringResource(R.string.file_deleting_files),
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
                 onNavigateTool = onNavigate,
                 onContinue = { onAction(FileManagerAction.ContinueManaging) },
+                noResultsContent = {
+                    FileManagerNoResultsContent(
+                        tabs = state.displayTabs,
+                        selectedTabIndex = state.selectedTabIndex,
+                        onTabSelected = { onAction(FileManagerAction.SelectTab(it)) },
+                    )
+                },
             ) {
                 FileManagerGalleryBrowserView(
                     tabs = state.displayTabs,

@@ -21,12 +21,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.DeleteConfirmDialog
-import com.aicleanerstorage.spaceclean.feature.files.shared.ui.NoResultsDialog
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.common.permission.ui.rememberPermissionGranted

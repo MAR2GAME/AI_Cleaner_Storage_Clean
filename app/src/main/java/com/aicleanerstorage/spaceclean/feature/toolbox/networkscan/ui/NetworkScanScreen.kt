@@ -46,7 +46,6 @@ fun NetworkScanScreen(
 ) {
     CleanXScaffoldPage(
         title = stringResource(R.string.network_scan),
-        titleFontSize = 20.sp,
         onBack = onBack,
         backgroundBrush = Brush.linearGradient(
             colors = listOf(NetworkScanPageBg, NetworkScanPageBg),

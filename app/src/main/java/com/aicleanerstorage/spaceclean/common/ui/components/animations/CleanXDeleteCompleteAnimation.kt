@@ -1,30 +1,39 @@
 package com.aicleanerstorage.spaceclean.common.ui.components.animations
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBackground
-import kotlinx.coroutines.launch
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXHeaderBottomPadding
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXHeaderTopPadding
+import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXIconButtonSize
 
 enum class CleanXDeleteCompleteStage {
     Deleting,
@@ -35,23 +44,23 @@ enum class CleanXDeleteCompleteStage {
 fun CleanXDeleteCompleteAnimation(
     stage: CleanXDeleteCompleteStage,
     modifier: Modifier = Modifier,
-    fallbackText: String? = null,
+    cleaningText: String,
+    completeText: String? = null,
     backgroundColor: Color = CleanXBackground,
     drawBackground: Boolean = true,
 ) {
     val isComplete = stage == CleanXDeleteCompleteStage.Complete
-    val deleteAlpha =
-        animateFloatAsState(
-            targetValue = if (isComplete) 0f else 1f,
-            animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing),
-            label = "deleteAlpha",
-        )
     val backgroundModifier =
         if (drawBackground) {
             Modifier.background(backgroundColor)
         } else {
             Modifier
         }
+    val topBarHeight =
+        WindowInsets.statusBars.asPaddingValues().calculateTopPadding() +
+            CleanXHeaderTopPadding +
+            CleanXIconButtonSize +
+            CleanXHeaderBottomPadding
 
     Box(
         modifier =
@@ -60,20 +69,37 @@ fun CleanXDeleteCompleteAnimation(
                 .then(backgroundModifier),
         contentAlignment = Alignment.TopCenter,
     ) {
-        CleanXDeleteAnimation(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        alpha = deleteAlpha.value
-                    },
-                fallbackText = fallbackText,
-        )
-        Column(
-            modifier = Modifier.padding(top = 150.dp)
-        ) {
-            CleanXDeleteCompleteCheckAnimation(
-                isVisible = isComplete,
+        if (isComplete) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .offset(y = -topBarHeight),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                CleanXDeleteCompleteCheckAnimation(
+                    isVisible = true,
+                    modifier = Modifier.padding(top = 174.dp),
+                )
+                completeText?.let { text ->
+                    Text(
+                        text = text,
+                        color = Color(0xFF282927),
+                        fontSize = 18.sp,
+                        lineHeight = 21.sp,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 479.dp),
+                    )
+                }
+            }
+        } else {
+            CleanXSpiralCleaningContent(
+                captionText = cleaningText,
+                contentOffsetY = -topBarHeight,
             )
         }
     }
@@ -82,44 +108,32 @@ fun CleanXDeleteCompleteAnimation(
 @Composable
 private fun CleanXDeleteCompleteCheckAnimation(
     isVisible: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    val scale = remember { Animatable(0.35f) }
-    val alpha = remember { Animatable(0f) }
+    var animationStarted by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (animationStarted) 1f else 0.35f,
+        animationSpec = tween(
+            durationMillis = 800,
+            easing = FastOutSlowInEasing,
+        ),
+        label = "whatsAppCleanCompleteScale",
+    )
 
     LaunchedEffect(isVisible) {
-        if (isVisible) {
-            scale.snapTo(0.35f)
-            alpha.snapTo(0f)
-            launch {
-                scale.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing),
-                )
-            }
-            launch {
-                alpha.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
-                )
-            }
-        } else {
-            scale.snapTo(0.35f)
-            alpha.snapTo(0f)
-        }
+        animationStarted = isVisible
     }
 
-    if (isVisible || alpha.value > 0f) {
+    if (isVisible) {
         Image(
-            painter = painterResource(R.drawable.ic_file_manager_complete),
+            painter = painterResource(R.drawable.ic_clean_ok),
             contentDescription = null,
             modifier =
-                Modifier
-                    .size(122.dp)
-                    .alpha(alpha.value)
+                modifier
+                    .size(250.dp)
                     .graphicsLayer {
-                        scaleX = scale.value
-                        scaleY = scale.value
-                        transformOrigin = TransformOrigin.Center
+                        scaleX = scale
+                        scaleY = scale
                     },
         )
     }

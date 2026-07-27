@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="533dp"
+    android:layout_height="129dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/bqjxsmvrascuurtcufcvxp"
+        android:layout_width="963dp"
+        android:layout_height="180dp"
+        android:text="uoifuoghvskbogbktoiblcq" 
+        android:src="@drawable/mxbdwouyezflfroch" 
+/>
+   <Spinner
+        android:id="@+id/wklpxrdznqqyurwa"
+        android:layout_width="636dp"
+        android:layout_height="988dp"
+        android:text="ifyrgesjwclcuhuzp" 
+        android:src="@drawable/mxbdwouyezflfroch" 
+/>
+   <SeekBar
+        android:id="@+id/bzzgprwojlasibkvvomvj"
+        android:layout_width="735dp"
+        android:layout_height="201dp"
+        android:text="ydyqrwinoxocyrorjygwckold" 
+        android:src="@drawable/mxbdwouyezflfroch" 
+/>
+   <RadioButton
+        android:id="@+id/mnofkwbdeycpjjjr"
+        android:layout_width="439dp"
+        android:layout_height="969dp"
+        android:text="nicjcjiibgcdjkrnw" 
+        android:src="@drawable/mxbdwouyezflfroch" 
+/>
+   <DatePicker
+        android:id="@+id/qcptaipuqvumbxkxx"
+        android:layout_width="649dp"
+        android:layout_height="325dp"
+        android:text="jcoacofvooamqkmwqpjvjhhn" 
+        android:src="@drawable/mxbdwouyezflfroch" 
+/>
+   </LinearLayout>

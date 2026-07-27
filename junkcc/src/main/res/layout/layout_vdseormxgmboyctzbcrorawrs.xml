@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="856dp"
+    android:layout_height="833dp"
+    android:orientation="vertical">
+   <EditText
+        android:id="@+id/aazyrzjvuzjqxbrzhxjetcj"
+        android:layout_width="336dp"
+        android:layout_height="457dp"
+        android:text="shatrfwctxhfkphdokj" 
+        android:src="@drawable/xrqbqwuhudjnsgmatcsj" 
+/>
+   <SeekBar
+        android:id="@+id/tclarlwjayvrxkfmymf"
+        android:layout_width="997dp"
+        android:layout_height="582dp"
+        android:text="dujkwowxrirdsaon" 
+        android:src="@drawable/xrqbqwuhudjnsgmatcsj" 
+/>
+   </LinearLayout>

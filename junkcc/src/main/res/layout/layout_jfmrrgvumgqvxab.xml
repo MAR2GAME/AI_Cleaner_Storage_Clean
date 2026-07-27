@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="954dp"
+    android:layout_height="569dp"
+    android:orientation="vertical">
+   <SeekBar
+        android:id="@+id/izkzfpeilrvyhkpfcknh"
+        android:layout_width="581dp"
+        android:layout_height="657dp"
+        android:text="aalcayfqluhlcpzeajnuo" 
+        android:src="@drawable/owczyvahzqxabbsmotosuilo" 
+/>
+   <SeekBar
+        android:id="@+id/aizzgbgxpbkumrj"
+        android:layout_width="340dp"
+        android:layout_height="265dp"
+        android:text="yyovikekvolapkvtnpph" 
+        android:src="@drawable/owczyvahzqxabbsmotosuilo" 
+/>
+   <ProgressBar
+        android:id="@+id/jxmiiptyzqrdqsdlrraaxvpn"
+        android:layout_width="467dp"
+        android:layout_height="581dp"
+        android:text="emoixgtbottiqfhrgwzwxbq" 
+        android:src="@drawable/owczyvahzqxabbsmotosuilo" 
+/>
+   <EditText
+        android:id="@+id/zduxjpecbwoehmvyvns"
+        android:layout_width="54dp"
+        android:layout_height="711dp"
+        android:text="nwkvgtcjoschrtjsont" 
+        android:src="@drawable/owczyvahzqxabbsmotosuilo" 
+/>
+   </LinearLayout>

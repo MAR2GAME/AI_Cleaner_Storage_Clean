@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="423dp"
+    android:layout_height="257dp"
+    android:orientation="vertical">
+   <GridView
+        android:id="@+id/wlsjdkgfegulcogoeyjrpfqlb"
+        android:layout_width="330dp"
+        android:layout_height="104dp"
+        android:text="rqjupqfffdttyyfgygdj" 
+        android:src="@drawable/sfjdtvvunfbggpgbany" 
+/>
+   <FrameLayout
+        android:id="@+id/uhplnxuextitvmhqugfeaa"
+        android:layout_width="27dp"
+        android:layout_height="666dp"
+        android:text="iomhjgktglomgwn" 
+        android:src="@drawable/sfjdtvvunfbggpgbany" 
+/>
+   <ViewFlipper
+        android:id="@+id/ocueqhmizvfptxxrahbq"
+        android:layout_width="116dp"
+        android:layout_height="526dp"
+        android:text="ckhtpqgoievqocxbx" 
+        android:src="@drawable/sfjdtvvunfbggpgbany" 
+/>
+   </LinearLayout>

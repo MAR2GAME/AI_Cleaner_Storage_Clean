@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="660dp"
+    android:layout_height="844dp"
+    android:orientation="vertical">
+   <RatingBar
+        android:id="@+id/logiyaocahzusibauyltjb"
+        android:layout_width="210dp"
+        android:layout_height="183dp"
+        android:text="gxkrjgxqcsjgavszdun" 
+        android:src="@drawable/zenepnsohnwlefwh" 
+/>
+   <ToggleButton
+        android:id="@+id/ahiirxhjhlhkemwcfxefkerpb"
+        android:layout_width="839dp"
+        android:layout_height="174dp"
+        android:text="mifjnwkjchjpybitnbpbyva" 
+        android:src="@drawable/zenepnsohnwlefwh" 
+/>
+   <ProgressBar
+        android:id="@+id/ufrmbmjwmzoycmcrw"
+        android:layout_width="726dp"
+        android:layout_height="113dp"
+        android:text="lffbqmwjvjmuwnxlfeghday" 
+        android:src="@drawable/zenepnsohnwlefwh" 
+/>
+   </LinearLayout>

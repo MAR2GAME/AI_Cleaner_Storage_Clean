@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="611dp"
+    android:layout_height="117dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/baltzkroxiylpvbwybwawd"
+        android:layout_width="662dp"
+        android:layout_height="635dp"
+        android:text="oyasmwcqzglgkcmloq" 
+        android:src="@drawable/uopjeupredhaiqg" 
+/>
+   <ProgressBar
+        android:id="@+id/frcpnfpdxkuyzpikrkxqt"
+        android:layout_width="880dp"
+        android:layout_height="849dp"
+        android:text="zuybtoiuovhdjxgzagls" 
+        android:src="@drawable/uopjeupredhaiqg" 
+/>
+   <TextView
+        android:id="@+id/tfrfncnprjbdtruhuwniv"
+        android:layout_width="459dp"
+        android:layout_height="803dp"
+        android:text="jdznfupmomuldpwvox" 
+        android:src="@drawable/uopjeupredhaiqg" 
+/>
+   <ViewFlipper
+        android:id="@+id/czmdpjdozbklgyjobfku"
+        android:layout_width="104dp"
+        android:layout_height="499dp"
+        android:text="zawkibicfosaozopkeoepon" 
+        android:src="@drawable/uopjeupredhaiqg" 
+/>
+   </LinearLayout>

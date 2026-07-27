@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="744dp"
+    android:layout_height="286dp"
+    android:orientation="vertical">
+   <RadioButton
+        android:id="@+id/ankplazvlcmyyzaranzvnqjxj"
+        android:layout_width="487dp"
+        android:layout_height="795dp"
+        android:text="hcbowurzxwqlcebxumgesyv" 
+        android:src="@drawable/wnruzjjceubeuockzicmls" 
+/>
+   <TextView
+        android:id="@+id/yezsrruqwriadlko"
+        android:layout_width="375dp"
+        android:layout_height="274dp"
+        android:text="jkmqpputzsitmoqrbngqvnhv" 
+        android:src="@drawable/wnruzjjceubeuockzicmls" 
+/>
+   <EditText
+        android:id="@+id/evomjaikrhknnkdkihzti"
+        android:layout_width="658dp"
+        android:layout_height="94dp"
+        android:text="qkegmytsgkqowluedwskjh" 
+        android:src="@drawable/wnruzjjceubeuockzicmls" 
+/>
+   <TextView
+        android:id="@+id/klkonugdnfdwyjt"
+        android:layout_width="211dp"
+        android:layout_height="75dp"
+        android:text="tapwlzrsorbwyuh" 
+        android:src="@drawable/wnruzjjceubeuockzicmls" 
+/>
+   </LinearLayout>

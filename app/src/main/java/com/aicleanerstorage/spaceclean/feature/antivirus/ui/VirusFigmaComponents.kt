@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.antivirus.ui
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.common.ui.components.CleanXTopAppBar
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
 import com.aicleanerstorage.spaceclean.feature.antivirus.VirusScanMode
 
@@ -55,39 +55,16 @@ internal fun VirusFigmaPage(
     onBack: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
     Box(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(VirusFigmaBackground),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .offset(x = 16.dp, y = 56.dp)
-                    .height(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_antivirus_back_figma),
-                contentDescription = stringResource(R.string.back),
-                tint = Color.Unspecified,
-                modifier =
-                    Modifier
-                        .size(24.dp)
-                        .clickable { onBack?.invoke() ?: dispatcher?.onBackPressed() },
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.anti_virus),
-                color = VirusFigmaText,
-                fontSize = 20.sp,
-                lineHeight = 23.sp,
-                fontWeight = FontWeight.Medium,
-            )
-        }
+        CleanXTopAppBar(
+            title = stringResource(R.string.anti_virus),
+            onBack = onBack,
+        )
 
         content()
     }
@@ -287,13 +264,17 @@ internal fun VirusFigmaProgressTrack(
         }
 
         positions.forEachIndexed { index, x ->
+            val iconSize = if (mode == VirusScanMode.Deep && index == icons.lastIndex) 33.dp else 38.dp
             Image(
                 painter = painterResource(icons[index]),
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .offset(x = x + 9.dp, y = 9.dp)
-                        .size(38.dp),
+                        .offset(
+                            x = x + (56.dp - iconSize) / 2,
+                            y = (56.dp - iconSize) / 2,
+                        )
+                        .size(iconSize),
                 contentScale = ContentScale.Fit,
             )
 

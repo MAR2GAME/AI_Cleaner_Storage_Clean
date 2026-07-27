@@ -18,7 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.feature.antivirus.ui.NoVirusResultScreen
 import com.aicleanerstorage.spaceclean.feature.antivirus.ui.ScanVirusResultScreen
 import java.io.File
@@ -34,7 +34,7 @@ sealed interface VirusResultAction {
 fun ScanVirusResultRoute(
     navigator: AppNavigator,
     viewModel: VirusScanViewModel,
-    externalActivities: ExternalActivityLauncher,
+    externalActivities: ExternalActivityTracker,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

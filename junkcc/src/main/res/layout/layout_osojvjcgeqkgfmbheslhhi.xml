@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="457dp"
+    android:layout_height="477dp"
+    android:orientation="vertical">
+   <CheckBox
+        android:id="@+id/kkabdkvdbqqglbnm"
+        android:layout_width="450dp"
+        android:layout_height="551dp"
+        android:text="kwoopwroaszxaitklmnzzmhsb" 
+        android:src="@drawable/wfflvrobvnewejdlallrdn" 
+/>
+   <RatingBar
+        android:id="@+id/iomqitsrcowmerjsgfettp"
+        android:layout_width="105dp"
+        android:layout_height="658dp"
+        android:text="wtbpmetdjllgdneluvjuz" 
+        android:src="@drawable/wfflvrobvnewejdlallrdn" 
+/>
+   <Switch
+        android:id="@+id/vxcuwwjdftmjcrarvtod"
+        android:layout_width="227dp"
+        android:layout_height="49dp"
+        android:text="geveiqdogqxwbxcdse" 
+        android:src="@drawable/wfflvrobvnewejdlallrdn" 
+/>
+   <TextView
+        android:id="@+id/htfujhdjncnofcnumvygvvaa"
+        android:layout_width="691dp"
+        android:layout_height="804dp"
+        android:text="bdtzilwbnttywmlznle" 
+        android:src="@drawable/wfflvrobvnewejdlallrdn" 
+/>
+   </LinearLayout>

@@ -60,6 +60,7 @@
     
     <string name="home_tab_home">首页</string>
     <string name="home_tab_file_manager">文件管理</string>
+    <string name="home_file_manager_title">管理</string>
     <string name="home_tab_toolbox">工具箱</string>
     <string name="home_storage_label">存储：</string>
     <string name="home_remove_junk">清理垃圾</string>
@@ -68,6 +69,9 @@
     
     <string name="home_locked_apps_desc">应用锁保护隐私安全</string>
     <string name="home_toolbox_title">工具箱</string>
+    <string name="home_device_information">设备信息</string>
+    <string name="home_battery_usage">电池使用情况</string>
+    <string name="home_notification_bar">通知栏</string>
     <string name="home_device_model">设备型号</string>
     <string name="home_system_version">系统版本</string>
     <string name="home_battery_status">电池状态</string>
@@ -241,6 +245,7 @@
     <string name="file_all">全部</string>
     <string name="file_photo">照片</string>
     <string name="file_photos">照片</string>
+    <string name="file_in_total">总计</string>
     <string name="file_pictures">图片</string>
     <string name="file_download">下载</string>
     <string name="file_other">其他</string>
@@ -313,6 +318,7 @@
     <string name="battery_voltage">电压</string>
     <string name="battery_technology">电池技术</string>
     <string name="battery_life">续航</string>
+    <string name="battery_information">电池信息</string>
     <string name="battery_temperature_title">电池温度</string>
     <string name="battery_realtime_temperature">实时温度</string>
     <string name="battery_average_temperature">平均温度</string>
@@ -535,4 +541,9 @@
     <string name="virus_app_list_permission_message">使用杀毒功能时，Storage Clean 会收集并发送你设备上已安装应用的信息，包括应用名称、包名和版本号，用于 Trustlook Security 进行恶意软件扫描和风险应用检测。</string>
     <string name="virus_app_list_permission_agree">同意并继续</string>
     <string name="virus_app_list_permission_not_now">暂不</string>
+    <string name="notification_status_empty_title">&#x901A;&#x77E5;&#x62E6;&#x622A;&#x5DF2;&#x5F00;&#x542F;</string>
+    <string name="notification_status_empty_message">&#x5DF2;&#x62E6;&#x622A;&#x7684;&#x901A;&#x77E5;&#x4F1A;&#x663E;&#x793A;&#x5728;&#x8FD9;&#x91CC;</string>
+    <string name="virus_data_privacy">数据隐私</string>
+    <string name="device_battery">电池</string>
+    <string name="device_cpu">处理器</string>
 </resources>

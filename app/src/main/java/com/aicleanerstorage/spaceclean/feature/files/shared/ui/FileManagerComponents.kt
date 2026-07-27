@@ -1,29 +1,39 @@
 package com.aicleanerstorage.spaceclean.feature.files.shared.ui
 
-import androidx.compose.foundation.Image
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.format.FileSizeFormatter
+import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerBackgroundColor
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerCardBackgroundColor
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerDividerLineColor
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerMutedTextColor
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerPrimaryGradient
+import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.common.ui.components.FileManagerTitleColor
 import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXGradientBottomActionBar
+import com.aicleanerstorage.spaceclean.common.ui.components.stableNavigationBarsPadding
 
 internal val FileManagerListBottomPadding = 112.dp
 internal val FileManagerPageBrush = Brush.verticalGradient(
@@ -38,10 +48,12 @@ internal val FileManagerDividerColor = FileManagerDividerLineColor
 internal fun FileManagerDeleteBottomBar(
     enabled: Boolean,
     selectedSizeBytes: Long,
+    keepActiveAppearance: Boolean = false,
     onClick: () -> Unit,
 ) {
-    CleanXGradientBottomActionBar(
+    FileManagerBottomActionBar(
         enabled = enabled,
+        keepActiveAppearance = keepActiveAppearance,
         text =
             if (enabled) {
                 stringResource(R.string.file_delete_size, FileSizeFormatter.format(selectedSizeBytes))
@@ -53,13 +65,59 @@ internal fun FileManagerDeleteBottomBar(
 }
 
 @Composable
-internal fun SelectionCircle(selected: Boolean, modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(
-            id = if (selected) R.drawable.ic_selected else R.drawable.ic_unselected
-        ),
-        contentDescription = null,
-        modifier = modifier.size(21.dp)
+internal fun FileManagerBottomActionBar(
+    enabled: Boolean,
+    text: String,
+    keepActiveAppearance: Boolean = false,
+    onClick: () -> Unit,
+) {
+    if (enabled || !keepActiveAppearance) {
+        CleanXGradientBottomActionBar(
+            enabled = enabled,
+            text = text,
+            onClick = onClick,
+        )
+        return
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .stableNavigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(26.dp))
+                    .background(FileManagerPrimaryGradient),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                color = FileManagerTextColor,
+                fontSize = 20.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
+@Composable
+internal fun SelectionCircle(
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    @DrawableRes unselectedIconRes: Int = R.drawable.ic_unselected,
+) {
+    CleanXSelectionCircle(
+        selected = selected,
+        modifier = modifier,
+        size = 21.dp,
+        unselectedIconRes = unselectedIconRes,
     )
 }
 

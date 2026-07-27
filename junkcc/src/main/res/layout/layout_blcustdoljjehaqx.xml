@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="595dp"
+    android:layout_height="198dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/kmayqvqmbfpiyspkteqzush"
+        android:layout_width="923dp"
+        android:layout_height="656dp"
+        android:text="djozqcbuoeuayjsbyqblmtm" 
+        android:src="@drawable/lpkllynibqcwhciybzkcsy" 
+/>
+   <Spinner
+        android:id="@+id/obzgrhmebrnqvpr"
+        android:layout_width="504dp"
+        android:layout_height="235dp"
+        android:text="nverhjntfhjhgvmtadkjjkbmy" 
+        android:src="@drawable/lpkllynibqcwhciybzkcsy" 
+/>
+   <ToggleButton
+        android:id="@+id/ujqtcvtnpsckgbap"
+        android:layout_width="181dp"
+        android:layout_height="28dp"
+        android:text="ayzwmyjggitoxqjgsoyk" 
+        android:src="@drawable/lpkllynibqcwhciybzkcsy" 
+/>
+   </LinearLayout>

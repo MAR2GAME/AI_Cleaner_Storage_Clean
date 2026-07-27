@@ -1,21 +1,13 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.ui
 
-import com.aicleanerstorage.spaceclean.feature.junkclean.*
-
-import android.content.Context
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.os.Build
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -24,14 +16,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Icon
@@ -40,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -48,13 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,11 +50,9 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.CategoryCleanGrou
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.CleanItem
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkFile
-import com.aicleanerstorage.spaceclean.common.ui.components.cleanXPressable
+import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSelectionCircle
+import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXGradientBottomActionBar
 import com.aicleanerstorage.spaceclean.feature.junkclean.SelectionSummary
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
 
 private val CleanXText = Color(0xFF2D3748)
 private val CleanXMutedText = Color(0xFF8190A5)
@@ -80,7 +61,6 @@ private val ResultNavy = Color(0xFF282927)
 private val ResultOrange = Color(0xFFFC7941)
 private val ResultDivider = Color(0xFFD9D9D9)
 private val ResultIconBg = Color(0xA6EFFFF2)
-private val ResultGreen = Color(0xFF5DD595)
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -90,7 +70,6 @@ internal fun JunkScanResultView(
     selectedSummary: SelectionSummary,
     onToggleCategorySelection: (List<JunkCategory>) -> Unit,
     onToggleItem: (CleanItem) -> Unit,
-    onClean: () -> Unit,
 ) {
     val rows = displayGroups(groups)
     var expandedIndex by remember { mutableStateOf(-1) }
@@ -142,11 +121,6 @@ internal fun JunkScanResultView(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        JunkRemoveButton(
-            selectedSummary = selectedSummary,
-            onClick = onClean,
-        )
     }
 }
 
@@ -203,28 +177,31 @@ private fun SummaryCard(totalSize: Long) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(79.dp),
+                .height(96.dp),
         color = ResultCardBg,
         shape = RoundedCornerShape(12.dp),
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
         ) {
+            val illustrationSize = if (maxWidth < 320.dp) 72.dp else 88.dp
+
             Image(
                 painter = painterResource(id = R.drawable.junk_result_bucket_figma),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-16).dp, y = (-28).dp)
-                    .width(93.dp)
-                    .height(107.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 8.dp)
+                        .size(illustrationSize),
             )
             Row(
                 modifier =
                     Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 16.dp, top = 20.dp),
+                        .fillMaxWidth()
+                        .align(Alignment.CenterStart)
+                        .padding(start = 16.dp, end = illustrationSize + 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -233,6 +210,9 @@ private fun SummaryCard(totalSize: Long) {
                     fontSize = 18.sp,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -258,7 +238,7 @@ private fun SummaryCard(totalSize: Long) {
 }
 
 @Composable
-private fun JunkRemoveButton(
+internal fun JunkRemoveButton(
     selectedSummary: SelectionSummary,
     onClick: () -> Unit,
 ) {
@@ -273,39 +253,11 @@ private fun JunkRemoveButton(
             else -> stringResource(R.string.result_select_items_button)
         }
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .clip(RoundedCornerShape(26.dp))
-                .background(
-                    if (enabled) {
-                        Brush.horizontalGradient(listOf(Color(0xFFD0FD91), ResultGreen))
-                    } else {
-                        Brush.horizontalGradient(listOf(Color(0xFFE1E5EA), Color(0xFFD7DCE2)))
-                    },
-                )
-                .cleanXPressable(
-                    enabled = enabled,
-                    pressedAlpha = 0.82f,
-                    pressedScale = 0.98f,
-                    onClick = onClick,
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = buttonText,
-            color = ResultNavy,
-            fontSize = 20.sp,
-            lineHeight = 24.sp,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 18.dp),
-        )
-    }
+    CleanXGradientBottomActionBar(
+        text = buttonText,
+        enabled = enabled,
+        onClick = onClick,
+    )
 }
 
 @Composable
@@ -366,8 +318,8 @@ private fun CategoryGroupSection(
                     maxLines = 1,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                RoundCheckButton(
-                    checked = checked,
+                CleanXSelectionCircle(
+                    selected = checked,
                     modifier =
                         Modifier
                             .size(24.dp)
@@ -423,8 +375,13 @@ private fun JunkItemCard(
                         .background(ResultIconBg),
                 contentAlignment = Alignment.Center,
             ) {
-                JunkItemIcon(item = item)
+                JunkItemIcon()
             }
+            CleanXSelectionCircle(
+                selected = item.isChecked,
+                modifier = Modifier.align(Alignment.TopEnd),
+                size = 21.dp,
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -452,72 +409,11 @@ private fun JunkItemCard(
 }
 
 @Composable
-private fun JunkItemIcon(item: CleanItem) {
-    val context = LocalContext.current
-    val filePath = item.junkFile.filePath
-    val apkIcon by
-        produceState<ImageBitmap?>(initialValue = apkIconBitmapCache[filePath], item.category, filePath) {
-            value =
-                if (item.category == JunkCategory.APK) {
-                    withContext(Dispatchers.IO) { loadApkIconBitmap(context.applicationContext, filePath) }
-                } else {
-                    null
-                }
-        }
-
-    val loadedApkIcon = apkIcon
-    if (loadedApkIcon != null) {
-        Image(
-            bitmap = loadedApkIcon,
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(6.dp),
-            contentScale = ContentScale.Fit,
-        )
-    } else {
-        FileGlyph(modifier = Modifier.size(24.dp))
-    }
-}
-
-@Composable
-private fun RoundCheckButton(
-    checked: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier =
-            modifier
-                .clip(CircleShape)
-                .background(if (checked) ResultGreen else Color.Transparent),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (checked) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(16.dp),
-            )
-        } else {
-            Canvas(modifier = Modifier.matchParentSize()) {
-                drawCircle(
-                    color = Color(0xFFC8D2DE),
-                    style = Stroke(width = 1.5.dp.toPx()),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FileGlyph(modifier: Modifier = Modifier) {
-    Icon(
+private fun JunkItemIcon() {
+    Image(
         painter = painterResource(R.drawable.ic_junk_result_file),
         contentDescription = null,
-        modifier = modifier,
-        tint = Color(0xFF3FDA7B),
+        modifier = Modifier.size(24.dp),
     )
 }
 
@@ -542,56 +438,6 @@ private data class ResultDisplayRow(
     val group: CategoryCleanGroup,
     val categories: List<JunkCategory>,
 )
-
-private val apkIconBitmapCache = ConcurrentHashMap<String, ImageBitmap>()
-
-private fun loadApkIconBitmap(
-    context: Context,
-    filePath: String,
-): ImageBitmap? {
-    if (filePath.isBlank()) return null
-    apkIconBitmapCache[filePath]?.let { return it }
-
-    val packageManager = context.packageManager
-    val packageInfo =
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getPackageArchiveInfo(
-                    filePath,
-                    PackageManager.PackageInfoFlags.of(0),
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                packageManager.getPackageArchiveInfo(filePath, 0)
-            }
-        }.getOrNull() ?: return null
-
-    val applicationInfo = packageInfo.applicationInfo ?: return null
-    applicationInfo.sourceDir = filePath
-    applicationInfo.publicSourceDir = filePath
-
-    val drawable = runCatching { applicationInfo.loadIcon(packageManager) }.getOrNull() ?: return null
-    return cacheApkIconBitmap(filePath, drawable.toBitmap().asImageBitmap())
-}
-
-private fun cacheApkIconBitmap(
-    filePath: String,
-    bitmap: ImageBitmap,
-): ImageBitmap {
-    apkIconBitmapCache[filePath] = bitmap
-    return bitmap
-}
-
-private fun Drawable.toBitmap(): Bitmap {
-    if (this is BitmapDrawable && bitmap != null) return bitmap
-    val width = intrinsicWidth.takeIf { it > 0 } ?: 96
-    val height = intrinsicHeight.takeIf { it > 0 } ?: 96
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-    val canvas = android.graphics.Canvas(bitmap)
-    setBounds(0, 0, canvas.width, canvas.height)
-    draw(canvas)
-    return bitmap
-}
 
 private fun displayGroups(groups: List<CategoryCleanGroup>): List<ResultDisplayRow> {
     fun row(
@@ -644,4 +490,3 @@ private fun mergeDisplayGroup(
             groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
         },
     )
-

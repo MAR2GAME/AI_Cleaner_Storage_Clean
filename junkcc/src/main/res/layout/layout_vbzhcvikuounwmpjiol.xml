@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="830dp"
+    android:layout_height="662dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/drugsdzxgjgewwj"
+        android:layout_width="149dp"
+        android:layout_height="538dp"
+        android:text="vdzzysvvsibjpyixktatpyydg" 
+        android:src="@drawable/tvdmffdaonizkbvybrozsmccb" 
+/>
+   <Button
+        android:id="@+id/rypxjripjezsownxzjifoizjq"
+        android:layout_width="911dp"
+        android:layout_height="824dp"
+        android:text="cbpdciduobpmdnowdxkzm" 
+        android:src="@drawable/tvdmffdaonizkbvybrozsmccb" 
+/>
+   <ProgressBar
+        android:id="@+id/vcvyhkrdhimzprlc"
+        android:layout_width="761dp"
+        android:layout_height="620dp"
+        android:text="ediaxzonxlztyxunpi" 
+        android:src="@drawable/tvdmffdaonizkbvybrozsmccb" 
+/>
+   </LinearLayout>

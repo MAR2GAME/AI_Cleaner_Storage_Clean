@@ -12,7 +12,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.core.net.toUri
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import java.io.File
 
 internal class PackageRemovedReceiver(
@@ -33,7 +33,7 @@ internal fun allFilesAccessIntent(context: Context): Intent {
 
 internal fun openDeveloperSettings(
     context: Context,
-    externalActivityLaunchHandler: ExternalActivityLauncher,
+    externalActivityLaunchHandler: ExternalActivityTracker,
 ) {
     try {
         Toast.makeText(context, context.getString(R.string.disable_usb), Toast.LENGTH_LONG).show()
@@ -52,7 +52,7 @@ internal fun openDeveloperSettings(
 internal fun openAppSettings(
     context: Context,
     packageName: String?,
-    externalActivityLaunchHandler: ExternalActivityLauncher,
+    externalActivityLaunchHandler: ExternalActivityTracker,
 ) {
     val targetPackageName = packageName?.takeIf { it.isNotBlank() } ?: return
     try {

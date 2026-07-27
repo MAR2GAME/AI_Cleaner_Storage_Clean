@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="204dp"
+    android:layout_height="96dp"
+    android:orientation="vertical">
+   <Spinner
+        android:id="@+id/ddydkwchfxeljltpkxbuc"
+        android:layout_width="959dp"
+        android:layout_height="461dp"
+        android:text="uymfjablrcdxmcflgbmfde" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <EditText
+        android:id="@+id/psahkwypczqyrzllkjkij"
+        android:layout_width="265dp"
+        android:layout_height="384dp"
+        android:text="ccfgrkquljcernkmgqhqtm" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <LinearLayout
+        android:id="@+id/ajqcwumjtbgivsuuuntjo"
+        android:layout_width="181dp"
+        android:layout_height="614dp"
+        android:text="rnywvixygimguebxjclg" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+android:orientation="horizontal"/>
+   <ViewFlipper
+        android:id="@+id/tiiplxwokzkplmwo"
+        android:layout_width="238dp"
+        android:layout_height="104dp"
+        android:text="qxpptckutafhbuwgfzzij" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <RelativeLayout
+        android:id="@+id/noeszshkxoiakfzvmi"
+        android:layout_width="962dp"
+        android:layout_height="51dp"
+        android:text="lvnzstbqhxcjzftfy" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <TableLayout
+        android:id="@+id/xlxxbxxvyramnxq"
+        android:layout_width="321dp"
+        android:layout_height="999dp"
+        android:text="pgofnqosuvxgusvlbzyedcogx" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <LinearLayout
+        android:id="@+id/kkfavvjtxoixigjznjkfywgso"
+        android:layout_width="172dp"
+        android:layout_height="272dp"
+        android:text="govmgjthxqkybghv" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+android:orientation="horizontal"/>
+   <RatingBar
+        android:id="@+id/wqioqvfzqadbeoovryjcq"
+        android:layout_width="579dp"
+        android:layout_height="344dp"
+        android:text="zewevxvruigpousiz" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <Switch
+        android:id="@+id/oampkdllirfpybzqzmht"
+        android:layout_width="781dp"
+        android:layout_height="628dp"
+        android:text="jopvbwxrngzllrrdfmgzvceii" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <RatingBar
+        android:id="@+id/lyfpyrdlizaniwrafeecqysx"
+        android:layout_width="524dp"
+        android:layout_height="125dp"
+        android:text="rgrsaqegwpdnpycv" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <TimePicker
+        android:id="@+id/nntttxnrcepjwaviw"
+        android:layout_width="946dp"
+        android:layout_height="125dp"
+        android:text="jtxxuiierspwspguyndgm" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <RatingBar
+        android:id="@+id/dbqqglweibecmkexknw"
+        android:layout_width="764dp"
+        android:layout_height="6dp"
+        android:text="imnahsblskulikfsa" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <ListView
+        android:id="@+id/gsqqeqbzsywzwezjfwdk"
+        android:layout_width="154dp"
+        android:layout_height="55dp"
+        android:text="bxqgeggenmyncodjpb" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   <LinearLayout
+        android:id="@+id/tqrkwwmidzqvsswj"
+        android:layout_width="62dp"
+        android:layout_height="876dp"
+        android:text="umgixqwuccotypsadirvr" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+android:orientation="horizontal"/>
+   <TextView
+        android:id="@+id/diqmdprzxdrhnjjbqtsjs"
+        android:layout_width="328dp"
+        android:layout_height="800dp"
+        android:text="ccmjehdvirffuts" 
+        android:src="@drawable/zjfqcljqazbxozkmevwsulhze" 
+/>
+   </LinearLayout>

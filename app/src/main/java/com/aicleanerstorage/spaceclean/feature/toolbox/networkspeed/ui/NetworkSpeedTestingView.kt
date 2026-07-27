@@ -29,16 +29,16 @@ internal fun NetworkSpeedTestingView(uiState: NetworkSpeedUiState) {
     Spacer(modifier = Modifier.height(22.dp))
     NetworkSpeedGauge(isAnimating = true)
     Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = networkSpeedPhaseLabel(uiState.progress.phase),
-        color = NetworkSpeedNavyMuted,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        fontWeight = FontWeight.Normal,
-        textAlign = TextAlign.Center
-    )
-    Spacer(modifier = Modifier.height(96.dp))
+//    Text(
+//        modifier = Modifier.fillMaxWidth(),
+//        text = networkSpeedPhaseLabel(uiState.progress.phase),
+//        color = NetworkSpeedNavyMuted,
+//        fontSize = 14.sp,
+//        lineHeight = 20.sp,
+//        fontWeight = FontWeight.Normal,
+//        textAlign = TextAlign.Center
+//    )
+//    Spacer(modifier = Modifier.height(96.dp))
 }
 
 @Composable

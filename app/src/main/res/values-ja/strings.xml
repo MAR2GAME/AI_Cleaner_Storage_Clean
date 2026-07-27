@@ -20,12 +20,16 @@
     <string name="nav_documents">ドキュメント</string>
     <string name="home_tab_home">ホーム</string>
     <string name="home_tab_file_manager">ファイル</string>
+    <string name="home_file_manager_title">管理</string>
     <string name="home_tab_toolbox">ツール</string>
     <string name="home_storage_label">ストレージ:</string>
     <string name="home_remove_junk">不要ファイルを削除</string>
     <string name="home_virus_title">ウイルス</string>
     <string name="home_virus_desc">ウイルス、危険なアプリ、\nリスクのあるファイルを深くスキャン</string>
     <string name="home_toolbox_title">ツール</string>
+    <string name="home_device_information">デバイス情報</string>
+    <string name="home_battery_usage">バッテリー使用状況</string>
+    <string name="home_notification_bar">通知バー</string>
     <string name="home_device_model">端末モデル</string>
     <string name="home_system_version">システムバージョン</string>
     <string name="home_battery_status">バッテリー状態</string>
@@ -49,6 +53,7 @@
     <string name="file_items">項目</string>
     <string name="file_all">すべて</string>
     <string name="file_photos">写真</string>
+    <string name="file_in_total">合計</string>
     <string name="file_download">ダウンロード</string>
     <string name="file_other">その他</string>
     <string name="file_got_it">了解</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">データのプライバシー</string>
+    <string name="device_battery">バッテリー</string>
+    <string name="device_cpu">CPU</string>
+    <string name="battery_information">バッテリー情報</string>
+    <string name="onboarding_device_info_disclaimer">表示されるデバイス情報はシステムが提供するデータに基づいており、公式仕様と異なる場合があります。例えば、システムの予約領域やハードウェア構成の違いにより、ストレージ容量やメモリがわずかに異なることがあります。</string>
+    <string name="notification_status_empty_title">通知のブロックが有効です</string>
+    <string name="notification_status_empty_message">ブロックした通知はここに表示されます</string>
 </resources>

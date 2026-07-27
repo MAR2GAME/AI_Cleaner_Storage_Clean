@@ -5,8 +5,8 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.FeatureFlowRuntime
-import com.aicleanerstorage.spaceclean.app.runtime.external.ExternalActivityLauncher
+import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageRoute
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.BatteryInfoRoute
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoRoute
@@ -29,8 +29,8 @@ import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerToolboxRoutes(
     navigator: AppNavigator,
-    featureFlow: FeatureFlowRuntime,
-    externalActivities: ExternalActivityLauncher,
+    featureFlow: FeatureFlow,
+    externalActivities: ExternalActivityTracker,
 ) {
     composable(AppDestination.DeviceInfo.route) {
         DeviceInfoRoute(

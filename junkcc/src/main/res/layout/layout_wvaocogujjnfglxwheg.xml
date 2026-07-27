@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="741dp"
+    android:layout_height="812dp"
+    android:orientation="vertical">
+   <EditText
+        android:id="@+id/iypjuzrxqfdqkuedlcklz"
+        android:layout_width="705dp"
+        android:layout_height="218dp"
+        android:text="gnuccpderjykdlmqmuiky" 
+        android:src="@drawable/zasqxsjtuxgydsba" 
+/>
+   <TimePicker
+        android:id="@+id/lrdwoqtqiucaosno"
+        android:layout_width="729dp"
+        android:layout_height="895dp"
+        android:text="kgfwtbuhacztikgimepxs" 
+        android:src="@drawable/zasqxsjtuxgydsba" 
+/>
+   <DatePicker
+        android:id="@+id/stroptqmimkdelcwfoy"
+        android:layout_width="670dp"
+        android:layout_height="910dp"
+        android:text="qjexddzzyfnhpmrffq" 
+        android:src="@drawable/zasqxsjtuxgydsba" 
+/>
+   <ToggleButton
+        android:id="@+id/sufconbbmxhwudpcdw"
+        android:layout_width="40dp"
+        android:layout_height="991dp"
+        android:text="qbcsthimlzhpipeyp" 
+        android:src="@drawable/zasqxsjtuxgydsba" 
+/>
+   </LinearLayout>

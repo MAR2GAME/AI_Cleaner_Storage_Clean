@@ -12,7 +12,7 @@
     <string name="rate_feedback_message">Thanks for your feedback. We will keep improving Storage Clean.</string>
     <string name="notification_enable_step_find">1. Find Storage Clean</string>
     <string name="virus_app_list_permission_title">How Virus Scan Uses Your Data</string>
-    <string name="virus_app_list_permission_message">When you use Virus Scan, Storage Clean collects and sends information about the apps installed on your device, including app names, package names, and version numbers, to Trustlook Security for malware scanning and risky app detection.</string>
+    <string name="virus_app_list_permission_message">When you use Virus Scan, Quick Clean PRO collects and sends information about the apps installed on your device, including app names, package names, and version numbers, to Trustlook Security for malware scanning and risky app detection.</string>
     <string name="virus_app_list_permission_agree">Agree and Continue</string>
     <string name="virus_app_list_permission_not_now">Not Now</string>
     <string name="not_now">Not Now</string>
@@ -70,6 +70,7 @@
     <string name="nav_documents">Documents</string>
     <string name="home_tab_home">Home</string>
     <string name="home_tab_file_manager">File Manager</string>
+    <string name="home_file_manager_title">Manager</string>
     <string name="home_tab_toolbox">Toolbox</string>
     <string name="home_storage_label">Storage:</string>
     <string name="home_remove_junk">Remove Junk</string>
@@ -109,6 +110,9 @@
     <string name="enter_your_new_pin">Enter Your New PIN</string>
     <string name="pin_updated_successfully">PIN updated successfully</string>
     <string name="home_toolbox_title">ToolBox</string>
+    <string name="home_device_information">Device information</string>
+    <string name="home_battery_usage">Battery usage</string>
+    <string name="home_notification_bar">Notification Bar</string>
     <string name="home_device_model">Device model</string>
     <string name="home_system_version">System version</string>
     <string name="home_battery_status">Battery status</string>
@@ -241,6 +245,7 @@
     <string name="file_all">All</string>
     <string name="file_photo">Photo</string>
     <string name="file_photos">Photos</string>
+    <string name="file_in_total">in total</string>
     <string name="file_pictures">Pictures</string>
     <string name="file_download">Download</string>
     <string name="file_music">Music</string>
@@ -279,6 +284,8 @@
     <string name="device_screen_density">Screen Density</string>
     <string name="device_screen_multi_touch">Screen Multiple-touch Support</string>
     <string name="device_sensors">Sensors</string>
+    <string name="device_battery">Battery</string>
+    <string name="device_cpu">CPU</string>
     <string name="device_accelerometer_sensor">Accelerometer Sensor</string>
     <string name="device_magnetic_field_sensor">Magnetic Field Sensor</string>
     <string name="device_orientation_sensor">Orientation Sensor</string>
@@ -304,6 +311,7 @@
     <string name="battery_voltage">Voltage</string>
     <string name="battery_technology">Technology</string>
     <string name="battery_life">Life</string>
+    <string name="battery_information">Battery Information</string>
     <string name="battery_temperature_title">Battery temperature</string>
     <string name="battery_realtime_temperature">Real-time Temperature</string>
     <string name="battery_average_temperature">Average Temperature</string>
@@ -427,6 +435,8 @@
     <string name="notification_tidy_complete">Tidy at last\nMiss nothing that matters!</string>
     <string name="notification_collected_suffix">has been collected</string>
     <string name="notification_status_enabled">Notification blocking is enabled</string>
+    <string name="notification_status_empty_title">Notification interception enabled</string>
+    <string name="notification_status_empty_message">Intercepted notifications appear here</string>
     <string name="notification_status_disabled">Notification blocking is disabled</string>
     <string name="notification_showing_limit">Showing up to 100 blocked messages</string>
     <string name="notification_blocked_notifications">Blocked Notifications</string>

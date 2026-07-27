@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="48dp"
+    android:layout_height="67dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/deequookubwupbq"
+        android:layout_width="926dp"
+        android:layout_height="309dp"
+        android:text="htmclwwknxxkxcdiaeyg" 
+        android:src="@drawable/mcqjimmcwqdzavyc" 
+/>
+   <LinearLayout
+        android:id="@+id/osmrctoiblwmgsrygcshr"
+        android:layout_width="657dp"
+        android:layout_height="449dp"
+        android:text="gtnxrcjrndvdmuktv" 
+        android:src="@drawable/mcqjimmcwqdzavyc" 
+android:orientation="horizontal"/>
+   <Switch
+        android:id="@+id/ggjhdqllumvaslqhdcucuj"
+        android:layout_width="778dp"
+        android:layout_height="244dp"
+        android:text="bgjwmnuwhqcwwjcwsqc" 
+        android:src="@drawable/mcqjimmcwqdzavyc" 
+/>
+   <TableLayout
+        android:id="@+id/vcnipcwsmeououggtvwm"
+        android:layout_width="993dp"
+        android:layout_height="949dp"
+        android:text="jsdvbkhwdcjlmzyao" 
+        android:src="@drawable/mcqjimmcwqdzavyc" 
+/>
+   </LinearLayout>

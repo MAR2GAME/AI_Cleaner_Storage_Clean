@@ -33,10 +33,14 @@ internal data class SimilarPhotosManagerUiState(
     val errorMessage: String? = null,
 ) {
     val items: List<SimilarPhotoItem> get() = groups.flatMap { it.items }
+    val totalPhotoCount: Int get() = items.size
+    val totalSizeBytes: Long get() = items.sumOf { it.file.sizeBytes }
     val displayItems: List<FileImageDisplayItem> get() = items.map { it.toDisplayItem() }
     val displayGroups: List<FileImageGroupDisplayItem>
         get() = groups.map { group -> FileImageGroupDisplayItem(group.count, group.items.map { it.toDisplayItem() }) }
     val visibleIds: Set<Int> get() = items.map { it.id }.toSet()
+    val bulkSelectableIds: Set<Int> get() = items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+    val allSelected: Boolean get() = bulkSelectableIds.isNotEmpty() && selectedIds.containsAll(bulkSelectableIds)
     val selectedFiles: List<ManagedFileItem> get() = items.filter { it.id in selectedIds }.map { it.file }
     val selectedSizeBytes: Long get() = selectedFiles.sumOf { it.sizeBytes }
     val selectedUris: List<FileUri> get() = selectedFiles.map { it.uri }

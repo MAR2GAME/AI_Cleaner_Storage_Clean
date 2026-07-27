@@ -3,23 +3,22 @@ package com.aicleanerstorage.spaceclean.config
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 
 import com.aicleanerstorage.spaceclean.BuildConfig
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureCatalog
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class VariantProfileTest {
     @Test
-    fun featureCatalogMapsNestedRoutesToOwningFeature() {
-        assertEquals(FeatureKey.ANTI_VIRUS, FeatureCatalog.featureForRoute(AppDestination.VirusQuickScan.route))
-        assertEquals(FeatureKey.NETWORK_SCAN, FeatureCatalog.featureForRoute(AppDestination.NetworkScanDevices.route))
+    fun destinationsMapNestedRoutesToOwningFeature() {
+        assertEquals(FeatureKey.ANTI_VIRUS, AppDestination.featureForRoute(AppDestination.VirusQuickScan.route))
+        assertEquals(FeatureKey.NETWORK_SCAN, AppDestination.featureForRoute(AppDestination.NetworkScanDevices.route))
     }
 
     @Test
-    fun featureCatalogDoesNotCarryAdPlacementState() {
-        FeatureCatalog.specs.forEach { spec ->
-            assertFalse(spec.toString().contains("Ad", ignoreCase = true))
+    fun destinationFeatureEntriesDoNotCarryAdPlacementState() {
+        AppDestination.featureEntries.forEach { destination ->
+            assertFalse(destination.toString().contains("Ad", ignoreCase = true))
         }
     }
 

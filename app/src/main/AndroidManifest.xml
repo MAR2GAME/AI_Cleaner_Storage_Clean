@@ -68,7 +68,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.aicleanerstorage.spaceclean.app.runtime.notification.AppBackgroundRuntimeService"
+            android:name="com.aicleanerstorage.spaceclean.app.background.AppBackgroundRuntimeService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse">

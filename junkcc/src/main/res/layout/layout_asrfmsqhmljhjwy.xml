@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="68dp"
+    android:layout_height="407dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/qpqleuyikcldjxygbzrifhxxt"
+        android:layout_width="406dp"
+        android:layout_height="61dp"
+        android:text="fplseyvhkcaghmpxoerjkm" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <TableLayout
+        android:id="@+id/lrdxbwokkgaczbgahh"
+        android:layout_width="1dp"
+        android:layout_height="447dp"
+        android:text="cxpghxstzknonurno" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <FrameLayout
+        android:id="@+id/kefdfagyzogaqvnlgkyv"
+        android:layout_width="439dp"
+        android:layout_height="471dp"
+        android:text="ibijejujlnidqegylvw" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <TimePicker
+        android:id="@+id/fjwwesedosupxtpy"
+        android:layout_width="301dp"
+        android:layout_height="538dp"
+        android:text="mjgvubrxgvcupltdf" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <ToggleButton
+        android:id="@+id/roecysrmjyaujjnhku"
+        android:layout_width="905dp"
+        android:layout_height="768dp"
+        android:text="qgafydgadfmftrdlgc" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <Spinner
+        android:id="@+id/rhwoivhwbutdlzxtejjv"
+        android:layout_width="496dp"
+        android:layout_height="926dp"
+        android:text="lmmptrghiircbzatn" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <DatePicker
+        android:id="@+id/hlxuriknnqibrpuhwhchrymaw"
+        android:layout_width="84dp"
+        android:layout_height="456dp"
+        android:text="wfmvrnpafbmgyzsnogutelfz" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <CheckBox
+        android:id="@+id/ctanpbkucsfsphihurxwscl"
+        android:layout_width="826dp"
+        android:layout_height="108dp"
+        android:text="ezubipurennyvrffwbse" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <CheckBox
+        android:id="@+id/dtkgjarkzyzhufkmmhxrnu"
+        android:layout_width="632dp"
+        android:layout_height="908dp"
+        android:text="nrxjjxbinycxiqm" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <EditText
+        android:id="@+id/utkmgqouzrxhopwwbhntt"
+        android:layout_width="36dp"
+        android:layout_height="68dp"
+        android:text="anosmylkmjgfcwfhjxd" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   <Switch
+        android:id="@+id/fgqkfhcdmlanmhbjqyqxlt"
+        android:layout_width="538dp"
+        android:layout_height="209dp"
+        android:text="wlptbhzdfxfvtrumh" 
+        android:src="@drawable/nkmyeitbjrajfohfopy" 
+/>
+   </LinearLayout>

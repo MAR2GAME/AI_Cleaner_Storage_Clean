@@ -12,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXGradientBottomActionBar
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerBottomActionBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.leaveBackForPermissionRejected
@@ -51,7 +51,9 @@ internal fun DuplicateFilesManagerScreen(
         onBack = { onAction(DuplicateFilesAction.Back) },
         bottomBar = {
             if (permissionGranted &&
-                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.ConfirmDelete)
+                (state.phase == FileOperationPhase.Browsing ||
+                    state.phase == FileOperationPhase.ConfirmDelete ||
+                    state.phase == FileOperationPhase.NoResults)
             ) {
                 val cleanupEnabled = if (selectedGroup == null) {
                     state.globalFilesToDelete.isNotEmpty()
@@ -59,8 +61,9 @@ internal fun DuplicateFilesManagerScreen(
                 val cleanupSize = if (selectedGroup == null) {
                     state.selectedDeleteSize
                 } else state.selectedGroupDeleteSize
-                CleanXGradientBottomActionBar(
+                FileManagerBottomActionBar(
                     enabled = cleanupEnabled,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     text = duplicateCleanupButtonText(cleanupSize),
                     onClick = {
                         onAction(

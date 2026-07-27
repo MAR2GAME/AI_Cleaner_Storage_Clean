@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.feature.startup
 
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
 
 enum class SplashStage {
     Preparing,

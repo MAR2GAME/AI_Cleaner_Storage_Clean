@@ -9,9 +9,9 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.toggleIds
 import com.aicleanerstorage.spaceclean.feature.files.shared.toggleId
 
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepository
-import com.aicleanerstorage.spaceclean.app.runtime.featureflow.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -32,7 +32,7 @@ internal class SimilarPhotosManagerViewModel(
     testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 700L
+    private val completeDelayMillis: Long = 800L
 ) : BaseFileManagerViewModel(FeatureKey.SIMILAR_PHOTOS, ioDispatcher, testLoader) {
     private val _uiState = MutableStateFlow(SimilarPhotosManagerUiState())
     val uiState: StateFlow<SimilarPhotosManagerUiState> = _uiState.asStateFlow()
@@ -65,6 +65,12 @@ internal class SimilarPhotosManagerViewModel(
 
     fun toggleSelection(id: Int) {
         _uiState.update { it.copy(selectedIds = toggleId(it.selectedIds, id)) }
+    }
+
+    fun toggleVisibleItems() {
+        _uiState.update { state ->
+            state.copy(selectedIds = toggleIds(state.selectedIds, state.bulkSelectableIds))
+        }
     }
 
     fun toggleGroup(ids: Set<Int>) {

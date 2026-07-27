@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="420dp"
+    android:layout_height="563dp"
+    android:orientation="vertical">
+   <TextView
+        android:id="@+id/nenwkixjrennvuqf"
+        android:layout_width="378dp"
+        android:layout_height="711dp"
+        android:text="igzywjenaztlsctfh" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <ViewFlipper
+        android:id="@+id/hxvclagujgnbfyxzfxkyqsbu"
+        android:layout_width="548dp"
+        android:layout_height="494dp"
+        android:text="hsmcjtdikldanifihums" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <TimePicker
+        android:id="@+id/vajgzrbwdcfvonljzgcpfeps"
+        android:layout_width="150dp"
+        android:layout_height="95dp"
+        android:text="zjgrmtuzzwedmredkm" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <DatePicker
+        android:id="@+id/lzatuqitksqwzokpqjoxsbxpk"
+        android:layout_width="856dp"
+        android:layout_height="674dp"
+        android:text="zcqylwysnpaxujk" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <LinearLayout
+        android:id="@+id/jjvrxrolgkhwkwxoksngh"
+        android:layout_width="673dp"
+        android:layout_height="350dp"
+        android:text="ujxzsxjbakvmyfvdpwzb" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+android:orientation="horizontal"/>
+   <GridView
+        android:id="@+id/vnwatzqyekynzcmjmnaxncqb"
+        android:layout_width="311dp"
+        android:layout_height="470dp"
+        android:text="ndwtdpnpvtsyxbcuoxbqyddhq" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <Spinner
+        android:id="@+id/hjzjtmsrhriwpzqjviqwxgcf"
+        android:layout_width="853dp"
+        android:layout_height="71dp"
+        android:text="tinvlfosczihucjwjin" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   <Switch
+        android:id="@+id/alfxfwebliwkftow"
+        android:layout_width="467dp"
+        android:layout_height="353dp"
+        android:text="qzncfntwdnfbydhapshzlvs" 
+        android:src="@drawable/iyljujqjefznhgkeedqsrep" 
+/>
+   </LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="32dp"
+    android:layout_height="805dp"
+    android:orientation="vertical">
+   <ProgressBar
+        android:id="@+id/slgsahjwabllocge"
+        android:layout_width="126dp"
+        android:layout_height="508dp"
+        android:text="bstukgskbglerknsxew" 
+        android:src="@drawable/gqgeapyjcdpjpbarbsa" 
+/>
+   <TableLayout
+        android:id="@+id/nausfmhnvcpmaixfln"
+        android:layout_width="340dp"
+        android:layout_height="343dp"
+        android:text="rbitjhrmplnsxpgwyou" 
+        android:src="@drawable/gqgeapyjcdpjpbarbsa" 
+/>
+   <LinearLayout
+        android:id="@+id/ucjngxwoumxjmvzjfyftonedo"
+        android:layout_width="716dp"
+        android:layout_height="430dp"
+        android:text="hbmsedtkvzscstg" 
+        android:src="@drawable/gqgeapyjcdpjpbarbsa" 
+android:orientation="horizontal"/>
+   <LinearLayout
+        android:id="@+id/titkbtdwrobpxlrwxcclriisk"
+        android:layout_width="93dp"
+        android:layout_height="211dp"
+        android:text="hiiddqjlxscdtcbmtjfjdup" 
+        android:src="@drawable/gqgeapyjcdpjpbarbsa" 
+android:orientation="horizontal"/>
+   </LinearLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="530dp"
+    android:layout_height="205dp"
+    android:orientation="vertical">
+   <GridView
+        android:id="@+id/gbiwlnxmtuombuyem"
+        android:layout_width="52dp"
+        android:layout_height="318dp"
+        android:text="ohszkthnizckpvgggzmkobtg" 
+        android:src="@drawable/suglbqhctdvkrkhpcjt" 
+/>
+   <ProgressBar
+        android:id="@+id/qlabfrtdtnkjikjqceda"
+        android:layout_width="882dp"
+        android:layout_height="385dp"
+        android:text="lxhquwtntazlfoejee" 
+        android:src="@drawable/suglbqhctdvkrkhpcjt" 
+/>
+   </LinearLayout>

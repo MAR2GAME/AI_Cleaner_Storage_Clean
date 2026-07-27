@@ -14,6 +14,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,12 +24,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,9 +42,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -228,70 +234,131 @@ private fun localizedOnboardingDeviceValue(value: String): String =
 
 @Composable
 private fun StorageCard(storageInfo: StorageInfo) {
-    Box(
+    val usedText = compactStorageSize(storageInfo.formattedUsed)
+    val totalText = " / ${compactStorageSize(storageInfo.formattedTotal)}"
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val totalTextStyle =
+        TextStyle(
+            color = OnboardingMuted,
+            fontSize = 16.sp,
+            lineHeight = 23.sp,
+        )
+
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .height(115.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White),
     ) {
-        Column(
+        val isCompactCard = maxWidth < 340.dp
+        val imageWidth = if (isCompactCard) 76.dp else 88.dp
+        val imageHeight = if (isCompactCard) 65.dp else 75.dp
+        val textEndPadding = if (isCompactCard) 8.dp else 12.dp
+
+        Row(
             modifier = Modifier
-                .width(249.dp)
-                .align(Alignment.CenterStart)
-                .padding(start = 16.dp),
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(R.string.home_storage_label) + ":",
-                    color = OnboardingText,
-                    fontSize = 16.sp,
-                    lineHeight = 23.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = compactStorageSize(storageInfo.formattedUsed),
-                    color = OnboardingGreen,
-                    fontSize = 24.sp,
-                    lineHeight = 28.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                )
-                Text(
-                    text = " / ${compactStorageSize(storageInfo.formattedTotal)}",
-                    color = OnboardingMuted,
-                    fontSize = 16.sp,
-                    lineHeight = 23.sp,
-                    maxLines = 1,
-                )
-            }
-            Spacer(modifier = Modifier.height(7.dp))
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .clip(RoundedCornerShape(14.5.dp))
-                    .background(OnboardingProgressTrack),
+                    .weight(1f)
+                    .padding(end = textEndPadding),
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_storage_label),
+                        color = OnboardingText,
+                        fontSize = 16.sp,
+                        lineHeight = 23.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.widthIn(max = 68.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                        val maxWidthPx = with(density) { maxWidth.roundToPx() }
+                        val measuredTotalWidthPx =
+                            remember(totalText, textMeasurer) {
+                                textMeasurer.measure(
+                                    text = totalText,
+                                    style = totalTextStyle,
+                                    maxLines = 1,
+                                ).size.width
+                            }
+                        val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
+                        val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
+                        val usedFontSize =
+                            remember(usedText, usedWidthPx, textMeasurer) {
+                                (24 downTo 16).firstOrNull { size ->
+                                    textMeasurer.measure(
+                                        text = usedText,
+                                        style =
+                                            TextStyle(
+                                                fontSize = size.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                            ),
+                                        maxLines = 1,
+                                    ).size.width <= usedWidthPx
+                                }?.sp ?: 16.sp
+                            }
+                        val totalWidth = with(density) { totalWidthPx.toDp() }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = usedText,
+                                color = OnboardingGreen,
+                                fontSize = usedFontSize,
+                                lineHeight = 28.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.weight(1f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                text = totalText,
+                                style = totalTextStyle,
+                                modifier = Modifier.width(totalWidth),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(7.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth((storageInfo.usagePercent.coerceIn(0, 100)) / 100f)
+                        .fillMaxWidth()
                         .height(16.dp)
                         .clip(RoundedCornerShape(14.5.dp))
-                        .background(OnboardingGreen),
-                )
+                        .background(OnboardingProgressTrack),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth((storageInfo.usagePercent.coerceIn(0, 100)) / 100f)
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(14.5.dp))
+                            .background(OnboardingGreen),
+                    )
+                }
             }
+            Image(
+                painter = painterResource(R.drawable.onboarding_trash_can),
+                contentDescription = null,
+                modifier = Modifier.size(width = imageWidth, height = imageHeight),
+                contentScale = ContentScale.Fit,
+            )
         }
-        Image(
-            painter = painterResource(R.drawable.onboarding_trash_can),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 7.dp)
-                .size(width = 88.dp, height = 75.dp),
-        )
     }
 }
 

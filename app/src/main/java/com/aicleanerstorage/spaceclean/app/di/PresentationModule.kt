@@ -24,7 +24,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.NetworkScanVi
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeedViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
-import com.aicleanerstorage.spaceclean.app.runtime.permission.NotificationPermissionViewModel
+import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsViewModel
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="115dp"
+    android:layout_height="683dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/ywevynzpnjzaxzfm"
+        android:layout_width="914dp"
+        android:layout_height="301dp"
+        android:text="dkvutkwrnjhhsblatbpzjiyxo" 
+        android:src="@drawable/fgtizabaxsqjisylctdsmnb" 
+/>
+   <Spinner
+        android:id="@+id/mgnhajyapxxozren"
+        android:layout_width="726dp"
+        android:layout_height="526dp"
+        android:text="ebrybzazuqafukjbsli" 
+        android:src="@drawable/fgtizabaxsqjisylctdsmnb" 
+/>
+   <RadioButton
+        android:id="@+id/gfxvpxatqksihvgaglwm"
+        android:layout_width="242dp"
+        android:layout_height="755dp"
+        android:text="hhjmseovfnovlvu" 
+        android:src="@drawable/fgtizabaxsqjisylctdsmnb" 
+/>
+   </LinearLayout>

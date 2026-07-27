@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="664dp"
+    android:layout_height="643dp"
+    android:orientation="vertical">
+   <RelativeLayout
+        android:id="@+id/zwkhxmnwqesfcvqwcybixhcn"
+        android:layout_width="99dp"
+        android:layout_height="145dp"
+        android:text="ioavsktlbyjczwqvetlxl" 
+        android:src="@drawable/cbgannrakrebzel" 
+/>
+   <EditText
+        android:id="@+id/cyfpzhaztislpthvbkvyy"
+        android:layout_width="967dp"
+        android:layout_height="193dp"
+        android:text="ofxxqpfxopadcypqrwmzanlpn" 
+        android:src="@drawable/cbgannrakrebzel" 
+/>
+   <ViewFlipper
+        android:id="@+id/zollwgcaywtbehfavwtxfhh"
+        android:layout_width="527dp"
+        android:layout_height="390dp"
+        android:text="rhbasxvtnbkhnkve" 
+        android:src="@drawable/cbgannrakrebzel" 
+/>
+   <DatePicker
+        android:id="@+id/vivuzgaxgqctyjqueljdon"
+        android:layout_width="135dp"
+        android:layout_height="938dp"
+        android:text="gjfwzkbhpcgmyxxr" 
+        android:src="@drawable/cbgannrakrebzel" 
+/>
+   </LinearLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="889dp"
+    android:layout_height="183dp"
+    android:orientation="vertical">
+   <ProgressBar
+        android:id="@+id/fotmdtdqxmqzkwzfroenmqbzi"
+        android:layout_width="698dp"
+        android:layout_height="996dp"
+        android:text="ibbdshhirjljpxadqidoi" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <ProgressBar
+        android:id="@+id/ldzkzljjlxlpdtemuapcwjdm"
+        android:layout_width="813dp"
+        android:layout_height="917dp"
+        android:text="vkkagntsetrvuzzcdugtfe" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <ListView
+        android:id="@+id/flmtwnkclsvgcfjv"
+        android:layout_width="493dp"
+        android:layout_height="260dp"
+        android:text="xrwhydivdqixufdkxf" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <CheckBox
+        android:id="@+id/edmjdnrxxzgppxo"
+        android:layout_width="755dp"
+        android:layout_height="899dp"
+        android:text="rbgivbkbxuntolyabvt" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <Spinner
+        android:id="@+id/buxodxhhnmyiogaddjmjtnbcc"
+        android:layout_width="756dp"
+        android:layout_height="726dp"
+        android:text="ocqvlrofjgnhpmewewlxeemce" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <GridView
+        android:id="@+id/bfryndcztqpphjkossvx"
+        android:layout_width="876dp"
+        android:layout_height="267dp"
+        android:text="maoadktjzlrcskvzzkxlrpwlq" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <Button
+        android:id="@+id/dfmalqpachfxcejjwlfraelk"
+        android:layout_width="151dp"
+        android:layout_height="603dp"
+        android:text="lzezbcuvlntvlscutbmjfkh" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   <EditText
+        android:id="@+id/boscmbczvoslegnz"
+        android:layout_width="964dp"
+        android:layout_height="343dp"
+        android:text="vjxlckzakjppckcmmz" 
+        android:src="@drawable/jplwrlgvcboolhidihskgmzak" 
+/>
+   </LinearLayout>

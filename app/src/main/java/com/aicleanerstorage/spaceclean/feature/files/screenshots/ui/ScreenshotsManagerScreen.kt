@@ -20,12 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerTopAction
 import com.aicleanerstorage.spaceclean.feature.files.shared.leaveBackForPermissionRejected
 import com.aicleanerstorage.spaceclean.feature.files.shared.leaveHome
 import com.aicleanerstorage.spaceclean.feature.files.shared.leaveHome
@@ -51,20 +50,15 @@ internal fun ScreenshotsManagerScreen(
     FileManagerScaffold(
         title = stringResource(R.string.nav_screenshots),
         onBack = { onAction(FileManagerAction.Back) },
-        actions = {
-            val actionText = when (state.phase) {
-                FileOperationPhase.Browsing,
-                FileOperationPhase.ConfirmDelete ->
-                    stringResource(if (state.allSelected) R.string.file_unselect_all else R.string.file_select_all)
-                else -> null
-            }
-            FileManagerTopAction(actionText = actionText) { onAction(FileManagerAction.ToggleVisibleItems) }
-        },
         bottomBar = {
-            if (permissionGranted && state.phase == FileOperationPhase.Browsing && !isDetailMode) {
+            if (permissionGranted &&
+                (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
+                !isDetailMode
+            ) {
                 FileManagerDeleteBottomBar(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
+                    keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
                     onClick = { onAction(FileManagerAction.RequestDelete) },
                 )
             }

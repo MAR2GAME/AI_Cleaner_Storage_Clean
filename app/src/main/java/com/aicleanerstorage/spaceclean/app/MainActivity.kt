@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.aicleanerstorage.spaceclean.app.runtime.notification.NotificationIntentRouteResolver
-import com.aicleanerstorage.spaceclean.app.runtime.startup.AppLaunchCoordinator
+import com.aicleanerstorage.spaceclean.app.notification.NotificationIntentRouteResolver
+import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
 import com.aicleanerstorage.spaceclean.common.ui.theme.StorageCleanAppTheme
 
 class MainActivity : AppCompatActivity() {

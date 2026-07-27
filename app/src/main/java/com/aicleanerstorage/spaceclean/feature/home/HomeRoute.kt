@@ -66,7 +66,7 @@ import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.home.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.feature.home.HomeViewModel
 import com.aicleanerstorage.spaceclean.feature.home.ui.ToolNotificationSpec
@@ -83,7 +83,7 @@ import com.aicleanerstorage.spaceclean.common.ui.components.stableStatusBarsPadd
 import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXBlue
 import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXText
 import kotlinx.coroutines.launch
-import com.aicleanerstorage.spaceclean.app.navigation.feature.destinationOrNull
+
 
 import com.aicleanerstorage.spaceclean.feature.home.ui.HomeScreen
 

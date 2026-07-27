@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="508dp"
+    android:layout_height="805dp"
+    android:orientation="vertical">
+   <ImageView
+        android:id="@+id/mhcgobplcelghsdgqgj"
+        android:layout_width="546dp"
+        android:layout_height="236dp"
+        android:text="gakumpjnysogdex" 
+        android:src="@drawable/uoqwhgxsccjidvitvgkpqafq" 
+/>
+   <Spinner
+        android:id="@+id/ffsjzytgckkyfaruobeuoo"
+        android:layout_width="204dp"
+        android:layout_height="418dp"
+        android:text="adpnfhtuvrbhqixeiubgwv" 
+        android:src="@drawable/uoqwhgxsccjidvitvgkpqafq" 
+/>
+   <ListView
+        android:id="@+id/biemmgdpqgtntenv"
+        android:layout_width="628dp"
+        android:layout_height="456dp"
+        android:text="focydpdsbpwzsqseqvibjgw" 
+        android:src="@drawable/uoqwhgxsccjidvitvgkpqafq" 
+/>
+   <ProgressBar
+        android:id="@+id/qqgcxdiipdmfqdpjcvmd"
+        android:layout_width="972dp"
+        android:layout_height="586dp"
+        android:text="ktnaxsgeybqpbsvikndmnyoy" 
+        android:src="@drawable/uoqwhgxsccjidvitvgkpqafq" 
+/>
+   <ViewFlipper
+        android:id="@+id/hybxsilcduwkqnbvuce"
+        android:layout_width="452dp"
+        android:layout_height="311dp"
+        android:text="mexaydueoohhgzycxvhvcjttu" 
+        android:src="@drawable/uoqwhgxsccjidvitvgkpqafq" 
+/>
+   </LinearLayout>

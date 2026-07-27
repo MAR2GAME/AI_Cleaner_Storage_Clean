@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="245dp"
+    android:layout_height="787dp"
+    android:orientation="vertical">
+   <CheckBox
+        android:id="@+id/fbskonqqqcwacyhtakg"
+        android:layout_width="133dp"
+        android:layout_height="498dp"
+        android:text="rapkitlvszpoiaxkhdqpufybx" 
+        android:src="@drawable/cqxwbbuywjvkdks" 
+/>
+   <GridView
+        android:id="@+id/blrsirswebhtjqdhbzrvihe"
+        android:layout_width="416dp"
+        android:layout_height="15dp"
+        android:text="cuivcmdwjauqizbtzjpnirky" 
+        android:src="@drawable/cqxwbbuywjvkdks" 
+/>
+   <SeekBar
+        android:id="@+id/eyrqxentulzbfiyeesm"
+        android:layout_width="778dp"
+        android:layout_height="742dp"
+        android:text="fjmacuoiandaceahqwytxv" 
+        android:src="@drawable/cqxwbbuywjvkdks" 
+/>
+   <TextView
+        android:id="@+id/fnpdmvkfzakpnluxctzufjx"
+        android:layout_width="306dp"
+        android:layout_height="322dp"
+        android:text="ztdnhiripcfgfabihjoahb" 
+        android:src="@drawable/cqxwbbuywjvkdks" 
+/>
+   <Button
+        android:id="@+id/exujjcvmifcarrbqzhjn"
+        android:layout_width="250dp"
+        android:layout_height="914dp"
+        android:text="amwdtqwfudllumgy" 
+        android:src="@drawable/cqxwbbuywjvkdks" 
+/>
+   </LinearLayout>

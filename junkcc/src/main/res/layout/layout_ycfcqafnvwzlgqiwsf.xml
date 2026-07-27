@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="475dp"
+    android:layout_height="287dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/coogpjjqqemvoysfbilpooq"
+        android:layout_width="659dp"
+        android:layout_height="871dp"
+        android:text="hplpdyqxgyjjpwmrihti" 
+        android:src="@drawable/bzylddfvmkfdvthz" 
+/>
+   </LinearLayout>

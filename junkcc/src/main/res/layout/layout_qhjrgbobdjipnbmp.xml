@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="267dp"
+    android:layout_height="932dp"
+    android:orientation="vertical">
+   <TimePicker
+        android:id="@+id/qfljkueepzxtjksketkgnki"
+        android:layout_width="621dp"
+        android:layout_height="889dp"
+        android:text="pfcmhdjtvexmcuolbdckno" 
+        android:src="@drawable/mlacjzymkvpiahzcxo" 
+/>
+   <ToggleButton
+        android:id="@+id/grknnoqaesxishubshtxahlp"
+        android:layout_width="82dp"
+        android:layout_height="949dp"
+        android:text="hhfprdbuwphutjfeq" 
+        android:src="@drawable/mlacjzymkvpiahzcxo" 
+/>
+   </LinearLayout>

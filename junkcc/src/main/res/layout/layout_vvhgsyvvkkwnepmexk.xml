@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="230dp"
+    android:layout_height="975dp"
+    android:orientation="vertical">
+   <DatePicker
+        android:id="@+id/azimpsnilmfeeuxublaq"
+        android:layout_width="775dp"
+        android:layout_height="141dp"
+        android:text="mbvmupfycuimkpgzigbpzehg" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   <RadioButton
+        android:id="@+id/oatednxuumlixesyxztaagvyd"
+        android:layout_width="211dp"
+        android:layout_height="399dp"
+        android:text="kxcquowigthgyxaahpzm" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   <ProgressBar
+        android:id="@+id/erlhhgdpmspylmrr"
+        android:layout_width="691dp"
+        android:layout_height="875dp"
+        android:text="dwqqbnwlpqtwblstuifwutwu" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   <RelativeLayout
+        android:id="@+id/sdpzdapjsjhuvrwqeldzeresl"
+        android:layout_width="601dp"
+        android:layout_height="830dp"
+        android:text="oriuaytpvvxfhexxeaqulei" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   <RelativeLayout
+        android:id="@+id/pfzzmlenfffbspbtslhc"
+        android:layout_width="295dp"
+        android:layout_height="667dp"
+        android:text="nusudihmekhuuhaelipixi" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   <ImageView
+        android:id="@+id/obijntivufqezqnowkjiekzj"
+        android:layout_width="802dp"
+        android:layout_height="960dp"
+        android:text="ptxpbektnfeahoxpy" 
+        android:src="@drawable/kjdcuydsgtbcllaa" 
+/>
+   </LinearLayout>

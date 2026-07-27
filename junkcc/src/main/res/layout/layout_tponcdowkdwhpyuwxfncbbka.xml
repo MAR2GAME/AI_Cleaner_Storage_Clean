@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="890dp"
+    android:layout_height="979dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/yyqqrmiaimzzzndyadyi"
+        android:layout_width="723dp"
+        android:layout_height="911dp"
+        android:text="gmemlazdvpquhpvjze" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <ViewFlipper
+        android:id="@+id/vopihznrykrrunfhluqpbhb"
+        android:layout_width="952dp"
+        android:layout_height="938dp"
+        android:text="vnrytngnrdgotfardkjurq" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <ViewFlipper
+        android:id="@+id/fpowonjzjcvwffjafwdxqtvr"
+        android:layout_width="178dp"
+        android:layout_height="446dp"
+        android:text="xsgbrvowjxpxttipxylexwyw" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <FrameLayout
+        android:id="@+id/wosloeccarocmqshnriu"
+        android:layout_width="383dp"
+        android:layout_height="894dp"
+        android:text="qxeywdunfagaymqqbssv" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <Switch
+        android:id="@+id/mjymdaoavayoyeyyiqwrgaq"
+        android:layout_width="9dp"
+        android:layout_height="179dp"
+        android:text="pxmekewveunplgigoyztd" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <GridView
+        android:id="@+id/pkzsfqdsgddokhdilpk"
+        android:layout_width="106dp"
+        android:layout_height="591dp"
+        android:text="fgafvoekbvvecucvrzw" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <RatingBar
+        android:id="@+id/thbmhiiuemtavfthehh"
+        android:layout_width="209dp"
+        android:layout_height="112dp"
+        android:text="iaiezylbrslenjvnjpjanh" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   <TextView
+        android:id="@+id/spksaimgmjkdhlrpj"
+        android:layout_width="708dp"
+        android:layout_height="416dp"
+        android:text="erfxshtisulhupnhp" 
+        android:src="@drawable/qyelkwfpheybbowr" 
+/>
+   </LinearLayout>

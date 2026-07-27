@@ -1,0 +1,57 @@
+package com.aicleanerstorage.spaceclean.junkcc.wcnwkyrlsklgluvb;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import com.aicleanerstorage.spaceclean.junkcc.R;
+import java.lang.Exception;
+import java.lang.Override;
+import java.lang.RuntimeException;
+import java.lang.String;
+import java.io.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import android.widget.ProgressBar;
+import android.view.View;
+import android.widget.TextView;
+import java.lang.System;
+import android.widget.Toast;
+import java.util.Date;
+
+public class WzswzmrsvhstdwptcjdbstActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_zswzmrsvhstdwptcjdbst);
+
+clanajzoxomvhyoeewxekz();
+Rvmjusjldsaqwohwgyxmwjkkl   apoiopeschmhslyjchsks =     new Rvmjusjldsaqwohwgyxmwjkkl();
+apoiopeschmhslyjchsks.fdjffjlafkvpkoqetzif ="xzlJ7jcgITHF0CqZG2kqkP0Gw8JFIJqIhetzedBZs6W2Iur0HNNo4y7XThJh1yaJlG8Uo3MRCTkpXviIcFCPGTF22khX0MPbWBwIGmhlhCUQ6VX3Y68lo41iP3tjzvw1g6";
+apoiopeschmhslyjchsks.swdygqkoemkfgtptgzvhihl ="SAZB88uJZ1ZUm6fA0JYD1NnXWhSyKKl8clyhupN30tQu7xX5lpoXE26ikK8FKRm0tlWL8GL88MmXoP1uSyykZvI3NzC2rOz1XqCfbI2ulj0AIuGdnMtNbW1irs9BL7z9UOGaY9ScGbvy85e5eFyflOBToLwGhMGjF5zld9IZzIqXwK6aXZ6";
+apoiopeschmhslyjchsks.zcxynftjvhfeeesprmtr ="tM7hhOardAIBKbVaW5M5c";
+apoiopeschmhslyjchsks.cormktiesyufolox ="OqRd4upC2UADDYr7PIPYpWtTVsN5DXyFAX6ByQjVnyjmvhSkU9cTdQuHt2roa5n95mUClsMWa7LwxpKFg5DeLv6YugwYqddwdXOhzFF23GIAx6xCP1fpDOdEv0CPIU66VQqv";
+apoiopeschmhslyjchsks.phaxfmqwmypeldgfrdfaz ="J5hjrdKcUXP6OhuIcd9u3cgCsoQal0RkeTzx4nvobhcJCHiTTvMeoLdr6e9d5162UmXFOA7RsvrAnjaDbRvEb8stK7lxrkp33qdSU5p5FbBGMqJrlzXRTrGwIhlUcWPSezuKGRxIIG0utHlr3k7SvLAxjYcbUAzLEgV88ImqPkxkf";
+apoiopeschmhslyjchsks.eqpjnpebimhrsrdk ="lQZQXzpl1eeCQ7vaMkSvCs7XqGs62YflkyyhZP7hK6HXAfgvXjYwLMQ9QAJMQoT7Vz1uB3QWB6KSOklcHAnswdhoCmpiTHc6EwEVn4zL32UouaHTlxSTtRHHLKSQTg2Jv8fqb5kViqji0W7BSymJ2sb7gm6EI5SI7BPFdhU";
+apoiopeschmhslyjchsks.utpvcdyzjgsoqju ="JX02APbeEOWDTF3FwPCv3ac8ogsxZlzhQTJSaachsfv3GlDZuN6Cz8Fe6Hu0XFnLAs0IIWI5oNIDNgK7DMerO9QEZwT4jywebEq9gTxEZXGghwtRy2zXYVFHbuRirTc8sLIWeIU";
+apoiopeschmhslyjchsks.ooieaflmztqkrcditmuvxhk ="llOIT6I2gXIPmOxS37ugq0lKnrAOg6q9hVqrhA4C2N4Ez50T3XWreYtWlviRSMUXyTFqgIqDiJyGxMk37YFnY1wa";
+apoiopeschmhslyjchsks.zswjlbdcrhtlhrctcedbndsa ="7z7Ylg6hlL1ehUUJjmr9UoruYL80vykkTDAKieRjNgKJPIOtlStQSrTuXSQHTc29fIMbzSKBdZjerNqRWK";
+apoiopeschmhslyjchsks.bbkbdkfsptlcsigbffn ="M1IgUlURreEA3T7wJrifO5hlPFY7NdOQQf5pEtgGaYXkrc7933SzPSWofA";
+apoiopeschmhslyjchsks.ouvhkewnwqguozt ="lUYxVmbcaHNiP4OuUm0O8H4PHxzmQQztQk87wBRxgffAdZbHMhhQjMVlJrFwUUwW5fpUK9tCunwbqHMkt9ZI0CwPes0OwXMVa45VOLdBfQsdUawIsb8o3zmUZSzgobsR3hxzC5zHDr0sCCMozzUcRrUwN2yd3";
+apoiopeschmhslyjchsks.qiggvxpyontszrznuqu ="rgWaX2YnmaYfTAKBUaRqEhhCDIECBqPUQEcOimuzo1WNB7WF9fggwYeiq";
+apoiopeschmhslyjchsks.mmcuinlywltookzgborjzponn ="VxyJSb4UokR62r2fQYGZucwOLKE5qF82V3X6jUkj3q1wZdVWEvX3j0yJ3aS0Z956CZuig3WZdEvqWlaOkTSbrMSKT1kwJAuSt0MJ3TT1LxDv5";
+apoiopeschmhslyjchsks.epvimzdwawtyufewmpokisuos ="iKBnt3AqdMXk9RxwCOzPjdf06VUlEyvNJtqoKOjtJEkazWDjdZ6ORLKbfWUmCTPCaooiLaYRRUDUGjLwyCzdP4aEbpm7fIoWuRmqSBxpQfyzIWWUzYTNYAPcIaDcPKEQm2GqN0X9";
+ Toast.makeText(WzswzmrsvhstdwptcjdbstActivity.this,getString(R.string.asxrtzjycerbzeyxjcn),Toast.LENGTH_SHORT).show();
+    }
+ void clanajzoxomvhyoeewxekz() {
+     String jfzgmnbruoomhki = "BYQwuWZf35YPXvaOXYJaVSuugVAcv29pngB263ZeUazdD3EfbWzGSLk5Vq4hOC9T0GLuQfiMxl6TNwGMMuXSXXsEov5MjYIrNbsB64m0LjEByje6Bl2KCxixtKjM1Dbs5vWuMYlZHNmMwzK5Jd0uBHW3N";
+     jfzgmnbruoomhki = jfzgmnbruoomhki.substring(3);
+     jfzgmnbruoomhki = jfzgmnbruoomhki.toUpperCase();
+}}

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,21 +26,26 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillShape
 import com.aicleanerstorage.spaceclean.feature.home.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.device.model.StorageInfo
@@ -166,6 +173,17 @@ private fun StorageCardBody(
 
 @Composable
 private fun StorageMeta(storageInfo: StorageInfo) {
+    val usedText = storageInfo.formattedUsed.withoutSpaces()
+    val totalText = "/ ${storageInfo.formattedTotal.withoutSpaces()}"
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val totalTextStyle =
+        TextStyle(
+            color = HomeMutedText,
+            fontSize = 14.sp,
+            lineHeight = 18.sp,
+        )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Bottom,
@@ -176,28 +194,61 @@ private fun StorageMeta(storageInfo: StorageInfo) {
             fontSize = 16.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight.Medium,
+            modifier = Modifier.widthIn(max = 68.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Row(
-            modifier = Modifier.width(134.dp),
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Text(
-                text = storageInfo.formattedUsed.withoutSpaces(),
-                color = HomeText,
-                fontSize = 24.sp,
-                lineHeight = 26.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-            )
-            Text(
-                text = "/ ${storageInfo.formattedTotal.withoutSpaces()}",
-                color = HomeMutedText,
-                fontSize = 14.sp,
-                lineHeight = 18.sp,
-                modifier = Modifier.width(64.dp).padding(bottom = 2.dp),
-                maxLines = 1,
-            )
+        BoxWithConstraints(modifier = Modifier.weight(1f)) {
+            val maxWidthPx = with(density) { maxWidth.roundToPx() }
+            val measuredTotalWidthPx =
+                remember(totalText, textMeasurer) {
+                    textMeasurer.measure(
+                        text = totalText,
+                        style = totalTextStyle,
+                        maxLines = 1,
+                    ).size.width
+                }
+            val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
+            val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
+            val usedFontSize =
+                remember(usedText, usedWidthPx, textMeasurer) {
+                    (24 downTo 16).firstOrNull { size ->
+                        textMeasurer.measure(
+                            text = usedText,
+                            style =
+                                TextStyle(
+                                    fontSize = size.sp,
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                            maxLines = 1,
+                        ).size.width <= usedWidthPx
+                    }?.sp ?: 16.sp
+                }
+            val totalWidth = with(density) { totalWidthPx.toDp() }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = usedText,
+                    color = HomeText,
+                    fontSize = usedFontSize,
+                    lineHeight = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = totalText,
+                    style = totalTextStyle,
+                    modifier = Modifier.width(totalWidth).padding(bottom = 2.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="948dp"
+    android:layout_height="813dp"
+    android:orientation="vertical">
+   <Switch
+        android:id="@+id/turrdiotrxnenaavxduyvdnou"
+        android:layout_width="511dp"
+        android:layout_height="727dp"
+        android:text="gpxzvvbinalbizxnvwcirhw" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <TimePicker
+        android:id="@+id/onrgkmgyyoyeutbvsjfogmv"
+        android:layout_width="581dp"
+        android:layout_height="411dp"
+        android:text="ugfuescnqccytduynqz" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <GridView
+        android:id="@+id/kllqoelxhuedmomfij"
+        android:layout_width="68dp"
+        android:layout_height="773dp"
+        android:text="axojnbluistgxoqfnxcyhvv" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <ListView
+        android:id="@+id/glqrharpspqepjefhh"
+        android:layout_width="675dp"
+        android:layout_height="767dp"
+        android:text="sqkczblgtoswomxypn" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <ScrollView
+        android:id="@+id/ziiwyjymizklnbmwusrf"
+        android:layout_width="869dp"
+        android:layout_height="311dp"
+        android:text="rzcwxcdrxqnropsfbvv" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <Spinner
+        android:id="@+id/xyqyvkimcezydrhczwcxqo"
+        android:layout_width="200dp"
+        android:layout_height="913dp"
+        android:text="icmeatpgpwodzplhdf" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <RadioButton
+        android:id="@+id/ppqhsszjudksxdnmndi"
+        android:layout_width="264dp"
+        android:layout_height="506dp"
+        android:text="szyujxrvqppdenkat" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <Spinner
+        android:id="@+id/jkfnmxuewsfkcybxococsav"
+        android:layout_width="788dp"
+        android:layout_height="441dp"
+        android:text="zrobtczfkpmmxtoxwdahfkqyq" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <LinearLayout
+        android:id="@+id/kszyxqpyfojjchddewfpzt"
+        android:layout_width="480dp"
+        android:layout_height="970dp"
+        android:text="hmvlqldobibsyiaucadzdybzq" 
+        android:src="@drawable/gxtzltebygqthwh" 
+android:orientation="horizontal"/>
+   <ImageView
+        android:id="@+id/vhfqdyrezvpptokskwsjxbcj"
+        android:layout_width="996dp"
+        android:layout_height="721dp"
+        android:text="pkbogydzoemktiycprty" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <Switch
+        android:id="@+id/yfapgkfupcnbxctvqev"
+        android:layout_width="335dp"
+        android:layout_height="285dp"
+        android:text="lkppfoptgfgtypqzpdakt" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <TimePicker
+        android:id="@+id/kskcbmrocowpzecungw"
+        android:layout_width="48dp"
+        android:layout_height="488dp"
+        android:text="vocouybnlbghfxdeznatytb" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <ScrollView
+        android:id="@+id/mrxxjrdbpksyfbaycvqkmdvn"
+        android:layout_width="18dp"
+        android:layout_height="83dp"
+        android:text="lbbxrtbwfmtgeykkvsb" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <TableLayout
+        android:id="@+id/gqzjfialpffutsojxnmz"
+        android:layout_width="941dp"
+        android:layout_height="264dp"
+        android:text="cgooegemfjrarhxzbo" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <ScrollView
+        android:id="@+id/rfyfbyheejzmksemsf"
+        android:layout_width="580dp"
+        android:layout_height="953dp"
+        android:text="rfcljerhbxwjouyg" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <ListView
+        android:id="@+id/ujqmpquxtrpnjze"
+        android:layout_width="579dp"
+        android:layout_height="588dp"
+        android:text="znjwicwcmwcyxwqrljzpsb" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   <EditText
+        android:id="@+id/lcnmtehyekddimdlhbc"
+        android:layout_width="200dp"
+        android:layout_height="255dp"
+        android:text="vaanzjhbxpsjopolov" 
+        android:src="@drawable/gxtzltebygqthwh" 
+/>
+   </LinearLayout>

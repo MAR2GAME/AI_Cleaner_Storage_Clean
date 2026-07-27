@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="307dp"
+    android:layout_height="899dp"
+    android:orientation="vertical">
+   <FrameLayout
+        android:id="@+id/myzlxnikgkkppqmmetbfduomw"
+        android:layout_width="982dp"
+        android:layout_height="994dp"
+        android:text="mgcejcrkewlwbov" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <Spinner
+        android:id="@+id/lkitxqevrrsnbtnbmddilyfc"
+        android:layout_width="692dp"
+        android:layout_height="805dp"
+        android:text="etfgqhbkhduhckhypw" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <TextView
+        android:id="@+id/ocmiisttonbamwmvf"
+        android:layout_width="566dp"
+        android:layout_height="360dp"
+        android:text="vsbmqaqejhcpofkdistem" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <ImageView
+        android:id="@+id/pxansqcoadbdeph"
+        android:layout_width="300dp"
+        android:layout_height="482dp"
+        android:text="npvvizjmnxgogig" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <SeekBar
+        android:id="@+id/oebcaaqfsmovwenkeqfw"
+        android:layout_width="930dp"
+        android:layout_height="708dp"
+        android:text="uflikammvcopojw" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <CheckBox
+        android:id="@+id/flolqbxaqiphiiswkw"
+        android:layout_width="750dp"
+        android:layout_height="694dp"
+        android:text="zlyuellscyfsuwvalvcgumjfy" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <ViewFlipper
+        android:id="@+id/twfvjkengerfyyudq"
+        android:layout_width="895dp"
+        android:layout_height="78dp"
+        android:text="ijqskzieyiknqmkafeiu" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <ToggleButton
+        android:id="@+id/octudgrhuaakbbb"
+        android:layout_width="168dp"
+        android:layout_height="722dp"
+        android:text="phktrvpfrciiars" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   <ImageView
+        android:id="@+id/fklkawfklxlnyamgeg"
+        android:layout_width="88dp"
+        android:layout_height="723dp"
+        android:text="zmahquwxqdgjibbnha" 
+        android:src="@drawable/picfrzrcbbecuxz" 
+/>
+   </LinearLayout>

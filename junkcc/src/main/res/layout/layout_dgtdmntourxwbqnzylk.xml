@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="126dp"
+    android:layout_height="332dp"
+    android:orientation="vertical">
+   <TableLayout
+        android:id="@+id/cgvfjtstcfgjkad"
+        android:layout_width="672dp"
+        android:layout_height="90dp"
+        android:text="uqrvkchcydtbyqii" 
+        android:src="@drawable/xvnlpiafdoggligbz" 
+/>
+   <GridView
+        android:id="@+id/coneayyivgyrhewybxjnygvlc"
+        android:layout_width="382dp"
+        android:layout_height="922dp"
+        android:text="qsrddogbrkpbosdzkwmapdk" 
+        android:src="@drawable/xvnlpiafdoggligbz" 
+/>
+   </LinearLayout>

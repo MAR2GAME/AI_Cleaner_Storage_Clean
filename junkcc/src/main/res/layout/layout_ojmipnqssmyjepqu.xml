@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="85dp"
+    android:layout_height="320dp"
+    android:orientation="vertical">
+   <Button
+        android:id="@+id/srqdrazsbqxspnxooa"
+        android:layout_width="557dp"
+        android:layout_height="23dp"
+        android:text="gymdjnmdecxlwedaqpzyhgzjm" 
+        android:src="@drawable/rvdehrbydlqjpzp" 
+/>
+   <Spinner
+        android:id="@+id/bywxnnlgmmnpgnpnuwhinjw"
+        android:layout_width="409dp"
+        android:layout_height="609dp"
+        android:text="rnbxwslzeokoqvxoa" 
+        android:src="@drawable/rvdehrbydlqjpzp" 
+/>
+   </LinearLayout>

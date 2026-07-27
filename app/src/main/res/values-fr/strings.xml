@@ -20,12 +20,16 @@
     <string name="nav_documents">Documents</string>
     <string name="home_tab_home">Accueil</string>
     <string name="home_tab_file_manager">Fichiers</string>
+    <string name="home_file_manager_title">Gestionnaire</string>
     <string name="home_tab_toolbox">Outils</string>
     <string name="home_storage_label">Stockage :</string>
     <string name="home_remove_junk">Supprimer les fichiers inutiles</string>
     <string name="home_virus_title">Virus</string>
     <string name="home_virus_desc">Analyse approfondie des virus,\napps malveillantes et fichiers à risque</string>
     <string name="home_toolbox_title">Outils</string>
+    <string name="home_device_information">Informations appareil</string>
+    <string name="home_battery_usage">Utilisation batterie</string>
+    <string name="home_notification_bar">Barre de notifications</string>
     <string name="home_device_model">Modèle de l’appareil</string>
     <string name="home_system_version">Version du système</string>
     <string name="home_battery_status">État de la batterie</string>
@@ -49,6 +53,7 @@
     <string name="file_items">Éléments</string>
     <string name="file_all">Tous</string>
     <string name="file_photos">Photos</string>
+    <string name="file_in_total">au total</string>
     <string name="file_download">Téléchargements</string>
     <string name="file_other">Autres</string>
     <string name="file_got_it">Compris</string>
@@ -452,4 +457,11 @@
     <string name="notification_tool_network_scan_desc">Network scan</string>
     <string name="notification_tool_network_usage_desc">View your data usage</string>
     <string name="notification_tool_cleaner_desc">Check if there are unwanted notifications</string>
+    <string name="virus_data_privacy">Confidentialité des données</string>
+    <string name="device_battery">Batterie</string>
+    <string name="device_cpu">Processeur</string>
+    <string name="battery_information">Informations sur la batterie</string>
+    <string name="onboarding_device_info_disclaimer">Les informations affichées sur l’appareil reposent sur les données fournies par le système et peuvent différer des spécifications officielles. Par exemple, la capacité de stockage ou la mémoire peut varier légèrement en raison des réservations système ou des différences de configuration matérielle.</string>
+    <string name="notification_status_empty_title">Interception des notifications activée</string>
+    <string name="notification_status_empty_message">Les notifications interceptées apparaissent ici</string>
 </resources>
