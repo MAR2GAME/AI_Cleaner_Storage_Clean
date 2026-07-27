@@ -6,6 +6,9 @@ import com.aicleanerstorage.spaceclean.feature.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.feature.applock.AdvancedLockAppInfoHelper
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockPermissionUtils
 import com.aicleanerstorage.spaceclean.feature.applock.AppPrefsUtils
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class AppLockRepositoryImpl(
     context: Context,
@@ -13,8 +16,12 @@ class AppLockRepositoryImpl(
     private val appContext = context.applicationContext
     private val appInfoHelper = AdvancedLockAppInfoHelper(appContext)
 
+    private val _lockedAppCountFlow = MutableStateFlow(0)
+    override val lockedAppCountFlow: StateFlow<Int> = _lockedAppCountFlow.asStateFlow()
+
     init {
         AppPrefsUtils.initialize(appContext)
+        _lockedAppCountFlow.value = lockedAppCount()
     }
 
     override fun isPinSet(): Boolean =
@@ -30,7 +37,8 @@ class AppLockRepositoryImpl(
 
     override fun lockedPackages(): Set<String> = decodePackages(AppPrefsUtils.getString(KEY_LOCKED_PACKAGES, ""))
 
-    override fun lockedAppCount(): Int = if (isPinSet()) lockedPackages().size else 0
+    override fun lockedAppCount(): Int =
+        if (isPinSet() && isMonitoringEnabled()) lockedPackages().size else 0
 
     override fun isPackageLocked(packageName: String): Boolean = packageName in lockedPackages()
 
@@ -54,6 +62,7 @@ class AppLockRepositoryImpl(
                 .distinct()
                 .joinToString(","),
         )
+        _lockedAppCountFlow.value = lockedAppCount()
     }
 
     override suspend fun lockableApps(): List<AppLockApp> {
@@ -72,6 +81,7 @@ class AppLockRepositoryImpl(
 
     override fun setMonitoringEnabled(enabled: Boolean) {
         AppPrefsUtils.putBoolean(KEY_MONITORING_ENABLED, enabled)
+        _lockedAppCountFlow.value = lockedAppCount()
     }
 
     override fun isAutoLockEnabled(): Boolean = AppPrefsUtils.getBoolean(KEY_AUTO_LOCK, false)

@@ -23,7 +23,7 @@
 # package names so variant apps can change applicationId/package names safely.
 -keep class * extends android.app.Application { public <init>(); }
 -keep class * extends android.app.Activity { public <init>(); }
--keep class * extends android.app.Service { public <init>();
+-keep class * extends android.app.Service { public <init>(); }
 -keep class * extends android.content.BroadcastReceiver { public <init>(); }
 -keep class * extends android.content.ContentProvider { public <init>(); }
 -keep class * extends android.service.notification.NotificationListenerService { public <init>(); }

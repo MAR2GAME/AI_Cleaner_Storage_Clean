@@ -1,14 +1,15 @@
 package com.aicleanerstorage.spaceclean.feature.antivirus.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,12 +25,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,8 +43,9 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import android.view.WindowManager
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ui.components.popups.InlinePermissionOverlay
 
 private val VirusInstalledAppsDialogShape = RoundedCornerShape(12.dp)
 private val VirusInstalledAppsButtonShape = RoundedCornerShape(28.dp)
@@ -62,27 +67,52 @@ internal fun VirusInstalledAppsAccessDialog(
     onDismissRequest: () -> Unit = onSecondaryAction,
     showHeroImage: Boolean = false,
 ) {
-    if (showHeroImage) {
-        BackHandler(onBack = onDismissRequest)
-        InlinePermissionOverlay(onDismiss = onDismissRequest) {
-            VirusInstalledAppsPanel(
-                title = title,
-                message = message,
-                primaryText = primaryText,
-                onPrimaryAction = onPrimaryAction,
-                secondaryText = secondaryText,
-                onSecondaryAction = onSecondaryAction,
-                showHeroImage = true,
-            )
-        }
-        return
-    }
-
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties =
+            DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false,
+            ),
     ) {
-        VirusInstalledAppsPanel(title, message, primaryText, onPrimaryAction, secondaryText, onSecondaryAction, false)
+        val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
+        LaunchedEffect(dialogWindow) {
+            dialogWindow?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.6f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {},
+                        ),
+            )
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {},
+                        ),
+            ) {
+                VirusInstalledAppsPanel(
+                    title = title,
+                    message = message,
+                    primaryText = primaryText,
+                    onPrimaryAction = onPrimaryAction,
+                    secondaryText = secondaryText,
+                    onSecondaryAction = onSecondaryAction,
+                    showHeroImage = showHeroImage,
+                )
+            }
+        }
     }
 }
 

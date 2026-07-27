@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.common.ui.permission
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +32,6 @@ private val PermissionLime = Color(0xFFD0FD91)
 
 @Composable
 internal fun AppLockUsageAccessPermissionDialog(onManagePermission: () -> Unit, onDismissToHome: () -> Unit) {
-    BackHandler(onBack = onDismissToHome)
     InlinePermissionOverlay(onDismiss = onDismissToHome) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).widthIn(max = 360.dp)
@@ -53,7 +51,6 @@ internal fun AppLockUsageAccessPermissionDialog(onManagePermission: () -> Unit, 
 
 @Composable
 internal fun AppLockOverlayPermissionDialog(onAllowNow: () -> Unit, onCancel: () -> Unit) {
-    BackHandler(onBack = onCancel)
     InlinePermissionOverlay(onDismiss = onCancel) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).widthIn(max = 360.dp)

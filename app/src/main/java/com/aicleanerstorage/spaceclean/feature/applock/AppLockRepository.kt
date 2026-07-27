@@ -1,8 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.applock
 
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockApp
+import kotlinx.coroutines.flow.StateFlow
 
 interface AppLockRepository {
+    val lockedAppCountFlow: StateFlow<Int>
     fun isPinSet(): Boolean
 
     fun savePin(pin: String)

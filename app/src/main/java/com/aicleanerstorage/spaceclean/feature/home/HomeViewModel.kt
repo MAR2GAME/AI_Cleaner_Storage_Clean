@@ -68,6 +68,13 @@ class HomeViewModel(
     init {
         refreshSummary()
         scheduleAutoRatePrompt()
+        viewModelScope.launch {
+            appLockRepository.lockedAppCountFlow.collect { count ->
+                _uiState.value = _uiState.value.copy(
+                    summary = _uiState.value.summary.copy(lockedAppCount = count)
+                )
+            }
+        }
     }
 
     fun onAction(action: HomeAction) {

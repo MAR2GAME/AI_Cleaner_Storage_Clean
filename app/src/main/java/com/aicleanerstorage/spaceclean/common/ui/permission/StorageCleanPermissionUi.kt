@@ -2,7 +2,6 @@ package com.aicleanerstorage.spaceclean.common.ui.permission
 
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
@@ -41,7 +40,6 @@ object StorageCleanPermissionUi {
                 )
             }
             else -> {
-                BackHandler { onDismiss() }
                 InlinePermissionOverlay(onDismiss = onDismiss) {
                     PermissionRequiredDialog(
                         copy = request.copyForStorageClean(),
