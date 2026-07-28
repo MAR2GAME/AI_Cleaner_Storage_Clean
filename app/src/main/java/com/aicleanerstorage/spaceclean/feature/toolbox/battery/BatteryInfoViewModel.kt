@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.app.background.BackgroundBatterySamplingController
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.BatteryCurrentRange
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoMode
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoStateController
@@ -23,6 +24,7 @@ class BatteryInfoViewModel(
     batteryHistoryRepository: BatteryHistoryRepository,
     batteryHistorySampler: BatteryHistorySampler,
     settingsRepository: SettingsRepository,
+    private val backgroundBatterySamplingController: BackgroundBatterySamplingController,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val controller =
@@ -44,6 +46,7 @@ class BatteryInfoViewModel(
     fun onAction(action: BatteryInfoAction) {
         when (action) {
             BatteryInfoAction.Resumed -> {
+                backgroundBatterySamplingController.activate()
                 controller.load(DeviceInfoMode.Battery)
                 controller.startBatterySampling()
             }

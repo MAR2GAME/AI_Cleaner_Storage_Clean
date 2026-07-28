@@ -45,7 +45,7 @@ val presentationModule =
         }
         viewModel { AppUsageViewModel(get(), get<AppDispatchers>().io) }
         viewModel { DeviceInfoViewModel(get(), get(), get(), get(), get<AppDispatchers>().io) }
-        viewModel { BatteryInfoViewModel(get(), get(), get(), get(), get<AppDispatchers>().io) }
+        viewModel { BatteryInfoViewModel(get(), get(), get(), get(), get(), get<AppDispatchers>().io) }
         viewModel { NetworkScanViewModel(get(), get(), get<AppDispatchers>().io) }
         viewModel { NetworkScanDevicesViewModel(get(), get<AppDispatchers>().io) }
         viewModel { NetworkSpeedViewModel(get(), get(), get<AppDispatchers>().io) }

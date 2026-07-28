@@ -20,7 +20,10 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
-fun AppRoot(launchCoordinator: AppLaunchCoordinator) {
+fun AppRoot(
+    launchCoordinator: AppLaunchCoordinator,
+    onNotificationPermissionGranted: () -> Unit,
+) {
     val notificationPermissionViewModel: NotificationPermissionViewModel = koinViewModel()
     val cleanupHistory: CleanupHistoryStore = koinInject()
     val notificationState by notificationPermissionViewModel.uiState.collectAsStateWithLifecycle()
@@ -51,7 +54,7 @@ fun AppRoot(launchCoordinator: AppLaunchCoordinator) {
             viewModel = notificationPermissionViewModel,
             currentRoute = currentRoute,
             externalActivityTracker = runtimeBindings.externalActivities,
-            onPermissionGranted = {},
+            onPermissionGranted = onNotificationPermissionGranted,
         )
         NotificationLaunchEffect(pendingRequest, currentRoute, navController)
     }

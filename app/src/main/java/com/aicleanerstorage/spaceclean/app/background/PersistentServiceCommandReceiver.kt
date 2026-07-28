@@ -26,6 +26,8 @@ internal class PersistentServiceCommandReceiver(
                 addAction(PersistentServiceActions.START)
                 addAction(PersistentServiceActions.ENABLE_MONITORING)
                 addAction(PersistentServiceActions.DISABLE_MONITORING)
+                addAction(PersistentServiceActions.ENABLE_BATTERY_SAMPLING)
+                addAction(PersistentServiceActions.DISABLE_BATTERY_SAMPLING)
                 addAction(PersistentServiceActions.RESTORE_NOTIFICATION)
                 addAction(PersistentServiceActions.STOP_SERVICE)
                 addAction(PersistentServiceActions.PASSWORD_SUCCESS)

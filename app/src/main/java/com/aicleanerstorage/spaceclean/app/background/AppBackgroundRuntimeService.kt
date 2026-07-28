@@ -8,10 +8,12 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.feature.applock.service.AppLockServiceCoordinator
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatterySamplingCoordinator
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BackgroundBatterySamplingPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class AppBackgroundRuntimeService : Service() {
     private val batteryHistorySampler: BatteryHistorySampler by inject()
+    private val backgroundBatterySamplingPreferences: BackgroundBatterySamplingPreferences by inject()
     private val appLockRepository: AppLockRepository by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -32,12 +35,18 @@ class AppBackgroundRuntimeService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        batterySampling = BatterySamplingCoordinator(batteryHistorySampler)
+        batterySampling =
+            BatterySamplingCoordinator(
+                sampler = batteryHistorySampler,
+                preferences = backgroundBatterySamplingPreferences,
+                hasNotificationPermission = { AppConfig.hasPostNotificationsPermission(this) },
+            )
         appLock = AppLockServiceCoordinator(this, appLockRepository, serviceScope)
         notification = ForegroundServiceNotificationController(this, serviceScope, stopRequested::get)
         commandDispatcher =
             PersistentServiceCommandDispatcher(
                 appLock = appLock,
+                batterySampling = batterySampling,
                 notification = notification,
                 stopService = ::requestStop,
             )
@@ -51,7 +60,7 @@ class AppBackgroundRuntimeService : Service() {
             return
         }
 
-        batterySampling.start()
+        batterySampling.syncSamplingState()
         runCatching { commandReceiver.register() }
         runCatching { appLock.registerPackageEvents() }
         appLock.syncMonitoringState()
@@ -79,14 +88,13 @@ class AppBackgroundRuntimeService : Service() {
             stopRequested.set(false)
         }
         commandDispatcher.dispatch(command)
-        batterySampling.start()
         return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        batterySampling.stop()
+        batterySampling.disableSampling()
         appLock.destroy()
         commandReceiver.unregister()
         notification.destroy()
@@ -100,7 +108,7 @@ class AppBackgroundRuntimeService : Service() {
     private fun requestStop() {
         stopRequested.set(true)
         appLock.disableMonitoring()
-        batterySampling.stop()
+        batterySampling.disableSampling()
         notification.stopForeground()
         stopSelf()
     }
@@ -115,6 +123,8 @@ class AppBackgroundRuntimeService : Service() {
         private const val ACTION_START = PersistentServiceActions.START
         const val ACTION_ENABLE_MONITORING = PersistentServiceActions.ENABLE_MONITORING
         const val ACTION_DISABLE_MONITORING = PersistentServiceActions.DISABLE_MONITORING
+        private const val ACTION_ENABLE_BATTERY_SAMPLING = PersistentServiceActions.ENABLE_BATTERY_SAMPLING
+        private const val ACTION_DISABLE_BATTERY_SAMPLING = PersistentServiceActions.DISABLE_BATTERY_SAMPLING
         private const val ACTION_STOP_SERVICE = PersistentServiceActions.STOP_SERVICE
         const val ACTION_PASSWORD_SUCCESS = PersistentServiceActions.PASSWORD_SUCCESS
         const val ACTION_LOCK_SCREEN_CANCELLED = PersistentServiceActions.LOCK_SCREEN_CANCELLED
@@ -151,6 +161,27 @@ class AppBackgroundRuntimeService : Service() {
             val appContext = context.applicationContext
             stopRequested.set(false)
             sendCommandBroadcast(appContext, ACTION_DISABLE_MONITORING)
+        }
+
+        fun enableBatterySampling(context: Context) {
+            val appContext = context.applicationContext
+            stopRequested.set(false)
+            val intent =
+                Intent(appContext, AppBackgroundRuntimeService::class.java).apply {
+                    action = ACTION_ENABLE_BATTERY_SAMPLING
+                }
+            if (_isRunning.get()) {
+                sendCommandBroadcast(appContext, ACTION_ENABLE_BATTERY_SAMPLING)
+                return
+            }
+            startForegroundCompat(appContext, intent)
+        }
+
+        fun disableBatterySampling(context: Context) {
+            val appContext = context.applicationContext
+            if (_isRunning.get()) {
+                sendCommandBroadcast(appContext, ACTION_DISABLE_BATTERY_SAMPLING)
+            }
         }
 
         fun stop(context: Context) {

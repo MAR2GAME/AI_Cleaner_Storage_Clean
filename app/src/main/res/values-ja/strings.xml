@@ -283,11 +283,11 @@
     <string name="file_back_to_main_page">Back To Main Page</string>
     <string name="file_deleted_in_cleanup">Deleted in this cleanup</string>
     <string name="file_location_data_removed">Location data removed</string>
-    <string name="file_stop_scan_title">Are you sure you want to\nstop now?</string>
+    <string name="file_stop_scan_title">Are you sure you want to stop now?</string>
     <string name="file_resume">Resume</string>
     <string name="file_quit">Quit</string>
     <string name="file_delete_permanently_title">Delete permanently?</string>
-    <string name="file_delete_permanently_message">Deleted files cannot be accessed or\nrecovered. Proceed with caution.</string>
+    <string name="file_delete_permanently_message">Deleted files cannot be accessed or recovered. Proceed with caution.</string>
     <string name="file_photo">Photo</string>
     <string name="file_pictures">Pictures</string>
     <string name="file_similar">Similar</string>

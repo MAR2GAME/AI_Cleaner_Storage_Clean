@@ -234,11 +234,11 @@
     <string name="file_back_to_main_page">返回主页</string>
     <string name="file_deleted_in_cleanup">本次清理已删除</string>
     <string name="file_location_data_removed">位置信息已移除</string>
-    <string name="file_stop_scan_title">确定要\n停止吗？</string>
+    <string name="file_stop_scan_title">确定要停止吗？</string>
     <string name="file_resume">继续</string>
     <string name="file_quit">退出</string>
     <string name="file_delete_permanently_title">永久删除？</string>
-    <string name="file_delete_permanently_message">删除后的文件无法访问或\n恢复，请谨慎操作。</string>
+    <string name="file_delete_permanently_message">删除后的文件无法访问或恢复，请谨慎操作。</string>
     <string name="file_items">项</string>
     
     

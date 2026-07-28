@@ -12,7 +12,7 @@
     <string name="rate_feedback_message">Thanks for your feedback. We will keep improving Storage Clean.</string>
     <string name="notification_enable_step_find">1. Find Storage Clean</string>
     <string name="virus_app_list_permission_title">How Virus Scan Uses Your Data</string>
-    <string name="virus_app_list_permission_message">When you use Virus Scan, Quick Clean PRO collects and sends information about the apps installed on your device, including app names, package names, and version numbers, to Trustlook Security for malware scanning and risky app detection.</string>
+    <string name="virus_app_list_permission_message">When you use Virus Scan, Storage Clean collects and sends information about the apps installed on your device, including app names, package names, and version numbers, to Trustlook Security for malware scanning and risky app detection.</string>
     <string name="virus_app_list_permission_agree">Agree and Continue</string>
     <string name="virus_app_list_permission_not_now">Not Now</string>
     <string name="not_now">Not Now</string>
@@ -236,11 +236,11 @@
     <string name="file_back_to_main_page">Back To Main Page</string>
     <string name="file_deleted_in_cleanup">Deleted in this cleanup</string>
     <string name="file_location_data_removed">Location data removed</string>
-    <string name="file_stop_scan_title">Are you sure you want to\nstop now?</string>
+    <string name="file_stop_scan_title">Are you sure you want to stop now?</string>
     <string name="file_resume">Resume</string>
     <string name="file_quit">Quit</string>
     <string name="file_delete_permanently_title">Delete permanently?</string>
-    <string name="file_delete_permanently_message">Deleted files cannot be accessed or\nrecovered. Proceed with caution.</string>
+    <string name="file_delete_permanently_message">Deleted files cannot be accessed or recovered. Proceed with caution.</string>
     <string name="file_items">Items</string>
     <string name="file_all">All</string>
     <string name="file_photo">Photo</string>

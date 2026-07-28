@@ -77,6 +77,15 @@
                 android:value="Samples local battery history for Battery Info charts and monitors user-selected protected apps for App Lock." />
         </service>
         <service
+            android:name="com.aicleanerstorage.spaceclean.app.notification.PersistentNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Shows a persistent notification with quick access shortcuts for Junk Clean, File Manager, Toolbox, and Battery Info." />
+        </service>
+        <service
             android:name="com.aicleanerstorage.spaceclean.feature.applock.service.LockScreenOverlayService"
             android:enabled="true"
             android:exported="false" />
