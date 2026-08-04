@@ -7,6 +7,7 @@ data class NotificationCleanerSnapshot(
     val enabled: Boolean,
     val blockedCount: Int,
     val blockedCountsByPackage: Map<String, Int>,
+    val blockedNotifications: List<BlockedNotification>,
     val apps: List<BlockableNotificationApp>,
     val selectedPackages: Set<String>,
 )
@@ -23,6 +24,10 @@ interface NotificationRepository {
     fun blockedNotificationCount(): Int
 
     fun blockedNotificationCountsByPackage(): Map<String, Int>
+
+    fun blockedNotifications(): List<BlockedNotification>
+
+    fun clearBlockedNotifications(): Int
 
     fun selectedNotificationPackages(): Set<String>
 

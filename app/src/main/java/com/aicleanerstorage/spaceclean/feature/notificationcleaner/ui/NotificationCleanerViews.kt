@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.feature.notificationcleaner.ui
 
+import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +46,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,25 +59,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.ui.components.CommonResultCheckIcon
+import com.aicleanerstorage.spaceclean.common.ui.components.CommonResultContent
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.BlockableNotificationApp
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.BlockedNotification
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBottomActionBar
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.common.ui.components.PackageAppIcon
+import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXDeleteCompleteAnimation
+import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.ui.NotificationBlockingTurnedOffDialog
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.ui.ToolboxScanningContent
-import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerPage
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerUiState
-import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel
 import kotlinx.coroutines.delay
+import java.util.Date
 
 private val CardBg = Color.White
 private val Navy = Color(0xFF2D3748)
@@ -88,6 +94,7 @@ private val NotificationStatusRowHeight = 84.dp
 private val NotificationBellBadgeSize = 66.dp
 private val NotificationBellIconSize = 40.dp
 private val NotificationSelectionSize = 20.dp
+private val NotificationRowHeight = 84.dp
 private const val NotificationGuideSlideDelayMillis = 2_000L
 
 private val NotificationGuideSlides =
@@ -109,11 +116,14 @@ internal fun NotificationCleanerScreen(
     var showStopDialog by remember { mutableStateOf(false) }
 
     fun handleBack() {
+        if (state.completionAdInFlight) return
         when (state.page) {
             NotificationCleanerPage.Settings -> onAction(NotificationCleanerAction.LeaveSettings)
-            NotificationCleanerPage.Scanning -> {
+            NotificationCleanerPage.Scanning,
+            NotificationCleanerPage.Cleaning -> {
                 showStopDialog = true
             }
+            NotificationCleanerPage.Complete -> onAction(NotificationCleanerAction.Back)
             else -> onAction(NotificationCleanerAction.Back)
         }
     }
@@ -148,17 +158,35 @@ internal fun NotificationCleanerScreen(
                     onClick = { onAction(NotificationCleanerAction.EnableBlocking) },
                     backgroundColor = Color.Transparent,
                 )
+            } else if (
+                state.isInitialized &&
+                state.errorMessage == null &&
+                state.page == NotificationCleanerPage.Status &&
+                state.blockedCount > 0
+            ) {
+                CleanXBottomActionBar(
+                    text = stringResource(R.string.notification_one_tap_tidy_up),
+                    onClick = { onAction(NotificationCleanerAction.TidyUp) },
+                    backgroundColor = Color.Transparent,
+                )
             }
         },
         contentPadding =
-            if (state.page == NotificationCleanerPage.Scanning) {
+            if (
+                state.page == NotificationCleanerPage.Scanning ||
+                state.page == NotificationCleanerPage.Cleaning ||
+                state.page == NotificationCleanerPage.Complete
+            ) {
                 PaddingValues(0.dp)
             } else {
                 PaddingValues(horizontal = 16.dp)
             },
         scrollEnabled =
-            state.page != NotificationCleanerPage.Onboarding &&
-                state.page != NotificationCleanerPage.Scanning,
+                state.page != NotificationCleanerPage.Onboarding &&
+                state.page != NotificationCleanerPage.Scanning &&
+                state.page != NotificationCleanerPage.Settings &&
+                state.page != NotificationCleanerPage.Cleaning &&
+                state.page != NotificationCleanerPage.Complete,
     ) {
         when {
             !state.isInitialized -> Spacer(modifier = Modifier.height(220.dp))
@@ -182,12 +210,26 @@ internal fun NotificationCleanerScreen(
                         },
                         onTogglePackage = { onAction(NotificationCleanerAction.TogglePackage(it)) },
                     )
+                    NotificationCleanerPage.Cleaning -> CleaningContent(
+                        paused = showStopDialog,
+                        complete = state.cleaningAnimationComplete,
+                        onFinished = { onAction(NotificationCleanerAction.FinishCleaning) },
+                    )
+                    NotificationCleanerPage.Complete -> CompleteContent(
+                        cleanedCount = state.cleanedCount,
+                        showResult = state.completionResultVisible,
+                        onCelebrationFinished = { onAction(NotificationCleanerAction.FinishCompleteAnimation) },
+                        onNavigateTool = onNavigate,
+                    )
                 }
             }
         }
         if (
             state.page != NotificationCleanerPage.Onboarding &&
-            state.page != NotificationCleanerPage.Scanning
+            state.page != NotificationCleanerPage.Scanning &&
+            state.page != NotificationCleanerPage.Settings &&
+            state.page != NotificationCleanerPage.Cleaning &&
+            state.page != NotificationCleanerPage.Complete
         ) {
             Spacer(modifier = Modifier.height(100.dp))
         }
@@ -285,15 +327,20 @@ private fun ScanningContent() {
 @Composable
 private fun StatusContent(uiState: NotificationCleanerUiState) {
     val showEmptyState = uiState.enabled && uiState.blockedCount == 0
-    val blockedRows =
-        remember(uiState.apps, uiState.blockedCountsByPackage) {
-            val appsByPackage = uiState.apps.associateBy { it.packageName }
-            uiState.blockedCountsByPackage.entries
-                .filter { it.value > 0 }
-                .sortedByDescending { it.value }
-                .map { (packageName, count) ->
-                    (appsByPackage[packageName] ?: BlockableNotificationApp(packageName, packageName)) to count
+    val blockedGroups =
+        remember(uiState.blockedNotifications, uiState.apps) {
+            uiState.blockedNotifications
+                .groupBy { it.packageName }
+                .map { (packageName, items) ->
+                    val sortedItems = items.sortedByDescending { it.postTimeMillis }
+                    BlockedNotificationGroup(
+                        app =
+                            uiState.apps.firstOrNull { it.packageName == packageName }
+                                ?: BlockableNotificationApp(sortedItems.firstOrNull()?.appName ?: packageName, packageName),
+                        items = sortedItems,
+                    )
                 }
+                .sortedByDescending { it.items.firstOrNull()?.postTimeMillis ?: 0L }
         }
 
     Surface(
@@ -346,11 +393,11 @@ private fun StatusContent(uiState: NotificationCleanerUiState) {
         }
     }
 
-    if (blockedRows.isNotEmpty()) {
+    if (blockedGroups.isNotEmpty()) {
         Spacer(modifier = Modifier.height(28.dp))
-        blockedRows.forEachIndexed { index, (app, count) ->
+        blockedGroups.forEachIndexed { groupIndex, group ->
             Text(
-                text = app.appName,
+                text = group.app.packageName,
                 color = NotificationSettingsText,
                 fontSize = 18.sp,
                 lineHeight = 22.sp,
@@ -360,8 +407,16 @@ private fun StatusContent(uiState: NotificationCleanerUiState) {
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(16.dp))
-            BlockedAppRow(app = app, count = count)
-            if (index != blockedRows.lastIndex) {
+            group.items.forEachIndexed { itemIndex, entry ->
+                BlockedNotificationRow(
+                    entry = entry,
+                    app = group.app,
+                )
+                if (itemIndex != group.items.lastIndex) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+            if (groupIndex != blockedGroups.lastIndex) {
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -394,7 +449,7 @@ private fun BlockedCountText(count: Int) {
 }
 
 @Composable
-private fun SettingsContent(
+private fun ColumnScope.SettingsContent(
     uiState: NotificationCleanerUiState,
     onEnabledChange: (Boolean) -> Unit,
     onTogglePackage: (String) -> Unit,
@@ -440,14 +495,39 @@ private fun SettingsContent(
     }
 
     Spacer(modifier = Modifier.height(16.dp))
-    uiState.apps.forEach { app ->
-        NotificationAppRow(
-            app = app,
-            enabled = uiState.enabled,
-            selected = app.packageName in uiState.selectedPackages,
-            onToggleSelection = { onTogglePackage(app.packageName) },
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+    LazyColumn(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        contentPadding = PaddingValues(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        if (uiState.isAppsLoading && uiState.apps.isEmpty()) {
+            item {
+                Text(
+                    text = stringResource(R.string.result_loading),
+                    color = NavyMuted,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                )
+            }
+        }
+        items(
+            items = uiState.apps,
+            key = { it.packageName },
+        ) { app ->
+            NotificationAppRow(
+                app = app,
+                enabled = uiState.enabled,
+                selected = app.packageName in uiState.selectedPackages,
+                onToggleSelection = { onTogglePackage(app.packageName) },
+            )
+        }
     }
 }
 
@@ -524,15 +604,24 @@ private fun NotificationAppRow(
 }
 
 @Composable
-private fun BlockedAppRow(
+private fun BlockedNotificationRow(
+    entry: BlockedNotification,
     app: BlockableNotificationApp,
-    count: Int,
 ) {
+    val context = LocalContext.current
+    val timeText =
+        remember(context, entry.postTimeMillis) {
+            DateFormat.getTimeFormat(context).format(Date(entry.postTimeMillis))
+        }
+    val messageText = remember(entry.title, entry.text) {
+        entry.text.ifBlank { entry.title }.ifBlank { "" }
+    }
+
     Surface(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(NotificationStatusRowHeight),
+                .height(NotificationRowHeight),
         color = CardBg,
         shape = RoundedCornerShape(NotificationStatusCardRadius),
     ) {
@@ -548,7 +637,7 @@ private fun BlockedAppRow(
             Spacer(modifier = Modifier.size(8.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = app.appName,
+                    text = messageText.ifBlank { stringResource(R.string.notification_message_fallback) },
                     color = NotificationSettingsText,
                     fontSize = 18.sp,
                     lineHeight = 22.sp,
@@ -558,13 +647,103 @@ private fun BlockedAppRow(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = pluralStringResource(R.plurals.notifications_blocked_count, count, count),
+                    text = app.appName,
                     color = NotificationSettingsText.copy(alpha = 0.65f),
                     fontSize = 14.sp,
                     lineHeight = 17.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = timeText,
+                color = NotificationSettingsText.copy(alpha = 0.65f),
+                fontSize = 14.sp,
+                lineHeight = 17.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier.widthIn(min = 42.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun CleaningContent(
+    paused: Boolean,
+    complete: Boolean,
+    onFinished: () -> Unit,
+) {
+    LaunchedEffect(paused, complete) {
+        if (paused || complete) return@LaunchedEffect
+        delay(1800L)
+        onFinished()
+    }
+
+    CleanXDeleteCompleteAnimation(
+        stage =
+            if (complete) {
+                CleanXDeleteCompleteStage.Complete
+            } else {
+                CleanXDeleteCompleteStage.Deleting
+            },
+        cleaningText = stringResource(R.string.cleaning_notifications),
+        drawBackground = false,
+    )
+}
+
+@Composable
+private fun CompleteContent(
+    cleanedCount: Int,
+    showResult: Boolean,
+    onCelebrationFinished: () -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
+) {
+    LaunchedEffect(showResult) {
+        if (showResult) return@LaunchedEffect
+        delay(800L)
+        onCelebrationFinished()
+    }
+
+    if (!showResult) {
+        CleanXDeleteCompleteAnimation(
+            stage = CleanXDeleteCompleteStage.Complete,
+            modifier = Modifier.fillMaxSize(),
+            cleaningText = stringResource(R.string.cleaning_notifications),
+            completeText = stringResource(R.string.notification_clean_result_cleared),
+            drawBackground = false,
+        )
+    } else {
+        CommonResultContent(
+            onNavigateTool = onNavigateTool,
+            modifier = Modifier.fillMaxSize(),
+            excludedToolDestinations = setOf(AppDestination.NotificationCleaner),
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CommonResultCheckIcon(size = 45.dp)
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    text = stringResource(
+                        R.string.notification_clean_result_count,
+                        cleanedCount,
+                        pluralStringResource(R.plurals.notifications_count, cleanedCount),
+                    ),
+                    color = Navy,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.notification_clean_result_cleared),
+                    color = NavyMuted,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -637,3 +816,8 @@ private fun ErrorCard(
         }
     }
 }
+
+private data class BlockedNotificationGroup(
+    val app: BlockableNotificationApp,
+    val items: List<BlockedNotification>,
+)

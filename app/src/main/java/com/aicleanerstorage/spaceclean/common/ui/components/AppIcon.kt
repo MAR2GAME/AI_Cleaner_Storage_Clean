@@ -103,7 +103,8 @@ internal fun rememberPackageIconBitmap(packageName: String?): ImageBitmap? {
     val context = LocalContext.current.applicationContext
     val cached = packageName?.let(packageIconBitmapCache::get)
     val icon by produceState<ImageBitmap?>(initialValue = cached, packageName) {
-        if (packageName != null && value == null) {
+        value = cached
+        if (packageName != null && cached == null) {
             value = withContext(Dispatchers.IO) { loadPackageIconBitmap(context, packageName) }
         }
     }

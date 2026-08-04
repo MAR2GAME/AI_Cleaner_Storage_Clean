@@ -42,12 +42,24 @@ fun NotificationCleanerRoute(
 
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.operationEvents.collect { event ->
-            if (event.isNotificationCleanerCompletionSuccess()) {
-                featureFlow.handleOperation(event) {
-                    viewModel.onAction(NotificationCleanerAction.ShowStatus)
+            when {
+                event.isNotificationCleanerScanFinished() -> {
+                    featureFlow.handleOperation(event) {
+                        viewModel.onAction(NotificationCleanerAction.ShowStatus)
+                    }
                 }
-            } else {
-                featureFlow.handleOperation(event)
+                event.isNotificationCleanerCompletionSuccess() -> {
+                    if (!viewModel.uiState.value.completionAdInFlight) {
+                        viewModel.onAction(NotificationCleanerAction.CompletionAdStarted)
+                        featureFlow.handleOperation(event) {
+                            viewModel.onAction(NotificationCleanerAction.CompletionAdFinished)
+                            viewModel.onAction(NotificationCleanerAction.ShowStatusAfterCompletionAd)
+                        }
+                    }
+                }
+                else -> {
+                    featureFlow.handleOperation(event)
+                }
             }
         }
     }
@@ -57,7 +69,9 @@ fun NotificationCleanerRoute(
         onAction = { action ->
             when (action) {
                 NotificationCleanerAction.Back -> {
-                    featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
+                    if (!state.completionAdInFlight) {
+                        featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
+                    }
                 }
                 NotificationCleanerAction.EnableBlocking -> {
                     permissionCoordinator.ensure(ProtectedAction.NotificationCleanerEnable) {
@@ -70,6 +84,10 @@ fun NotificationCleanerRoute(
         onNavigate = navigator::open,
     )
 }
+
+private fun FeatureOperationEvent.isNotificationCleanerScanFinished(): Boolean =
+    this is FeatureOperationEvent.ScanFinished &&
+        feature == FeatureKey.NOTIFICATION_CLEANER
 
 private fun FeatureOperationEvent.isNotificationCleanerCompletionSuccess(): Boolean =
     this is FeatureOperationEvent.OperationFinished &&

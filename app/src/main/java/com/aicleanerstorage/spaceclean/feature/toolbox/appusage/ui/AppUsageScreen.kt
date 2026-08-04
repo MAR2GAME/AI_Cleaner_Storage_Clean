@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -288,18 +289,12 @@ private fun AppUsageRangeMenuItem(
 @Composable
 private fun PieChartCard(uiState: AppUsageUiState) {
     val allUsages = uiState.usages
-    val sortedUsages = when (uiState.selectedTab) {
-        AppUsageMetricTab.Duration -> allUsages.sortedWith(
+    val sortedUsages =
+        allUsages.sortedWith(
             compareByDescending<AppUsageInfo> { it.totalForegroundMs }
-                .thenByDescending { it.launchCount }
-                .thenBy { it.appName.lowercase(Locale.US) },
+                .thenBy { it.appName.lowercase(Locale.US) }
+                .thenBy { it.packageName },
         )
-        AppUsageMetricTab.LaunchCount -> allUsages.sortedWith(
-            compareByDescending<AppUsageInfo> { it.launchCount }
-                .thenByDescending { it.totalForegroundMs }
-                .thenBy { it.appName.lowercase(Locale.US) },
-        )
-    }
 
     val topItems = sortedUsages.take(3)
     val otherItems = sortedUsages.drop(3)
@@ -539,11 +534,13 @@ private fun UsageDataCard(
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         uiState.visibleItems.forEach { item ->
-                            AppUsageRow(
-                                item = item,
-                                selectedTab = uiState.selectedTab,
-                                onStopApp = onStopApp,
-                            )
+                            key(item.packageName) {
+                                AppUsageRow(
+                                    item = item,
+                                    selectedTab = uiState.selectedTab,
+                                    onStopApp = onStopApp,
+                                )
+                            }
                         }
                     }
                 }
