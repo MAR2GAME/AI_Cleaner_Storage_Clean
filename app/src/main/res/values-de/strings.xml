@@ -443,6 +443,10 @@
     <string name="notification_blocking_off_message">Turn off notification blocking?</string>
     <string name="notification_blocking_off_detail">Selected apps will no longer be blocked, and all app selections will be cleared.</string>
     <string name="notification_one_tap_tidy_up">One-tap Tidy Up</string>
+    <string name="cleaning_notifications">Benachrichtigungen werden bereinigt...</string>
+    <string name="notification_clean_result_count">%1$d %2$s</string>
+    <string name="notification_clean_result_cleared">wurden gelöscht</string>
+    <string name="notification_message_fallback">Nachrichteninhalt</string>
     <string name="notification_overload_title">Notification overload?\nCan\'t find anything!</string>
     <string name="notification_tidy_one_tap">Tidy your notification bar with\none tap!</string>
     <string name="notification_tidy_complete">Tidy at last\nMiss nothing that matters!</string>

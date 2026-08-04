@@ -32,6 +32,8 @@ enum class NotificationCleanerPage {
     Scanning,
     Status,
     Settings,
+    Cleaning,
+    Complete,
 }
 
 data class NotificationCleanerUiState(
@@ -39,13 +41,20 @@ data class NotificationCleanerUiState(
     val enabled: Boolean = false,
     val blockedCount: Int = 0,
     val blockedCountsByPackage: Map<String, Int> = emptyMap(),
+    val blockedNotifications: List<BlockedNotification> = emptyList(),
     val apps: List<BlockableNotificationApp> = emptyList(),
     val selectedPackages: Set<String> = emptySet(),
+    val appsLoaded: Boolean = false,
+    val isAppsLoading: Boolean = false,
     val page: NotificationCleanerPage = NotificationCleanerPage.Onboarding,
     val isLoading: Boolean = true,
     val scanInProgress: Boolean = false,
     val isInitialized: Boolean = false,
     val errorMessage: String? = null,
+    val completionAdInFlight: Boolean = false,
+    val cleanedCount: Int = 0,
+    val cleaningAnimationComplete: Boolean = false,
+    val completionResultVisible: Boolean = false,
 )
 
 sealed interface NotificationCleanerAction {
@@ -55,7 +64,13 @@ sealed interface NotificationCleanerAction {
     data object LeaveSettings : NotificationCleanerAction
     data object EnableBlocking : NotificationCleanerAction
     data object DisableBlocking : NotificationCleanerAction
+    data object TidyUp : NotificationCleanerAction
     data object FinishScanning : NotificationCleanerAction
+    data object FinishCleaning : NotificationCleanerAction
+    data object FinishCompleteAnimation : NotificationCleanerAction
+    data object ShowStatusAfterCompletionAd : NotificationCleanerAction
+    data object CompletionAdStarted : NotificationCleanerAction
+    data object CompletionAdFinished : NotificationCleanerAction
     data object ShowStatus : NotificationCleanerAction
     data class TogglePackage(val packageName: String) : NotificationCleanerAction
 }
@@ -70,6 +85,8 @@ class NotificationCleanerViewModel(
     private val operationEventsChannel = Channel<FeatureOperationEvent>(Channel.BUFFERED)
     private var scanJob: Job? = null
     private var scanningCompletionPending = false
+    private var cleaningCompletionPending = false
+    private var postCompletionPage: NotificationCleanerPage? = null
 
     val uiState: StateFlow<NotificationCleanerUiState> = _uiState.asStateFlow()
     val operationEvents: Flow<FeatureOperationEvent> = operationEventsChannel.receiveAsFlow()
@@ -86,7 +103,15 @@ class NotificationCleanerViewModel(
             NotificationCleanerAction.LeaveSettings -> leaveSettings()
             NotificationCleanerAction.EnableBlocking -> setBlockingEnabled(true)
             NotificationCleanerAction.DisableBlocking -> setBlockingEnabled(false)
+            NotificationCleanerAction.TidyUp -> tidyUp()
             NotificationCleanerAction.FinishScanning -> finishScanning()
+            NotificationCleanerAction.FinishCleaning -> finishCleaning()
+            NotificationCleanerAction.FinishCompleteAnimation -> finishCompleteAnimation()
+            NotificationCleanerAction.ShowStatusAfterCompletionAd -> showStatusAfterCompletionAd()
+            NotificationCleanerAction.CompletionAdStarted ->
+                _uiState.update { it.copy(completionAdInFlight = true) }
+            NotificationCleanerAction.CompletionAdFinished ->
+                _uiState.update { it.copy(completionAdInFlight = false) }
             NotificationCleanerAction.ShowStatus -> showStatus()
             is NotificationCleanerAction.TogglePackage -> togglePackage(action.packageName)
         }
@@ -136,6 +161,7 @@ class NotificationCleanerViewModel(
 
     fun showSettings() {
         _uiState.update { it.copy(page = NotificationCleanerPage.Settings) }
+        loadNotificationAppsIfNeeded()
     }
 
     fun leaveSettings() {
@@ -184,19 +210,28 @@ class NotificationCleanerViewModel(
             scanJob?.cancel()
             scanJob = null
             scanningCompletionPending = false
+            cleaningCompletionPending = false
+            postCompletionPage = null
             _uiState.update {
                 it.copy(
                     hasAccess = false,
                     enabled = false,
                     blockedCount = 0,
                     blockedCountsByPackage = emptyMap(),
+                    blockedNotifications = emptyList(),
                     apps = emptyList(),
                     selectedPackages = emptySet(),
+                    appsLoaded = false,
+                    isAppsLoading = false,
                     page = NotificationCleanerPage.Onboarding,
                     isLoading = false,
                     scanInProgress = false,
                     isInitialized = true,
                     errorMessage = null,
+                    completionAdInFlight = false,
+                    cleanedCount = 0,
+                    cleaningAnimationComplete = false,
+                    completionResultVisible = false,
                 )
             }
             return
@@ -208,8 +243,7 @@ class NotificationCleanerViewModel(
 
         val shouldScan =
             !state.isInitialized ||
-                !state.hasAccess ||
-                state.apps.isEmpty()
+                !state.hasAccess
 
         if (shouldScan) {
             startAccessScan()
@@ -227,6 +261,8 @@ class NotificationCleanerViewModel(
                         enabled = snapshot.enabled,
                         blockedCount = snapshot.blockedCount,
                         blockedCountsByPackage = snapshot.blockedCountsByPackage,
+                        blockedNotifications = snapshot.blockedNotifications,
+                        selectedPackages = snapshot.selectedPackages,
                         isLoading = false,
                         scanInProgress = false,
                         isInitialized = true,
@@ -266,8 +302,11 @@ class NotificationCleanerViewModel(
                                 enabled = false,
                                 blockedCount = 0,
                                 blockedCountsByPackage = emptyMap(),
+                                blockedNotifications = emptyList(),
                                 apps = emptyList(),
                                 selectedPackages = emptySet(),
+                                appsLoaded = false,
+                                isAppsLoading = false,
                                 page = NotificationCleanerPage.Onboarding,
                                 isLoading = false,
                                 scanInProgress = false,
@@ -280,8 +319,11 @@ class NotificationCleanerViewModel(
                                 enabled = snapshot.enabled,
                                 blockedCount = snapshot.blockedCount,
                                 blockedCountsByPackage = snapshot.blockedCountsByPackage,
+                                blockedNotifications = snapshot.blockedNotifications,
                                 apps = snapshot.apps,
                                 selectedPackages = snapshot.selectedPackages,
+                                appsLoaded = snapshot.apps.isNotEmpty(),
+                                isAppsLoading = false,
                                 page = NotificationCleanerPage.Scanning,
                                 isLoading = false,
                                 scanInProgress = false,
@@ -313,6 +355,8 @@ class NotificationCleanerViewModel(
             enabled = repository.isNotificationBlockingEnabled(),
             blockedCount = repository.blockedNotificationCount(),
             blockedCountsByPackage = repository.blockedNotificationCountsByPackage(),
+            blockedNotifications = repository.blockedNotifications(),
+            selectedPackages = repository.selectedNotificationPackages(),
         )
 
     private fun finishScanIfReady() {
@@ -327,12 +371,96 @@ class NotificationCleanerViewModel(
         }
         scanningCompletionPending = true
         trackOperationEvent(
+            FeatureOperationEvent.ScanFinished(
+                FeatureKey.NOTIFICATION_CLEANER,
+                state.blockedCount > 0,
+            ),
+        )
+    }
+
+    fun tidyUp() {
+        val state = _uiState.value
+        if (state.page != NotificationCleanerPage.Status || state.blockedCount <= 0 || state.completionAdInFlight) return
+        viewModelScope.launch(ioDispatcher) {
+            runSuspendCatching { repository.clearBlockedNotifications() }
+                .onSuccess { cleanedCount ->
+                    if (cleanedCount <= 0) {
+                        refreshState()
+                        return@onSuccess
+                    }
+                    postCompletionPage = null
+                    cleaningCompletionPending = false
+                    _uiState.update {
+                        it.copy(
+                            page = NotificationCleanerPage.Cleaning,
+                            blockedCount = 0,
+                            blockedCountsByPackage = emptyMap(),
+                            blockedNotifications = emptyList(),
+                            cleanedCount = cleanedCount,
+                            cleaningAnimationComplete = false,
+                            completionResultVisible = false,
+                            errorMessage = null,
+                        )
+                    }
+                    trackOperationEvent(
+                        FeatureOperationEvent.OperationStarted(
+                            FeatureKey.NOTIFICATION_CLEANER,
+                            OperationAction.CLEAN,
+                        ),
+                    )
+                }.onFailure { error ->
+                    _uiState.update {
+                        it.copy(errorMessage = error.message ?: appString(R.string.notification_status_load_failed))
+                    }
+                }
+        }
+    }
+
+    fun finishCleaning() {
+        if (_uiState.value.page != NotificationCleanerPage.Cleaning || cleaningCompletionPending) return
+        cleaningCompletionPending = true
+        postCompletionPage = NotificationCleanerPage.Complete
+        _uiState.update {
+            it.copy(
+                page = NotificationCleanerPage.Complete,
+                cleaningAnimationComplete = false,
+                completionResultVisible = false,
+            )
+        }
+    }
+
+    fun finishCompleteAnimation() {
+        if (_uiState.value.page != NotificationCleanerPage.Complete || !cleaningCompletionPending) return
+        cleaningCompletionPending = false
+        trackOperationEvent(
             FeatureOperationEvent.OperationFinished(
                 FeatureKey.NOTIFICATION_CLEANER,
                 OperationAction.CLEAN,
                 success = true,
             ),
         )
+    }
+
+    fun showStatusAfterCompletionAd() {
+        val targetPage = postCompletionPage ?: NotificationCleanerPage.Status
+        cleaningCompletionPending = false
+        postCompletionPage = null
+        _uiState.update {
+            when (targetPage) {
+                NotificationCleanerPage.Complete ->
+                    it.copy(
+                        page = NotificationCleanerPage.Complete,
+                        cleaningAnimationComplete = false,
+                        completionResultVisible = true,
+                    )
+                else ->
+                    it.copy(
+                        page = NotificationCleanerPage.Status,
+                        cleaningAnimationComplete = false,
+                        completionResultVisible = false,
+                    )
+            }
+        }
     }
 
     private fun failRefresh(error: Throwable) {
@@ -347,6 +475,36 @@ class NotificationCleanerViewModel(
     }
 
     private fun appString(resId: Int): String = getApplication<Application>().getString(resId)
+
+    private fun loadNotificationAppsIfNeeded() {
+        val current = _uiState.value
+        if (current.appsLoaded || current.isAppsLoading) return
+        _uiState.update { it.copy(isAppsLoading = true) }
+        viewModelScope.launch(ioDispatcher) {
+            runSuspendCatching {
+                NotificationAppsSnapshot(
+                    apps = repository.notificationApps(),
+                    selectedPackages = repository.selectedNotificationPackages(),
+                )
+            }.onSuccess { snapshot ->
+                _uiState.update {
+                    it.copy(
+                        apps = snapshot.apps,
+                        selectedPackages = snapshot.selectedPackages,
+                        appsLoaded = true,
+                        isAppsLoading = false,
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isAppsLoading = false,
+                        errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+                    )
+                }
+            }
+        }
+    }
 
     private fun trackOperationEvent(event: FeatureOperationEvent) {
         operationEventsChannel.trySend(event)
@@ -366,5 +524,12 @@ private data class NotificationCleanerLightSnapshot(
     val enabled: Boolean,
     val blockedCount: Int,
     val blockedCountsByPackage: Map<String, Int>,
+    val blockedNotifications: List<BlockedNotification>,
+    val selectedPackages: Set<String>,
+)
+
+private data class NotificationAppsSnapshot(
+    val apps: List<BlockableNotificationApp>,
+    val selectedPackages: Set<String>,
 )
 

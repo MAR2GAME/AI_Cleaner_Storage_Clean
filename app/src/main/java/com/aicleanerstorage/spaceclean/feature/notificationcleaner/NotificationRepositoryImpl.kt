@@ -23,6 +23,10 @@ class NotificationRepositoryImpl(
 
     override fun blockedNotificationCountsByPackage(): Map<String, Int> = NotificationDataSource.blockedCountsByPackage(appContext)
 
+    override fun blockedNotifications(): List<BlockedNotification> = NotificationDataSource.blockedNotifications(appContext)
+
+    override fun clearBlockedNotifications(): Int = NotificationDataSource.clearBlockedNotifications(appContext)
+
     override fun selectedNotificationPackages(): Set<String> = NotificationDataSource.selectedPackages(appContext)
 
     override fun notificationApps(): List<BlockableNotificationApp> = NotificationDataSource.apps(appContext)
