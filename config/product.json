@@ -7,11 +7,66 @@
     "themeKey": "storage_clean"
   },
   "version": {
-    "code": 1,
-    "name": "1.0.0"
+    "code": 4,
+    "name": "1.0.3"
   },
   "legal": {
     "privacyUrl": "https://sites.google.com/view/aicleanerstorageclean/home",
     "termsUrl": "https://sites.google.com/view/aicleaner-storageclean/home"
+  },
+  "advertising": {
+    "defaultTopic": "all",
+    "debugOverrideMode": "POLICY",
+    "policyFile": "config/ad_policy.json",
+    "admob": {
+      "appId": "ca-app-pub-3643549411810853~5913258493",
+      "bannerId": "ca-app-pub-3940256099942544/6300978111",
+      "interstitialId": "ca-app-pub-3643549411810853/1611619626",
+      "nativeId": "ca-app-pub-3940256099942544/2247696110",
+      "openId": "ca-app-pub-3643549411810853/3639017161",
+      "rewardedId": "ca-app-pub-3940256099942544/5224354917",
+      "nativeIds": [
+        {
+          "highPriceID": "ca-app-pub-3940256099942544/2247696110",
+          "midPriceID": "ca-app-pub-3940256099942544/2247696110",
+          "lowPriceID": "ca-app-pub-3940256099942544/2247696110"
+        }
+      ]
+    }
+  },
+  "services": {
+    "releaseHost": "https://api.newminigame.online",
+    "testHost": "http://192.168.111.227:10002",
+    "playIntegrityCloudProjectNumber": 216278718827
+  },
+  "analytics": {
+    "thinkingAppKey": "d4579ef4e15f4820ada24873dff21e07",
+    "thinkingServerUrl": "https://mar2.top"
+  },
+  "integrations": {
+    "trustlook": {
+      "apiKey": "72dc1403e0c882dc5ed1e0610a023f9d417e077defeeefdfcb52eb8d"
+    },
+    "remoteConfig": {
+      "encryptionKey": "/skh8muNk7LVX5rLhIB2k2Jg9TjvjUwmmfkpEEtnD6g=",
+      "encryptionKeyId": "rc_2026_08_05_18_03_25"
+    },
+    "facebook": {
+      "appId": "",
+      "clientToken": ""
+    },
+    "singular": {
+      "apiKey": "mar2game_f7b9272a",
+      "secret": "72b3df2ee5d0a64a6c404ce01937c3d6"
+    },
+    "tiktok": {
+      "accessToken": "",
+      "ttAppId": "",
+      "appId": ""
+    },
+    "playIntegrity": {
+      "parseTokenKey": "TianWangGaiDiHu",
+      "safeExpectedSignatures": "55:B2:49:B4:EB:4A:AA:73:DA:D0:7C:D7:41:5E:0B:FC:0C:F2:9A:E4:9E:AF:ED:1E:3A:FD:13:4D:85:AB:17:F0;DE:D7:24:51:4C:B8:20:40:AC:2F:8D:C3:C9:33:6C:70:03:D6:CE:31:3D:48:7A:07:E9:5F:78:74:22:4A:81:C8"
+    }
   }
 }

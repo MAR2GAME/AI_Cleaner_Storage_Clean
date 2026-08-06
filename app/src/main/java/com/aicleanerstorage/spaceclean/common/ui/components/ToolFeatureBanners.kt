@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import kotlin.random.Random
 
 private val CardBg = Color.White
@@ -151,7 +153,7 @@ fun ToolFeatureBanners(
         features.forEachIndexed { index, feature ->
             ToolFeatureBanner(
                 feature = feature,
-                onClick = { onNavigateTool(feature.destination) },
+                onClick = { handleToolFeatureBannerClick(feature.destination, onNavigateTool = onNavigateTool) },
             )
             if (index < features.lastIndex) Spacer(modifier = Modifier.height(20.dp))
         }
@@ -168,11 +170,20 @@ fun ToolFeatureBanners(
         features.forEachIndexed { index, feature ->
             ToolFeatureBanner(
                 feature = feature,
-                onClick = { onNavigateTool(feature.destination) },
+                onClick = { handleToolFeatureBannerClick(feature.destination, onNavigateTool = onNavigateTool) },
             )
             if (index < features.lastIndex) Spacer(modifier = Modifier.height(20.dp))
         }
     }
+}
+
+internal fun handleToolFeatureBannerClick(
+    destination: AppDestination,
+    trackFeatureClicked: (FeatureKey) -> Unit = AnalyticsTracker::trackCoreFeatureClicked,
+    onNavigateTool: (AppDestination) -> Unit,
+) {
+    destination.featureKey?.let(trackFeatureClicked)
+    onNavigateTool(destination)
 }
 
 @Composable

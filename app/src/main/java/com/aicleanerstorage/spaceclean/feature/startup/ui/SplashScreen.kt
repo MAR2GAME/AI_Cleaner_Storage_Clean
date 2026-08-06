@@ -227,6 +227,8 @@ private val SplashProgressStage.startProgress: Float
     get() =
         when (this) {
             SplashProgressStage.Preparing -> 0f
+            SplashProgressStage.RequestingAd -> 0.25f
+            SplashProgressStage.ShowingAd,
             SplashProgressStage.Finishing -> 0.25f
             SplashProgressStage.Completed -> 1f
         }
@@ -235,6 +237,9 @@ private val SplashProgressStage.durationMillis: Int
     get() =
         when (this) {
             SplashProgressStage.Preparing -> 700
+            SplashProgressStage.RequestingAd,
+            SplashProgressStage.ShowingAd,
+            -> 1
             SplashProgressStage.Finishing -> 1_500
             SplashProgressStage.Completed -> 1
         }

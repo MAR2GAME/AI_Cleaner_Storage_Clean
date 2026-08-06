@@ -45,6 +45,8 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.scanner.SharedScanState
 import com.aicleanerstorage.spaceclean.common.storage.preferences.AppPreferences
 import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
 import com.aicleanerstorage.spaceclean.common.storage.preferences.DefaultCleanupHistoryStore
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsPreferences
+import com.aicleanerstorage.spaceclean.common.analytics.DefaultAnalyticsPreferences
 import com.aicleanerstorage.spaceclean.common.permission.PermissionPreferences
 import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.background.AppBackgroundRuntimeService
@@ -68,6 +70,7 @@ val dataModule: Module =
             )
         }
         single<CleanupHistoryStore> { DefaultCleanupHistoryStore(get()) }
+        single<AnalyticsPreferences> { DefaultAnalyticsPreferences(get()) }
         single<DeviceInfoRepository> { DeviceInfoRepositoryImpl(androidContext()) }
         single<VirusScanEngine> { TrustlookVirusScanEngine(androidContext()) }
         single<VirusSecurityRepository> { VirusSecurityRepositoryImpl(androidContext()) }

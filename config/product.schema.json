@@ -4,7 +4,7 @@
   "title": "Storage Clean product configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "identity", "version", "legal"],
+  "required": ["schemaVersion", "identity", "version", "legal", "advertising", "services", "analytics", "integrations"],
   "properties": {
     "schemaVersion": { "const": 1 },
     "identity": {
@@ -34,6 +34,123 @@
       "properties": {
         "privacyUrl": { "type": "string", "pattern": "^https://" },
         "termsUrl": { "type": "string", "pattern": "^https://" }
+      }
+    },
+    "advertising": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultTopic", "debugOverrideMode", "policyFile", "admob"],
+      "properties": {
+        "defaultTopic": { "type": "string", "minLength": 1 },
+        "debugOverrideMode": { "type": "string", "minLength": 1 },
+        "policyFile": { "const": "config/ad_policy.json" },
+        "admob": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["appId", "bannerId", "interstitialId", "nativeId", "openId", "rewardedId", "nativeIds"],
+          "properties": {
+            "appId": { "type": "string", "minLength": 1 },
+            "bannerId": { "type": "string", "minLength": 1 },
+            "interstitialId": { "type": "string", "minLength": 1 },
+            "nativeId": { "type": "string", "minLength": 1 },
+            "openId": { "type": "string", "minLength": 1 },
+            "rewardedId": { "type": "string", "minLength": 1 },
+            "nativeIds": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["highPriceID", "midPriceID", "lowPriceID"],
+                "properties": {
+                  "highPriceID": { "type": "string", "minLength": 1 },
+                  "midPriceID": { "type": "string", "minLength": 1 },
+                  "lowPriceID": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "services": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["releaseHost", "testHost", "playIntegrityCloudProjectNumber"],
+      "properties": {
+        "releaseHost": { "type": "string" },
+        "testHost": { "type": "string" },
+        "playIntegrityCloudProjectNumber": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "analytics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["thinkingAppKey", "thinkingServerUrl"],
+      "properties": {
+        "thinkingAppKey": { "type": "string" },
+        "thinkingServerUrl": { "type": "string" }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trustlook", "remoteConfig", "facebook", "singular", "tiktok", "playIntegrity"],
+      "properties": {
+        "trustlook": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["apiKey"],
+          "properties": {
+            "apiKey": { "type": "string" }
+          }
+        },
+        "remoteConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["encryptionKey", "encryptionKeyId"],
+          "properties": {
+            "encryptionKey": { "type": "string" },
+            "encryptionKeyId": { "type": "string" }
+          }
+        },
+        "facebook": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["appId", "clientToken"],
+          "properties": {
+            "appId": { "type": "string" },
+            "clientToken": { "type": "string" }
+          }
+        },
+        "singular": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["apiKey", "secret"],
+          "properties": {
+            "apiKey": { "type": "string" },
+            "secret": { "type": "string" }
+          }
+        },
+        "tiktok": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["accessToken", "ttAppId", "appId"],
+          "properties": {
+            "accessToken": { "type": "string" },
+            "ttAppId": { "type": "string" },
+            "appId": { "type": "string" }
+          }
+        },
+        "playIntegrity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["parseTokenKey", "safeExpectedSignatures"],
+          "properties": {
+            "parseTokenKey": { "type": "string" },
+            "safeExpectedSignatures": { "type": "string" }
+          }
+        }
       }
     }
   }

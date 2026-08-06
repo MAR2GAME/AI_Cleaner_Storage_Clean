@@ -7,10 +7,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.feature.home.HomeRoute
 import com.aicleanerstorage.spaceclean.feature.home.HomeViewModel
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerHomeRoutes(
     navigator: AppNavigator,
+    analyticsReporter: AnalyticsReporter,
     externalBlockingPromptActive: Boolean,
 ) {
     composable(AppDestination.Home.route) {
@@ -18,6 +20,7 @@ internal fun NavGraphBuilder.registerHomeRoutes(
         HomeRoute(
             navigator = navigator,
             viewModel = viewModel,
+            analyticsReporter = analyticsReporter,
             externalBlockingPromptActive = externalBlockingPromptActive,
         )
     }
@@ -26,6 +29,7 @@ internal fun NavGraphBuilder.registerHomeRoutes(
         HomeRoute(
             navigator = navigator,
             viewModel = viewModel,
+            analyticsReporter = analyticsReporter,
             externalBlockingPromptActive = externalBlockingPromptActive,
             initialTabIndex = 1,
         )
@@ -35,6 +39,7 @@ internal fun NavGraphBuilder.registerHomeRoutes(
         HomeRoute(
             navigator = navigator,
             viewModel = viewModel,
+            analyticsReporter = analyticsReporter,
             externalBlockingPromptActive = externalBlockingPromptActive,
             initialTabIndex = 2,
         )

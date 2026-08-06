@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 apply(from = "product-config.gradle")
@@ -55,6 +57,11 @@ ktlint {
 
 dependencies {
     implementation(project(":junkcc"))
+    implementation(libs.pdffox.advertise) {
+        exclude(group = "com.pangle.global", module = "pag-sdk")
+    }
+    implementation(libs.pangle.pag.sdk.ad)
+    implementation(libs.tiktok.business.android.sdk.comp)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.graphics)

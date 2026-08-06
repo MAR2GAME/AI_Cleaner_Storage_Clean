@@ -13,15 +13,65 @@ import org.junit.Test
 
 class SplashViewModelTest {
     @Test
-    fun `normal launch enters finishing after request and visual readiness`() {
+    fun `normal launch waits for open ad after request and visual readiness`() {
         var state = SplashMachineState()
 
         state = transition(state, SplashAction.LaunchRequestChanged(AppLaunchRequest.Normal))
         assertEquals(SplashStage.Preparing, state.stage)
 
-        state = transition(state, SplashAction.VisualReady)
-        assertEquals(SplashStage.Finishing, state.stage)
-        assertEquals(SplashProgressStage.Finishing, state.toUiState().progressStage)
+        val result = reduceSplashState(state, SplashAction.VisualReady, AppDestination.Home)
+
+        assertEquals(SplashStage.WaitingForOpenAd, result.state.stage)
+        assertEquals(SplashProgressStage.RequestingAd, result.state.toUiState().progressStage)
+        assertTrue(result.state.toUiState().paused)
+        assertEquals(listOf(SplashEffect.RunColdStartAd), result.effects)
+    }
+
+    @Test
+    fun `open ad active pauses splash and reports showing ad stage`() {
+        val state =
+            SplashMachineState(
+                stage = SplashStage.WaitingForOpenAd,
+                launchRequest = AppLaunchRequest.Normal,
+                pauseReasons = setOf(SplashPauseReason.OpenAd),
+            )
+
+        val loaded = transition(state, SplashAction.OpenAdStateChanged(true))
+
+        assertTrue(loaded.toUiState().paused)
+        assertEquals(SplashProgressStage.ShowingAd, loaded.toUiState().progressStage)
+    }
+
+    @Test
+    fun `open ad inactive clears pause without navigating`() {
+        val state =
+            SplashMachineState(
+                stage = SplashStage.WaitingForOpenAd,
+                launchRequest = AppLaunchRequest.Normal,
+                pauseReasons = setOf(SplashPauseReason.OpenAd),
+                openAdLoaded = true,
+            )
+
+        val result = reduceSplashState(state, SplashAction.OpenAdStateChanged(false), AppDestination.Home)
+
+        assertEquals(SplashStage.WaitingForOpenAd, result.state.stage)
+        assertFalse(result.state.toUiState().paused)
+        assertEquals(emptyList<SplashEffect>(), result.effects)
+    }
+
+    @Test
+    fun `open ad finished advances to finishing`() {
+        val state =
+            SplashMachineState(
+                stage = SplashStage.WaitingForOpenAd,
+                launchRequest = AppLaunchRequest.Normal,
+                pauseReasons = setOf(SplashPauseReason.OpenAd),
+            )
+
+        val finished = transition(state, SplashAction.OpenAdFinished)
+
+        assertEquals(SplashStage.Finishing, finished.stage)
+        assertEquals(SplashProgressStage.Finishing, finished.toUiState().progressStage)
     }
 
     @Test
@@ -29,7 +79,12 @@ class SplashViewModelTest {
         var state = SplashMachineState(visualReady = true)
         val request = notificationRequest(NotificationLaunchSource.InitialIntent)
 
-        state = transition(state, SplashAction.LaunchRequestChanged(request))
+        val launchResult = reduceSplashState(state, SplashAction.LaunchRequestChanged(request), AppDestination.Home)
+        state = launchResult.state
+
+        assertEquals(SplashStage.Finishing, state.stage)
+        assertEquals(emptyList<SplashEffect>(), launchResult.effects)
+
         val result = reduceSplashState(state, SplashAction.VisualFinished, AppDestination.Home)
 
         assertEquals(SplashStage.Completed, result.state.stage)
@@ -56,12 +111,16 @@ class SplashViewModelTest {
         var state = SplashMachineState()
         state = transition(state, SplashAction.PermissionPauseChanged(true))
         state = transition(state, SplashAction.ExternalLinkStateChanged(true))
+        state = transition(state, SplashAction.OpenAdStateChanged(true))
         assertTrue(state.toUiState().paused)
 
         state = transition(state, SplashAction.PermissionPauseChanged(false))
         assertTrue(state.toUiState().paused)
 
         state = transition(state, SplashAction.ExternalLinkStateChanged(false))
+        assertTrue(state.toUiState().paused)
+
+        state = transition(state, SplashAction.OpenAdStateChanged(false))
         assertFalse(state.toUiState().paused)
     }
 
@@ -71,6 +130,9 @@ class SplashViewModelTest {
 
         viewModel.onAction(SplashAction.LaunchRequestChanged(AppLaunchRequest.Normal))
         viewModel.onAction(SplashAction.VisualReady)
+        assertEquals(SplashEffect.RunColdStartAd, viewModel.effects.first())
+
+        viewModel.onAction(SplashAction.OpenAdFinished)
         viewModel.onAction(SplashAction.VisualFinished)
 
         assertEquals(SplashEffect.Navigate(AppDestination.OnboardingScan), viewModel.effects.first())
@@ -79,6 +141,8 @@ class SplashViewModelTest {
     @Test
     fun `progress stages use fixed targets`() {
         assertEquals(0.25f, SplashProgressStage.Preparing.targetProgress, 0f)
+        assertEquals(0.25f, SplashProgressStage.RequestingAd.targetProgress, 0f)
+        assertEquals(0.25f, SplashProgressStage.ShowingAd.targetProgress, 0f)
         assertEquals(1f, SplashProgressStage.Finishing.targetProgress, 0f)
         assertEquals(1f, SplashProgressStage.Completed.targetProgress, 0f)
     }

@@ -66,6 +66,8 @@ import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.home.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.feature.home.HomeViewModel
@@ -91,6 +93,7 @@ import com.aicleanerstorage.spaceclean.feature.home.ui.HomeScreen
 fun HomeRoute(
     navigator: AppNavigator,
     viewModel: HomeViewModel,
+    analyticsReporter: AnalyticsReporter,
     externalBlockingPromptActive: Boolean = false,
     initialTabIndex: Int = 0,
 ) {
@@ -127,6 +130,7 @@ fun HomeRoute(
         },
         onNavigate = { destination ->
             viewModel.onAction(HomeAction.FeatureClicked)
+            destination.featureKey?.let { analyticsReporter.report(AnalyticsEvent.CoreFeatureClicked(it)) }
             navigator.open(destination)
         },
         initialTabIndex = initialTabIndex,

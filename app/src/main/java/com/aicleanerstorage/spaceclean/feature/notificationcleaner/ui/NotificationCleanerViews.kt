@@ -113,27 +113,13 @@ internal fun NotificationCleanerScreen(
     modifier: Modifier = Modifier,
 ) {
     var showBlockingTurnedOffDialog by remember { mutableStateOf(false) }
-    var showStopDialog by remember { mutableStateOf(false) }
 
-    fun handleBack() {
-        if (state.completionAdInFlight) return
-        when (state.page) {
-            NotificationCleanerPage.Settings -> onAction(NotificationCleanerAction.LeaveSettings)
-            NotificationCleanerPage.Scanning,
-            NotificationCleanerPage.Cleaning -> {
-                showStopDialog = true
-            }
-            NotificationCleanerPage.Complete -> onAction(NotificationCleanerAction.Back)
-            else -> onAction(NotificationCleanerAction.Back)
-        }
-    }
-
-    BackHandler(onBack = ::handleBack)
+    BackHandler { onAction(NotificationCleanerAction.Back) }
 
     CleanXScaffoldPage(
         title = stringResource(R.string.notification_cleaner),
         modifier = modifier,
-        onBack = ::handleBack,
+        onBack = { onAction(NotificationCleanerAction.Back) },
         actions = {
             if (state.page == NotificationCleanerPage.Status) {
                 IconButton(
@@ -211,7 +197,7 @@ internal fun NotificationCleanerScreen(
                         onTogglePackage = { onAction(NotificationCleanerAction.TogglePackage(it)) },
                     )
                     NotificationCleanerPage.Cleaning -> CleaningContent(
-                        paused = showStopDialog,
+                        paused = state.showStopDialog,
                         complete = state.cleaningAnimationComplete,
                         onFinished = { onAction(NotificationCleanerAction.FinishCleaning) },
                     )
@@ -245,15 +231,10 @@ internal fun NotificationCleanerScreen(
         )
     }
 
-    if (showStopDialog) {
+    if (state.showStopDialog) {
         StopScanDialog(
-            onQuit = {
-                showStopDialog = false
-                onAction(NotificationCleanerAction.Back)
-            },
-            onResume = {
-                showStopDialog = false
-            },
+            onQuit = { onAction(NotificationCleanerAction.QuitStoppedOperation) },
+            onResume = { onAction(NotificationCleanerAction.ResumeStoppedOperation) },
         )
     }
 }

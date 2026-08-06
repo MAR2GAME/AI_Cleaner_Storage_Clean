@@ -55,10 +55,15 @@ data class NotificationCleanerUiState(
     val cleanedCount: Int = 0,
     val cleaningAnimationComplete: Boolean = false,
     val completionResultVisible: Boolean = false,
+    val showStopDialog: Boolean = false,
+    val stopDialogPage: NotificationCleanerPage? = null,
 )
 
 sealed interface NotificationCleanerAction {
     data object Back : NotificationCleanerAction
+    data object RequestStop : NotificationCleanerAction
+    data object QuitStoppedOperation : NotificationCleanerAction
+    data object ResumeStoppedOperation : NotificationCleanerAction
     data object Refresh : NotificationCleanerAction
     data object ShowSettings : NotificationCleanerAction
     data object LeaveSettings : NotificationCleanerAction
@@ -71,9 +76,14 @@ sealed interface NotificationCleanerAction {
     data object ShowStatusAfterCompletionAd : NotificationCleanerAction
     data object CompletionAdStarted : NotificationCleanerAction
     data object CompletionAdFinished : NotificationCleanerAction
-    data object ShowStatus : NotificationCleanerAction
+    data class ShowStatus(val scanGeneration: Long) : NotificationCleanerAction
     data class TogglePackage(val packageName: String) : NotificationCleanerAction
 }
+
+internal data class NotificationCleanerOperationEvent(
+    val event: FeatureOperationEvent,
+    val scanGeneration: Long? = null,
+)
 
 class NotificationCleanerViewModel(
     application: Application,
@@ -82,14 +92,16 @@ class NotificationCleanerViewModel(
     private val settingsGateway: NotificationSettingsGateway = AndroidNotificationSettingsGateway(),
 ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(NotificationCleanerUiState())
-    private val operationEventsChannel = Channel<FeatureOperationEvent>(Channel.BUFFERED)
+    private val operationEventsChannel = Channel<NotificationCleanerOperationEvent>(Channel.BUFFERED)
     private var scanJob: Job? = null
-    private var scanningCompletionPending = false
+    private var activeScanGeneration = 0L
+    private var pendingScanCompletionGeneration: Long? = null
+    private var deferredScanCompletionGeneration: Long? = null
     private var cleaningCompletionPending = false
     private var postCompletionPage: NotificationCleanerPage? = null
 
     val uiState: StateFlow<NotificationCleanerUiState> = _uiState.asStateFlow()
-    val operationEvents: Flow<FeatureOperationEvent> = operationEventsChannel.receiveAsFlow()
+    internal val operationEvents: Flow<NotificationCleanerOperationEvent> = operationEventsChannel.receiveAsFlow()
 
     init {
         refreshState()
@@ -98,6 +110,9 @@ class NotificationCleanerViewModel(
     fun onAction(action: NotificationCleanerAction) {
         when (action) {
             NotificationCleanerAction.Back -> Unit
+            NotificationCleanerAction.RequestStop -> requestStopDialog()
+            NotificationCleanerAction.QuitStoppedOperation -> confirmStoppedOperationExit()
+            NotificationCleanerAction.ResumeStoppedOperation -> resumeStoppedOperation()
             NotificationCleanerAction.Refresh -> refreshState()
             NotificationCleanerAction.ShowSettings -> showSettings()
             NotificationCleanerAction.LeaveSettings -> leaveSettings()
@@ -112,7 +127,7 @@ class NotificationCleanerViewModel(
                 _uiState.update { it.copy(completionAdInFlight = true) }
             NotificationCleanerAction.CompletionAdFinished ->
                 _uiState.update { it.copy(completionAdInFlight = false) }
-            NotificationCleanerAction.ShowStatus -> showStatus()
+            is NotificationCleanerAction.ShowStatus -> showStatus(action.scanGeneration)
             is NotificationCleanerAction.TogglePackage -> togglePackage(action.packageName)
         }
     }
@@ -169,35 +184,107 @@ class NotificationCleanerViewModel(
     }
 
     fun finishScanning() {
-        finishScanIfReady()
+        finishScanIfReady(activeScanGeneration)
     }
 
-    fun showStatus() {
-        scanningCompletionPending = false
+    fun showStatus(scanGeneration: Long) {
+        if (
+            scanGeneration != activeScanGeneration ||
+            pendingScanCompletionGeneration != scanGeneration
+        ) {
+            return
+        }
+        val state = _uiState.value
+        if (
+            state.showStopDialog &&
+            state.stopDialogPage == NotificationCleanerPage.Scanning
+        ) {
+            deferredScanCompletionGeneration = scanGeneration
+            return
+        }
+        completeScanStatus(scanGeneration)
+    }
+
+    private fun completeScanStatus(scanGeneration: Long) {
+        if (
+            scanGeneration != activeScanGeneration ||
+            pendingScanCompletionGeneration != scanGeneration
+        ) {
+            return
+        }
+        pendingScanCompletionGeneration = null
+        deferredScanCompletionGeneration = null
         _uiState.update {
             if (it.page == NotificationCleanerPage.Scanning) {
-                it.copy(page = NotificationCleanerPage.Status, scanInProgress = false)
+                it.copy(
+                    page = NotificationCleanerPage.Status,
+                    scanInProgress = false,
+                    showStopDialog = false,
+                    stopDialogPage = null,
+                )
             } else {
                 it
             }
         }
     }
 
-    fun cancelScanning() {
+    private fun requestStopDialog() {
+        val stoppedPage = _uiState.value.page
+        if (
+            stoppedPage != NotificationCleanerPage.Scanning &&
+            stoppedPage != NotificationCleanerPage.Cleaning
+        ) {
+            return
+        }
+        _uiState.update {
+            if (it.page == stoppedPage) {
+                it.copy(showStopDialog = true, stopDialogPage = stoppedPage)
+            } else {
+                it
+            }
+        }
+        if (
+            stoppedPage == NotificationCleanerPage.Scanning &&
+            pendingScanCompletionGeneration != activeScanGeneration
+        ) {
+            cancelActiveScan()
+        }
+    }
+
+    private fun resumeStoppedOperation() {
+        val stoppedPage = _uiState.value.stopDialogPage
+        val scanCompletionPending = pendingScanCompletionGeneration == activeScanGeneration
+        _uiState.update { it.copy(showStopDialog = false, stopDialogPage = null) }
+        if (stoppedPage != NotificationCleanerPage.Scanning) return
+
+        val deferredGeneration = deferredScanCompletionGeneration
+        when {
+            deferredGeneration == activeScanGeneration -> completeScanStatus(deferredGeneration)
+            scanCompletionPending -> Unit
+            else -> startAccessScan()
+        }
+    }
+
+    private fun confirmStoppedOperationExit() {
+        if (_uiState.value.stopDialogPage == NotificationCleanerPage.Scanning) {
+            cancelActiveScan()
+        }
+        _uiState.update { it.copy(showStopDialog = false, stopDialogPage = null) }
+    }
+
+    private fun cancelActiveScan() {
+        activeScanGeneration += 1L
+        pendingScanCompletionGeneration = null
+        deferredScanCompletionGeneration = null
         scanJob?.cancel()
         scanJob = null
-        scanningCompletionPending = false
         _uiState.update {
             if (it.page == NotificationCleanerPage.Scanning) {
-                it.copy(page = NotificationCleanerPage.Status, scanInProgress = false, isLoading = false)
+                it.copy(scanInProgress = false, isLoading = false)
             } else {
                 it
             }
         }
-    }
-
-    fun restartScanning() {
-        startAccessScan()
     }
 
     fun notificationListenerSettingsIntent(): Intent = settingsGateway.notificationListenerSettingsIntent()
@@ -207,9 +294,11 @@ class NotificationCleanerViewModel(
     private fun handleAccessRefresh(hasAccess: Boolean) {
         val state = _uiState.value
         if (!hasAccess) {
+            activeScanGeneration += 1L
             scanJob?.cancel()
             scanJob = null
-            scanningCompletionPending = false
+            pendingScanCompletionGeneration = null
+            deferredScanCompletionGeneration = null
             cleaningCompletionPending = false
             postCompletionPage = null
             _uiState.update {
@@ -232,6 +321,8 @@ class NotificationCleanerViewModel(
                     cleanedCount = 0,
                     cleaningAnimationComplete = false,
                     completionResultVisible = false,
+                    showStopDialog = false,
+                    stopDialogPage = null,
                 )
             }
             return
@@ -277,7 +368,10 @@ class NotificationCleanerViewModel(
     private fun startAccessScan() {
         scanJob?.cancel()
         scanJob = null
-        scanningCompletionPending = false
+        activeScanGeneration += 1L
+        val scanGeneration = activeScanGeneration
+        pendingScanCompletionGeneration = null
+        deferredScanCompletionGeneration = null
         _uiState.update {
             it.copy(
                 hasAccess = true,
@@ -286,6 +380,8 @@ class NotificationCleanerViewModel(
                 scanInProgress = true,
                 isInitialized = true,
                 errorMessage = null,
+                showStopDialog = false,
+                stopDialogPage = null,
             )
         }
         scanJob =
@@ -295,6 +391,7 @@ class NotificationCleanerViewModel(
                     val snapshot = repository.notificationSnapshot()
                     val remainingMillis = MIN_SCAN_DURATION_MILLIS - (System.currentTimeMillis() - startedAtMillis)
                     if (remainingMillis > 0L) delay(remainingMillis)
+                    if (scanGeneration != activeScanGeneration) return@launch
                     _uiState.update { state ->
                         if (!snapshot.hasAccess) {
                             state.copy(
@@ -332,11 +429,13 @@ class NotificationCleanerViewModel(
                             )
                         }
                     }
+                    if (scanGeneration != activeScanGeneration) return@launch
                     scanJob = null
-                    finishScanIfReady()
+                    finishScanIfReady(scanGeneration)
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
+                    if (scanGeneration != activeScanGeneration) return@launch
                     scanJob = null
                     _uiState.update {
                         it.copy(
@@ -359,22 +458,25 @@ class NotificationCleanerViewModel(
             selectedPackages = repository.selectedNotificationPackages(),
         )
 
-    private fun finishScanIfReady() {
+    private fun finishScanIfReady(scanGeneration: Long) {
         val state = _uiState.value
         if (
+            scanGeneration != activeScanGeneration ||
             state.page != NotificationCleanerPage.Scanning ||
+            state.showStopDialog ||
             state.isLoading ||
             state.scanInProgress ||
-            scanningCompletionPending
+            pendingScanCompletionGeneration != null
         ) {
             return
         }
-        scanningCompletionPending = true
+        pendingScanCompletionGeneration = scanGeneration
         trackOperationEvent(
             FeatureOperationEvent.ScanFinished(
                 FeatureKey.NOTIFICATION_CLEANER,
                 state.blockedCount > 0,
             ),
+            scanGeneration = scanGeneration,
         )
     }
 
@@ -506,8 +608,16 @@ class NotificationCleanerViewModel(
         }
     }
 
-    private fun trackOperationEvent(event: FeatureOperationEvent) {
-        operationEventsChannel.trySend(event)
+    private fun trackOperationEvent(
+        event: FeatureOperationEvent,
+        scanGeneration: Long? = null,
+    ) {
+        operationEventsChannel.trySend(
+            NotificationCleanerOperationEvent(
+                event = event,
+                scanGeneration = scanGeneration,
+            ),
+        )
     }
 
     override fun onCleared() {

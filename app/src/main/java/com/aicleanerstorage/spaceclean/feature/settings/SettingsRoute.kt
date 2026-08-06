@@ -8,6 +8,8 @@ import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.common.intent.openUrl
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.feature.settings.ui.SettingsScreen
 import com.aicleanerstorage.spaceclean.feature.settings.ui.openGooglePlayRatePage
 import org.koin.androidx.compose.koinViewModel
@@ -16,13 +18,15 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsRoute(
     navigator: AppNavigator,
     externalActivities: ExternalActivityTracker,
+    analyticsReporter: AnalyticsReporter,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    fun openLink(url: String) {
+    fun openLink(url: String, track: () -> Unit) {
         externalActivities.markLaunch()
+        track()
         if (!context.openUrl(url)) externalActivities.cancelLaunch()
     }
 
@@ -31,8 +35,12 @@ fun SettingsRoute(
         onAction = { action ->
             when (action) {
                 SettingsAction.Back -> navigator.back()
-                SettingsAction.OpenTerms -> openLink(AppConfig.TERMS_OF_SERVICE_URL)
-                SettingsAction.OpenPrivacy -> openLink(AppConfig.PRIVACY_POLICY_URL)
+                SettingsAction.OpenTerms -> openLink(AppConfig.TERMS_OF_SERVICE_URL) {
+                    analyticsReporter.report(AnalyticsEvent.TermsOpened("about"))
+                }
+                SettingsAction.OpenPrivacy -> openLink(AppConfig.PRIVACY_POLICY_URL) {
+                    analyticsReporter.report(AnalyticsEvent.PrivacyOpened("about"))
+                }
                 SettingsAction.RateApp -> openGooglePlayRatePage(context)
                 is SettingsAction.TemperatureUnitChanged -> viewModel.onAction(action)
             }

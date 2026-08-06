@@ -50,4 +50,36 @@ class ToolFeatureRecommendationTest {
 
         assertEquals(2, selected.size)
     }
+
+    @Test
+    fun `tool feature click tracks feature before navigating`() {
+        val calls = mutableListOf<String>()
+
+        handleToolFeatureBannerClick(
+            destination = AppDestination.DeviceInfo,
+            trackFeatureClicked = { calls += "track:${it.name}" },
+            onNavigateTool = { calls += "navigate:${it.route}" },
+        )
+
+        assertEquals(
+            listOf(
+                "track:DEVICE_INFO",
+                "navigate:${AppDestination.DeviceInfo.route}",
+            ),
+            calls,
+        )
+    }
+
+    @Test
+    fun `tool feature click without feature key only navigates`() {
+        val calls = mutableListOf<String>()
+
+        handleToolFeatureBannerClick(
+            destination = AppDestination.Settings,
+            trackFeatureClicked = { calls += "track:${it.name}" },
+            onNavigateTool = { calls += "navigate:${it.route}" },
+        )
+
+        assertEquals(listOf("navigate:${AppDestination.Settings.route}"), calls)
+    }
 }

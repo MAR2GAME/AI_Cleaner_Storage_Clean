@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -281,7 +282,7 @@ private fun EmptyNetworkState() {
     Box(
         modifier =
             Modifier
-                .fillMaxWidth(),
+                .fillMaxSize(),
     ) {
         Image(
             painter = painterResource(id = R.drawable.network_usage_empty_figma),

@@ -6,6 +6,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsRoute
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsRoute
@@ -15,9 +16,14 @@ import org.koin.androidx.compose.koinViewModel
 internal fun NavGraphBuilder.registerSettingsRoutes(
     navigator: AppNavigator,
     externalActivities: ExternalActivityTracker,
+    analyticsReporter: AnalyticsReporter,
 ) {
     composable(AppDestination.Settings.route) {
-        SettingsRoute(navigator = navigator, externalActivities = externalActivities)
+        SettingsRoute(
+            navigator = navigator,
+            externalActivities = externalActivities,
+            analyticsReporter = analyticsReporter,
+        )
     }
     composable(AppDestination.ManagePermissions.route) {
         ManagePermissionsRoute(

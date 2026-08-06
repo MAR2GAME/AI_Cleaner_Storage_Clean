@@ -26,7 +26,13 @@ internal fun AppNavGraph(
     splashPaused: Boolean,
     notificationPermissionUiActive: Boolean,
 ) {
-    val navigator = remember(navController) { NavHostControllerAppNavigator(navController) }
+    val navigator =
+        remember(navController, runtime.interstitials) {
+            FeatureEntryNavigator(
+                navigator = NavHostControllerAppNavigator(navController),
+                interstitialAds = runtime.interstitials,
+            )
+        }
 
     NavHost(
         navController = navController,
@@ -66,12 +72,16 @@ internal fun AppNavGraph(
             launchCoordinator = launchCoordinator,
             externalActivityTracker = runtime.externalActivities,
             splashPermissionPaused = splashPaused,
+            analyticsReporter = runtime.analyticsReporter,
         )
         registerOnboardingRoute(
             navigator = navigator,
+            interstitialAds = runtime.interstitials,
+            analyticsReporter = runtime.analyticsReporter,
         )
         registerHomeRoutes(
             navigator = navigator,
+            analyticsReporter = runtime.analyticsReporter,
             externalBlockingPromptActive = notificationPermissionUiActive,
         )
         registerCleanRoutes(
@@ -101,6 +111,7 @@ internal fun AppNavGraph(
         registerSettingsRoutes(
             navigator = navigator,
             externalActivities = runtime.externalActivities,
+            analyticsReporter = runtime.analyticsReporter,
         )
     }
 }

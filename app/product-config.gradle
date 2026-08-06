@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 def configFile = rootProject.file('config/product.json')
@@ -12,8 +13,8 @@ if (![config.identity.appName, config.identity.profileKey, config.identity.theme
     throw new GradleException('Product identity fields must not be blank')
 }
 if (config.version.code < 1 || !config.version.name) throw new GradleException('Invalid product version')
-[config.legal.privacyUrl, config.legal.termsUrl].each { url ->
-    if (!url.startsWith('https://')) throw new GradleException("Legal URL must use HTTPS: $url")
+if (config.advertising.policyFile != 'config/ad_policy.json') {
+    throw new GradleException("advertising.policyFile must be 'config/ad_policy.json'")
 }
 
 def loadProperties = { File source ->
@@ -21,16 +22,27 @@ def loadProperties = { File source ->
     if (source.isFile()) source.withInputStream { properties.load(it) }
     properties
 }
-def local = loadProperties(rootProject.file('config/product.local.properties'))
-def resolveValue = { String name, String legacyName = null ->
-    providers.gradleProperty(name).orNull ?: providers.environmentVariable(name).orNull ?:
-        local.getProperty(name) ?: (legacyName == null ? null : local.getProperty(legacyName)) ?: ''
+def resolveValue = { String name, Object defaultValue = '' ->
+    providers.gradleProperty(name).orNull ?: providers.environmentVariable(name).orNull ?: defaultValue.toString()
 }
 def buildConfigString = { target, String name, Object rawValue ->
     def escaped = rawValue.toString().replace('\\', '\\\\').replace('"', '\\"').replace('\r', '\\r').replace('\n', '\\n')
     target.buildConfigField('String', name, "\"$escaped\"")
 }
-def trustlookKey = resolveValue('TRUSTLOOK_API_KEY')
+
+def adMob = config.advertising.admob
+def firebaseFile = file('google-services.json')
+if (!firebaseFile.isFile()) throw new GradleException("Missing Firebase config: $firebaseFile")
+def firebase = new JsonSlurper().parse(firebaseFile)
+def firebasePackages = (firebase.client ?: []).collect { it.client_info?.android_client_info?.package_name }.findAll()
+if (!(config.identity.applicationId in firebasePackages)) {
+    throw new GradleException("google-services.json does not contain applicationId '${config.identity.applicationId}'")
+}
+
+def policyFile = rootProject.file(config.advertising.policyFile).canonicalFile
+if (!policyFile.isFile()) throw new GradleException("Missing canonical ad policy: $policyFile")
+def generatedResDirectory = layout.buildDirectory.dir('generated/product-config/res')
+android.sourceSets.main.res.srcDir(generatedResDirectory.get().asFile.absolutePath)
 
 android {
     defaultConfig {
@@ -38,26 +50,93 @@ android {
         versionCode = config.version.code as int
         versionName = config.version.name
         resValue 'string', 'app_name', config.identity.appName
-        manifestPlaceholders += [trustlookApiKey: trustlookKey]
-        buildConfigString(delegate, 'TRUSTLOOK_API_KEY', trustlookKey)
-        buildConfigString(delegate, 'PRODUCT_PROFILE_KEY', config.identity.profileKey)
-        buildConfigString(delegate, 'PRODUCT_THEME_KEY', config.identity.themeKey)
-        buildConfigString(delegate, 'PRIVACY_POLICY_URL', config.legal.privacyUrl)
-        buildConfigString(delegate, 'TERMS_OF_SERVICE_URL', config.legal.termsUrl)
+        resValue 'string', 'app_profile_key', config.identity.profileKey
+        resValue 'string', 'app_theme_key', config.identity.themeKey
+        resValue 'string', 'privacy_policy_url', config.legal.privacyUrl
+        resValue 'string', 'terms_of_service_url', config.legal.termsUrl
+
+        def trustlookKey = resolveValue('TRUSTLOOK_API_KEY', config.integrations.trustlook.apiKey)
+        manifestPlaceholders += [
+            trustlookApiKey: trustlookKey,
+            advAdmobAppId: resolveValue('ADV_ADMOB_APP_ID', adMob.appId),
+            advFacebookAppId: resolveValue('ADV_FACEBOOK_APP_ID', config.integrations.facebook.appId),
+            advFacebookClientToken: resolveValue('ADV_FACEBOOK_CLIENT_TOKEN', config.integrations.facebook.clientToken)
+        ]
+        def values = [
+            TRUSTLOOK_API_KEY: trustlookKey,
+            PRODUCT_PROFILE_KEY: config.identity.profileKey,
+            PRODUCT_THEME_KEY: config.identity.themeKey,
+            ADV_PRIVACY_URL: config.legal.privacyUrl,
+            ADV_TERMS_URL: config.legal.termsUrl,
+            PRIVACY_POLICY_URL: config.legal.privacyUrl,
+            TERMS_OF_SERVICE_URL: config.legal.termsUrl,
+            ADV_ADMOB_APP_ID: resolveValue('ADV_ADMOB_APP_ID', adMob.appId),
+            ADV_ADMOB_BANNER_ID: resolveValue('ADV_ADMOB_BANNER_ID', adMob.bannerId),
+            ADV_ADMOB_INTERSTITIAL_ID: resolveValue('ADV_ADMOB_INTERSTITIAL_ID', adMob.interstitialId),
+            ADV_ADMOB_NATIVE_ID: resolveValue('ADV_ADMOB_NATIVE_ID', adMob.nativeId),
+            ADV_ADMOB_NATIVE_IDS_JSON: resolveValue('ADV_ADMOB_NATIVE_IDS_JSON', JsonOutput.toJson(adMob.nativeIds)),
+            ADV_ADMOB_OPEN_ID: resolveValue('ADV_ADMOB_OPEN_ID', adMob.openId),
+            ADV_ADMOB_REWARDED_ID: resolveValue('ADV_ADMOB_REWARDED_ID', adMob.rewardedId),
+            ADV_DEFAULT_TOPIC: resolveValue('ADV_DEFAULT_TOPIC', config.advertising.defaultTopic),
+            ADV_AD_DEBUG_OVERRIDE_MODE: resolveValue('ADV_AD_DEBUG_OVERRIDE_MODE', config.advertising.debugOverrideMode),
+            ADV_SERVER_RELEASE_HOST: resolveValue('ADV_SERVER_RELEASE_HOST', config.services.releaseHost),
+            ADV_SERVER_TEST_HOST: resolveValue('ADV_SERVER_TEST_HOST', config.services.testHost),
+            ADV_PLAY_INTEGRITY_PARSE_TOKEN_KEY: resolveValue('ADV_PLAY_INTEGRITY_PARSE_TOKEN_KEY', config.integrations.playIntegrity.parseTokenKey),
+            ADV_REMOTE_CONFIG_ENCRYPTION_KEY: resolveValue('ADV_REMOTE_CONFIG_ENCRYPTION_KEY', config.integrations.remoteConfig.encryptionKey),
+            ADV_REMOTE_CONFIG_ENCRYPTION_KEY_ID: resolveValue('ADV_REMOTE_CONFIG_ENCRYPTION_KEY_ID', config.integrations.remoteConfig.encryptionKeyId),
+            ADV_THINKING_APP_KEY: resolveValue('ADV_THINKING_APP_KEY', config.analytics.thinkingAppKey),
+            ADV_THINKING_SERVER_URL: resolveValue('ADV_THINKING_SERVER_URL', config.analytics.thinkingServerUrl),
+            ADV_FACEBOOK_APP_ID: resolveValue('ADV_FACEBOOK_APP_ID', config.integrations.facebook.appId),
+            ADV_FACEBOOK_CLIENT_TOKEN: resolveValue('ADV_FACEBOOK_CLIENT_TOKEN', config.integrations.facebook.clientToken),
+            ADV_SINGULAR_API_KEY: resolveValue('ADV_SINGULAR_API_KEY', config.integrations.singular.apiKey),
+            ADV_SINGULAR_SECRET: resolveValue('ADV_SINGULAR_SECRET', config.integrations.singular.secret),
+            ADV_TIKTOK_ACCESS_TOKEN: resolveValue('ADV_TIKTOK_ACCESS_TOKEN', config.integrations.tiktok.accessToken),
+            ADV_TIKTOK_TT_APP_ID: resolveValue('ADV_TIKTOK_TT_APP_ID', config.integrations.tiktok.ttAppId),
+            ADV_TIKTOK_APP_ID: resolveValue('ADV_TIKTOK_APP_ID', config.integrations.tiktok.appId),
+            ADV_SAFE_EXPECTED_SIGNATURES: resolveValue('ADV_SAFE_EXPECTED_SIGNATURES', config.integrations.playIntegrity.safeExpectedSignatures)
+        ]
+        values.each { name, value -> buildConfigString(delegate, name.toString(), value) }
+        def cloudProjectNumber = resolveValue('ADV_PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER', config.services.playIntegrityCloudProjectNumber)
+        try {
+            buildConfigField 'long', 'ADV_PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER', "${Long.parseLong(cloudProjectNumber)}L"
+        } catch (NumberFormatException ignored) {
+            throw new GradleException('ADV_PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER must be a long')
+        }
     }
+}
+
+def generateProductAdResources = tasks.register('generateProductAdResources') {
+    group = 'build setup'
+    description = 'Generates package-scoped advertisement resources from product configuration.'
+    inputs.files(configFile, policyFile)
+    outputs.dir(generatedResDirectory)
+    doLast {
+        def output = generatedResDirectory.get().asFile
+        def rawDirectory = new File(output, 'raw')
+        rawDirectory.mkdirs()
+        def packagedPolicy = new LinkedHashMap(new JsonSlurper().parse(policyFile))
+        packagedPolicy.put('package_name', config.identity.applicationId)
+        def orderedPolicy = [package_name: packagedPolicy.remove('package_name')] + packagedPolicy
+        new File(rawDirectory, 'ad_policy.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(orderedPolicy)) + '\n'
+        new File(rawDirectory, 'native_ad_ids.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(adMob.nativeIds)) + '\n'
+    }
+}
+tasks.configureEach {
+    if (name == 'preBuild' || (name.startsWith('merge') && name.endsWith('Resources'))) dependsOn(generateProductAdResources)
 }
 
 def readinessFile = rootProject.file('config/release-readiness.properties')
 def verifyReleaseReadiness = tasks.register('verifyReleaseReadiness') {
     group = 'verification'
-    description = 'Blocks release builds until legal URLs and the Trustlook credential are confirmed for Storage Clean.'
+    description = 'Blocks release builds until Storage Clean SDK credentials are confirmed.'
     inputs.files(configFile, readinessFile)
     doLast {
         def readiness = loadProperties(readinessFile)
         def blockers = []
         if (readiness.getProperty('LEGAL_URLS_CONFIRMED') != 'true') blockers += 'Storage Clean legal URLs are not confirmed'
-        if (readiness.getProperty('TRUSTLOOK_KEY_CONFIRMED') != 'true') blockers += 'Trustlook authorization is not confirmed for the new package/signature'
-        if (!trustlookKey) blockers += 'TRUSTLOOK_API_KEY is blank'
+        if (readiness.getProperty('SDK_CREDENTIALS_CONFIRMED') != 'true') blockers += 'Storage Clean advertising and analytics credentials are not confirmed'
+        if (!resolveValue('TRUSTLOOK_API_KEY', config.integrations.trustlook.apiKey)) blockers += 'TRUSTLOOK_API_KEY is blank'
+        if (!resolveValue('ADV_THINKING_APP_KEY', config.analytics.thinkingAppKey)) blockers += 'ADV_THINKING_APP_KEY is blank'
         if (blockers) throw new GradleException("Release readiness failed:\n- ${blockers.join('\n- ')}")
     }
 }

@@ -41,11 +41,14 @@ fun NotificationCleanerRoute(
     }
 
     LaunchedEffect(viewModel, featureFlow) {
-        viewModel.operationEvents.collect { event ->
+        viewModel.operationEvents.collect { operationEvent ->
+            val event = operationEvent.event
             when {
                 event.isNotificationCleanerScanFinished() -> {
                     featureFlow.handleOperation(event) {
-                        viewModel.onAction(NotificationCleanerAction.ShowStatus)
+                        operationEvent.scanGeneration?.let { scanGeneration ->
+                            viewModel.onAction(NotificationCleanerAction.ShowStatus(scanGeneration))
+                        }
                     }
                 }
                 event.isNotificationCleanerCompletionSuccess() -> {
@@ -64,14 +67,29 @@ fun NotificationCleanerRoute(
         }
     }
 
+    fun exitBack() {
+        featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
+    }
+
+    fun handleBack() {
+        if (state.completionAdInFlight) return
+        when (state.page) {
+            NotificationCleanerPage.Settings -> viewModel.onAction(NotificationCleanerAction.LeaveSettings)
+            NotificationCleanerPage.Scanning,
+            NotificationCleanerPage.Cleaning,
+            -> viewModel.onAction(NotificationCleanerAction.RequestStop)
+            else -> exitBack()
+        }
+    }
+
     NotificationCleanerScreen(
         state = state,
         onAction = { action ->
             when (action) {
-                NotificationCleanerAction.Back -> {
-                    if (!state.completionAdInFlight) {
-                        featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
-                    }
+                NotificationCleanerAction.Back -> handleBack()
+                NotificationCleanerAction.QuitStoppedOperation -> {
+                    viewModel.onAction(action)
+                    exitBack()
                 }
                 NotificationCleanerAction.EnableBlocking -> {
                     permissionCoordinator.ensure(ProtectedAction.NotificationCleanerEnable) {

@@ -19,6 +19,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.common.permission.appSettingsIntent
 import com.aicleanerstorage.spaceclean.common.ui.components.NotificationPermissionDialog
 import kotlinx.coroutines.delay
@@ -28,6 +30,7 @@ internal fun NotificationPermissionHost(
     viewModel: NotificationPermissionViewModel,
     currentRoute: String?,
     externalActivityTracker: ExternalActivityTracker,
+    analyticsReporter: AnalyticsReporter,
     onPermissionGranted: () -> Unit,
 ) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
@@ -46,6 +49,7 @@ internal fun NotificationPermissionHost(
         }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            analyticsReporter.report(AnalyticsEvent.NotificationPermissionResult(granted))
             viewModel.onSystemPermissionResult(
                 granted = granted,
                 shouldShowRationale = context.shouldShowPostNotificationsRationale(),

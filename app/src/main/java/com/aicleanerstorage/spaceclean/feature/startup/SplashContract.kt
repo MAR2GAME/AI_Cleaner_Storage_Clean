@@ -5,17 +5,21 @@ import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
 
 enum class SplashStage {
     Preparing,
+    WaitingForOpenAd,
     Finishing,
     Completed,
 }
 
 enum class SplashPauseReason {
     Permission,
+    OpenAd,
     ExternalLink,
 }
 
 enum class SplashProgressStage {
     Preparing,
+    RequestingAd,
+    ShowingAd,
     Finishing,
     Completed,
 }
@@ -24,6 +28,9 @@ internal val SplashProgressStage.targetProgress: Float
     get() =
         when (this) {
             SplashProgressStage.Preparing -> 0.25f
+            SplashProgressStage.RequestingAd,
+            SplashProgressStage.ShowingAd,
+            -> 0.25f
             SplashProgressStage.Finishing,
             SplashProgressStage.Completed,
             -> 1f
@@ -47,10 +54,16 @@ sealed interface SplashAction {
 
     data class PermissionPauseChanged(val active: Boolean) : SplashAction
 
+    data class OpenAdStateChanged(val active: Boolean) : SplashAction
+
     data class ExternalLinkStateChanged(val active: Boolean) : SplashAction
+
+    data object OpenAdFinished : SplashAction
 }
 
 sealed interface SplashEffect {
+    data object RunColdStartAd : SplashEffect
+
     data class OpenNotificationTarget(val route: String) : SplashEffect
 
     data class Navigate(val destination: AppDestination) : SplashEffect

@@ -72,13 +72,6 @@ try {
         }
     }
 
-    $localPath = Join-Path $rootPath 'config/product.local.properties'
-    if (Test-Path -LiteralPath $localPath) {
-        $local = Get-Content -LiteralPath $localPath -Raw | ConvertFrom-StringData
-        $advKeys = @($local.GetEnumerator() | Where-Object { $_.Key -like 'ADV_*' })
-        if ($advKeys.Count -gt 0) { Add-Failure 'product.local.properties must not define ADV_* keys' }
-    }
-
     if ($failures.Count -gt 0) {
         Write-Host 'Product config check failed:'
         $failures | ForEach-Object { Write-Host "- $_" }

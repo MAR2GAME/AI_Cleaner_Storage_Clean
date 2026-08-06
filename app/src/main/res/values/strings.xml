@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="open_ad_loading">Loading...</string>
     <string name="app_name">Storage Clean</string>
     <string name="app_lock_usage_permission_desc">Locate Storage Clean and toggle on permission.</string>
     <string name="app_lock_overlay_permission_desc">Locate Storage Clean and toggle on permission.</string>

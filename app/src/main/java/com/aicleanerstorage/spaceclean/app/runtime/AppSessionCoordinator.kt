@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 enum class RuntimeBusyReason {
     Permission,
     FeatureOperation,
+    Interstitial,
 }
 
 class AppSessionCoordinator {
