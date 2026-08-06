@@ -8,6 +8,11 @@ plugins {
 
 apply(from = "product-config.gradle")
 
+val disableReleaseResourceShrink =
+    providers.gradleProperty("disableReleaseResourceShrink")
+        .map { it.equals("true", ignoreCase = true) }
+        .getOrElse(false)
+
 android {
     namespace = "com.aicleanerstorage.spaceclean"
     compileSdk {
@@ -20,8 +25,8 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 8
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,7 +34,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            isShrinkResources = true
+            isShrinkResources = !disableReleaseResourceShrink
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

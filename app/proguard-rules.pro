@@ -71,6 +71,25 @@
 -keep class com.aicleanerstorage.spaceclean.junkcc.R { *; }
 -keep class com.aicleanerstorage.spaceclean.junkcc.R$* { *; }
 
+# Company advertising SDK and integrated ad/attribution networks.
+-keep class com.pdffox.adv.** { *; }
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.ads.** { *; }
+-keep class com.facebook.** { *; }
+-keep class com.pangle.** { *; }
+-keep class com.bytedance.** { *; }
+-keep class com.tiktok.** { *; }
+-keep class com.singular.sdk.** { *; }
+-dontwarn com.pdffox.adv.**
+-dontwarn com.google.android.gms.ads.**
+-dontwarn com.google.android.gms.internal.ads.**
+-dontwarn com.google.ads.**
+-dontwarn com.facebook.**
+-dontwarn com.pangle.**
+-dontwarn com.bytedance.**
+-dontwarn com.tiktok.**
+-dontwarn com.singular.sdk.**
+
 # Local Trustlook cloud scan AAR. Keep conservatively because it is a binary SDK.
 -keep class com.trustlook.** { *; }
 -dontwarn com.trustlook.**

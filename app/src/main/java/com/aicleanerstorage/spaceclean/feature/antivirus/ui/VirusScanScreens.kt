@@ -6,7 +6,6 @@ import com.aicleanerstorage.spaceclean.feature.antivirus.VirusScanViewModel
 
 import com.aicleanerstorage.spaceclean.feature.antivirus.VirusScanMode
 
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -14,12 +13,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.feature.antivirus.ui.VirusScanningView
-import kotlinx.coroutines.delay
 
 @Composable
 fun QuickScanVirusScreen(
@@ -53,7 +50,6 @@ private fun VirusScanContent(
 ) {
     val router = navigator
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     var scanStarted by remember(mode) { mutableStateOf(false) }
 
     LaunchedEffect(mode) {
@@ -69,15 +65,6 @@ private fun VirusScanContent(
             } else {
                 router.replace(AppDestination.NoVirusResult)
             }
-        }
-    }
-
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-            viewModel.clearError()
-            delay(200L)
-            router.back()
         }
     }
 

@@ -16,8 +16,6 @@ import com.aicleanerstorage.spaceclean.feature.antivirus.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.feature.antivirus.getAppLabelAndIcon
 import com.aicleanerstorage.spaceclean.feature.antivirus.getProtectionIcon
 import com.aicleanerstorage.spaceclean.feature.antivirus.logScanError
-import com.aicleanerstorage.spaceclean.feature.antivirus.scanErrorMessage
-import com.aicleanerstorage.spaceclean.feature.antivirus.scanStartErrorMessage
 import com.aicleanerstorage.spaceclean.feature.antivirus.toThreat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,7 +35,16 @@ import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "VirusScan"
 private const val PROGRESS_TICK_MILLIS = 40L
+private const val WAITING_FOR_SDK_PROGRESS = 0.99f
+private const val QUICK_SCAN_CALLBACK_GRACE_MILLIS = 5_000L
+private const val DEEP_SCAN_CALLBACK_GRACE_MILLIS = 10_000L
 private const val INSTALLED_APPS_DIALOG_INTERACTION_THRESHOLD_MILLIS = 1_500L
+
+private enum class ScanTerminalState {
+    Running,
+    Success,
+    Failure,
+}
 
 class VirusScanViewModel constructor(
     application: Application,
@@ -55,12 +62,15 @@ class VirusScanViewModel constructor(
 
     private var completionJob: Job? = null
     private var progressJob: Job? = null
+    private var terminalTimeoutJob: Job? = null
+    private var adbRiskJob: Job? = null
     private var appDisplayJob: Job? = null
     private var pathDisplayJob: Job? = null
     private var appDisplayChannel = Channel<String>(Channel.UNLIMITED)
     private var pathDisplayChannel = Channel<String>(Channel.UNLIMITED)
     private var scanStartedAt: Long = 0L
     private var scanGeneration = 0
+    private var scanTerminalState = ScanTerminalState.Running
     private var isAppDisplayStarted = false
     private var isAppDisplayStopped = false
     private var isPathDisplayStarted = false
@@ -200,10 +210,12 @@ class VirusScanViewModel constructor(
             currentIcon = getApplication<Application>().getProtectionIcon()
         )
 
+        handleScanStarted(mode, generation)
         refreshAdbRisk()
+        startTerminalTimeout(mode, generation)
 
         if (!securityRepository.trustlookApiKeyState().isConfigured) {
-            handleStartFailure(TrustlookConfigurationException())
+            handleStartFailure(mode, generation, TrustlookConfigurationException())
             return
         }
 
@@ -211,14 +223,17 @@ class VirusScanViewModel constructor(
             val listener = createScanListener(mode, generation)
             scanEngine.startScan(mode, listener)
         }.onFailure { error ->
-            handleStartFailure(error)
+            handleStartFailure(mode, generation, error)
         }
     }
 
     fun resetScanState() {
         scanGeneration++
+        scanTerminalState = ScanTerminalState.Running
         completionJob?.cancel()
         completionJob = null
+        stopTerminalTimeout()
+        cancelAdbRiskCheck()
         stopTrackProgress()
         resetDisplayQueues()
         pendingThreatJobs.forEach { job -> job.cancel() }
@@ -231,9 +246,19 @@ class VirusScanViewModel constructor(
     }
 
     fun refreshAdbRisk() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val hasRisk = securityRepository.hasAdbRisk()
-            _uiState.update { state -> state.copy(hasAdbRisk = hasRisk) }
+        val generation = scanGeneration
+        adbRiskJob?.cancel()
+        adbRiskJob = viewModelScope.launch {
+            val hasRisk = withContext(Dispatchers.Default) {
+                securityRepository.hasAdbRisk()
+            }
+            _uiState.update { state ->
+                if (generation == scanGeneration) {
+                    state.copy(hasAdbRisk = hasRisk)
+                } else {
+                    state
+                }
+            }
         }
     }
 
@@ -247,8 +272,12 @@ class VirusScanViewModel constructor(
         scanGeneration++
         completionJob?.cancel()
         completionJob = null
+        stopTerminalTimeout()
+        cancelAdbRiskCheck()
         stopTrackProgress()
         stopDisplayQueues()
+        pendingThreatJobs.forEach { job -> job.cancel() }
+        pendingThreatJobs.clear()
         scanEngine.cancelScan()
         scanStartedAt = 0L
         _uiState.update { state ->
@@ -283,16 +312,19 @@ class VirusScanViewModel constructor(
     private fun createScanListener(mode: VirusScanMode, generation: Int): VirusScanEngineListener {
         return object : VirusScanEngineListener {
             override fun onScanStarted() {
-                handleScanStarted(mode, generation)
+                viewModelScope.launch {
+                    if (canAcceptSdkCallback(generation)) {
+                        handleScanStarted(mode, generation)
+                    }
+                }
             }
 
             override fun onScanProgress(item: VirusScanItem?) {
                 item ?: return
-                if (generation == scanGeneration && !_uiState.value.scanCompleted) {
-                    if (scanStartedAt == 0L || !_uiState.value.isScanning) {
-                        handleScanStarted(mode, generation)
+                viewModelScope.launch {
+                    if (canAcceptSdkCallback(generation)) {
+                        handleScanProgress(mode, item, generation)
                     }
-                    handleScanProgress(mode, item)
                 }
             }
 
@@ -301,44 +333,37 @@ class VirusScanViewModel constructor(
                 message: String?,
                 kind: VirusScanErrorKind,
             ) {
-                if (generation != scanGeneration) return
-                scanGeneration++
-                stopTrackProgress()
-                stopDisplayQueues()
-                logScanError(code, message, securityRepository.trustlookApiKeyState().logState)
-                _uiState.update { state ->
-                    state.copy(
-                        isScanning = false,
-                        errorMessage = scanErrorMessage(getApplication(), kind)
-                    )
+                viewModelScope.launch {
+                    if (!canAcceptSdkCallback(generation)) return@launch
+                    logScanError(code, message, securityRepository.trustlookApiKeyState().logState)
+                    handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
                 }
             }
 
             override fun onScanCanceled() {
-                if (generation != scanGeneration) return
-                scanGeneration++
-                stopTrackProgress()
-                stopDisplayQueues()
-                _uiState.update { state -> state.copy(isScanning = false) }
+                viewModelScope.launch {
+                    handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+                }
             }
 
             override fun onScanInterrupt() {
-                if (generation != scanGeneration) return
-                scanGeneration++
-                stopTrackProgress()
-                stopDisplayQueues()
-                _uiState.update { state -> state.copy(isScanning = false) }
+                viewModelScope.launch {
+                    handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+                }
             }
 
             override fun onScanFinished() {
-                if (generation == scanGeneration) {
-                    if (scanStartedAt == 0L) {
-                        handleScanStarted(mode, generation)
-                    }
-                    finishWhenUiIsReady(mode, generation)
+                viewModelScope.launch {
+                    handleSdkTerminal(mode, generation, ScanTerminalState.Success)
                 }
             }
         }
+    }
+
+    private fun canAcceptSdkCallback(generation: Int): Boolean {
+        return generation == scanGeneration &&
+            scanTerminalState == ScanTerminalState.Running &&
+            !_uiState.value.scanCompleted
     }
 
     private fun handleScanStarted(mode: VirusScanMode, generation: Int) {
@@ -361,29 +386,31 @@ class VirusScanViewModel constructor(
         startTrackProgress(mode, generation)
     }
 
-    private fun handleScanProgress(mode: VirusScanMode, item: VirusScanItem) {
+    private fun handleScanProgress(mode: VirusScanMode, item: VirusScanItem, generation: Int) {
         val packageName = item.packageName?.takeIf { it.isNotBlank() }
         if (packageName != null) {
-            if (item.score >= 6) addThreat(item, isFile = false)
+            if (item.score >= 6) addThreat(item, isFile = false, generation = generation)
             appDisplayChannel.trySend(packageName)
             return
         }
 
         if (mode == VirusScanMode.Deep) {
             val path = item.apkPath?.takeIf { it.isNotBlank() }
-            if (item.score >= 6) addThreat(item, isFile = true)
+            if (item.score >= 6) addThreat(item, isFile = true, generation = generation)
             if (path != null) pathDisplayChannel.trySend(path)
         }
     }
 
-    private fun addThreat(item: VirusScanItem, isFile: Boolean) {
+    private fun addThreat(item: VirusScanItem, isFile: Boolean, generation: Int) {
         val job = viewModelScope.launch {
             val threat = withContext(Dispatchers.IO) {
                 item.toThreat(getApplication(), isFile)
             }
+            if (generation != scanGeneration) return@launch
             if (!threatIds.add(threat.id)) return@launch
 
             _uiState.update { state ->
+                if (generation != scanGeneration) return@update state
                 val nextThreats = state.threats + threat
                 state.copy(
                     threats = nextThreats,
@@ -404,8 +431,10 @@ class VirusScanViewModel constructor(
             val remaining = (mode.minDurationMillis - elapsed).coerceAtLeast(0L)
             if (remaining > 0L) delay(remaining)
             pendingThreatJobs.toList().joinAll()
+            adbRiskJob?.join()
             if (generation != scanGeneration) return@launch
             stopTrackProgress()
+            stopTerminalTimeout()
             stopDisplayQueues()
             _uiState.update { state ->
                 state.copy(
@@ -418,12 +447,14 @@ class VirusScanViewModel constructor(
     }
 
     private fun startTrackProgress(mode: VirusScanMode, generation: Int) {
-        progressJob?.cancel()
+        if (progressJob?.isActive == true) return
         progressJob = viewModelScope.launch {
             while (true) {
                 if (generation != scanGeneration) break
                 val elapsed = System.currentTimeMillis() - scanStartedAt
-                val fraction = (elapsed.toFloat() / mode.minDurationMillis).coerceIn(0f, 1f)
+                val fraction = (
+                    elapsed.toFloat() / mode.minDurationMillis * WAITING_FOR_SDK_PROGRESS
+                ).coerceIn(0f, WAITING_FOR_SDK_PROGRESS)
                 _uiState.update { state ->
                     if (state.isScanning) {
                         state.copy(progressFraction = maxOf(state.progressFraction, fraction))
@@ -432,7 +463,7 @@ class VirusScanViewModel constructor(
                     }
                 }
                 handleProgressStageTriggers(mode, fraction, generation)
-                if (fraction >= 1f) break
+                if (fraction >= WAITING_FOR_SDK_PROGRESS) break
                 delay(PROGRESS_TICK_MILLIS)
             }
         }
@@ -441,6 +472,31 @@ class VirusScanViewModel constructor(
     private fun stopTrackProgress() {
         progressJob?.cancel()
         progressJob = null
+    }
+
+    private fun startTerminalTimeout(mode: VirusScanMode, generation: Int) {
+        terminalTimeoutJob?.cancel()
+        val graceMillis = when (mode) {
+            VirusScanMode.Quick -> QUICK_SCAN_CALLBACK_GRACE_MILLIS
+            VirusScanMode.Deep -> DEEP_SCAN_CALLBACK_GRACE_MILLIS
+        }
+        terminalTimeoutJob = viewModelScope.launch {
+            delay(mode.minDurationMillis + graceMillis)
+            if (canAcceptSdkCallback(generation)) {
+                terminalTimeoutJob = null
+                handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+            }
+        }
+    }
+
+    private fun stopTerminalTimeout() {
+        terminalTimeoutJob?.cancel()
+        terminalTimeoutJob = null
+    }
+
+    private fun cancelAdbRiskCheck() {
+        adbRiskJob?.cancel()
+        adbRiskJob = null
     }
 
     private fun handleProgressStageTriggers(mode: VirusScanMode, progress: Float, generation: Int) {
@@ -457,20 +513,25 @@ class VirusScanViewModel constructor(
         }
     }
 
-    private fun handleStartFailure(error: Throwable) {
-        if (scanGeneration < 0) return
-        stopTrackProgress()
-        stopDisplayQueues()
-        completionJob?.cancel()
-        completionJob = null
-        scanStartedAt = 0L
+    private fun handleStartFailure(
+        mode: VirusScanMode,
+        generation: Int,
+        error: Throwable,
+    ) {
+        if (generation != scanGeneration) return
         Log.w(TAG, "Trustlook scan start failed apiKey=${securityRepository.trustlookApiKeyState().logState}", error)
-        _uiState.update { state ->
-            state.copy(
-                isScanning = false,
-                errorMessage = scanStartErrorMessage(getApplication(), error)
-            )
-        }
+        handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+    }
+
+    private fun handleSdkTerminal(
+        mode: VirusScanMode,
+        generation: Int,
+        terminalState: ScanTerminalState,
+    ) {
+        if (!canAcceptSdkCallback(generation)) return
+        scanTerminalState = terminalState
+        stopTerminalTimeout()
+        finishWhenUiIsReady(mode, generation)
     }
 
     private fun startAppDisplayConsumer(mode: VirusScanMode, generation: Int) {

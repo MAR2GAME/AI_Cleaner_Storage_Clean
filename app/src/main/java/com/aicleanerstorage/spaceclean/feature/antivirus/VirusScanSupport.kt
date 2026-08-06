@@ -83,7 +83,7 @@ internal fun VirusScanItem.toThreat(context: Context, isFile: Boolean): VirusThr
 }
 
 internal fun Application.getProtectionIcon(): Drawable? {
-    return runCatching { getDrawable(R.drawable.ic_virus_protection_shield) }.getOrNull()
+    return runCatching { getDrawable(R.drawable.virus_engine_figma) }.getOrNull()
 }
 
 private fun VirusScanItem.threatDescription(context: Context): String {

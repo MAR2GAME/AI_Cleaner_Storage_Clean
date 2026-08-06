@@ -1,0 +1,2 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@layout/temp_notification,@layout/temp_notification_big,@mipmap/ic_push_photos,@drawable/pulse_button,@drawable/pulse_big_button,@drawable/app_logo,@drawable/ic_persistent_clean,@drawable/ic_persistent_file,@drawable/ic_persistent_tools,@drawable/ic_persistent_battery" />

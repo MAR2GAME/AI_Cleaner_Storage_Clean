@@ -7,8 +7,8 @@
     "themeKey": "storage_clean"
   },
   "version": {
-    "code": 4,
-    "name": "1.0.3"
+    "code": 8,
+    "name": "1.0.7"
   },
   "legal": {
     "privacyUrl": "https://sites.google.com/view/aicleanerstorageclean/home",
@@ -36,7 +36,7 @@
   },
   "services": {
     "releaseHost": "https://api.newminigame.online",
-    "testHost": "http://192.168.111.227:10002",
+    "testHost": "http://192.168.111.226:10002",
     "playIntegrityCloudProjectNumber": 216278718827
   },
   "analytics": {
@@ -66,7 +66,7 @@
     },
     "playIntegrity": {
       "parseTokenKey": "TianWangGaiDiHu",
-      "safeExpectedSignatures": "55:B2:49:B4:EB:4A:AA:73:DA:D0:7C:D7:41:5E:0B:FC:0C:F2:9A:E4:9E:AF:ED:1E:3A:FD:13:4D:85:AB:17:F0;DE:D7:24:51:4C:B8:20:40:AC:2F:8D:C3:C9:33:6C:70:03:D6:CE:31:3D:48:7A:07:E9:5F:78:74:22:4A:81:C8"
+      "safeExpectedSignatures": "55:B2:49:B4:EB:4A:AA:73:DA:D0:7C:D7:41:5E:0B:FC:0C:F2:9A:E4:9E:AF:ED:1E:3A:FD:13:4D:85:AB:17:F0,DE:D7:24:51:4C:B8:20:40:AC:2F:8D:C3:C9:33:6C:70:03:D6:CE:31:3D:48:7A:07:E9:5F:78:74:22:4A:81:C8,C3:01:AB:22:43:C5:F4:11:A2:75:AC:FF:E9:73:6A:38:9B:EC:F6:20:A3:AD:0A:29:9D:3F:90:D7:BF:CE:C4:02,A8:65:DE:08:1D:73:D2:83:89:A0:11:38:AE:D0:01:6A:FC:6C:E5:88:9E:55:B8:3D:CB:54:2D:E6:AC:C1:3C:0D"
     }
   }
 }
