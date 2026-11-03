@@ -6,6 +6,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.FeatureEntryNavigator
 import com.aicleanerstorage.spaceclean.common.ads.AdNavigationPolicy
 import com.aicleanerstorage.spaceclean.common.ads.AdScene
 import com.aicleanerstorage.spaceclean.common.ads.InterstitialAdRunner
+import com.aicleanerstorage.spaceclean.common.ads.once
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -82,12 +83,62 @@ class FeatureEntryNavigatorTest {
         assertEquals(emptyList<String>(), interstitials.adRequests)
         assertEquals(listOf("resetToRoute:unknown_route"), navigator.calls)
     }
+
+    @Test
+    fun `notification feature target waits for entry ad continuation`() {
+        val navigator = RecordingNavigator(current = AppDestination.Home.route)
+        val interstitials = PolicyAwareInterstitialRunner()
+        val router = FeatureEntryNavigator(navigator, interstitials)
+
+        router.openNotificationTarget(AppDestination.NotificationCleaner.route)
+
+        assertEquals(listOf("home->notification_cleaner"), interstitials.routeRequests)
+        assertEquals(listOf("enter:NOTIFICATION_CLEANER:notification_cleaner"), interstitials.adRequests)
+        assertEquals(emptyList<String>(), navigator.calls)
+        assertEquals(emptyList<String>(), navigator.notificationTargets)
+
+        interstitials.continueLast()
+        interstitials.continueLast()
+
+        assertEquals(listOf(AppDestination.NotificationCleaner.route), navigator.notificationTargets)
+    }
+
+    @Test
+    fun `notification home target bypasses entry ad`() {
+        val navigator = RecordingNavigator(current = AppDestination.JunkClean.route)
+        val interstitials = PolicyAwareInterstitialRunner()
+        val router = FeatureEntryNavigator(navigator, interstitials)
+
+        router.openNotificationTarget(AppDestination.HomeToolbox.route)
+
+        assertEquals(emptyList<String>(), interstitials.routeRequests)
+        assertEquals(emptyList<String>(), interstitials.adRequests)
+        assertEquals(listOf(AppDestination.HomeToolbox.route), navigator.notificationTargets)
+    }
+
+    @Test
+    fun `notification feature target omits startup route as ad source`() {
+        val splashNavigator = RecordingNavigator(current = AppDestination.Splash.route)
+        val splashInterstitials = PolicyAwareInterstitialRunner()
+        FeatureEntryNavigator(splashNavigator, splashInterstitials)
+            .openNotificationTarget(AppDestination.JunkClean.route)
+
+        assertEquals(listOf("->scan"), splashInterstitials.routeRequests)
+
+        val onboardingNavigator = RecordingNavigator(current = AppDestination.OnboardingScan.route)
+        val onboardingInterstitials = PolicyAwareInterstitialRunner()
+        FeatureEntryNavigator(onboardingNavigator, onboardingInterstitials)
+            .openNotificationTarget(AppDestination.JunkClean.route)
+
+        assertEquals(listOf("->scan"), onboardingInterstitials.routeRequests)
+    }
 }
 
 private class RecordingNavigator(
     private var current: String?,
 ) : AppNavigator {
     val calls = mutableListOf<String>()
+    val notificationTargets = mutableListOf<String>()
 
     override val currentRoute: String?
         get() = current
@@ -117,6 +168,11 @@ private class RecordingNavigator(
         current = route
     }
 
+    override fun openNotificationTarget(route: String) {
+        notificationTargets += route
+        current = route
+    }
+
     override fun home() {
         calls += "home"
         current = AppDestination.Home.route
@@ -138,7 +194,7 @@ private class PolicyAwareInterstitialRunner(
     override fun run(scene: AdScene?, requestId: String, onContinue: () -> Unit) {
         if (scene is AdScene.EnterFeature) {
             adRequests += "enter:${scene.feature.name}:${scene.route}"
-            pendingContinuations += onContinue
+            pendingContinuations += once(onContinue)
         } else {
             onContinue()
         }
@@ -159,6 +215,6 @@ private class PolicyAwareInterstitialRunner(
     }
 
     fun continueLast() {
-        pendingContinuations.removeAt(pendingContinuations.lastIndex).invoke()
+        pendingContinuations.lastOrNull()?.invoke()
     }
 }
