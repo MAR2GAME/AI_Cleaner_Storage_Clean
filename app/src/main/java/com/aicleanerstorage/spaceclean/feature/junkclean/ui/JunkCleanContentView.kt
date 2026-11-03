@@ -26,6 +26,20 @@ internal fun JunkCleanContentView(
     onContinueFromResult: () -> Unit,
 ) {
     when (uiState.phase) {
+        JunkCleanPhase.CheckingPermission -> JunkScanningView(uiState = uiState)
+        JunkCleanPhase.MissingPermission ->
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(CleanXBackground)
+                        .padding(horizontal = 24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                JunkCleanErrorView(
+                    message = stringResource(com.aicleanerstorage.spaceclean.R.string.permission_is_required),
+                )
+            }
         JunkCleanPhase.Scanning -> JunkScanningView(uiState = uiState)
         JunkCleanPhase.Preview ->
             JunkScanResultView(

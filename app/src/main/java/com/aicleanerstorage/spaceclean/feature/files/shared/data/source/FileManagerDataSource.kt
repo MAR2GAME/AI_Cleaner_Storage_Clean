@@ -7,6 +7,7 @@ import android.media.ExifInterface
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.aicleanerstorage.spaceclean.common.files.DuplicateContentGuard
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileItem
 import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileType
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileDeleteResult
@@ -105,19 +106,36 @@ object FileManagerDataSource {
         withContext(Dispatchers.IO) {
             var freed = 0L
             var deletedCount = 0
-            items.forEach { item ->
+            var skippedCount = 0
+            val selectedIdentities = items.map(::fileIdentity).toSet()
+            items.distinctBy(::fileIdentity).forEach { item ->
+                coroutineContext.ensureActive()
+                val duplicate = item.duplicateHash != null || item.duplicatePeers.isNotEmpty()
+                if (duplicate && !canDeleteDuplicate(item, selectedIdentities) {
+                        FileContentHasher.hash(context, it, coroutineContext)
+                    }
+                ) {
+                    skippedCount++
+                    return@forEach
+                }
                 coroutineContext.ensureActive()
                 val deleted =
-                    runCatching { context.contentResolver.delete(item.uri.toAndroidUri(), null, null) > 0 }
-                        .getOrDefault(false)
+                    if (duplicate && !item.path.isNullOrBlank() && File(item.path).isFile) {
+                        runCatching { File(item.path).delete() }.getOrDefault(false)
+                    } else {
+                        runCatching { context.contentResolver.delete(item.uri.toAndroidUri(), null, null) > 0 }
+                            .getOrDefault(false)
+                    }
                 val deletedFromPath =
-                    !deleted && item.path != null && runCatching { File(item.path).delete() }.getOrDefault(false)
-                if (deleted || deletedFromPath || !fileStillExists(context, item)) {
+                    !duplicate && !deleted && item.path != null && runCatching { File(item.path).delete() }.getOrDefault(false)
+                if (deleted || deletedFromPath || (!duplicate && !fileStillExists(context, item))) {
                     freed += item.sizeBytes.coerceAtLeast(0L)
                     deletedCount++
+                } else {
+                    skippedCount++
                 }
             }
-            FileDeleteResult(freedBytes = freed, deletedCount = deletedCount)
+            FileDeleteResult(freedBytes = freed, deletedCount = deletedCount, skippedCount = skippedCount)
         }
 
     suspend fun removeLocationData(context: Context, items: List<ManagedFileItem>): Int =
@@ -140,6 +158,18 @@ object FileManagerDataSource {
             changed
         }
 
+    internal fun canDeleteDuplicate(
+        item: ManagedFileItem,
+        selectedIdentities: Set<String>,
+        contentHash: (ManagedFileItem) -> String?,
+    ): Boolean = DuplicateContentGuard.hasVerifiedCopy(
+        candidate = item,
+        retainedCandidates = item.duplicatePeers.filter { fileIdentity(it) !in selectedIdentities },
+        expectedHash = item.duplicateHash,
+        identity = ::fileIdentity,
+        contentHash = contentHash,
+    )
+
     fun isDocumentFile(name: String, mimeType: String?): Boolean =
         ManagedFileClassifier.isDocumentFile(name, mimeType)
 
@@ -156,11 +186,20 @@ object FileManagerDataSource {
     fun buildDuplicateFileGroups(
         files: List<ManagedFileItem>,
         contentHash: (ManagedFileItem) -> String?,
-    ): List<List<ManagedFileItem>> =
-        DuplicateFileGrouping.group(
+    ): List<List<ManagedFileItem>> {
+        val hashes = mutableMapOf<String, String?>()
+        return DuplicateFileGrouping.group(
             candidates = files.map(::duplicateCandidate),
-            contentHash = contentHash,
-        )
+            contentHash = { item -> contentHash(item).also { hashes[fileIdentity(item)] = it } },
+        ).map { group ->
+            group.map { item ->
+                item.copy(
+                    duplicateHash = hashes.getValue(fileIdentity(item)),
+                    duplicatePeers = group,
+                )
+            }
+        }
+    }
 
     fun scanPublicFilesFromFileSystem(): List<ManagedFileItem> = DirectoryFileScanner.scanPublicFiles()
 

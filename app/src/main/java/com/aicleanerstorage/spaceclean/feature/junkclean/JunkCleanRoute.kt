@@ -23,14 +23,11 @@ import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
 import com.aicleanerstorage.spaceclean.feature.junkclean.ui.JunkCleanScreen
 
 @Composable
 fun JunkCleanRoute(
     viewModel: JunkCleanViewModel,
-    permissionCoordinator: AppPermissionCoordinator,
     featureFlow: FeatureFlow,
     onNavigateBack: () -> Unit,
     onNavigateHome: () -> Unit,
@@ -46,19 +43,8 @@ fun JunkCleanRoute(
             viewModel.handleAuthorizationResult(result.resultCode == Activity.RESULT_OK)
         }
 
-    LaunchedEffect(viewModel, permissionCoordinator) {
-        permissionCoordinator.ensure(
-            action = ProtectedAction.JunkStartScan,
-            onGranted = {
-                viewModel.startScanIfNeeded()
-            },
-            onDenied = {
-                featureFlow.exit(FeatureKey.JUNK_CLEAN, FeatureExitReason.PermissionRejected) {
-                    viewModel.clearResult()
-                    onNavigateHome()
-                }
-            },
-        )
+    LaunchedEffect(viewModel) {
+        viewModel.startScanIfNeeded()
     }
 
     LaunchedEffect(viewModel, featureFlow) {
@@ -124,9 +110,7 @@ fun JunkCleanRoute(
             when (action) {
                 JunkCleanUiAction.Back -> handleBack()
                 JunkCleanUiAction.CleanSelected -> {
-                    permissionCoordinator.ensure(ProtectedAction.JunkCleanSelected) {
-                        viewModel.startCleaning(context)
-                    }
+                    viewModel.startCleaning(context)
                 }
                 is JunkCleanUiAction.ToggleCategories -> viewModel.toggleCategorySelection(action.categories)
                 is JunkCleanUiAction.ToggleItem -> viewModel.toggleItemSelection(action.itemId)

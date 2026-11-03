@@ -37,6 +37,7 @@ internal data class DuplicateFilesManagerUiState(
     val deletedBytes: Long = 0L,
     val errorMessage: String? = null,
     val showWarning: Boolean = false,
+    val skippedDeleteCount: Int = 0,
 ) {
     val selectedGroup: DuplicateGroupItem?
         get() = groups.firstOrNull { it.id == selectedGroupId }
@@ -233,6 +234,10 @@ internal class DuplicateFilesManagerViewModel(
         _uiState.update { it.copy(errorMessage = null) }
     }
 
+    fun clearSkippedDeleteCount() {
+        _uiState.update { it.copy(skippedDeleteCount = 0) }
+    }
+
     override fun onCancelDeletingPhase() {
         _uiState.update { current ->
             if (current.phase == FileOperationPhase.Deleting) {
@@ -255,7 +260,10 @@ internal class DuplicateFilesManagerViewModel(
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = {
-                val result = repository.deleteFiles(selectedFiles)
+                val verifiedFiles = selectedFiles.filter { !it.duplicateHash.isNullOrBlank() && it.duplicatePeers.isNotEmpty() }
+                val result = repository.deleteFiles(verifiedFiles)
+                val skipped = selectedFiles.size - verifiedFiles.size + result.skippedCount
+                _uiState.update { it.copy(skippedDeleteCount = skipped) }
                 FileOperationOutcome(freedBytes = result.freedBytes, changedCount = result.deletedCount)
             },
             isSuccessful = { it.changedCount > 0 },

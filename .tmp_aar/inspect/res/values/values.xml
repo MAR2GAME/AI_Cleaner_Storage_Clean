@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="btn_nor">#337EFF</color>
+    <color name="color_purple">#FF9E7BFB</color>
+    <color name="notification_text_color">#282E39</color>
+    <color name="tab_color_pdf">#FFF92D2D</color>
+    <color name="teal_200_ad">#FF03DAC5</color>
+    <color name="text_color_282E39">#282E39</color>
+    <color name="v_page_bg">#E9EBF2</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">PDFfox</string>
+    <string name="check">Check</string>
+    <string name="close">Close</string>
+    <string name="go">Go</string>
+    <string name="loading_avertisement">Loading advertisement</string>
+    <string name="other_files">Other Files</string>
+    <string name="photos">Photos</string>
+    <string name="recovered">Recovered</string>
+    <string name="videos">Videos</string>
+    <style name="Base.Theme.PDFfox" parent="Theme.Material3.DayNight.NoActionBar">
+
+    </style>
+</resources>

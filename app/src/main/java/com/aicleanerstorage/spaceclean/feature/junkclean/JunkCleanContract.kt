@@ -8,6 +8,8 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.ScanResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
 
 enum class JunkCleanPhase {
+    CheckingPermission,
+    MissingPermission,
     Scanning,
     Preview,
     Cleaning,
@@ -61,6 +63,8 @@ data class JunkCleanUiState(
 )
 
 sealed interface JunkCleanAction {
+    data object PermissionCheckStarted : JunkCleanAction
+    data object PermissionDenied : JunkCleanAction
     data object ScanStarted : JunkCleanAction
 
     data class ScanProgressUpdated(

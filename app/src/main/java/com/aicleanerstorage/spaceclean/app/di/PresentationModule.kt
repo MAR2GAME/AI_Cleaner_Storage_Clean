@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.di
 
+import com.aicleanerstorage.spaceclean.app.AppViewModel
 import com.aicleanerstorage.spaceclean.common.coroutines.AppDispatchers
 import com.aicleanerstorage.spaceclean.feature.antivirus.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockViewModel
@@ -25,6 +26,11 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeed
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
+import com.aicleanerstorage.spaceclean.app.permission.PermissionCoordinator
+import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
+import com.aicleanerstorage.spaceclean.common.permission.AppRuntimePermissionDenialStore
+import com.aicleanerstorage.spaceclean.common.permission.PermissionEngine
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsViewModel
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel
@@ -36,6 +42,17 @@ import org.koin.dsl.module
 val presentationModule =
     module {
         single { AppDispatchers() }
+        viewModel { AppViewModel() }
+        single {
+            PermissionCoordinator(
+                context = androidApplication(),
+                engine = PermissionEngine(
+                    denialStore = AppRuntimePermissionDenialStore(get()),
+                ),
+            )
+        }
+        single<PermissionGateway> { get<PermissionCoordinator>() }
+        single { PermissionInterceptor(get<PermissionGateway>()) }
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel {
             NotificationPermissionViewModel(
@@ -60,7 +77,14 @@ val presentationModule =
             )
         }
         viewModel { OnboardingScanViewModel(get(), get()) }
-        viewModel { JunkCleanViewModel(get(), get(), Dispatchers.IO) }
+        viewModel {
+            JunkCleanViewModel(
+                cleanRepository = get(),
+                sharedState = get(),
+                permissionGateway = get(),
+                ioDispatcher = Dispatchers.IO,
+            )
+        }
         viewModel { SplashViewModel(get()) }
         viewModel { PhotosManagerViewModel(get(), Dispatchers.IO) }
         viewModel { ScreenshotsManagerViewModel(get(), Dispatchers.IO) }

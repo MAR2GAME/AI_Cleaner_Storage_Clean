@@ -7,6 +7,7 @@ interface AppPermissionCoordinator {
         action: ProtectedAction,
         mode: PermissionPromptMode = PermissionPromptMode.Explained,
         onDenied: () -> Unit = {},
+        onBusy: () -> Unit = {},
         onGranted: () -> Unit,
     )
 
@@ -14,6 +15,7 @@ interface AppPermissionCoordinator {
         permission: PermissionType,
         mode: PermissionPromptMode = PermissionPromptMode.Explained,
         onDenied: () -> Unit = {},
+        onBusy: () -> Unit = {},
         onGranted: () -> Unit,
     )
 

@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkFile
+import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.common.files.DuplicateContentGuard
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkAuthorizedDeleteResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkDeleteOutcome
 import java.io.File
@@ -14,8 +16,15 @@ object JunkFileDeleteHelper {
     fun delete(
         context: Context,
         junkFile: JunkFile,
+        selectedPaths: Set<String> = setOf(junkFile.filePath),
+        checkCancellation: () -> Unit = {},
     ): JunkDeleteOutcome {
+        checkCancellation()
         val file = File(junkFile.filePath)
+        val duplicate = junkFile.category == JunkCategory.DUPLICATE
+        if (duplicate && !canDeleteDuplicate(junkFile, selectedPaths, checkCancellation)) {
+            return JunkDeleteOutcome(junkFile = junkFile, deleted = false, freedBytes = 0L)
+        }
         if (!file.exists()) {
             return JunkDeleteOutcome(
                 junkFile = junkFile,
@@ -25,18 +34,39 @@ object JunkFileDeleteHelper {
         }
 
         val beforeSize = sizeOf(file).takeIf { it > 0L } ?: junkFile.fileSize
-        val deleted =
-            if (file.isDirectory) {
-                deleteDirectory(context, file)
-            } else {
-                deleteFile(context, file)
-            }
+        checkCancellation()
+        val deleted = when {
+            duplicate -> runCatching { file.isFile && file.delete() }.getOrDefault(false)
+            file.isDirectory -> deleteDirectory(context, file)
+            else -> deleteFile(context, file)
+        }
 
         return JunkDeleteOutcome(
             junkFile = junkFile,
             deleted = deleted && !file.exists(),
             freedBytes = if (deleted && !file.exists()) beforeSize else 0L,
-            authorizationUri = if (!deleted && file.isFile) findMediaUri(context.contentResolver, file)?.toString() else null,
+            authorizationUri = if (!duplicate && !deleted && file.isFile) findMediaUri(context.contentResolver, file)?.toString() else null,
+        )
+    }
+
+    internal fun canDeleteDuplicate(
+        junkFile: JunkFile,
+        selectedPaths: Set<String>,
+        checkCancellation: () -> Unit = {},
+    ): Boolean {
+        val original = junkFile.duplicateOriginalPath?.let(::File) ?: return false
+        val originalPath = runCatching { original.canonicalPath }.getOrNull() ?: return false
+        if (selectedPaths.any { selected ->
+                val path = runCatching { File(selected).canonicalPath }.getOrNull() ?: return false
+                originalPath == path || originalPath.startsWith(path.trimEnd(File.separatorChar) + File.separator)
+            }
+        ) return false
+        return DuplicateContentGuard.hasVerifiedCopy(
+            candidate = File(junkFile.filePath),
+            retainedCandidates = listOf(original),
+            expectedHash = junkFile.duplicateHash,
+            identity = { it.canonicalPath },
+            contentHash = { DuplicateContentGuard.hashFile(it, checkCancellation = checkCancellation) },
         )
     }
 

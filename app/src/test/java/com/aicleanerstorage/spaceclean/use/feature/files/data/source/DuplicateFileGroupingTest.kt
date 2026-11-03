@@ -40,7 +40,7 @@ class DuplicateFileGroupingTest {
     }
 
     @Test
-    fun `falls back to same name and size when hashing fails`() {
+    fun `does not group same name and size when hashing fails`() {
         val candidates =
             listOf(
                 candidate("a", name = "Report.pdf", size = 10),
@@ -49,8 +49,21 @@ class DuplicateFileGroupingTest {
 
         val groups = DuplicateFileGrouping.group(candidates) { null }
 
+        assertTrue(groups.isEmpty())
+    }
+
+    @Test
+    fun `hash failure does not combine successfully hashed different contents`() {
+        val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
+        val groups = DuplicateFileGrouping.group(candidates) { if (it == "unreadable") null else it }
+        assertTrue(groups.isEmpty())
+    }
+
+    @Test
+    fun `hash failure preserves only verified duplicate group`() {
+        val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
+        val groups = DuplicateFileGrouping.group(candidates) { if (it == "unreadable") null else "same" }
         assertEquals(listOf(listOf("a", "b")), groups)
-        assertTrue(groups.flatten().containsAll(listOf("a", "b")))
     }
 
     private fun candidate(

@@ -27,6 +27,7 @@ import org.koin.compose.koinInject
 fun AppRoot(
     launchCoordinator: AppLaunchCoordinator,
     onNotificationPermissionGranted: () -> Unit,
+    appViewModel: AppViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -54,6 +55,8 @@ fun AppRoot(
         externalActivityTracker = runtimeBindings.externalActivities,
         onPermissionFlowActiveChange = { sessionCoordinator.set(RuntimeBusyReason.Permission, it) },
     ) {
+        AppView(appViewModel)
+        AppEffectHost(appViewModel)
         AppNavGraph(
             navController = navController,
             launchCoordinator = launchCoordinator,

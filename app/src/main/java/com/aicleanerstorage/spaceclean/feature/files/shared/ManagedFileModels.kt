@@ -19,6 +19,8 @@ data class ManagedFileItem(
     val mimeType: String?,
     val bucketName: String?,
     val type: ManagedFileType,
+    val duplicateHash: String? = null,
+    val duplicatePeers: List<ManagedFileItem> = emptyList(),
 ) {
     val formattedSize: String get() = FileSizeFormatter.format(sizeBytes)
 }

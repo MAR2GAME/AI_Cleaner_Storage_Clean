@@ -11,12 +11,17 @@ import com.aicleanerstorage.spaceclean.common.permission.PermissionPromptMode
 import com.aicleanerstorage.spaceclean.common.permission.PermissionStatus
 import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
+import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 internal class PermissionCoordinator(
     private val context: Context,
     private val engine: PermissionEngine,
-) : AppPermissionCoordinator {
+) : AppPermissionCoordinator, PermissionGateway {
     var session by mutableStateOf<PermissionSession?>(null)
         private set
     var pendingLaunch by mutableStateOf<PermissionLaunch?>(null)
@@ -29,15 +34,17 @@ internal class PermissionCoordinator(
         action: ProtectedAction,
         mode: PermissionPromptMode,
         onDenied: () -> Unit,
+        onBusy: () -> Unit,
         onGranted: () -> Unit,
-    ) = startSession(PermissionTarget.Action(action), mode, onDenied, onGranted)
+    ) = startSession(PermissionTarget.Action(action), mode, onDenied, onGranted, onBusy)
 
     override fun ensure(
         permission: PermissionType,
         mode: PermissionPromptMode,
         onDenied: () -> Unit,
+        onBusy: () -> Unit,
         onGranted: () -> Unit,
-    ) = startSession(PermissionTarget.Permission(permission), mode, onDenied, onGranted)
+    ) = startSession(PermissionTarget.Permission(permission), mode, onDenied, onGranted, onBusy)
 
     override fun openSettings(
         permission: PermissionType,
@@ -58,6 +65,31 @@ internal class PermissionCoordinator(
             else -> dismiss(notifyDenied = false)
         }
     }
+
+    override suspend fun ensure(need: PermissionNeed): PermissionResult =
+        suspendCancellableCoroutine { continuation ->
+            val target = PermissionTarget.Permission(need.permission)
+
+            startSession(
+                target = target,
+                mode = PermissionPromptMode.Explained,
+                onDenied = {
+                    if (continuation.isActive) {
+                        continuation.resume(PermissionResult.Denied)
+                    }
+                },
+                onGranted = {
+                    if (continuation.isActive) {
+                        continuation.resume(PermissionResult.Granted)
+                    }
+                },
+                onBusy = {
+                    if (continuation.isActive) {
+                        continuation.resume(PermissionResult.Busy)
+                    }
+                },
+            )
+        }
 
     fun dismiss(notifyDenied: Boolean = true) {
         val current = session
@@ -99,8 +131,12 @@ internal class PermissionCoordinator(
         mode: PermissionPromptMode,
         onDenied: () -> Unit,
         onGranted: () -> Unit,
+        onBusy: () -> Unit = {},
     ) {
-        if (session != null) return
+        if (session != null) {
+            onBusy()
+            return
+        }
         val status = status(target)
         if (status.granted) {
             onGranted()

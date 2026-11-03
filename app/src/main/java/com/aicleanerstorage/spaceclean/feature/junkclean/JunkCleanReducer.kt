@@ -19,6 +19,21 @@ internal val DefaultResultDisplayCategories =
 object JunkCleanReducer {
     fun reduce(state: JunkCleanUiState, action: JunkCleanAction): JunkCleanUiState =
         when (action) {
+            JunkCleanAction.PermissionCheckStarted ->
+                state.copy(
+                    phase = JunkCleanPhase.CheckingPermission,
+                    errorMessageRes = null,
+                    errorMessage = null,
+                )
+
+            JunkCleanAction.PermissionDenied ->
+                state.copy(
+                    phase = JunkCleanPhase.MissingPermission,
+                    scanState = JunkCleanScanState.Error,
+                    errorMessageRes = R.string.permission_is_required,
+                    errorMessage = null,
+                )
+
             JunkCleanAction.ScanStarted ->
                 JunkCleanUiState(
                     phase = JunkCleanPhase.Scanning,

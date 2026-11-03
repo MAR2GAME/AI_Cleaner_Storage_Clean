@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.ensureActive
 import java.io.File
 
 class CleanRepositoryImpl(
@@ -109,9 +110,10 @@ class CleanRepositoryImpl(
             val cleanedFiles = mutableListOf<JunkFile>()
             val failedFiles = mutableListOf<JunkFile>()
             var freedSpace = 0L
+            val selectedPaths = selectedItems.map { it.junkFile.filePath }.toSet()
 
             for (item in selectedItems) {
-                val outcome = JunkFileDeleteHelper.delete(context, item.junkFile)
+                val outcome = JunkFileDeleteHelper.delete(context, item.junkFile, selectedPaths, coroutineContext::ensureActive)
                 if (outcome.deleted) {
                     cleanedFiles.add(item.junkFile)
                     freedSpace += outcome.freedBytes
@@ -140,7 +142,8 @@ class CleanRepositoryImpl(
 
     override suspend fun deleteFileItems(selectedItems: List<CleanItem>): List<JunkDeleteOutcome> =
         withContext(Dispatchers.IO) {
-            selectedItems.map { JunkFileDeleteHelper.delete(context, it.junkFile) }
+            val selectedPaths = selectedItems.map { it.junkFile.filePath }.toSet()
+            selectedItems.map { JunkFileDeleteHelper.delete(context, it.junkFile, selectedPaths, coroutineContext::ensureActive) }
         }
 
     override suspend fun finalizeAuthorizedDeletes(pendingOutcomes: List<JunkDeleteOutcome>): JunkAuthorizedDeleteResult =

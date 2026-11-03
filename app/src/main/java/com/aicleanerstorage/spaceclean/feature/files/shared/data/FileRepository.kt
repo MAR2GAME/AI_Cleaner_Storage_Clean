@@ -5,6 +5,7 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.ManagedFileItem
 data class FileDeleteResult(
     val freedBytes: Long,
     val deletedCount: Int,
+    val skippedCount: Int = 0,
 )
 
 interface FileRepository {

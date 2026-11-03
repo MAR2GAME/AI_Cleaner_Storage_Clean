@@ -13,6 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,6 +79,17 @@ private fun DuplicateFilesManagerRouteContent(
     val flowState by viewModel.flowState.collectAsStateWithLifecycle()
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val selectedGroup = displayState.selectedGroup
+    val context = LocalContext.current
+    LaunchedEffect(uiState.skippedDeleteCount) {
+        if (uiState.skippedDeleteCount > 0) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.clean_result_files_failed, uiState.skippedDeleteCount),
+                Toast.LENGTH_LONG,
+            ).show()
+            viewModel.clearSkippedDeleteCount()
+        }
+    }
 
     fun handleBack() {
         when {
@@ -131,7 +145,7 @@ private fun DuplicateFilesManagerRouteContent(
         feature = FEATURE,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete,
-        selectedUris = displayState.selectedUris,
+        selectedUris = emptyList(),
         onCancelActiveOperation = viewModel::cancelActiveOperation,
         onCancelDelete = viewModel::cancelDelete,
         onDeleteReady = viewModel::deleteSelectedFiles,

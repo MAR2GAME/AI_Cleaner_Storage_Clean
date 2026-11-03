@@ -10,6 +10,8 @@ data class JunkFile(
     val fileSize: Long,
     val category: JunkCategory,
     val lastModified: Long = System.currentTimeMillis(),
+    val duplicateHash: String? = null,
+    val duplicateOriginalPath: String? = null,
 ) {
     /** 閺嶇厧绱￠崠鏍ф倵閻ㄥ嫭鏋冩禒璺恒亣鐏忓繑鏋冨*/
     val formattedSize: String

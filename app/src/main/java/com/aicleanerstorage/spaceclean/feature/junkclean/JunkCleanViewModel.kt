@@ -20,6 +20,9 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanRepository
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkAuthorizedDeleteResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkDeleteOutcome
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -38,6 +41,7 @@ private const val CLEANING_ANIMATION_MIN_MILLIS = 1_600L
 class JunkCleanViewModel(
     private val cleanRepository: CleanRepository,
     private val sharedState: CleanSessionStore,
+    private val permissionGateway: PermissionGateway,
     private val ioDispatcher: CoroutineDispatcher,
     private val scanPreviewMinMillis: Long = SCAN_PREVIEW_MIN_MILLIS,
     private val cleaningAnimationMinMillis: Long = CLEANING_ANIMATION_MIN_MILLIS,
@@ -102,15 +106,32 @@ class JunkCleanViewModel(
         val requestContext = context
         val state = _uiState.value.takeIf { it.phase == JunkCleanPhase.Preview } ?: return
         val selectedItems = state.groups.flatMap { it.items }.filter { it.isChecked }
-        dispatch(JunkCleanAction.CleaningRequested)
-        if (_uiState.value.phase != JunkCleanPhase.Cleaning) return
+        if (selectedItems.isEmpty()) {
+            dispatch(JunkCleanAction.CleaningRequested)
+            return
+        }
+        if (cleaningJob?.isActive == true) return
+        val previous = state
+        dispatch(JunkCleanAction.PermissionCheckStarted)
 
-        trackOperationEvent(FeatureOperationEvent.OperationStarted(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN))
-        val cleaningStartedAt = System.currentTimeMillis()
-        cleaningJob?.cancel()
         cleaningJob =
             viewModelScope.launch {
                 try {
+                    when (permissionGateway.ensure(PermissionNeed.StorageFiles)) {
+                        PermissionResult.Granted -> Unit
+                        PermissionResult.Denied,
+                        PermissionResult.Busy,
+                        -> {
+                            _uiState.value = previous
+                            return@launch
+                        }
+                    }
+
+                    dispatch(JunkCleanAction.CleaningRequested)
+                    if (_uiState.value.phase != JunkCleanPhase.Cleaning) return@launch
+
+                    trackOperationEvent(FeatureOperationEvent.OperationStarted(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN))
+                    val cleaningStartedAt = System.currentTimeMillis()
                     val outcomes =
                         withContext(ioDispatcher) {
                             cleanRepository.deleteFileItems(selectedItems)
@@ -199,21 +220,37 @@ class JunkCleanViewModel(
     }
 
     private fun startScanInternal(resetSession: Boolean) {
-        if (_uiState.value.scanState == JunkCleanScanState.Scanning) return
+        if (scanJob?.isActive == true) return
         hasStarted = true
-        scanJob?.cancel()
-        if (resetSession) {
-            sharedState.clear()
-        }
-        val scanStartedAt = System.currentTimeMillis()
-        observeProgress()
-        trackOperationEvent(FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN))
-        dispatch(JunkCleanAction.ScanStarted)
-
+        val previous = _uiState.value
+        dispatch(JunkCleanAction.PermissionCheckStarted)
         scanJob =
-            viewModelScope.launch(ioDispatcher) {
+            viewModelScope.launch {
                 try {
-                    val result = cleanRepository.performFullScan()
+                    when (permissionGateway.ensure(PermissionNeed.StorageFiles)) {
+                        PermissionResult.Granted -> Unit
+                        PermissionResult.Busy -> {
+                            hasStarted = false
+                            _uiState.value = previous
+                            return@launch
+                        }
+                        PermissionResult.Denied -> {
+                            hasStarted = false
+                            dispatch(JunkCleanAction.PermissionDenied)
+                            return@launch
+                        }
+                    }
+
+                    if (resetSession) {
+                        sharedState.clear()
+                    }
+                    val scanStartedAt = System.currentTimeMillis()
+                    observeProgress()
+                    trackOperationEvent(FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN))
+                    dispatch(JunkCleanAction.ScanStarted)
+                    val result = withContext(ioDispatcher) {
+                        cleanRepository.performFullScan()
+                    }
                     progressJob?.cancel()
                     dispatch(JunkCleanAction.ScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
