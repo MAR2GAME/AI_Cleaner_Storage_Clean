@@ -7,6 +7,7 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.ScanResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
 
 sealed interface JunkCleanPhase {
     data object Idle : JunkCleanPhase
@@ -67,6 +68,10 @@ enum class JunkPermissionRequest {
 
 sealed interface JunkCleanAction {
     data class PermissionCheckStarted(val request: JunkPermissionRequest) : JunkCleanAction
+    data class PermissionCheckRestored(
+        val request: JunkPermissionRequest,
+        val previous: JunkCleanUiState,
+    ) : JunkCleanAction
     data class PermissionDenied(val request: JunkPermissionRequest) : JunkCleanAction
     data class PermissionBusy(val request: JunkPermissionRequest) : JunkCleanAction
     data object ScanStarted : JunkCleanAction
@@ -96,17 +101,31 @@ sealed interface JunkCleanAction {
     data object StopDialogDismissed : JunkCleanAction
 }
 
-sealed interface JunkCleanUiAction {
-    data object Back : JunkCleanUiAction
-    data object CleanSelected : JunkCleanUiAction
-    data class ToggleItem(val itemId: String) : JunkCleanUiAction
-    data class ToggleCategories(val categories: List<JunkCategory>) : JunkCleanUiAction
-    data object ContinueFromResult : JunkCleanUiAction
-    data object QuitStoppedOperation : JunkCleanUiAction
-    data object ResumeStoppedOperation : JunkCleanUiAction
+sealed interface JunkCleanIntent {
+    data object Entered : JunkCleanIntent
+    data object ScanRequested : JunkCleanIntent
+    data object Back : JunkCleanIntent
+    data object CleanSelected : JunkCleanIntent
+    data class ToggleItem(val itemId: String) : JunkCleanIntent
+    data class ToggleCategories(val categories: List<JunkCategory>) : JunkCleanIntent
+    data object ContinueFromResult : JunkCleanIntent
+    data object QuitStoppedOperation : JunkCleanIntent
+    data object ResumeStoppedOperation : JunkCleanIntent
+    data class DeleteAuthorizationResult(val approved: Boolean) : JunkCleanIntent
+    data object CompletionAdFinished : JunkCleanIntent
+    data object ExitFinished : JunkCleanIntent
+}
+
+enum class JunkExitTarget {
+    Back,
+    HomeAfterComplete,
 }
 
 sealed interface JunkCleanEffect {
-    data class Exit(val reason: FeatureExitReason) : JunkCleanEffect
+    data class Exit(
+        val reason: FeatureExitReason,
+        val target: JunkExitTarget = JunkExitTarget.Back,
+    ) : JunkCleanEffect
     data class RequestDeleteAuthorization(val deleteRequest: PendingIntent) : JunkCleanEffect
+    data class Operation(val event: FeatureOperationEvent) : JunkCleanEffect
 }

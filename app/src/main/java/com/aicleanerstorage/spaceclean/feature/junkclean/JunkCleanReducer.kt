@@ -45,6 +45,13 @@ object JunkCleanReducer {
                     stopDialogPhase = null,
                 )
 
+            is JunkCleanAction.PermissionCheckRestored ->
+                if (state.phase == JunkCleanPhase.CheckingPermission(action.request)) {
+                    action.previous
+                } else {
+                    state
+                }
+
             is JunkCleanAction.PermissionBusy -> state
 
             JunkCleanAction.ScanStarted ->

@@ -82,6 +82,7 @@ val presentationModule =
                 cleanRepository = get(),
                 sharedState = get(),
                 permissionGateway = get(),
+                appContext = androidApplication(),
                 ioDispatcher = Dispatchers.IO,
             )
         }

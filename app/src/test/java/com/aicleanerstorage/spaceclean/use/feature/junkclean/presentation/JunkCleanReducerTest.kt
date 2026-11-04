@@ -16,6 +16,26 @@ import org.junit.Test
 
 class JunkCleanReducerTest {
     @Test
+    fun `permission restore returns entire snapshot only for matching check`() {
+        val previous = JunkCleanReducer.reduce(
+            JunkCleanUiState(),
+            JunkCleanAction.PreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+        ).copy(errorMessage = "previous message", progress = 100f)
+        JunkPermissionRequest.entries.forEach { request ->
+            val checking = JunkCleanReducer.reduce(previous, JunkCleanAction.PermissionCheckStarted(request))
+            val restore = JunkCleanAction.PermissionCheckRestored(request, previous)
+            assertSame(previous, JunkCleanReducer.reduce(checking, restore))
+            val otherRequest = JunkPermissionRequest.entries.first { it != request }
+            assertSame(
+                checking,
+                JunkCleanReducer.reduce(checking, JunkCleanAction.PermissionCheckRestored(otherRequest, previous)),
+            )
+            val scanning = previous.copy(phase = JunkCleanPhase.Scanning)
+            assertSame(scanning, JunkCleanReducer.reduce(scanning, restore))
+        }
+    }
+
+    @Test
     fun `scan denial exits without error and clears stop dialog`() {
         val stale = JunkCleanUiState(
             phase = JunkCleanPhase.Failed(JunkOperation.Scan),

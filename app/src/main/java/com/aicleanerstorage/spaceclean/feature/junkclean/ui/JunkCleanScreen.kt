@@ -15,7 +15,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXTopAppBar
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiAction
+import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanIntent
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
 
@@ -25,11 +25,11 @@ private val JunkFigmaBackground = Color(0xFFF4F4F4)
 fun JunkCleanScreen(
     state: JunkCleanUiState,
     onNavigateTool: (AppDestination) -> Unit,
-    onAction: (JunkCleanUiAction) -> Unit,
+    onAction: (JunkCleanIntent) -> Unit,
     interactionsEnabled: Boolean = true,
 ) {
     BackHandler {
-        if (interactionsEnabled) onAction(JunkCleanUiAction.Back)
+        if (interactionsEnabled) onAction(JunkCleanIntent.Back)
     }
 
     JunkCleanScaffold(
@@ -38,7 +38,7 @@ fun JunkCleanScreen(
             if (interactionsEnabled && state.phase == JunkCleanPhase.Preview) {
                 JunkRemoveButton(
                     selectedSummary = state.selectedSummary,
-                    onClick = { onAction(JunkCleanUiAction.CleanSelected) },
+                    onClick = { onAction(JunkCleanIntent.CleanSelected) },
                 )
             }
         },
@@ -46,24 +46,24 @@ fun JunkCleanScreen(
         JunkCleanContentView(
             uiState = state,
             interactionsEnabled = interactionsEnabled,
-            onToggleCategorySelection = { onAction(JunkCleanUiAction.ToggleCategories(it)) },
-            onToggleItem = { onAction(JunkCleanUiAction.ToggleItem(it.junkFile.id)) },
+            onToggleCategorySelection = { onAction(JunkCleanIntent.ToggleCategories(it)) },
+            onToggleItem = { onAction(JunkCleanIntent.ToggleItem(it.junkFile.id)) },
             onNavigateTool = onNavigateTool,
-            onContinueFromResult = { onAction(JunkCleanUiAction.ContinueFromResult) },
+            onContinueFromResult = { onAction(JunkCleanIntent.ContinueFromResult) },
         )
         CleanXTopAppBar(
             title = stringResource(R.string.junk_removal),
             showBack = true,
             onBack = {
-                if (interactionsEnabled) onAction(JunkCleanUiAction.Back)
+                if (interactionsEnabled) onAction(JunkCleanIntent.Back)
             },
         )
     }
 
     if (state.showStopDialog) {
         StopScanDialog(
-            onQuit = { onAction(JunkCleanUiAction.QuitStoppedOperation) },
-            onResume = { onAction(JunkCleanUiAction.ResumeStoppedOperation) },
+            onQuit = { onAction(JunkCleanIntent.QuitStoppedOperation) },
+            onResume = { onAction(JunkCleanIntent.ResumeStoppedOperation) },
         )
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.lifecycle.ViewModel
+import com.aicleanerstorage.spaceclean.common.presentation.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.CleanResult
@@ -28,15 +28,10 @@ import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -47,6 +42,7 @@ class JunkCleanViewModel(
     private val cleanRepository: CleanRepository,
     private val sharedState: CleanSessionStore,
     private val permissionGateway: PermissionGateway,
+    private val appContext: Context,
     private val ioDispatcher: CoroutineDispatcher,
     private val scanPreviewMinMillis: Long = SCAN_PREVIEW_MIN_MILLIS,
     private val cleaningAnimationMinMillis: Long = CLEANING_ANIMATION_MIN_MILLIS,
@@ -57,7 +53,7 @@ class JunkCleanViewModel(
             null
         }
     },
-) : ViewModel() {
+) : MviViewModel<JunkCleanUiState, JunkCleanIntent, JunkCleanEffect>(JunkCleanUiState()) {
     private data class CleaningExecutionState(
         val pendingAuthorizationOutcomes: List<JunkDeleteOutcome> = emptyList(),
         val directCleanedFiles: List<JunkFile> = emptyList(),
@@ -68,17 +64,8 @@ class JunkCleanViewModel(
 
     private val FINISHING_ANIMATION_MILLIS = 800L
 
-    private val _uiState = MutableStateFlow(JunkCleanUiState())
-    val uiState: StateFlow<JunkCleanUiState> = _uiState.asStateFlow()
-
-    private val effectsChannel = Channel<JunkCleanEffect>(Channel.BUFFERED)
-    val effects = effectsChannel.receiveAsFlow()
-
-    private val operationEventsChannel = Channel<FeatureOperationEvent>(Channel.BUFFERED)
-    val operationEvents = operationEventsChannel.receiveAsFlow()
-
     private fun trackOperationEvent(event: FeatureOperationEvent) {
-        operationEventsChannel.trySend(event)
+        emitEffect(JunkCleanEffect.Operation(event))
     }
 
     private var progressJob: Job? = null
@@ -87,72 +74,108 @@ class JunkCleanViewModel(
     private var exitEffectSent = false
     private var cleaningExecutionState = CleaningExecutionState()
 
-    private fun dispatch(action: JunkCleanAction) {
+    override fun onIntent(intent: JunkCleanIntent) {
+        if (!viewModelScope.isActive) return
+        if (intent == JunkCleanIntent.ExitFinished) {
+            sharedState.clearCleanResults()
+            return
+        }
         if (exitEffectSent) return
-        _uiState.value = JunkCleanReducer.reduce(_uiState.value, action)
-        if (action is JunkCleanAction.PermissionDenied) {
-            exitEffectSent = true
-            effectsChannel.trySend(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected))
+
+        when (intent) {
+            JunkCleanIntent.Entered -> startScanIfNeeded()
+            JunkCleanIntent.ScanRequested -> startScanInternal(resetSession = true)
+            JunkCleanIntent.CleanSelected -> startCleaning()
+            is JunkCleanIntent.ToggleItem -> toggleItemSelection(intent.itemId)
+            is JunkCleanIntent.ToggleCategories -> toggleCategorySelection(intent.categories)
+            is JunkCleanIntent.DeleteAuthorizationResult -> handleAuthorizationResult(intent.approved)
+            JunkCleanIntent.CompletionAdFinished -> {
+                if (currentState.phase == JunkCleanPhase.CompleteAnimation) {
+                    reduce(JunkCleanAction.ResultAnimationCompleted)
+                }
+            }
+            JunkCleanIntent.Back -> handleBack()
+            JunkCleanIntent.ContinueFromResult -> {
+                if (currentState.phase == JunkCleanPhase.Complete) {
+                    requestExit(FeatureExitReason.Return, JunkExitTarget.HomeAfterComplete)
+                }
+            }
+            JunkCleanIntent.QuitStoppedOperation -> {
+                if (currentState.showStopDialog) {
+                    dismissStopDialog(resume = false)
+                    requestExit(FeatureExitReason.Return)
+                }
+            }
+            JunkCleanIntent.ResumeStoppedOperation -> {
+                if (currentState.showStopDialog) dismissStopDialog(resume = true)
+            }
+            JunkCleanIntent.ExitFinished -> Unit
         }
     }
 
-    fun startScanIfNeeded() {
-        if (_uiState.value.phase != JunkCleanPhase.Idle) return
+    private fun handleBack() {
+        if (currentState.showStopDialog) return
+        when (currentState.phase) {
+            JunkCleanPhase.Scanning, JunkCleanPhase.Cleaning -> requestStopDialog()
+            JunkCleanPhase.CompleteAnimation, JunkCleanPhase.Complete ->
+                requestExit(FeatureExitReason.Return, JunkExitTarget.HomeAfterComplete)
+            else -> requestExit(FeatureExitReason.Return)
+        }
+    }
+
+    private fun requestExit(
+        reason: FeatureExitReason,
+        target: JunkExitTarget = JunkExitTarget.Back,
+    ) {
+        if (exitEffectSent) return
+        exitEffectSent = true
+        scanJob?.cancel()
+        cleaningJob?.cancel()
+        progressJob?.cancel()
+        emitEffect(JunkCleanEffect.Exit(reason, target))
+    }
+
+    private fun reduce(action: JunkCleanAction) {
+        updateState { JunkCleanReducer.reduce(this, action) }
+    }
+
+    private fun startScanIfNeeded() {
+        if (currentState.phase != JunkCleanPhase.Idle) return
         startScanInternal(resetSession = true)
     }
 
-    fun retryScan() {
-        startScanInternal(resetSession = true)
+    private fun toggleItemSelection(itemId: String) {
+        if (exitEffectSent) return
+        val previous = currentState
+        reduce(JunkCleanAction.ToggleItem(itemId))
+        if (currentState !== previous) trackPreviewPublished()
     }
 
-    fun toggleItemSelection(itemId: String) {
+    private fun toggleCategorySelection(categories: List<JunkCategory>) {
         if (exitEffectSent) return
-        val previous = _uiState.value
-        dispatch(JunkCleanAction.ToggleItem(itemId))
-        if (_uiState.value !== previous) trackPreviewPublished()
+        val previous = currentState
+        reduce(JunkCleanAction.ToggleCategories(categories))
+        if (currentState !== previous) trackPreviewPublished()
     }
 
-    fun toggleCategorySelection(categories: List<JunkCategory>) {
+    private fun startCleaning() {
         if (exitEffectSent) return
-        val previous = _uiState.value
-        dispatch(JunkCleanAction.ToggleCategories(categories))
-        if (_uiState.value !== previous) trackPreviewPublished()
-    }
-
-    fun startCleaning(context: Context) {
-        if (exitEffectSent) return
-        val appContext = context.applicationContext ?: context
-        val requestContext = context
-        val state = _uiState.value.takeIf { it.phase == JunkCleanPhase.Preview } ?: return
+        val state = currentState.takeIf { it.phase == JunkCleanPhase.Preview } ?: return
         val selectedItems = state.groups.flatMap { it.items }.filter { it.isChecked }
         if (selectedItems.isEmpty()) {
-            dispatch(JunkCleanAction.CleaningRequested)
+            reduce(JunkCleanAction.CleaningRequested)
             return
         }
         if (cleaningJob?.isActive == true) return
         val previous = state
-        dispatch(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Clean))
+        reduce(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Clean))
 
         cleaningJob =
             viewModelScope.launch {
                 try {
-                    when (ensureFilePermission()) {
-                        PermissionResult.Granted -> Unit
-                        PermissionResult.Busy -> {
-                            _uiState.value = previous
-                            dispatch(JunkCleanAction.PermissionBusy(JunkPermissionRequest.Clean))
-                            return@launch
-                        }
-                        PermissionResult.Denied -> {
-                            _uiState.value = previous
-                            dispatch(JunkCleanAction.PermissionDenied(JunkPermissionRequest.Clean))
-                            return@launch
-                        }
-                    }
-
-                    _uiState.value = previous
-                    dispatch(JunkCleanAction.CleaningRequested)
-                    if (_uiState.value.phase != JunkCleanPhase.Cleaning) return@launch
+                    if (!checkPermission(JunkPermissionRequest.Clean, previous)) return@launch
+                    reduce(JunkCleanAction.CleaningRequested)
+                    if (currentState.phase != JunkCleanPhase.Cleaning) return@launch
 
                     trackOperationEvent(FeatureOperationEvent.OperationStarted(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN))
                     val cleaningStartedAt = System.currentTimeMillis()
@@ -177,11 +200,11 @@ class JunkCleanViewModel(
                         )
 
                     val uris = pending.mapNotNull { it.authorizationUri }.distinct()
-                    val request = if (uris.isNotEmpty()) createDeleteRequest(requestContext, uris) else null
+                    val request = if (uris.isNotEmpty()) createDeleteRequest(appContext, uris) else null
                     if (request != null) {
                         val message = appContext.resources.getString(R.string.result_confirm_system_deletion, uris.size)
-                        dispatch(JunkCleanAction.DeleteAuthorizationRequested(message))
-                        effectsChannel.send(JunkCleanEffect.RequestDeleteAuthorization(request))
+                        reduce(JunkCleanAction.DeleteAuthorizationRequested(message))
+                        emitEffect(JunkCleanEffect.RequestDeleteAuthorization(request))
                     } else {
                         delayRemainingCleaningAnimation(cleaningStartedAt)
                         finishCleaning(
@@ -195,17 +218,17 @@ class JunkCleanViewModel(
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
                     trackOperationEvent(FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, success = false))
-                    dispatch(JunkCleanAction.Failed(R.string.result_clean_error, error.message))
+                    reduce(JunkCleanAction.Failed(R.string.result_clean_error, error.message))
                 }
             }
     }
 
-    fun handleAuthorizationResult(approved: Boolean) {
-        if (_uiState.value.phase != JunkCleanPhase.AwaitingAuthorization) return
+    private fun handleAuthorizationResult(approved: Boolean) {
+        if (currentState.phase != JunkCleanPhase.AwaitingAuthorization) return
         val pending = cleaningExecutionState.pendingAuthorizationOutcomes
         if (pending.isEmpty()) return
 
-        dispatch(JunkCleanAction.DeleteAuthorizationHandled)
+        reduce(JunkCleanAction.DeleteAuthorizationHandled)
         val cleaningStartedAt = System.currentTimeMillis()
         cleaningJob?.cancel()
         cleaningJob =
@@ -234,64 +257,39 @@ class JunkCleanViewModel(
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
                     trackOperationEvent(FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, success = false))
-                    dispatch(JunkCleanAction.Failed(R.string.result_clean_error_after_authorization, error.message))
+                    reduce(JunkCleanAction.Failed(R.string.result_clean_error_after_authorization, error.message))
                 }
             }
     }
 
-    fun clearResult() {
-        sharedState.clearCleanResults()
-        dispatch(JunkCleanAction.ResultCleared)
-    }
-
-    fun clearSharedResults() {
-        sharedState.clearCleanResults()
-    }
-
-    fun showResult() {
-        if (!viewModelScope.isActive) return
-        dispatch(JunkCleanAction.ResultAnimationCompleted)
-    }
-
     private fun startScanInternal(resetSession: Boolean) {
         if (exitEffectSent || cleaningJob?.isActive == true) return
-        when (val phase = _uiState.value.phase) {
+        when (val phase = currentState.phase) {
             JunkCleanPhase.Idle, JunkCleanPhase.Preview -> Unit
             is JunkCleanPhase.Failed -> if (phase.operation != JunkOperation.Scan) return
             else -> return
         }
         if (scanJob?.isActive == true) return
-        val previous = _uiState.value
-        dispatch(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Scan))
+        val previous = currentState
+        reduce(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Scan))
         scanJob =
             viewModelScope.launch {
                 try {
-                    when (ensureFilePermission()) {
-                        PermissionResult.Granted -> Unit
-                        PermissionResult.Busy -> {
-                            _uiState.value = previous
-                            dispatch(JunkCleanAction.PermissionBusy(JunkPermissionRequest.Scan))
-                            return@launch
-                        }
-                        PermissionResult.Denied -> {
-                            dispatch(JunkCleanAction.PermissionDenied(JunkPermissionRequest.Scan))
-                            return@launch
-                        }
-                    }
+                    if (!checkPermission(JunkPermissionRequest.Scan, previous)) return@launch
 
                     if (resetSession) {
                         sharedState.clear()
                     }
                     val scanStartedAt = System.currentTimeMillis()
+                    reduce(JunkCleanAction.ScanStarted)
                     observeProgress()
                     trackOperationEvent(FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN))
-                    dispatch(JunkCleanAction.ScanStarted)
                     val result = withContext(ioDispatcher) {
                         cleanRepository.performFullScan()
                     }
                     currentCoroutineContext().ensureActive()
                     progressJob?.cancel()
-                    dispatch(JunkCleanAction.ScanCompleted(result))
+                    reduce(JunkCleanAction.ScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
                     loadPreview(result)
                 } catch (error: CancellationException) {
@@ -299,37 +297,54 @@ class JunkCleanViewModel(
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
                     progressJob?.cancel()
-                    dispatch(JunkCleanAction.Failed(R.string.scan_failed, error.message, duringScan = true))
+                    reduce(JunkCleanAction.Failed(R.string.scan_failed, error.message, duringScan = true))
                 }
             }
     }
 
-    fun cancelActiveOperation() {
+    private fun cancelActiveOperation() {
         scanJob?.cancel()
         scanJob = null
         progressJob?.cancel()
         progressJob = null
         cleaningJob?.cancel()
         cleaningJob = null
-        dispatch(JunkCleanAction.ActiveOperationCancelled)
+        reduce(JunkCleanAction.ActiveOperationCancelled)
         cleaningExecutionState = CleaningExecutionState()
     }
 
-    private suspend fun ensureFilePermission(): PermissionResult {
-        return permissionGateway.ensure(PermissionNeed.StorageFiles).also {
-            currentCoroutineContext().ensureActive()
+    private suspend fun checkPermission(
+        request: JunkPermissionRequest,
+        previous: JunkCleanUiState,
+    ): Boolean {
+        val result = permissionGateway.ensure(PermissionNeed.StorageFiles)
+        currentCoroutineContext().ensureActive()
+        return when (result) {
+            PermissionResult.Granted -> {
+                reduce(JunkCleanAction.PermissionCheckRestored(request, previous))
+                true
+            }
+            PermissionResult.Busy -> {
+                reduce(JunkCleanAction.PermissionCheckRestored(request, previous))
+                false
+            }
+            PermissionResult.Denied -> {
+                reduce(JunkCleanAction.PermissionDenied(request))
+                requestExit(FeatureExitReason.PermissionRejected)
+                false
+            }
         }
     }
 
-    fun cancelCleaningAndReturnToPreview() {
+    private fun cancelCleaningAndReturnToPreview() {
         cleaningJob?.cancel()
         cleaningJob = null
         cleaningExecutionState = CleaningExecutionState()
-        dispatch(JunkCleanAction.CleaningCancelled)
+        reduce(JunkCleanAction.CleaningCancelled)
     }
 
-    fun requestStopDialog() {
-        val phase = _uiState.value.phase
+    private fun requestStopDialog() {
+        val phase = currentState.phase
         when (phase) {
             JunkCleanPhase.Scanning -> cancelActiveOperation()
             JunkCleanPhase.Cleaning,
@@ -337,12 +352,12 @@ class JunkCleanViewModel(
             -> cancelCleaningAndReturnToPreview()
             else -> return
         }
-        dispatch(JunkCleanAction.StopDialogShown(phase))
+        reduce(JunkCleanAction.StopDialogShown(phase))
     }
 
-    fun dismissStopDialog(resume: Boolean) {
-        val stoppedPhase = _uiState.value.stopDialogPhase
-        dispatch(JunkCleanAction.StopDialogDismissed)
+    private fun dismissStopDialog(resume: Boolean) {
+        val stoppedPhase = currentState.stopDialogPhase
+        reduce(JunkCleanAction.StopDialogDismissed)
         if (resume && stoppedPhase == JunkCleanPhase.Scanning) {
             startScanIfNeeded()
         }
@@ -353,10 +368,10 @@ class JunkCleanViewModel(
         progressJob =
             viewModelScope.launch {
                 sharedState.scanProgress.collect { progress ->
-                    if (_uiState.value.phase != JunkCleanPhase.Scanning) return@collect
+                    if (currentState.phase != JunkCleanPhase.Scanning) return@collect
                     val currentResult = sharedState.scanResult.value
                     val foundSize = currentResult?.totalSize ?: progress.foundSize
-                    dispatch(
+                    reduce(
                         JunkCleanAction.ScanProgressUpdated(
                             progress = progress.percent,
                             currentCategory = progress.currentCategory,
@@ -370,16 +385,16 @@ class JunkCleanViewModel(
 
     private fun loadPreview(scanResult: ScanResult?) {
         if (scanResult == null) {
-            dispatch(JunkCleanAction.PreviewUnavailable)
+            reduce(JunkCleanAction.PreviewUnavailable)
             return
         }
 
-        dispatch(JunkCleanAction.PreviewLoaded(scanResult))
+        reduce(JunkCleanAction.PreviewLoaded(scanResult))
         trackPreviewPublished()
     }
 
     private fun trackPreviewPublished() {
-        val hasGroups = _uiState.value.groups.any { it.items.isNotEmpty() }
+        val hasGroups = currentState.groups.any { it.items.isNotEmpty() }
         trackOperationEvent(FeatureOperationEvent.ScanFinished(FeatureKey.JUNK_CLEAN, hasGroups))
     }
 
@@ -416,9 +431,9 @@ class JunkCleanViewModel(
         sharedState.setCleanupSummary(summary)
 
         cleaningExecutionState = CleaningExecutionState()
-        dispatch(JunkCleanAction.CleaningCompleted(summary))
+        reduce(JunkCleanAction.CleaningCompleted(summary))
         delay(FINISHING_ANIMATION_MILLIS)
-        if (_uiState.value.phase == JunkCleanPhase.CompleteAnimation) {
+        if (currentState.phase == JunkCleanPhase.CompleteAnimation) {
             trackOperationEvent(FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, success = true))
         }
     }

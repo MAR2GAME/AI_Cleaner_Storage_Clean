@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.isActive
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
@@ -38,8 +37,7 @@ fun JunkCleanRoute(
     onNavigateHomeAfterComplete: () -> Unit = onNavigateHome,
     onNavigateTool: (AppDestination) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
     val routeScope = rememberCoroutineScope()
 
@@ -54,38 +52,35 @@ fun JunkCleanRoute(
         rememberLauncherForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult(),
         ) { result ->
-            viewModel.handleAuthorizationResult(result.resultCode == Activity.RESULT_OK)
+            viewModel.dispatch(JunkCleanIntent.DeleteAuthorizationResult(result.resultCode == Activity.RESULT_OK))
         }
 
     LaunchedEffect(viewModel) {
-        viewModel.startScanIfNeeded()
-    }
-
-    LaunchedEffect(viewModel, featureFlow) {
-        viewModel.operationEvents.collect { event ->
-            if (event.isJunkCleanCompletionSuccess()) {
-                featureFlow.handleOperation(event) {
-                    viewModel.showResult()
-                }
-            } else {
-                featureFlow.handleOperation(event)
-            }
-        }
-    }
-
-    fun exitBack() {
-        exitOnce(FeatureExitReason.Return) {
-            onNavigateBack()
-        }
+        viewModel.dispatch(JunkCleanIntent.Entered)
     }
 
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.effects.collect { effect ->
             when (effect) {
+                is JunkCleanEffect.Operation -> {
+                    if (!exitStarted) {
+                        featureFlow.handleOperation(effect.event) {
+                            if (
+                                routeScope.isActive && !exitStarted &&
+                                effect.event.isJunkCleanCompletionSuccess()
+                            ) {
+                                viewModel.dispatch(JunkCleanIntent.CompletionAdFinished)
+                            }
+                        }
+                    }
+                }
                 is JunkCleanEffect.Exit -> {
                     exitOnce(effect.reason) {
-                        viewModel.clearSharedResults()
-                        onNavigateBack()
+                        viewModel.dispatch(JunkCleanIntent.ExitFinished)
+                        when (effect.target) {
+                            JunkExitTarget.Back -> onNavigateBack()
+                            JunkExitTarget.HomeAfterComplete -> onNavigateHomeAfterComplete()
+                        }
                     }
                 }
                 is JunkCleanEffect.RequestDeleteAuthorization -> {
@@ -97,55 +92,14 @@ fun JunkCleanRoute(
         }
     }
 
-    fun exitToHome(afterComplete: Boolean = false) {
-        if (exitStarted) return
-        if (afterComplete) {
-            exitOnce(FeatureExitReason.Return) {
-                viewModel.clearSharedResults()
-                onNavigateHomeAfterComplete()
-            }
-        } else {
-            exitStarted = true
-            viewModel.clearSharedResults()
-            onNavigateHome()
-        }
-    }
-
-    fun handleBack() {
-        when (uiState.phase) {
-            JunkCleanPhase.Scanning -> {
-                viewModel.requestStopDialog()
-            }
-            JunkCleanPhase.Cleaning -> {
-                viewModel.requestStopDialog()
-            }
-            JunkCleanPhase.CompleteAnimation,
-            JunkCleanPhase.Complete -> exitToHome(afterComplete = true)
-            else -> exitBack()
-        }
-    }
-
     JunkCleanScreen(
         state = uiState,
         interactionsEnabled = !exitStarted,
         onNavigateTool = { destination ->
             if (!exitStarted) onNavigateTool(destination)
         },
-        onAction = { action ->
-            if (!exitStarted) when (action) {
-                JunkCleanUiAction.Back -> handleBack()
-                JunkCleanUiAction.CleanSelected -> {
-                    viewModel.startCleaning(context)
-                }
-                is JunkCleanUiAction.ToggleCategories -> viewModel.toggleCategorySelection(action.categories)
-                is JunkCleanUiAction.ToggleItem -> viewModel.toggleItemSelection(action.itemId)
-                JunkCleanUiAction.ContinueFromResult -> exitToHome(afterComplete = true)
-                JunkCleanUiAction.QuitStoppedOperation -> {
-                    viewModel.dismissStopDialog(resume = false)
-                    exitBack()
-                }
-                JunkCleanUiAction.ResumeStoppedOperation -> viewModel.dismissStopDialog(resume = true)
-            }
+        onAction = { intent ->
+            if (!exitStarted) viewModel.dispatch(intent)
         },
     )
 }

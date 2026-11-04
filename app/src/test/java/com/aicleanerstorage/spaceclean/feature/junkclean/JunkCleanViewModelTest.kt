@@ -8,6 +8,8 @@ import android.content.res.Resources
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
 import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
@@ -48,12 +50,12 @@ class JunkCleanViewModelTest {
     @Test
     fun `initial entry uses idle and does not rescan an existing preview`() = runTest {
         val vm = model()
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
         preview(vm)
-        val previous = vm.uiState.value
-        vm.startScanIfNeeded()
+        val previous = vm.state.value
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        assertEquals(previous, vm.uiState.value)
+        assertEquals(previous, vm.state.value)
         assertEquals(1, repository.scanCalls)
         assertEquals(1, gateway.calls)
     }
@@ -63,18 +65,18 @@ class JunkCleanViewModelTest {
         val firstScan = CompletableDeferred<ScanResult>()
         repository.scan = { firstScan.await() }
         val vm = model()
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        assertEquals(JunkCleanPhase.Scanning, vm.uiState.value.phase)
-        vm.requestStopDialog()
+        assertEquals(JunkCleanPhase.Scanning, vm.state.value.phase)
+        vm.dispatch(JunkCleanIntent.Back)
         runCurrent()
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-        assertTrue(vm.uiState.value.showStopDialog)
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+        assertTrue(vm.state.value.showStopDialog)
         repository.scan = { repository.result }
-        vm.dismissStopDialog(resume = true)
+        vm.dispatch(JunkCleanIntent.ResumeStoppedOperation)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Preview, vm.uiState.value.phase)
-        assertFalse(vm.uiState.value.showStopDialog)
+        assertEquals(JunkCleanPhase.Preview, vm.state.value.phase)
+        assertFalse(vm.state.value.showStopDialog)
         assertEquals(2, repository.scanCalls)
     }
 
@@ -83,21 +85,20 @@ class JunkCleanViewModelTest {
         gateway.answer = { PermissionResult.Denied }
         val vm = model()
         val effects = effects(vm)
-        val operations = operations(vm)
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        vm.startScanIfNeeded()
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.Entered)
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-        assertNull(vm.uiState.value.errorMessageRes)
-        assertNull(vm.uiState.value.errorMessage)
-        vm.clearResult()
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects)
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+        assertNull(vm.state.value.errorMessageRes)
+        assertNull(vm.state.value.errorMessage)
+        vm.dispatch(JunkCleanIntent.ExitFinished)
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         assertEquals(1, gateway.calls)
         assertEquals(0, repository.scanCalls)
-        assertTrue(operations.isEmpty())
+        assertTrue(effects.filterIsInstance<JunkCleanEffect.Operation>().isEmpty())
         assertNull(session.cleanupSummary.value)
     }
 
@@ -106,16 +107,16 @@ class JunkCleanViewModelTest {
         val coordinator = coordinator()
         val vm = model(coordinator)
         val effects = effects(vm)
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
         coordinator.onDialogSubmit()
         coordinator.markSettingsLaunchObservedPause()
         coordinator.onSettingsReturnIfReady()
         advanceUntilIdle()
-        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects)
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-        assertNull(vm.uiState.value.errorMessageRes)
-        assertNull(vm.uiState.value.errorMessage)
+        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+        assertNull(vm.state.value.errorMessageRes)
+        assertNull(vm.state.value.errorMessage)
         assertEquals(0, repository.scanCalls)
         assertNull(coordinator.session)
     }
@@ -126,7 +127,7 @@ class JunkCleanViewModelTest {
             val coordinator = coordinator(runtime)
             val vm = model(coordinator)
             val effects = effects(vm)
-            vm.startScanIfNeeded()
+            vm.dispatch(JunkCleanIntent.Entered)
             runCurrent()
             if (runtime) {
                 coordinator.onDialogSubmit()
@@ -135,10 +136,10 @@ class JunkCleanViewModelTest {
                 coordinator.dismiss()
             }
             advanceUntilIdle()
-            assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-            assertNull(vm.uiState.value.errorMessageRes)
-            assertNull(vm.uiState.value.errorMessage)
-            assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects)
+            assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+            assertNull(vm.state.value.errorMessageRes)
+            assertNull(vm.state.value.errorMessage)
+            assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         }
         assertEquals(0, repository.scanCalls)
     }
@@ -149,49 +150,48 @@ class JunkCleanViewModelTest {
         gateway.answer = { answer.await() }
         val vm = model()
         val effects = effects(vm)
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Scan), vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Scan), vm.state.value.phase)
         advanceTimeBy(2_000L)
         runCurrent()
         assertEquals(0, repository.scanCalls)
-        assertEquals(0f, vm.uiState.value.progress, 0f)
-        assertEquals(0, vm.uiState.value.foundItemCount)
-        assertEquals(0L, vm.uiState.value.foundTotalSize)
+        assertEquals(0f, vm.state.value.progress, 0f)
+        assertEquals(0, vm.state.value.foundItemCount)
+        assertEquals(0L, vm.state.value.foundTotalSize)
         answer.complete(PermissionResult.Denied)
         advanceUntilIdle()
-        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects)
+        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         assertEquals(0, repository.scanCalls)
-        assertEquals(JunkCleanPhase.Idle, vm.uiState.value.phase)
-        assertEquals(0f, vm.uiState.value.progress, 0f)
+        assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
+        assertEquals(0f, vm.state.value.progress, 0f)
     }
 
     @Test
     fun `clean denial preserves preview and exits without delete memory or completion`() = runTest {
         val vm = model()
         preview(vm)
-        val previous = vm.uiState.value
+        val previous = vm.state.value
         val effects = effects(vm)
-        val operations = operations(vm)
         gateway.answer = { PermissionResult.Denied }
-        vm.startCleaning(context)
-        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Clean), vm.uiState.value.phase)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Clean), vm.state.value.phase)
         advanceUntilIdle()
-        vm.startCleaning(context)
-        vm.startScanIfNeeded()
-        vm.retryScan()
-        vm.toggleItemSelection("direct")
-        vm.toggleCategorySelection(listOf(JunkCategory.CACHE))
-        vm.requestStopDialog()
-        vm.dismissStopDialog(resume = true)
-        vm.showResult()
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        vm.dispatch(JunkCleanIntent.Entered)
+        vm.dispatch(JunkCleanIntent.ScanRequested)
+        vm.dispatch(JunkCleanIntent.ToggleItem("direct"))
+        vm.dispatch(JunkCleanIntent.ToggleCategories(listOf(JunkCategory.CACHE)))
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.ResumeStoppedOperation)
+        vm.dispatch(JunkCleanIntent.CompletionAdFinished)
         advanceUntilIdle()
-        assertEquals(previous, vm.uiState.value)
+        assertEquals(previous, vm.state.value)
         assertEquals(2, gateway.calls)
-        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects)
+        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         assertEquals(0, repository.deleteCalls)
         assertEquals(0, repository.memoryCalls)
-        assertFalse(operations.any { it is FeatureOperationEvent.OperationFinished })
+        assertFalse(effects.filterIsInstance<JunkCleanEffect.Operation>().any { it.event is FeatureOperationEvent.OperationFinished })
         assertNull(session.cleanResult.value)
         assertNull(session.cleanupSummary.value)
     }
@@ -199,12 +199,12 @@ class JunkCleanViewModelTest {
     @Test
     fun `scan busy restores entire state and allows later retry without exit`() = runTest {
         val vm = model()
-        val previous = vm.uiState.value
+        val previous = vm.state.value
         val effects = effects(vm)
         gateway.answer = { PermissionResult.Busy }
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        assertEquals(previous, vm.uiState.value)
+        assertEquals(previous, vm.state.value)
         assertTrue(effects.isEmpty())
         assertEquals(0, repository.scanCalls)
         gateway.answer = { PermissionResult.Granted }
@@ -216,20 +216,21 @@ class JunkCleanViewModelTest {
     fun `clean busy restores exact preview and permits a later granted clean`() = runTest {
         val vm = model()
         preview(vm)
-        vm.toggleItemSelection("failed")
-        val previous = vm.uiState.value
+        vm.dispatch(JunkCleanIntent.ToggleItem("failed"))
+        val previous = vm.state.value
         val effects = effects(vm)
+        val previousEffects = effects.toList()
         gateway.answer = { PermissionResult.Busy }
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         advanceUntilIdle()
-        assertEquals(previous, vm.uiState.value)
-        assertTrue(effects.isEmpty())
+        assertEquals(previous, vm.state.value)
+        assertEquals(previousEffects, effects)
         assertEquals(0, repository.deleteCalls)
         gateway.answer = { PermissionResult.Granted }
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         advanceUntilIdle()
         assertEquals(1, repository.deleteCalls)
-        assertEquals(JunkCleanPhase.CompleteAnimation, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
         assertNotNull(session.cleanupSummary.value)
     }
 
@@ -240,19 +241,19 @@ class JunkCleanViewModelTest {
         val scan = CompletableDeferred<ScanResult>()
         repository.scan = { scan.await() }
         val vm = model()
-        vm.startScanIfNeeded()
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.Entered)
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         runCurrent()
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         assertEquals(1, gateway.calls)
         permission.complete(PermissionResult.Granted)
         runCurrent()
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         runCurrent()
         assertEquals(1, repository.scanCalls)
         scan.complete(repository.result)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Preview, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.Preview, vm.state.value.phase)
     }
 
     @Test
@@ -263,22 +264,22 @@ class JunkCleanViewModelTest {
         gateway.answer = { permission.await() }
         val deletes = CompletableDeferred<List<JunkDeleteOutcome>>()
         repository.delete = { deletes.await() }
-        vm.startCleaning(context)
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         runCurrent()
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         assertEquals(2, gateway.calls)
         permission.complete(PermissionResult.Granted)
         runCurrent()
-        assertEquals(JunkCleanPhase.Cleaning, vm.uiState.value.phase)
-        vm.startCleaning(context)
-        vm.retryScan()
+        assertEquals(JunkCleanPhase.Cleaning, vm.state.value.phase)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         runCurrent()
         assertEquals(1, repository.deleteCalls)
         assertEquals(1, repository.scanCalls)
         deletes.complete(emptyList())
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.CompleteAnimation, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
     }
 
     @Test
@@ -287,13 +288,13 @@ class JunkCleanViewModelTest {
         gateway.answer = { answer.await() }
         val vm = model()
         val effects = effects(vm)
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        vm.cancelActiveOperation()
+        vm.viewModelScope.cancel()
         answer.complete(PermissionResult.Granted)
         advanceUntilIdle()
         assertEquals(0, repository.scanCalls)
-        assertTrue(effects.isEmpty())
+        assertTrue(effects.none { it !is JunkCleanEffect.Operation })
         assertNull(session.cleanResult.value)
     }
 
@@ -304,16 +305,15 @@ class JunkCleanViewModelTest {
         val permission = CompletableDeferred<PermissionResult>()
         gateway.answer = { permission.await() }
         val effects = effects(vm)
-        val operations = operations(vm)
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         runCurrent()
-        vm.cancelActiveOperation()
+        vm.viewModelScope.cancel()
         permission.complete(PermissionResult.Granted)
         advanceUntilIdle()
         assertEquals(0, repository.deleteCalls)
         assertEquals(0, repository.memoryCalls)
-        assertTrue(effects.isEmpty())
-        assertFalse(operations.any { it is FeatureOperationEvent.OperationFinished })
+        assertTrue(effects.none { it !is JunkCleanEffect.Operation })
+        assertFalse(effects.filterIsInstance<JunkCleanEffect.Operation>().any { it.event is FeatureOperationEvent.OperationFinished })
         assertNull(session.cleanupSummary.value)
     }
 
@@ -323,28 +323,28 @@ class JunkCleanViewModelTest {
         preview(vm)
         val deletion = CompletableDeferred<List<JunkDeleteOutcome>>()
         repository.delete = { withContext(NonCancellable) { deletion.await() } }
-        val operations = operations(vm)
-        vm.startCleaning(context)
+        val effects = effects(vm)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         runCurrent()
-        vm.cancelActiveOperation()
+        vm.viewModelScope.cancel()
         deletion.complete(repository.mixedOutcomes)
         advanceUntilIdle()
         assertNull(session.cleanupSummary.value)
         assertNull(session.cleanResult.value)
-        assertFalse(operations.any { it is FeatureOperationEvent.OperationFinished })
+        assertFalse(effects.filterIsInstance<JunkCleanEffect.Operation>().any { it.event is FeatureOperationEvent.OperationFinished })
     }
 
     @Test
     fun `permission exception releases request so explicit retry can scan`() = runTest {
         val vm = model()
         gateway.answer = { error("permission unavailable") }
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Failed(JunkOperation.Scan), vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.Failed(JunkOperation.Scan), vm.state.value.phase)
         gateway.answer = { PermissionResult.Granted }
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.ScanRequested)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Preview, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.Preview, vm.state.value.phase)
         assertEquals(1, repository.scanCalls)
     }
 
@@ -353,16 +353,16 @@ class JunkCleanViewModelTest {
         val first = CompletableDeferred<ScanResult>()
         repository.scan = { withContext(NonCancellable) { first.await() } }
         val vm = model()
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        vm.cancelActiveOperation()
+        vm.dispatch(JunkCleanIntent.Back)
         repository.scan = { repository.result }
-        vm.retryScan()
+        vm.dispatch(JunkCleanIntent.ResumeStoppedOperation)
         advanceUntilIdle()
-        val preview = vm.uiState.value
+        val preview = vm.state.value
         first.complete(ScanResult.EMPTY)
         advanceUntilIdle()
-        assertEquals(preview, vm.uiState.value)
+        assertEquals(preview, vm.state.value)
         assertEquals(2, repository.scanCalls)
     }
 
@@ -371,10 +371,10 @@ class JunkCleanViewModelTest {
         repository.scan = { error("scan failed") }
         val vm = model()
         val effects = effects(vm)
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Failed(JunkOperation.Scan), vm.uiState.value.phase)
-        assertTrue(effects.isEmpty())
+        assertEquals(JunkCleanPhase.Failed(JunkOperation.Scan), vm.state.value.phase)
+        assertTrue(effects.none { it !is JunkCleanEffect.Operation })
     }
 
     @Test
@@ -383,12 +383,12 @@ class JunkCleanViewModelTest {
         preview(vm)
         repository.delete = { repository.mixedOutcomes }
         val effects = effects(vm)
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.AwaitingAuthorization, vm.uiState.value.phase)
-        assertSame(deleteRequest, (effects.single() as JunkCleanEffect.RequestDeleteAuthorization).deleteRequest)
-        vm.handleAuthorizationResult(false)
-        vm.handleAuthorizationResult(false)
+        assertEquals(JunkCleanPhase.AwaitingAuthorization, vm.state.value.phase)
+        assertSame(deleteRequest, effects.filterIsInstance<JunkCleanEffect.RequestDeleteAuthorization>().single().deleteRequest)
+        vm.dispatch(JunkCleanIntent.DeleteAuthorizationResult(false))
+        vm.dispatch(JunkCleanIntent.DeleteAuthorizationResult(false))
         advanceUntilIdle()
         assertEquals(0, repository.finalizeCalls)
         assertEquals(listOf(repository.files[0]), session.cleanResult.value!!.cleanedFiles)
@@ -396,7 +396,7 @@ class JunkCleanViewModelTest {
         assertEquals(100L, session.cleanResult.value!!.freedSpace)
         assertEquals(20L, session.memoryResult.value!!.freedBytes)
         assertEquals(120L, session.cleanupSummary.value!!.totalFreedBytes)
-        assertEquals(JunkCleanPhase.CompleteAnimation, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
         assertFalse(effects.any { it is JunkCleanEffect.Exit })
     }
 
@@ -404,12 +404,12 @@ class JunkCleanViewModelTest {
     fun `late completion callback does not show result after viewmodel cancellation`() = runTest {
         val vm = model()
         preview(vm)
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.CompleteAnimation, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
         vm.viewModelScope.cancel()
-        vm.showResult()
-        assertEquals(JunkCleanPhase.CompleteAnimation, vm.uiState.value.phase)
+        vm.dispatch(JunkCleanIntent.CompletionAdFinished)
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
     }
 
     @Test
@@ -417,16 +417,126 @@ class JunkCleanViewModelTest {
         val vm = model()
         preview(vm)
         repository.delete = { repository.mixedOutcomes }
-        vm.startCleaning(context)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
         advanceUntilIdle()
-        vm.handleAuthorizationResult(true)
-        vm.handleAuthorizationResult(true)
+        vm.dispatch(JunkCleanIntent.DeleteAuthorizationResult(true))
+        vm.dispatch(JunkCleanIntent.DeleteAuthorizationResult(true))
         advanceUntilIdle()
         assertEquals(1, repository.finalizeCalls)
         assertEquals(listOf(repository.files[0], repository.files[2]), session.cleanResult.value!!.cleanedFiles)
         assertEquals(listOf(repository.files[1]), session.cleanResult.value!!.failedFiles)
         assertEquals(400L, session.cleanResult.value!!.freedSpace)
         assertEquals(420L, session.cleanupSummary.value!!.totalFreedBytes)
+    }
+
+    @Test
+    fun `back during permission wait exits once and ignores late permission and inputs`() = runTest {
+        val answer = CompletableDeferred<PermissionResult>()
+        gateway.answer = { withContext(NonCancellable) { answer.await() } }
+        val vm = model()
+        val effects = effects(vm)
+        vm.dispatch(JunkCleanIntent.Entered)
+        runCurrent()
+        val previous = vm.state.value
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.ScanRequested)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        answer.complete(PermissionResult.Granted)
+        advanceUntilIdle()
+        assertEquals(previous, vm.state.value)
+        assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.Return)), effects)
+        assertEquals(0, repository.scanCalls)
+        assertEquals(0, repository.deleteCalls)
+    }
+
+    @Test
+    fun `preview back exits to previous page without changing visible state`() = runTest {
+        val vm = model()
+        val effects = effects(vm)
+        preview(vm)
+        val previous = vm.state.value
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.ToggleItem("direct"))
+        advanceUntilIdle()
+        assertEquals(previous, vm.state.value)
+        assertEquals(
+            listOf(JunkCleanEffect.Exit(FeatureExitReason.Return, JunkExitTarget.Back)),
+            effects.filterIsInstance<JunkCleanEffect.Exit>(),
+        )
+    }
+
+    @Test
+    fun `quitting stopped scan emits one back exit without resuming work`() = runTest {
+        repository.scan = { awaitCancellation() }
+        val vm = model()
+        val effects = effects(vm)
+        vm.dispatch(JunkCleanIntent.Entered)
+        runCurrent()
+        vm.dispatch(JunkCleanIntent.Back)
+        assertTrue(vm.state.value.showStopDialog)
+        vm.dispatch(JunkCleanIntent.QuitStoppedOperation)
+        vm.dispatch(JunkCleanIntent.ResumeStoppedOperation)
+        vm.dispatch(JunkCleanIntent.Back)
+        advanceUntilIdle()
+        assertFalse(vm.state.value.showStopDialog)
+        assertEquals(1, repository.scanCalls)
+        assertEquals(
+            listOf(JunkCleanEffect.Exit(FeatureExitReason.Return)),
+            effects.filterIsInstance<JunkCleanEffect.Exit>(),
+        )
+    }
+
+    @Test
+    fun `one effect stream delivers operations then complete exit to home`() = runTest {
+        val vm = model()
+        val effects = effects(vm)
+        preview(vm)
+        vm.dispatch(JunkCleanIntent.CompletionAdFinished)
+        assertEquals(JunkCleanPhase.Preview, vm.state.value.phase)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        advanceUntilIdle()
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
+        assertEquals(
+            listOf(
+                FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN),
+                FeatureOperationEvent.ScanFinished(FeatureKey.JUNK_CLEAN, true),
+                FeatureOperationEvent.OperationStarted(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN),
+                FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, true),
+            ),
+            effects.filterIsInstance<JunkCleanEffect.Operation>().map { it.event },
+        )
+        vm.dispatch(JunkCleanIntent.CompletionAdFinished)
+        assertEquals(JunkCleanPhase.Complete, vm.state.value.phase)
+        vm.dispatch(JunkCleanIntent.ContinueFromResult)
+        vm.dispatch(JunkCleanIntent.Back)
+        advanceUntilIdle()
+        assertEquals(
+            listOf(JunkCleanEffect.Exit(FeatureExitReason.Return, JunkExitTarget.HomeAfterComplete)),
+            effects.filterIsInstance<JunkCleanEffect.Exit>(),
+        )
+        assertNotNull(session.cleanupSummary.value)
+        vm.dispatch(JunkCleanIntent.ExitFinished)
+        assertNull(session.cleanupSummary.value)
+        assertNull(session.cleanResult.value)
+    }
+
+    @Test
+    fun `back during completion animation ignores late ad callback`() = runTest {
+        val vm = model()
+        val effects = effects(vm)
+        preview(vm)
+        vm.dispatch(JunkCleanIntent.CleanSelected)
+        advanceUntilIdle()
+        vm.dispatch(JunkCleanIntent.Back)
+        vm.dispatch(JunkCleanIntent.CompletionAdFinished)
+        advanceUntilIdle()
+        assertEquals(JunkCleanPhase.CompleteAnimation, vm.state.value.phase)
+        assertEquals(
+            listOf(JunkCleanEffect.Exit(FeatureExitReason.Return, JunkExitTarget.HomeAfterComplete)),
+            effects.filterIsInstance<JunkCleanEffect.Exit>(),
+        )
     }
 
     private fun coordinator(runtime: Boolean = false) = PermissionCoordinator(
@@ -448,28 +558,26 @@ class JunkCleanViewModelTest {
     )
 
     private fun model(permissionGateway: PermissionGateway = gateway) = JunkCleanViewModel(
-        repository, session, permissionGateway, dispatcher,
+        repository, session, permissionGateway, context, dispatcher,
         scanPreviewMinMillis = 0L,
         cleaningAnimationMinMillis = 0L,
-        createDeleteRequest = { _, uris ->
+        createDeleteRequest = { requestContext, uris ->
+            assertSame(context, requestContext)
             assertEquals(listOf("content://media/external/file/3"), uris)
             deleteRequest
         },
     ).also(models::add)
 
     private suspend fun TestScope.preview(vm: JunkCleanViewModel) {
-        vm.startScanIfNeeded()
+        vm.dispatch(JunkCleanIntent.Entered)
         advanceUntilIdle()
-        assertEquals(JunkCleanPhase.Preview, vm.uiState.value.phase)
+        assertEquals(JunkCleanPhase.Preview, vm.state.value.phase)
     }
 
     private fun TestScope.effects(vm: JunkCleanViewModel) = mutableListOf<JunkCleanEffect>().also { items ->
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.effects.toList(items) }
     }
 
-    private fun TestScope.operations(vm: JunkCleanViewModel) = mutableListOf<FeatureOperationEvent>().also { items ->
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.operationEvents.toList(items) }
-    }
 }
 
 private class RecordingGateway : PermissionGateway {
