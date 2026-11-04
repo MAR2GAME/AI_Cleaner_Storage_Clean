@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app
 
 import android.content.Intent
-import com.aicleanerstorage.spaceclean.common.presentation.MviViewModel
+import com.aicleanerstorage.spaceclean.core.presentation.MviViewModel
 
 data class AppState(
     val message: String? = null,

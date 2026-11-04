@@ -14,6 +14,50 @@ import org.junit.Test
 
 class AdFeatureFlowTest {
     @Test
+    fun `recording completion updates busy history and analytics without showing ad`() {
+        val ads = RecordingAdRunner()
+        val reports = RecordingAnalyticsReporter()
+        val busy = mutableListOf<Boolean>()
+        var completed = 0
+        val history = object : CleanupHistoryStore {
+            override fun hasCompletedCleanup() = completed > 0
+            override fun recordCompletedCleanup() { completed += 1 }
+        }
+        val subject = AdFeatureFlow(ads, history, busy::add, reports)
+        val event = FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, true)
+
+        subject.recordOperation(event)
+
+        assertEquals(1, completed)
+        assertEquals(listOf(false), busy)
+        assertEquals(listOf(AnalyticsEvent.FeatureOperation(event)), reports.events)
+        assertEquals(emptyList<AdRequest>(), ads.requests)
+
+        subject.handleOperation(event) {}
+        assertEquals(2, completed)
+        assertEquals(2, reports.events.size)
+        assertEquals(1, ads.requests.size)
+    }
+
+    @Test
+    fun `local record and legacy handle each record once`() {
+        var completed = 0
+        var continued = 0
+        val busy = mutableListOf<Boolean>()
+        val history = object : CleanupHistoryStore {
+            override fun hasCompletedCleanup() = completed > 0
+            override fun recordCompletedCleanup() { completed += 1 }
+        }
+        val subject = LocalFeatureFlow(history, busy::add)
+        val event = FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, true)
+        subject.recordOperation(event)
+        subject.handleOperation(event) { continued += 1 }
+        assertEquals(2, completed)
+        assertEquals(1, continued)
+        assertEquals(listOf(false, false), busy)
+    }
+
+    @Test
     fun `scan lifecycle reports each operation event without an ad`() {
         val ads = RecordingAdRunner()
         val reports = RecordingAnalyticsReporter()

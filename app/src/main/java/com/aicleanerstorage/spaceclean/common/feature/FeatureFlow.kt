@@ -1,6 +1,8 @@
 package com.aicleanerstorage.spaceclean.common.feature
 
 interface FeatureFlow {
+    fun recordOperation(event: FeatureOperationEvent)
+
     fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit = {})
 
     fun exit(feature: FeatureKey, reason: FeatureExitReason, onContinue: () -> Unit)

@@ -25,9 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.common.ui.components.ToolFeatureBanners
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanResultUiState
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanResultUiState
 
 private val ResultText = Color(0xFF282927)
 private val ResultSubtext = Color(0xFF999999)
@@ -36,7 +34,8 @@ private val ResultAction = Color(0xFF5DD595)
 @Composable
 internal fun JunkCleanResultView(
     uiState: JunkCleanResultUiState,
-    onNavigateTool: (AppDestination) -> Unit,
+    resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
+    interactionsEnabled: Boolean,
 ) {
     val formatted = uiState.formattedFreedSpace
     val showResult = uiState.hasVisibleResult && formatted.isNotBlank()
@@ -108,14 +107,12 @@ internal fun JunkCleanResultView(
                     .padding(top = 231.dp),
         )
 
-        ToolFeatureBanners(
-            onNavigateTool = onNavigateTool,
-            excludedDestinations = setOf(AppDestination.JunkClean),
-            modifier =
-                Modifier
+        resultTools(
+            Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(top = 284.dp),
+            interactionsEnabled,
         )
     }
 }

@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.common.permission
 
-import com.aicleanerstorage.spaceclean.common.presentation.IntentPolicy
+import com.aicleanerstorage.spaceclean.core.presentation.IntentPolicy
 
 enum class PermissionNeed(
     val permission: PermissionType,

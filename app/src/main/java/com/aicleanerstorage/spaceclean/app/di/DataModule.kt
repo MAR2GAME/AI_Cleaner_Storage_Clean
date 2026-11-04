@@ -12,7 +12,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.shared.network.AndroidNet
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.data.AppUsageRepositoryImpl
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistoryRepositoryImpl
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BackgroundBatterySamplingPreferencesImpl
-import com.aicleanerstorage.spaceclean.feature.junkclean.CleanRepositoryImpl
+import com.aicleanerstorage.spaceclean.feature.junkclean.data.CleanRepositoryImpl
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.device.DeviceInfoRepositoryImpl
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepositoryImpl
 import com.aicleanerstorage.spaceclean.feature.files.duplicates.data.DuplicateFilesPreferencesImpl
@@ -34,14 +34,14 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.data.AppUsageRep
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistorySampler
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BackgroundBatterySamplingPreferences
-import com.aicleanerstorage.spaceclean.feature.junkclean.CleanRepository
-import com.aicleanerstorage.spaceclean.feature.junkclean.CleanSessionStore
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.CleanRepository
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.CleanSessionStore
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.device.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.feature.files.shared.data.FileRepository
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.network.NetworkInfoReader
 import com.aicleanerstorage.spaceclean.feature.toolbox.shared.network.NetworkRepository
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsRepository
-import com.aicleanerstorage.spaceclean.feature.junkclean.scanner.SharedScanState
+import com.aicleanerstorage.spaceclean.feature.junkclean.data.session.SharedScanState
 import com.aicleanerstorage.spaceclean.common.storage.preferences.AppPreferences
 import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
 import com.aicleanerstorage.spaceclean.common.storage.preferences.DefaultCleanupHistoryStore

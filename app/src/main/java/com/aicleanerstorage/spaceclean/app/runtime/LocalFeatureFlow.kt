@@ -12,9 +12,13 @@ internal class LocalFeatureFlow(
     private val cleanupHistory: CleanupHistoryStore,
     private val onOperationBusyChanged: (Boolean) -> Unit,
 ) : FeatureFlow {
-    override fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit) {
+    override fun recordOperation(event: FeatureOperationEvent) {
         onOperationBusyChanged(event.operationBusyState())
         if (event.completedCleanup()) cleanupHistory.recordCompletedCleanup()
+    }
+
+    override fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit) {
+        recordOperation(event)
         onContinue()
     }
 

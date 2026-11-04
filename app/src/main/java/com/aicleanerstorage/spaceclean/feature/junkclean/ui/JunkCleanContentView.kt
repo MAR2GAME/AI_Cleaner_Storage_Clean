@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.ui
 
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.CleanResult
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,14 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.aicleanerstorage.spaceclean.R
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.CleanItem
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.model.CleanItem
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkCategory
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBackground
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanPhase
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkPermissionRequest
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkPermissionRequest
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXDeleteCompleteStage
 
 @Composable
@@ -23,7 +25,7 @@ internal fun JunkCleanContentView(
     uiState: JunkCleanUiState,
     onToggleCategorySelection: (List<JunkCategory>) -> Unit,
     onToggleItem: (CleanItem) -> Unit,
-    onNavigateTool: (AppDestination) -> Unit,
+    resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
     onContinueFromResult: () -> Unit,
     interactionsEnabled: Boolean = true,
 ) {
@@ -70,12 +72,15 @@ internal fun JunkCleanContentView(
                         .padding(horizontal = 24.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                AwaitingAuthorizationView(message = uiState.awaitingAuthorizationMessage.orEmpty())
+                AwaitingAuthorizationView(
+                    message = stringResource(R.string.result_confirm_system_deletion, uiState.pendingAuthorizationCount),
+                )
             }
         JunkCleanPhase.Complete ->
             JunkCleanResultView(
                 uiState = uiState.cleanResult,
-                onNavigateTool = onNavigateTool,
+                resultTools = resultTools,
+                interactionsEnabled = interactionsEnabled,
             )
         is JunkCleanPhase.Failed ->
             Box(

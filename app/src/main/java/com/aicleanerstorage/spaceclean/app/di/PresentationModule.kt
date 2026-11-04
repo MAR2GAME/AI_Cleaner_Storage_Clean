@@ -15,7 +15,7 @@ import com.aicleanerstorage.spaceclean.feature.files.similarphotos.SimilarPhotos
 import com.aicleanerstorage.spaceclean.feature.files.videos.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.home.HomeViewModel
 import com.aicleanerstorage.spaceclean.feature.onboarding.OnboardingScanViewModel
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanViewModel
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanViewModel
 import com.aicleanerstorage.spaceclean.feature.startup.SplashViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.battery.BatteryInfoViewModel
@@ -82,7 +82,6 @@ val presentationModule =
                 cleanRepository = get(),
                 sharedState = get(),
                 interceptors = listOf(get<PermissionInterceptor>()),
-                appContext = androidApplication(),
                 ioDispatcher = Dispatchers.IO,
             )
         }

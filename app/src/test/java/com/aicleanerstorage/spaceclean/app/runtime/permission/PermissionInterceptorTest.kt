@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.app.permission
 import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
 import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.common.presentation.InterceptResult
-import com.aicleanerstorage.spaceclean.common.presentation.IntentPolicy
+import com.aicleanerstorage.spaceclean.core.presentation.InterceptResult
+import com.aicleanerstorage.spaceclean.core.presentation.IntentPolicy
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

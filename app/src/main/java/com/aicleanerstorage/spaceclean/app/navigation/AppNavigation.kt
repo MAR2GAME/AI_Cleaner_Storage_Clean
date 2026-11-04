@@ -87,6 +87,7 @@ internal fun AppNavGraph(
         registerCleanRoutes(
             navigator = navigator,
             featureFlow = runtime.featureFlow,
+            completionAdInterceptor = runtime.completionAdInterceptor,
         )
         registerAntiVirusRoutes(
             navController = navController,

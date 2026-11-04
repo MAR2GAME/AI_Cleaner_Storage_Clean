@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.ui
 
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkFile
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,19 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXTopAppBar
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanIntent
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanPhase
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanIntent
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanUiState
 
 private val JunkFigmaBackground = Color(0xFFF4F4F4)
 
 @Composable
 fun JunkCleanScreen(
     state: JunkCleanUiState,
-    onNavigateTool: (AppDestination) -> Unit,
+    resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
     onAction: (JunkCleanIntent) -> Unit,
     interactionsEnabled: Boolean = true,
 ) {
@@ -48,7 +49,7 @@ fun JunkCleanScreen(
             interactionsEnabled = interactionsEnabled,
             onToggleCategorySelection = { onAction(JunkCleanIntent.ToggleCategories(it)) },
             onToggleItem = { onAction(JunkCleanIntent.ToggleItem(it.junkFile.id)) },
-            onNavigateTool = onNavigateTool,
+            resultTools = resultTools,
             onContinueFromResult = { onAction(JunkCleanIntent.ContinueFromResult) },
         )
         CleanXTopAppBar(

@@ -8,6 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import com.aicleanerstorage.spaceclean.app.analytics.AppAnalyticsReporter
 import com.aicleanerstorage.spaceclean.app.commercial.AdRuntimeFacade
+import com.aicleanerstorage.spaceclean.app.commercial.AdInterceptor
+import com.aicleanerstorage.spaceclean.app.commercial.RuntimeAdDriver
+import com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor
 import com.aicleanerstorage.spaceclean.app.commercial.executor.InterstitialExecutor
 import com.aicleanerstorage.spaceclean.common.ads.AdRuntime
 import com.aicleanerstorage.spaceclean.common.ads.AdRuntimeState
@@ -21,6 +24,7 @@ internal data class AppRuntimeBindings(
     val ads: AdRuntimeFacade,
     val interstitials: InterstitialAdRunner,
     val featureFlow: FeatureFlow,
+    val completionAdInterceptor: IntentInterceptor,
     val analyticsReporter: AnalyticsReporter,
     val externalActivities: ExternalActivityTracker,
 )
@@ -47,6 +51,7 @@ internal fun rememberAppRuntimeBindings(
         )
     }
     val ads = remember(adRuntime) { AdRuntimeFacade(adRuntime) }
+    val completionAdInterceptor = remember(adRuntime) { AdInterceptor(RuntimeAdDriver(adRuntime)) }
     val interstitials = remember(ads) { InterstitialExecutor(ads) }
     val analyticsReporter = remember { AppAnalyticsReporter() }
     val externalActivities = remember(ads) {
@@ -64,8 +69,8 @@ internal fun rememberAppRuntimeBindings(
             analyticsReporter = analyticsReporter,
         )
     }
-    return remember(ads, interstitials, featureFlow, analyticsReporter, externalActivities) {
-        AppRuntimeBindings(ads, interstitials, featureFlow, analyticsReporter, externalActivities)
+    return remember(ads, interstitials, featureFlow, completionAdInterceptor, analyticsReporter, externalActivities) {
+        AppRuntimeBindings(ads, interstitials, featureFlow, completionAdInterceptor, analyticsReporter, externalActivities)
     }
 }
 

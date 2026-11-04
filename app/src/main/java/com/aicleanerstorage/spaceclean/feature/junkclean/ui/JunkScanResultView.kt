@@ -46,13 +46,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.CategoryCleanGroup
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.CleanItem
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkFile
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.model.CategoryCleanGroup
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.model.CleanItem
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkCategory
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkFile
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.common.ui.components.buttons.CleanXGradientBottomActionBar
-import com.aicleanerstorage.spaceclean.feature.junkclean.SelectionSummary
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.SelectionSummary
 
 private val CleanXText = Color(0xFF2D3748)
 private val CleanXMutedText = Color(0xFF8190A5)

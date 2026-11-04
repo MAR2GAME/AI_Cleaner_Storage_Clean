@@ -7,6 +7,7 @@ import android.os.Looper
 import android.util.Log
 import java.util.ArrayDeque
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.CancellationException
 
 interface InterstitialAdRunner {
     fun run(
@@ -82,6 +83,28 @@ class AdRuntime internal constructor(
         )
     }
 
+    internal fun runCancellable(
+        scene: AdScene?,
+        requestId: String,
+        onContinue: () -> Unit,
+    ): AdRuntimeCancellation {
+        if (scene == null) {
+            onContinue()
+            return AdRuntimeCancellation {}
+        }
+        val request = AdRequest(
+            scene = scene,
+            requestId = requestId,
+            areaKey = AdPlacementRegistry.interstitialArea(scene),
+            onContinue = once(onContinue),
+        )
+        if (!enqueue(request)) {
+            request.onContinue()
+            return AdRuntimeCancellation {}
+        }
+        return AdRuntimeCancellation { complete(request, notify = false) }
+    }
+
     override fun runRouteEntry(
         fromRoute: String?,
         targetRoute: String?,
@@ -153,7 +176,7 @@ class AdRuntime internal constructor(
 
     fun dispose() = externalAppOpenGuard.dispose()
 
-    private fun enqueue(request: AdRequest) {
+    private fun enqueue(request: AdRequest): Boolean {
         var startNow = false
         val accepted = synchronized(lock) {
             if (!knownRequestIds.add(request.requestId)) {
@@ -168,14 +191,33 @@ class AdRuntime internal constructor(
                 true
             }
         }
-        if (!accepted) return
+        if (!accepted) return false
         if (startNow) {
-            onInterstitialStateChanged(true)
-            execute(request)
+            try {
+                onInterstitialStateChanged(true)
+                execute(request)
+            } catch (error: Exception) {
+                complete(request, notify = false)
+                throw error
+            }
         }
+        return true
     }
 
     private fun execute(request: AdRequest) {
+        if (!synchronized(lock) { activeRequest === request }) return
+        try {
+            executeActive(request)
+        } catch (error: CancellationException) {
+            complete(request, notify = false)
+            throw error
+        } catch (error: Exception) {
+            logW(TAG_INTERSTITIAL, "interstitial request failed: ${request.requestId}", error)
+            complete(request)
+        }
+    }
+
+    private fun executeActive(request: AdRequest) {
         val finish = once { complete(request) }
         if (!canShow(request)) {
             finish()
@@ -187,6 +229,7 @@ class AdRuntime internal constructor(
             return
         }
         val closed = once {
+            if (!synchronized(lock) { activeRequest === request }) return@once
             logD(
                 TAG_INTERSTITIAL,
                 "interstitial closed scene=${request.scene} areaKey=$areaKey requestId=${request.requestId}",
@@ -199,11 +242,14 @@ class AdRuntime internal constructor(
             }
             finish()
         }
-        val started = runCatching {
+        val started = try {
             driver.showInterstitial(areaKey, closed)
-        }.onFailure { throwable ->
-            logW(TAG_INTERSTITIAL, "show interstitial failed for $areaKey", throwable)
-        }.getOrDefault(false)
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            logW(TAG_INTERSTITIAL, "show interstitial failed for $areaKey", error)
+            false
+        }
         if (!started) finish()
     }
 
@@ -216,11 +262,21 @@ class AdRuntime internal constructor(
         return true
     }
 
-    private fun complete(request: AdRequest) {
+    private fun complete(request: AdRequest, notify: Boolean = true) {
         var nextRequest: AdRequest? = null
         var becameIdle = false
         val completed = synchronized(lock) {
             if (activeRequest !== request) {
+                if (!notify) {
+                    val iterator = queuedRequests.iterator()
+                    while (iterator.hasNext()) {
+                        if (iterator.next() === request) {
+                            iterator.remove()
+                            knownRequestIds.remove(request.requestId)
+                            break
+                        }
+                    }
+                }
                 false
             } else {
                 knownRequestIds.remove(request.requestId)
@@ -231,9 +287,9 @@ class AdRuntime internal constructor(
             }
         }
         if (!completed) return
-        if (becameIdle) onInterstitialStateChanged(false)
         try {
-            request.onContinue()
+            if (becameIdle) onInterstitialStateChanged(false)
+            if (notify) request.onContinue()
         } finally {
             nextRequest?.let(::execute)
         }

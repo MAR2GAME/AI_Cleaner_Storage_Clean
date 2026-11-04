@@ -23,11 +23,15 @@ internal class AdFeatureFlow(
 ) : FeatureFlow {
     private val executor = InterstitialExecutor(interstitialAds)
 
-    override fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit) {
-        val continueOnce = once(onContinue)
+    override fun recordOperation(event: FeatureOperationEvent) {
         onOperationBusyChanged(event.operationBusyState())
         if (event.completedCleanup()) cleanupHistory.recordCompletedCleanup()
         analyticsReporter.report(AnalyticsEvent.FeatureOperation(event))
+    }
+
+    override fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit) {
+        val continueOnce = once(onContinue)
+        recordOperation(event)
         val request = adPolicy.request(event)
         if (request == null) continueOnce() else executor.execute(request, continueOnce)
     }

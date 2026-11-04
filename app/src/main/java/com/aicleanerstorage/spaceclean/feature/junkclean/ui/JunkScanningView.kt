@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
-import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanUiState
+import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkCategory
 
 private val JunkScanText = Color(0xFF282927)
 private val JunkScanNumber = Color(0xFF2D3748)
