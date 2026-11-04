@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -26,11 +27,13 @@ internal fun AppNavGraph(
     splashPaused: Boolean,
     notificationPermissionUiActive: Boolean,
 ) {
+    val navigationScope = rememberCoroutineScope()
     val navigator =
         remember(navController, runtime.interstitials) {
             FeatureEntryNavigator(
                 navigator = NavHostControllerAppNavigator(navController),
-                interstitialAds = runtime.interstitials,
+                showAd = runtime.interstitials::show,
+                scope = navigationScope,
             )
         }
 
@@ -76,7 +79,7 @@ internal fun AppNavGraph(
         )
         registerOnboardingRoute(
             navigator = navigator,
-            interstitialAds = runtime.interstitials,
+            showAd = runtime.interstitials::show,
             analyticsReporter = runtime.analyticsReporter,
         )
         registerHomeRoutes(
@@ -87,7 +90,7 @@ internal fun AppNavGraph(
         registerCleanRoutes(
             navigator = navigator,
             featureFlow = runtime.featureFlow,
-            completionAdInterceptor = runtime.completionAdInterceptor,
+            completionAdInterceptor = runtime.interstitials,
         )
         registerAntiVirusRoutes(
             navController = navController,

@@ -12,10 +12,15 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
+import org.junit.Before
+import org.junit.After
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class JunkCleanRouteEffectsTest {
+    private val dispatcher = StandardTestDispatcher()
+    @Before fun setup() = Dispatchers.setMain(dispatcher)
+    @After fun teardown() = Dispatchers.resetMain()
     private val completion = FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, true)
 
     @Test
@@ -151,14 +156,12 @@ class JunkCleanRouteEffectsTest {
         private val effects = Channel<JunkCleanEffect>(Channel.UNLIMITED)
         private val flow = object : FeatureFlow {
             override fun recordOperation(event: FeatureOperationEvent) { records += event }
-            override fun handleOperation(event: FeatureOperationEvent, onContinue: () -> Unit) {
+            override suspend fun handleOperation(event: FeatureOperationEvent) {
                 handled += event
-                onContinue()
             }
-            override fun exit(feature: FeatureKey, reason: FeatureExitReason, onContinue: () -> Unit) {
+            override suspend fun exit(feature: FeatureKey, reason: FeatureExitReason) {
                 onExitFlow()
                 exits += 1
-                onContinue()
             }
         }
         fun send(effect: JunkCleanEffect) { check(effects.trySend(effect).isSuccess) }
@@ -172,8 +175,10 @@ class JunkCleanRouteEffectsTest {
                     isExiting = { exiting },
                     onCompletionAdFinished = { results += 1; phase = JunkCleanPhase.Complete },
                     onExit = { effect ->
-                        exiting = true
-                        flow.exit(FeatureKey.JUNK_CLEAN, effect.reason) {}
+                        if (!exiting) {
+                            exiting = true
+                            launch { flow.exit(FeatureKey.JUNK_CLEAN, effect.reason) }
+                        }
                     },
                     onDeleteAuthorization = { authorizations += it },
                 )

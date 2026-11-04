@@ -1,6 +1,6 @@
 # 重构整体代码（Sample v5 · 历史设计）
 
-> 本文为历史方案，当前实现和后续迁移以 [MVI 规范与垃圾清理试点](mvi-architecture.md) 为准。当前 `resolvePolicies` 对无人处理的策略返回 `Block`；本文后续与其冲突的示例不再适用。
+> 本文第 3、4 节的“权限拦截器直接持有请求、广告拦截器直接调用 Driver”已被当前实现采用，其余仍是历史示例。生命周期、通知提示和业务行为以 [MVI 规范与垃圾清理试点](mvi-architecture.md) 为准。当前 `resolvePolicies` 对无人处理的策略返回 `Block`；本文后续与其冲突的示例不再适用。
 
 > 配套：`docs/refactor-audit.md`（问题）、`docs/refactor-plan.md`（计划）
 > 纯设计示例，未改动任何现有源码

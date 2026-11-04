@@ -1,5 +1,8 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.*
 
 
@@ -28,12 +31,27 @@ fun NetworkSpeedRoute(
     viewModel: NetworkSpeedViewModel,
     featureFlow: FeatureFlow,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var operationJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     fun handleBack() {
+        if (exiting) return
         if (uiState.phase == NetworkSpeedPhase.Completing) return
         if (uiState.phase == NetworkSpeedPhase.Testing) viewModel.stopSpeedTest()
-        featureFlow.exit(FeatureKey.NETWORK_SPEED, FeatureExitReason.Return) { navigator.back() }
+        run {
+            if (!exiting) {
+                exiting = true
+                operationJob?.cancel()
+                routeScope.launch {
+                    featureFlow.exit(FeatureKey.NETWORK_SPEED, FeatureExitReason.Return)
+                    ensureActive()
+                    navigator.back()
+                }
+            }
+        }
     }
 
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -50,11 +68,15 @@ fun NetworkSpeedRoute(
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.operationEvents.collect { event ->
             if (event.isNetworkSpeedCompletionSuccess()) {
-                featureFlow.handleOperation(event) {
-                    viewModel.showResult()
+                if (!exiting && operationJob?.isActive != true) {
+                    operationJob = routeScope.launch {
+                        featureFlow.handleOperation(event)
+                        ensureActive()
+                        if (!exiting) { viewModel.showResult() }
+                    }
                 }
             } else {
-                featureFlow.handleOperation(event)
+                if (!exiting) routeScope.launch { if (!exiting) featureFlow.handleOperation(event) }
             }
         }
     }
@@ -66,7 +88,7 @@ fun NetworkSpeedRoute(
         onBack = ::handleBack,
         onRunSpeedTest = viewModel::runSpeedTest,
         onStopSpeedTest = viewModel::stopSpeedTest,
-        onNavigateTool = navigator::resetTo,
+        onNavigateTool = { if (!exiting) navigator.resetTo(it) },
     )
 }
 

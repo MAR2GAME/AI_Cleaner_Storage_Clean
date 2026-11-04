@@ -27,7 +27,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerMediaGridView
@@ -85,7 +85,7 @@ private fun VideosManagerRouteContent(
     FileManagerFlowEffects(
         viewModel = viewModel,
         featureFlow = featureFlow,
-        permissionCoordinator = LocalPermissionCoordinator.current,
+        permissionGateway = LocalPermissionGateway.current,
         feature = FEATURE,
         permissionState = permissionState,
         errorMessage = uiState.errorMessage,
@@ -122,7 +122,7 @@ private fun VideosManagerRouteContent(
         permissionState = permissionState,
         router = router,
         featureFlow = featureFlow,
-        permissionCoordinator = LocalPermissionCoordinator.current,
+        permissionGateway = LocalPermissionGateway.current,
         feature = FEATURE,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,

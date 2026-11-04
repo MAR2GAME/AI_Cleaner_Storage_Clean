@@ -11,19 +11,32 @@ import com.aicleanerstorage.spaceclean.core.presentation.InterceptResult
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
+import org.junit.Before
+import org.junit.After
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AdInterceptorTest {
+    private val dispatcher = StandardTestDispatcher()
+    @Before fun setup() = Dispatchers.setMain(dispatcher)
+    @After fun teardown() = Dispatchers.resetMain()
+    @Test
+    fun `missing activity continues without starting sdk`() = runTest {
+        val subject = AdInterceptor(object : AdDriver {
+            override suspend fun play(areaKey: String) { fail("Unavailable Activity must not play") }
+            override fun isAvailable() = false
+        })
+        assertEquals(InterceptResult.Continue, subject.intercept(AdNeed.JunkCleanCompletion))
+    }
+
     @Test
     fun `closed ad continues with existing completion placement and request id`() = runTest {
-        val requests = mutableListOf<InterstitialRequest>()
+        val requests = mutableListOf<String>()
         val subject = AdInterceptor(AdDriver { requests += it })
         assertEquals(InterceptResult.Continue, subject.intercept(AdNeed.JunkCleanCompletion))
         assertEquals(
-            listOf(InterstitialRequest(
+            listOf(com.aicleanerstorage.spaceclean.common.ads.AdPlacementRegistry.interstitialArea(
                 AdScene.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, true),
-                "operation_finished_JUNK_CLEAN_CLEAN_true",
             )),
             requests,
         )

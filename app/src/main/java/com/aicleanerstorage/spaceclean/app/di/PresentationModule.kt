@@ -26,10 +26,7 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeed
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
-import com.aicleanerstorage.spaceclean.app.permission.PermissionCoordinator
 import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
-import com.aicleanerstorage.spaceclean.common.permission.AppRuntimePermissionDenialStore
-import com.aicleanerstorage.spaceclean.common.permission.PermissionEngine
 import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsViewModel
@@ -43,16 +40,8 @@ val presentationModule =
     module {
         single { AppDispatchers() }
         viewModel { AppViewModel() }
-        single {
-            PermissionCoordinator(
-                context = androidApplication(),
-                engine = PermissionEngine(
-                    denialStore = AppRuntimePermissionDenialStore(get()),
-                ),
-            )
-        }
-        single<PermissionGateway> { get<PermissionCoordinator>() }
-        single { PermissionInterceptor(get<PermissionGateway>()) }
+        single { PermissionInterceptor(androidApplication(), get()) }
+        single<PermissionGateway> { get<PermissionInterceptor>() }
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel {
             NotificationPermissionViewModel(

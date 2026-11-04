@@ -1,5 +1,8 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.battery
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+
 import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.*
 
 import androidx.activity.compose.BackHandler
@@ -24,13 +27,25 @@ fun BatteryInfoRoute(
     viewModel: BatteryInfoViewModel,
     featureFlow: FeatureFlow,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var exiting by remember { mutableStateOf(false) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(viewModel, featureFlow, navigator) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 BatteryInfoEffect.Exit ->
-                    featureFlow.exit(FeatureKey.BATTERY_INFO, FeatureExitReason.Return) { navigator.back() }
+                    run {
+                        if (!exiting) {
+                            exiting = true
+                            routeScope.launch {
+                                featureFlow.exit(FeatureKey.BATTERY_INFO, FeatureExitReason.Return)
+                                ensureActive()
+                                navigator.back()
+                            }
+                        }
+                    }
             }
         }
     }
@@ -57,6 +72,6 @@ fun BatteryInfoRoute(
 
     BatteryInfoScreen(
         state = uiState,
-        onAction = viewModel::onAction,
+        onAction = { if (!exiting) viewModel.onAction(it) },
     )
 }

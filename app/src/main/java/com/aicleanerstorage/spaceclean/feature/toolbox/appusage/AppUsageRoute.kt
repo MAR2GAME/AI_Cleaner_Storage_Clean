@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.appusage
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.*
 
 
@@ -21,7 +26,7 @@ import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageEffect
 import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageViewModel
@@ -34,10 +39,14 @@ fun AppUsageRoute(
     featureFlow: FeatureFlow,
     externalActivities: ExternalActivityTracker,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
     LaunchedEffect(viewModel, context, externalActivities) {
         viewModel.effects.collect { effect ->
             when (effect) {
@@ -60,7 +69,17 @@ fun AppUsageRoute(
                             AppUsageExitReason.Return -> FeatureExitReason.Return
                             AppUsageExitReason.PermissionRejected -> FeatureExitReason.PermissionRejected
                         }
-                        featureFlow.exit(FeatureKey.APP_USAGE, reason) { navigator.back() }
+                    run {
+                        if (!exiting) {
+                            exiting = true
+                            permissionJob?.cancel()
+                            routeScope.launch {
+                                featureFlow.exit(FeatureKey.APP_USAGE, reason)
+                                ensureActive()
+                                navigator.back()
+                            }
+                        }
+                    }
                     }
                 }
             }
@@ -80,11 +99,15 @@ fun AppUsageRoute(
     LaunchedEffect(uiState.permissionRequestPending) {
         if (uiState.permissionRequestPending) {
             viewModel.onAction(AppUsageAction.PermissionRequestConsumed)
-            permissionCoordinator.ensure(
-                permission = PermissionType.UsageAccess,
-                onGranted = { viewModel.onAction(AppUsageAction.PermissionGranted) },
-                onDenied = { viewModel.onAction(AppUsageAction.PermissionRejected) },
-            )
+            if (!exiting && permissionJob?.isActive != true) {
+                permissionJob = routeScope.launch {
+                    when (permissionGateway.ensure(PermissionTarget.Permission(PermissionType.UsageAccess))) {
+                        PermissionResult.Granted -> { viewModel.onAction(AppUsageAction.PermissionGranted) }
+                        PermissionResult.Denied -> { viewModel.onAction(AppUsageAction.PermissionRejected) }
+                        PermissionResult.Busy -> Unit
+                    }
+                }
+            }
         }
     }
 
@@ -92,6 +115,6 @@ fun AppUsageRoute(
 
     AppUsageScreen(
         state = uiState,
-        onAction = viewModel::onAction,
+        onAction = { if (!exiting) viewModel.onAction(it) },
     )
 }

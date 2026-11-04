@@ -9,7 +9,7 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.*
 import androidx.compose.runtime.Composable
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileUri
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
@@ -27,7 +27,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 internal fun FileManagerFlowEffects(
     viewModel: BaseFileManagerViewModel,
     featureFlow: FeatureFlow,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     feature: FeatureKey,
     permissionState: FileManagerPermissionState,
     errorMessage: String?,
@@ -36,12 +36,12 @@ internal fun FileManagerFlowEffects(
     onPermissionRejected: () -> Unit,
     flowState: FileManagerFlowState,
 ) {
-    FileManagerOperationEventsEffect(viewModel, featureFlow)
+    FileManagerOperationEventsEffect(viewModel, featureFlow, permissionState)
     FileManagerErrorToastEffect(errorMessage, onClearError)
     FileManagerStartEffect(
         feature,
         permissionState,
-        permissionCoordinator,
+        permissionGateway,
         featureFlow,
         onStartIfNeeded,
         onPermissionRejected,
@@ -55,7 +55,7 @@ internal fun FileManagerFlowDialogs(
     permissionState: FileManagerPermissionState,
     router: AppNavigator,
     featureFlow: FeatureFlow,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     feature: FeatureKey,
     phase: FileOperationPhase,
     deleteDialogVisible: Boolean,
@@ -82,7 +82,7 @@ internal fun FileManagerFlowDialogs(
         visible = deleteDialogVisible,
         permissionGranted = permissionState.granted,
         selectedUris = selectedUris,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         onCancel = onCancelDelete,
         onDeleteReady = onDeleteReady,
         onRejected = onDeleteRejected,

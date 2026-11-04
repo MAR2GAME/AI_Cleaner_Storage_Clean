@@ -95,6 +95,7 @@ private fun copyFor(item: PermissionType): PermissionCopy {
             hint2Res = noPersonalRes,
         )
         PermissionType.Overlay -> overlayCopy()
+        PermissionType.PostNotifications -> copyFor(PermissionType.NotificationListener)
     }
 }
 
@@ -153,4 +154,3 @@ private fun overlayCopy(): PermissionCopy =
         hint1Res = R.string.permission_hint_overlay,
         hint2Res = R.string.permission_hint_no_personal,
     )
-

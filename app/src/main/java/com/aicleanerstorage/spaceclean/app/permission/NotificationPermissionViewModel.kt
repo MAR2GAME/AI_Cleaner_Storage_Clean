@@ -25,7 +25,7 @@ class NotificationPermissionViewModel(
     private val _uiState = MutableStateFlow(machineState)
     val uiState: StateFlow<NotificationPermissionUiState> = _uiState.asStateFlow()
 
-    private val effectsChannel = Channel<NotificationPermissionCommand.Host>(Channel.BUFFERED)
+    private val effectsChannel = Channel<NotificationPermissionCommand.Host>(Channel.UNLIMITED)
     internal val effects = effectsChannel.receiveAsFlow()
 
     fun onSurfaceChanged(
@@ -62,6 +62,8 @@ class NotificationPermissionViewModel(
         )
     }
 
+    fun onSystemRequestUnavailable() { dispatch(NotificationPermissionAction.SystemRequestUnavailable) }
+
     fun onCustomPromptConfirmed() {
         dispatch(NotificationPermissionAction.CustomPromptConfirmed)
     }
@@ -70,9 +72,13 @@ class NotificationPermissionViewModel(
         dispatch(NotificationPermissionAction.CustomPromptDismissed)
     }
 
-    fun onSettingsLaunchResult(launched: Boolean) {
-        dispatch(NotificationPermissionAction.SettingsLaunchResult(launched))
+    fun onSettingsFinished(shouldShowRationale: Boolean) {
+        dispatch(NotificationPermissionAction.SettingsFinished(readFacts(shouldShowRationale)))
     }
+
+    fun onCustomPromptShown() { dispatch(NotificationPermissionAction.CustomPromptShown) }
+
+    override fun onCleared() { effectsChannel.cancel(); super.onCleared() }
 
     private fun dispatch(action: NotificationPermissionAction) {
         if (!runtimePermissionRequired) return
@@ -84,8 +90,6 @@ class NotificationPermissionViewModel(
 
     private fun handleCommand(command: NotificationPermissionCommand) {
         when (command) {
-            NotificationPermissionCommand.SaveRequestedBefore ->
-                permissionPreferences.saveNotificationRuntimePermissionRequestedBefore()
             is NotificationPermissionCommand.SaveLastCustomPromptAt ->
                 permissionPreferences.saveLastNotificationPermissionCustomPromptAt(command.timestampMillis)
             is NotificationPermissionCommand.Host -> effectsChannel.trySend(command)

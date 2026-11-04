@@ -1,136 +1,75 @@
 package com.aicleanerstorage.spaceclean.navigation
 
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.navigation.FeatureEntryNavigator
-import com.aicleanerstorage.spaceclean.common.ads.AdNavigationPolicy
+import com.aicleanerstorage.spaceclean.app.navigation.*
+import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
 import com.aicleanerstorage.spaceclean.common.ads.AdScene
-import com.aicleanerstorage.spaceclean.common.ads.InterstitialAdRunner
-import com.aicleanerstorage.spaceclean.common.ads.once
-import org.junit.Assert.assertEquals
+import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.*
+import org.junit.Assert.*
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FeatureEntryNavigatorTest {
-    @Test
-    fun `resetTo feature entry waits for entry ad continuation`() {
-        val navigator = RecordingNavigator(current = AppDestination.Home.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
+    @Test fun `duplicate feature entry awaits one ad and navigates once`() = runTest {
+        val navigator = RecordingNavigator(AppDestination.Home.route)
+        val closed = CompletableDeferred<Unit>()
+        val requests = mutableListOf<InterstitialRequest>()
+        val router = FeatureEntryNavigator(navigator, { requests += it; closed.await() }, this)
         router.resetTo(AppDestination.DeviceInfo)
-
-        assertEquals(listOf("home->device_info"), interstitials.routeRequests)
-        assertEquals(listOf("enter:DEVICE_INFO:device_info"), interstitials.adRequests)
-        assertEquals(emptyList<String>(), navigator.calls)
-
-        interstitials.continueLast()
-
+        router.resetTo(AppDestination.DeviceInfo)
+        runCurrent()
+        assertEquals(listOf(InterstitialRequest(AdScene.EnterFeature(FeatureKey.DEVICE_INFO, "device_info"),
+            "route_enter_DEVICE_INFO_device_info")), requests)
+        assertTrue(navigator.calls.isEmpty())
+        closed.complete(Unit)
+        runCurrent()
         assertEquals(listOf("resetTo:device_info"), navigator.calls)
     }
 
-    @Test
-    fun `resetTo home and settings continue without entry ad`() {
-        val navigator = RecordingNavigator(current = AppDestination.JunkClean.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
+    @Test fun `home settings and unknown routes bypass ads and preserve navigation`() = runTest {
+        val navigator = RecordingNavigator(AppDestination.JunkClean.route)
+        val router = FeatureEntryNavigator(navigator, { fail("Unexpected ad") }, this)
         router.resetTo(AppDestination.Home)
         router.resetTo(AppDestination.Settings)
-
-        assertEquals(
-            listOf(
-                "scan->home",
-                "home->settings",
-            ),
-            interstitials.routeRequests,
-        )
-        assertEquals(emptyList<String>(), interstitials.adRequests)
-        assertEquals(
-            listOf(
-                "resetTo:home",
-                "resetTo:settings",
-            ),
-            navigator.calls,
-        )
-    }
-
-    @Test
-    fun `resetToRoute recognized feature uses entry policy and preserves final route`() {
-        val navigator = RecordingNavigator(current = AppDestination.Home.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
-        router.resetToRoute(AppDestination.NetworkScan.route)
-
-        assertEquals(listOf("home->network_scan"), interstitials.routeRequests)
-        assertEquals(listOf("enter:NETWORK_SCAN:network_scan"), interstitials.adRequests)
-        assertEquals(emptyList<String>(), navigator.calls)
-
-        interstitials.continueLast()
-
-        assertEquals(listOf("resetToRoute:network_scan"), navigator.calls)
-    }
-
-    @Test
-    fun `resetToRoute unknown route delegates directly`() {
-        val navigator = RecordingNavigator(current = AppDestination.Home.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
         router.resetToRoute("unknown_route")
-
-        assertEquals(emptyList<String>(), interstitials.routeRequests)
-        assertEquals(emptyList<String>(), interstitials.adRequests)
-        assertEquals(listOf("resetToRoute:unknown_route"), navigator.calls)
+        assertEquals(listOf("resetTo:home", "resetTo:settings", "resetToRoute:unknown_route"), navigator.calls)
     }
 
-    @Test
-    fun `notification feature target waits for entry ad continuation`() {
-        val navigator = RecordingNavigator(current = AppDestination.Home.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
-        router.openNotificationTarget(AppDestination.NotificationCleaner.route)
-
-        assertEquals(listOf("home->notification_cleaner"), interstitials.routeRequests)
-        assertEquals(listOf("enter:NOTIFICATION_CLEANER:notification_cleaner"), interstitials.adRequests)
-        assertEquals(emptyList<String>(), navigator.calls)
-        assertEquals(emptyList<String>(), navigator.notificationTargets)
-
-        interstitials.continueLast()
-        interstitials.continueLast()
-
-        assertEquals(listOf(AppDestination.NotificationCleaner.route), navigator.notificationTargets)
+    @Test fun `notification feature from startup uses entry ad and keeps final target`() = runTest {
+        for (source in listOf(AppDestination.Splash.route, AppDestination.OnboardingScan.route)) {
+            val navigator = RecordingNavigator(source)
+            val requests = mutableListOf<InterstitialRequest>()
+            val router = FeatureEntryNavigator(navigator, { requests += it }, this)
+            router.openNotificationTarget(AppDestination.JunkClean.route)
+            runCurrent()
+            assertEquals(1, requests.size)
+            assertEquals(listOf(AppDestination.JunkClean.route), navigator.notificationTargets)
+        }
     }
 
-    @Test
-    fun `notification home target bypasses entry ad`() {
-        val navigator = RecordingNavigator(current = AppDestination.JunkClean.route)
-        val interstitials = PolicyAwareInterstitialRunner()
-        val router = FeatureEntryNavigator(navigator, interstitials)
-
+    @Test fun `home notification target bypasses entry and cancels pending navigation`() = runTest {
+        val navigator = RecordingNavigator(AppDestination.Home.route)
+        val late = CompletableDeferred<Unit>()
+        val router = FeatureEntryNavigator(navigator, { withContext(NonCancellable) { late.await() } }, this)
+        router.open(AppDestination.NetworkScan)
+        runCurrent()
         router.openNotificationTarget(AppDestination.HomeToolbox.route)
-
-        assertEquals(emptyList<String>(), interstitials.routeRequests)
-        assertEquals(emptyList<String>(), interstitials.adRequests)
+        late.complete(Unit)
+        runCurrent()
+        assertTrue(navigator.calls.isEmpty())
         assertEquals(listOf(AppDestination.HomeToolbox.route), navigator.notificationTargets)
     }
 
-    @Test
-    fun `notification feature target omits startup route as ad source`() {
-        val splashNavigator = RecordingNavigator(current = AppDestination.Splash.route)
-        val splashInterstitials = PolicyAwareInterstitialRunner()
-        FeatureEntryNavigator(splashNavigator, splashInterstitials)
-            .openNotificationTarget(AppDestination.JunkClean.route)
-
-        assertEquals(listOf("->scan"), splashInterstitials.routeRequests)
-
-        val onboardingNavigator = RecordingNavigator(current = AppDestination.OnboardingScan.route)
-        val onboardingInterstitials = PolicyAwareInterstitialRunner()
-        FeatureEntryNavigator(onboardingNavigator, onboardingInterstitials)
-            .openNotificationTarget(AppDestination.JunkClean.route)
-
-        assertEquals(listOf("->scan"), onboardingInterstitials.routeRequests)
+    @Test fun `page disposal cancels entry wait and never navigates`() = runTest {
+        val navigator = RecordingNavigator(AppDestination.Home.route)
+        val scope = CoroutineScope(coroutineContext + Job())
+        val router = FeatureEntryNavigator(navigator, { awaitCancellation() }, scope)
+        router.resetToRoute(AppDestination.NetworkScan.route)
+        runCurrent()
+        scope.cancel()
+        runCurrent()
+        assertTrue(navigator.calls.isEmpty())
     }
 }
 
@@ -181,40 +120,5 @@ private class RecordingNavigator(
     override fun back(): Boolean {
         calls += "back"
         return true
-    }
-}
-
-private class PolicyAwareInterstitialRunner(
-    private val policy: AdNavigationPolicy = AdNavigationPolicy(),
-) : InterstitialAdRunner {
-    val routeRequests = mutableListOf<String>()
-    val adRequests = mutableListOf<String>()
-    private val pendingContinuations = mutableListOf<() -> Unit>()
-
-    override fun run(scene: AdScene?, requestId: String, onContinue: () -> Unit) {
-        if (scene is AdScene.EnterFeature) {
-            adRequests += "enter:${scene.feature.name}:${scene.route}"
-            pendingContinuations += once(onContinue)
-        } else {
-            onContinue()
-        }
-    }
-
-    override fun runRouteEntry(fromRoute: String?, targetRoute: String?, onContinue: () -> Unit) {
-        routeRequests += "${fromRoute.orEmpty()}->${targetRoute.orEmpty()}"
-        val decision = policy.entryAdDecision(fromRoute, targetRoute)
-        if (decision == null) {
-            onContinue()
-            return
-        }
-        run(
-            scene = AdScene.EnterFeature(decision.feature, decision.route),
-            requestId = "route_enter_${decision.feature.name}_${decision.route}",
-            onContinue = onContinue,
-        )
-    }
-
-    fun continueLast() {
-        pendingContinuations.lastOrNull()?.invoke()
     }
 }

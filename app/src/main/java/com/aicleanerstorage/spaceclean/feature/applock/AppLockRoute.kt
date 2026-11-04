@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.applock
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockPage
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockPinStep
 import com.aicleanerstorage.spaceclean.feature.applock.AppLockAction
@@ -38,7 +43,7 @@ import com.aicleanerstorage.spaceclean.common.ui.components.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXPillShape
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 
 
 import com.aicleanerstorage.spaceclean.feature.applock.ui.AppLockScreen
@@ -49,10 +54,14 @@ internal fun AppLockRoute(
     viewModel: AppLockViewModel,
     featureFlow: FeatureFlow,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
     val toastRes = uiState.toastRes
     val toastMessage = toastRes?.let { stringResource(it) }
 
@@ -75,19 +84,34 @@ internal fun AppLockRoute(
 
     LaunchedEffect(uiState.overlayPermissionRequired) {
         if (uiState.overlayPermissionRequired) {
-            permissionCoordinator.ensure(
-                action = ProtectedAction.AppLockRequestOverlay,
-                onGranted = { viewModel.onAction(AppLockAction.ConsumeOverlayPermissionRequest) },
-                onDenied = { viewModel.onAction(AppLockAction.ConsumeOverlayPermissionRequest) },
-            )
+            if (!exiting && permissionJob?.isActive != true) {
+                permissionJob = routeScope.launch {
+                    when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.AppLockRequestOverlay))) {
+                        PermissionResult.Granted -> { viewModel.onAction(AppLockAction.ConsumeOverlayPermissionRequest) }
+                        PermissionResult.Denied -> { viewModel.onAction(AppLockAction.ConsumeOverlayPermissionRequest) }
+                        PermissionResult.Busy -> Unit
+                    }
+                }
+            }
         }
     }
 
     fun exitBack() {
-        featureFlow.exit(FeatureKey.APP_LOCK, FeatureExitReason.Return) { navigator.back() }
+        run {
+            if (!exiting) {
+                exiting = true
+                permissionJob?.cancel()
+                routeScope.launch {
+                    featureFlow.exit(FeatureKey.APP_LOCK, FeatureExitReason.Return)
+                    ensureActive()
+                    navigator.back()
+                }
+            }
+        }
     }
 
     fun handleAction(action: AppLockAction) {
+        if (exiting) return
         when (action) {
             AppLockAction.Back -> {
                 if (!viewModel.handleBack()) exitBack()
@@ -96,23 +120,41 @@ internal fun AppLockRoute(
                 if (uiState.page == AppLockPage.SelectApps) {
                     viewModel.onAction(action)
                 } else {
-                    permissionCoordinator.ensure(ProtectedAction.AppLockOpenProtectedArea) {
-                        viewModel.onAction(action)
+                    if (!exiting && permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.AppLockOpenProtectedArea))) {
+                                PermissionResult.Granted -> { viewModel.onAction(action) }
+                                PermissionResult.Denied -> { Unit }
+                                PermissionResult.Busy -> Unit
+                            }
+                        }
                     }
                 }
             }
             AppLockAction.ToggleAllApps,
             AppLockAction.BeginCreatePin -> {
-                permissionCoordinator.ensure(ProtectedAction.AppLockOpenProtectedArea) {
-                    viewModel.onAction(action)
+                if (!exiting && permissionJob?.isActive != true) {
+                    permissionJob = routeScope.launch {
+                        when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.AppLockOpenProtectedArea))) {
+                            PermissionResult.Granted -> { viewModel.onAction(action) }
+                            PermissionResult.Denied -> { Unit }
+                            PermissionResult.Busy -> Unit
+                        }
+                    }
                 }
             }
             is AppLockAction.MonitoringChanged -> {
                 if (!action.enabled) {
                     viewModel.onAction(action)
                 } else {
-                permissionCoordinator.ensure(ProtectedAction.AppLockEnableMonitoring) {
-                        viewModel.onAction(action)
+                    if (!exiting && permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.AppLockEnableMonitoring))) {
+                                PermissionResult.Granted -> { viewModel.onAction(action) }
+                                PermissionResult.Denied -> { Unit }
+                                PermissionResult.Busy -> Unit
+                            }
+                        }
                     }
                 }
             }
@@ -123,6 +165,6 @@ internal fun AppLockRoute(
     AppLockScreen(
         state = uiState,
         onAction = ::handleAction,
-        onNavigate = navigator::open,
+        onNavigate = { if (!exiting) navigator.open(it) },
     )
 }

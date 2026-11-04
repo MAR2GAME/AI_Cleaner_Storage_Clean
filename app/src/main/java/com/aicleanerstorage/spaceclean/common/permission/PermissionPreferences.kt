@@ -1,8 +1,5 @@
 package com.aicleanerstorage.spaceclean.common.permission
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.common.storage.preferences.AppPreferences
 
 class PermissionPreferences(
@@ -44,49 +41,6 @@ class PermissionPreferences(
         store.edit().putLong(KEY_LAST_NOTIFICATION_PERMISSION_CUSTOM_PROMPT_AT, timestampMillis).apply()
     }
 }
-
-class AppRuntimePermissionDenialStore(
-    private val preferences: PermissionPreferences,
-) : RuntimePermissionDenialStore {
-    override fun hasDenied(permission: PermissionType): Boolean =
-        permission == PermissionType.Location && preferences.hasDeniedLocationRuntimePermission()
-
-    override fun hasRequestedBefore(permission: PermissionType): Boolean =
-        permission == PermissionType.Location && preferences.hasRequestedLocationRuntimePermissionBefore()
-
-    override fun markRequested(permission: PermissionType) {
-        if (permission == PermissionType.Location) {
-            preferences.saveLocationRuntimePermissionRequestedBefore()
-        }
-    }
-
-    override fun shouldRequestRuntimePermission(
-        context: Context,
-        permission: PermissionType,
-        runtimePermissions: Array<String>,
-    ): Boolean {
-        if (permission != PermissionType.Location) return super.shouldRequestRuntimePermission(
-            context,
-            permission,
-            runtimePermissions,
-        )
-        if (!hasRequestedBefore(permission)) return true
-        return runtimePermissions.any { context.findActivity()?.shouldShowRequestPermissionRationale(it) == true }
-    }
-
-    override fun markDenied(permission: PermissionType) {
-        if (permission == PermissionType.Location) {
-            preferences.saveLocationRuntimePermissionDenied()
-        }
-    }
-}
-
-private tailrec fun Context.findActivity(): Activity? =
-    when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
 
 private const val KEY_LOCATION_RUNTIME_PERMISSION_DENIED = "location_runtime_permission_denied"
 private const val KEY_LOCATION_RUNTIME_PERMISSION_REQUESTED_BEFORE = "location_runtime_permission_requested_before"

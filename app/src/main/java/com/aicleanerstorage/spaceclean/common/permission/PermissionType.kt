@@ -8,6 +8,7 @@ enum class PermissionType(
     UsageAccess("usage_access"),
     NotificationListener("notification_listener"),
     Overlay("overlay"),
+    PostNotifications("post_notifications"),
     ;
 
     companion object {

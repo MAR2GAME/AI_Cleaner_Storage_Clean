@@ -24,7 +24,7 @@ import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.feature.files.shared.FileOperationPhase
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.FileManagerPageBrush
@@ -77,7 +77,7 @@ private fun PhotoPrivacyManagerRouteContent(
     FileManagerFlowEffects(
         viewModel = viewModel,
         featureFlow = featureFlow,
-        permissionCoordinator = LocalPermissionCoordinator.current,
+        permissionGateway = LocalPermissionGateway.current,
         feature = FEATURE,
         permissionState = permissionState,
         errorMessage = uiState.errorMessage,
@@ -112,7 +112,7 @@ private fun PhotoPrivacyManagerRouteContent(
         permissionState = permissionState,
         router = router,
         featureFlow = featureFlow,
-        permissionCoordinator = LocalPermissionCoordinator.current,
+        permissionGateway = LocalPermissionGateway.current,
         feature = FEATURE,
         phase = displayState.phase,
         deleteDialogVisible = false,

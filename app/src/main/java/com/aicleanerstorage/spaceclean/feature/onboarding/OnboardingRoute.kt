@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.feature.onboarding
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -18,11 +20,14 @@ import com.aicleanerstorage.spaceclean.feature.onboarding.ui.OnboardingScanScree
 fun OnboardingRoute(
     navigator: AppNavigator,
     analyticsReporter: AnalyticsReporter,
-    onScanFinishedAd: (() -> Unit) -> Unit,
-    onCompletionAd: (skipped: Boolean, onContinue: () -> Unit) -> Unit,
+    onScanFinishedAd: suspend () -> Unit,
+    onCompletionAd: suspend (skipped: Boolean) -> Unit,
     viewModel: OnboardingScanViewModel,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val routeScope = rememberCoroutineScope()
+    var scanAd by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel) {
@@ -31,14 +36,20 @@ fun OnboardingRoute(
         viewModel.effects.collect { effect ->
             when (effect) {
                 OnboardingEffect.ScanFinished -> {
-                    analyticsReporter.report(AnalyticsEvent.GuideScanResultEntered)
-                    onScanFinishedAd {}
+                    if (!exiting && scanAd == null) {
+                        analyticsReporter.report(AnalyticsEvent.GuideScanResultEntered)
+                        scanAd = routeScope.launch { onScanFinishedAd() }
+                    }
                 }
                 is OnboardingEffect.Complete -> {
-                    analyticsReporter.report(
-                        if (effect.skipped) AnalyticsEvent.GuideSkipClicked else AnalyticsEvent.GuideContinueClicked,
-                    )
-                    onCompletionAd(effect.skipped) { navigator.replace(AppDestination.Home) }
+                    if (!exiting) {
+                        exiting = true
+                        analyticsReporter.report(
+                            if (effect.skipped) AnalyticsEvent.GuideSkipClicked else AnalyticsEvent.GuideContinueClicked,
+                        )
+                        scanAd?.cancel()
+                        routeScope.launch { onCompletionAd(effect.skipped); ensureActive(); navigator.replace(AppDestination.Home) }
+                    }
                 }
             }
         }
@@ -56,7 +67,7 @@ fun OnboardingRoute(
 
     OnboardingScanScreen(
         state = state,
-        onAction = viewModel::onAction,
-        onNavigate = navigator::replace,
+        onAction = { if (!exiting) viewModel.onAction(it) },
+        onNavigate = { if (!exiting) navigator.replace(it) },
     )
 }

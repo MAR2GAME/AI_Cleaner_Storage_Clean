@@ -3,30 +3,25 @@ package com.aicleanerstorage.spaceclean.app.runtime
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import com.aicleanerstorage.spaceclean.app.analytics.AppAnalyticsReporter
-import com.aicleanerstorage.spaceclean.app.commercial.AdRuntimeFacade
 import com.aicleanerstorage.spaceclean.app.commercial.AdInterceptor
-import com.aicleanerstorage.spaceclean.app.commercial.RuntimeAdDriver
-import com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor
-import com.aicleanerstorage.spaceclean.app.commercial.executor.InterstitialExecutor
-import com.aicleanerstorage.spaceclean.common.ads.AdRuntime
-import com.aicleanerstorage.spaceclean.common.ads.AdRuntimeState
-import com.aicleanerstorage.spaceclean.common.ads.InterstitialAdRunner
+import com.aicleanerstorage.spaceclean.app.commercial.AdvertiseAdDriver
+import com.aicleanerstorage.spaceclean.common.ads.*
+import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
+import org.koin.compose.koinInject
 import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
 
 internal data class AppRuntimeBindings(
-    val ads: AdRuntimeFacade,
-    val interstitials: InterstitialAdRunner,
+    val ads: AdDriver,
+    val interstitials: AdInterceptor,
     val featureFlow: FeatureFlow,
-    val completionAdInterceptor: IntentInterceptor,
     val analyticsReporter: AnalyticsReporter,
     val externalActivities: ExternalActivityTracker,
+    val externalGuard: ExternalAppOpenGuard,
 )
 
 @Composable
@@ -36,47 +31,39 @@ internal fun rememberAppRuntimeBindings(
     sessionCoordinator: AppSessionCoordinator,
     cleanupHistory: CleanupHistoryStore,
 ): AppRuntimeBindings {
+    val permission: PermissionInterceptor = koinInject()
+    val notificationActive by rememberUpdatedState(notificationPermissionFlowActive)
     val activity = context.findActivity()
-    val latestPermissionFlowActive = rememberUpdatedState(notificationPermissionFlowActive)
-    val adRuntime = remember(activity, sessionCoordinator) {
-        AdRuntime(
-            activityProvider = { activity },
-            stateProvider = {
-                AdRuntimeState(
-                    permissionFlowActive = latestPermissionFlowActive.value || sessionCoordinator.isActive(RuntimeBusyReason.Permission),
-                    featureOperationActive = sessionCoordinator.isActive(RuntimeBusyReason.FeatureOperation),
-                )
+    val scope = rememberCoroutineScope()
+    val driver = remember(activity) { AdvertiseAdDriver(context, activityProvider = { activity }) }
+    val externalGuard = remember(driver, scope) { ExternalAppOpenGuard(driver, scope) }
+    val ads = remember(driver, sessionCoordinator, externalGuard, permission) {
+        AdInterceptor(
+            driver,
+            canShow = { request ->
+                val rejected = request.scene is AdScene.PermissionRejected
+                val allowed = !sessionCoordinator.isActive(RuntimeBusyReason.FeatureOperation) &&
+                    (rejected || (permission.request.value == null && !notificationActive && !sessionCoordinator.isActive(RuntimeBusyReason.Permission) && !externalGuard.isReturning))
+                allowed
             },
-            onInterstitialStateChanged = { active -> sessionCoordinator.set(RuntimeBusyReason.Interstitial, active) },
+            onBusyChanged = { sessionCoordinator.set(RuntimeBusyReason.Interstitial, it) },
         )
     }
-    val ads = remember(adRuntime) { AdRuntimeFacade(adRuntime) }
-    val completionAdInterceptor = remember(adRuntime) { AdInterceptor(RuntimeAdDriver(adRuntime)) }
-    val interstitials = remember(ads) { InterstitialExecutor(ads) }
-    val analyticsReporter = remember { AppAnalyticsReporter() }
-    val externalActivities = remember(ads) {
-        ExternalActivityTracker(
-            markLaunch = ads::markExternalActivityLaunch,
-            cancelLaunch = ads::cancelExternalActivityLaunch,
-            markReturn = ads::onHostResumed,
-        )
+    DisposableEffect(ads, externalGuard) { onDispose { ads.dispose(); externalGuard.dispose() } }
+    val analytics = remember { AppAnalyticsReporter() }
+    val tracker = remember(externalGuard) {
+        ExternalActivityTracker(externalGuard::onLaunch, externalGuard::onLaunchCancelled, externalGuard::onHostResumed)
     }
-    val featureFlow = remember(interstitials, cleanupHistory, sessionCoordinator, analyticsReporter) {
-        AdFeatureFlow(
-            interstitialAds = interstitials,
-            cleanupHistory = cleanupHistory,
-            onOperationBusyChanged = { active -> sessionCoordinator.set(RuntimeBusyReason.FeatureOperation, active) },
-            analyticsReporter = analyticsReporter,
-        )
+    val flow = remember(ads, cleanupHistory, sessionCoordinator, analytics) {
+        AppFeatureFlow(ads::show, cleanupHistory,
+            { sessionCoordinator.set(RuntimeBusyReason.FeatureOperation, it) }, analytics)
     }
-    return remember(ads, interstitials, featureFlow, completionAdInterceptor, analyticsReporter, externalActivities) {
-        AppRuntimeBindings(ads, interstitials, featureFlow, completionAdInterceptor, analyticsReporter, externalActivities)
+    return remember(driver, ads, flow, analytics, tracker, externalGuard) {
+        AppRuntimeBindings(driver, ads, flow, analytics, tracker, externalGuard)
     }
 }
-
-private tailrec fun Context.findActivity(): Activity? =
-    when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}

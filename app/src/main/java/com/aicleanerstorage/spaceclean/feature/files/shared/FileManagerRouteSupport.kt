@@ -6,6 +6,10 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.*
 
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 
+import kotlinx.coroutines.*
+import androidx.compose.runtime.rememberCoroutineScope
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
 import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -30,7 +34,7 @@ import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.feature.files.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.common.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.common.permission.ui.rememberPermissionGranted
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.feature.files.shared.BaseFileManagerViewModel
@@ -45,15 +49,20 @@ import com.aicleanerstorage.spaceclean.feature.files.shared.ui.*
 internal fun FileManagerOperationEventsEffect(
     viewModel: BaseFileManagerViewModel,
     featureFlow: FeatureFlow,
+    permissionState: FileManagerPermissionState,
 ) {
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.operationEvents.collect { event ->
-            if (event.isFileManagerCompletionSuccess()) {
-                featureFlow.handleOperation(event) {
-                    viewModel.showPendingResult()
-                }
-            } else {
-                featureFlow.handleOperation(event)
+            if (!permissionState.leavingPage) {
+                if (event.isFileManagerCompletionSuccess()) {
+                    if (permissionState.operationJob?.isActive != true) {
+                        permissionState.operationJob = permissionState.scope.launch {
+                            featureFlow.handleOperation(event)
+                            ensureActive()
+                            if (!permissionState.leavingPage) viewModel.showPendingResult()
+                        }
+                    }
+                } else featureFlow.recordOperation(event)
             }
         }
     }
@@ -78,32 +87,28 @@ private fun FeatureOperationEvent.isFileManagerCompletionSuccess(): Boolean =
         success
 
 @Composable
-internal fun rememberFileManagerPermissionState(
-): FileManagerPermissionState {
-    val observedPermissionGranted = rememberPermissionGranted(PermissionType.StorageFiles)
-    var permissionGranted by remember {
-        mutableStateOf(observedPermissionGranted)
-    }
-    var isLeavingPage by remember { mutableStateOf(false) }
-
-    LaunchedEffect(observedPermissionGranted) {
-        permissionGranted = observedPermissionGranted
-    }
-
-    return FileManagerPermissionState(
-        granted = permissionGranted,
-        leavingPage = isLeavingPage,
-        markLeaving = { isLeavingPage = true },
-        onPermissionChanged = { permissionGranted = it },
-    )
+internal fun rememberFileManagerPermissionState(): FileManagerPermissionState {
+    val granted = rememberPermissionGranted(PermissionType.StorageFiles)
+    val scope = rememberCoroutineScope()
+    val state = remember(scope) { FileManagerPermissionState(granted, scope) }
+    LaunchedEffect(granted) { state.onPermissionChanged(granted) }
+    return state
 }
 
-internal class FileManagerPermissionState(
-    val granted: Boolean,
-    val leavingPage: Boolean,
-    val markLeaving: () -> Unit,
-    val onPermissionChanged: (Boolean) -> Unit,
-)
+internal class FileManagerPermissionState(initialGranted: Boolean, val scope: CoroutineScope) {
+    var granted by mutableStateOf(initialGranted)
+        private set
+    var leavingPage by mutableStateOf(false)
+        private set
+    var operationJob: Job? = null
+    var permissionJob: Job? = null
+    fun onPermissionChanged(value: Boolean) { granted = value }
+    fun markLeaving() {
+        leavingPage = true
+        operationJob?.cancel()
+        permissionJob?.cancel()
+    }
+}
 
 internal fun FileManagerPermissionState.leaveHome(router: AppNavigator) {
     markLeaving()
@@ -111,38 +116,24 @@ internal fun FileManagerPermissionState.leaveHome(router: AppNavigator) {
 }
 
 internal fun FileManagerPermissionState.leaveBackForPermissionRejected(
-    router: AppNavigator,
-    feature: FeatureKey,
-    featureFlow: FeatureFlow,
-) {
-    markLeaving()
-    featureFlow.exit(feature, FeatureExitReason.PermissionRejected) {
-        router.back()
-    }
-}
+    router: AppNavigator, feature: FeatureKey, featureFlow: FeatureFlow,
+) = exit(feature, FeatureExitReason.PermissionRejected, featureFlow) { router.back() }
 
 internal fun FileManagerPermissionState.leaveBack(
-    router: AppNavigator,
-    feature: FeatureKey,
-    featureFlow: FeatureFlow,
-) {
-    markLeaving()
-    featureFlow.exit(feature, FeatureExitReason.Return) {
-        router.back()
-    }
-}
+    router: AppNavigator, feature: FeatureKey, featureFlow: FeatureFlow,
+) = exit(feature, FeatureExitReason.Return, featureFlow) { router.back() }
 
 internal fun FileManagerPermissionState.leaveHome(
-    router: AppNavigator,
-    feature: FeatureKey,
-    featureFlow: FeatureFlow,
-) {
-    markLeaving()
-    featureFlow.exit(feature, FeatureExitReason.Return) {
-        router.home()
-    }
-}
+    router: AppNavigator, feature: FeatureKey, featureFlow: FeatureFlow,
+) = exit(feature, FeatureExitReason.Return, featureFlow) { router.home() }
 
+private fun FileManagerPermissionState.exit(
+    feature: FeatureKey, reason: FeatureExitReason, featureFlow: FeatureFlow, navigate: () -> Unit,
+) {
+    if (leavingPage) return
+    markLeaving()
+    scope.launch { featureFlow.exit(feature, reason); ensureActive(); navigate() }
+}
 
 @Composable
 internal fun FileManagerErrorToastEffect(
@@ -161,7 +152,7 @@ internal fun FileManagerErrorToastEffect(
 internal fun FileManagerStartEffect(
     feature: FeatureKey,
     permissionState: FileManagerPermissionState,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     featureFlow: FeatureFlow,
     onStartIfNeeded: () -> Unit,
     onPermissionRejected: () -> Unit,
@@ -174,18 +165,22 @@ internal fun FileManagerStartEffect(
             latestStartIfNeeded()
             return@LaunchedEffect
         }
-        permissionCoordinator.ensure(
-            action = ProtectedAction.FileManagerLoadFiles,
-            onGranted = {
-                permissionState.onPermissionChanged(true)
-                latestStartIfNeeded()
-            },
-            onDenied = {
-                featureFlow.exit(feature, FeatureExitReason.PermissionRejected) {
-                    latestPermissionRejected()
+        if (permissionState.permissionJob?.isActive != true) {
+            permissionState.permissionJob = permissionState.scope.launch {
+                when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.FileManagerLoadFiles))) {
+                    PermissionResult.Granted -> {
+                        if (!permissionState.leavingPage) {
+                            permissionState.onPermissionChanged(true)
+                            latestStartIfNeeded()
+                        }
+                    }
+                    PermissionResult.Denied -> permissionState.exit(feature, FeatureExitReason.PermissionRejected, featureFlow) {
+                        latestPermissionRejected()
+                    }
+                    PermissionResult.Busy -> Unit
                 }
-            },
-        )
+            }
+        }
     }
 }
 
@@ -209,12 +204,14 @@ internal fun FileManagerDeleteConfirmDialog(
     visible: Boolean,
     permissionGranted: Boolean,
     selectedUris: List<FileUri>,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     onCancel: () -> Unit,
     onBeforeDeleteRequest: () -> Unit = {},
     onDeleteReady: () -> Unit,
     onRejected: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
     val context = LocalContext.current
     val (launchDeleteRequest, deleteDirectly) = rememberMediaStoreDeleteLauncher(
         onConfirmed = onDeleteReady,
@@ -224,14 +221,17 @@ internal fun FileManagerDeleteConfirmDialog(
         DeleteConfirmDialog(
             onCancel = onCancel,
             onDelete = {
-                permissionCoordinator.ensure(ProtectedAction.FileManagerDeleteFiles) {
-                    onBeforeDeleteRequest()
-                    requestMediaStoreDeleteOrDeleteDirectly(
-                        context = context,
-                        uris = selectedUris,
-                        launchRequest = launchDeleteRequest,
-                        deleteDirectly = deleteDirectly,
-                    )
+                if (permissionJob?.isActive != true) permissionJob = scope.launch {
+                    if (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.FileManagerDeleteFiles)) == PermissionResult.Granted) {
+                        ensureActive()
+                        onBeforeDeleteRequest()
+                        requestMediaStoreDeleteOrDeleteDirectly(
+                            context = context,
+                            uris = selectedUris,
+                            launchRequest = launchDeleteRequest,
+                            deleteDirectly = deleteDirectly,
+                        )
+                    }
                 }
             },
         )

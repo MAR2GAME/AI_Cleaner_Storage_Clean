@@ -23,19 +23,19 @@ import com.aicleanerstorage.spaceclean.feature.files.similarphotos.SimilarPhotos
 import com.aicleanerstorage.spaceclean.feature.files.videos.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.shared.rememberFileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 
 @Composable
 internal fun PhotosFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: PhotosManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.currentDisplayItems.map { it.toFileDetailDisplayItem() },
@@ -57,14 +57,14 @@ internal fun PhotosFileDetailRoute(
 @Composable
 internal fun SimilarPhotosFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: SimilarPhotosManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.displayItems.map { it.toFileDetailDisplayItem() },
@@ -86,14 +86,14 @@ internal fun SimilarPhotosFileDetailRoute(
 @Composable
 internal fun ScreenshotsFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: ScreenshotsManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.displayItems.map { it.toFileDetailDisplayItem() },
@@ -115,14 +115,14 @@ internal fun ScreenshotsFileDetailRoute(
 @Composable
 internal fun VideosFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: VideosManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.visibleDisplayItems.map { it.toFileDetailDisplayItem() },
@@ -144,14 +144,14 @@ internal fun VideosFileDetailRoute(
 @Composable
 internal fun AudiosFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: AudiosManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.visibleDisplayItems.map { it.toFileDetailDisplayItem() },
@@ -173,14 +173,14 @@ internal fun AudiosFileDetailRoute(
 @Composable
 internal fun LargeFilesFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: LargeFilesManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.visibleDisplayItems.map { it.toFileDetailDisplayItem() },
@@ -202,14 +202,14 @@ internal fun LargeFilesFileDetailRoute(
 @Composable
 internal fun DocumentsFileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: DocumentsManagerViewModel,
     initialIndex: Int,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     FileDetailRoute(
         navigator = navigator,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         uiState =
             FileDetailUiState(
                 items = uiState.visibleDisplayItems.map { it.toFileDetailDisplayItem() },
@@ -231,7 +231,7 @@ internal fun DocumentsFileDetailRoute(
 @Composable
 private fun FileDetailRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     uiState: FileDetailUiState,
     onRequestDelete: () -> Unit,
     onCancelDelete: () -> Unit,
@@ -270,7 +270,7 @@ private fun FileDetailRoute(
         visible = uiState.confirmDeleteVisible,
         permissionGranted = permissionState.granted,
         selectedUris = uiState.selectedUris,
-        permissionCoordinator = permissionCoordinator,
+        permissionGateway = permissionGateway,
         onCancel = onCancelDelete,
         onDeleteReady = {
             onDeleteReady()

@@ -9,7 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.app.navigation.DETAIL_INITIAL_INDEX_ARG
 import com.aicleanerstorage.spaceclean.feature.files.audios.AudiosManagerViewModel
 import com.aicleanerstorage.spaceclean.feature.files.documents.DocumentsManagerViewModel
@@ -51,7 +51,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.PhotosManager, backStackEntry)
         }
         val viewModel: PhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        PhotosFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        PhotosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.SimilarPhotosManager.route) {
         SimilarPhotosManagerRoute(navigator, koinViewModel<SimilarPhotosManagerViewModel>(), featureFlow)
@@ -61,7 +61,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.SimilarPhotosManager, backStackEntry)
         }
         val viewModel: SimilarPhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        SimilarPhotosFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        SimilarPhotosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.PhotoPrivacyManager.route) {
         PhotoPrivacyManagerRoute(navigator, koinViewModel<PhotoPrivacyManagerViewModel>(), featureFlow)
@@ -74,7 +74,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.ScreenshotsManager, backStackEntry)
         }
         val viewModel: ScreenshotsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        ScreenshotsFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        ScreenshotsFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.VideosManager.route) {
         VideosManagerRoute(navigator, koinViewModel<VideosManagerViewModel>(), featureFlow)
@@ -84,7 +84,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.VideosManager, backStackEntry)
         }
         val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VideosFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        VideosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.AudiosManager.route) {
         AudiosManagerRoute(navigator, koinViewModel<AudiosManagerViewModel>(), featureFlow)
@@ -94,7 +94,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.AudiosManager, backStackEntry)
         }
         val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        AudiosFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        AudiosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.LargeFilesManager.route) {
         LargeFilesManagerRoute(navigator, koinViewModel<LargeFilesManagerViewModel>(), featureFlow)
@@ -104,7 +104,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.LargeFilesManager, backStackEntry)
         }
         val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        LargeFilesFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        LargeFilesFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
     composable(AppDestination.DuplicateFilesManager.route) {
         DuplicateFilesManagerRoute(navigator, koinViewModel<DuplicateFilesManagerViewModel>(), featureFlow)
@@ -117,7 +117,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.fileManagerViewModelOwnerOr(AppDestination.DocumentsManager, backStackEntry)
         }
         val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        DocumentsFileDetailRoute(navigator, LocalPermissionCoordinator.current, viewModel, backStackEntry.initialIndex())
+        DocumentsFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
     }
 }
 

@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.networkscan
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.*
 
 import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.*
@@ -23,7 +28,7 @@ import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.common.permission.PermissionPromptMode
@@ -38,14 +43,29 @@ fun NetworkScanRoute(
     featureFlow: FeatureFlow,
     externalActivities: ExternalActivityTracker,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
 
     fun handleBack() {
+        if (exiting) return
         if (uiState.phase == NetworkScanPhase.Scanning) viewModel.cancelScan()
-        featureFlow.exit(FeatureKey.NETWORK_SCAN, FeatureExitReason.Return) { navigator.back() }
+        run {
+            if (!exiting) {
+                exiting = true
+                permissionJob?.cancel()
+                routeScope.launch {
+                    featureFlow.exit(FeatureKey.NETWORK_SCAN, FeatureExitReason.Return)
+                    ensureActive()
+                    navigator.back()
+                }
+            }
+        }
     }
 
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -76,11 +96,14 @@ fun NetworkScanRoute(
             viewModel.refreshNetworkStateUntilWifiConnected()
         },
         onScan = {
-            permissionCoordinator.ensure(
-                ProtectedAction.NetworkScanStart,
-                mode = PermissionPromptMode.Direct,
-            ) {
-                viewModel.startScan()
+            if (!exiting && permissionJob?.isActive != true) {
+                permissionJob = routeScope.launch {
+                    when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.NetworkScanStart), mode = PermissionPromptMode.Direct)) {
+                        PermissionResult.Granted -> { viewModel.startScan() }
+                        PermissionResult.Denied -> { Unit }
+                        PermissionResult.Busy -> Unit
+                    }
+                }
             }
         },
         onOpenDevices = { navigator.open(AppDestination.NetworkScanDevices) },

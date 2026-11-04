@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app
+package com.aicleanerstorage.spaceclean.app
 
 import android.app.Activity
 import android.content.Context
@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.common.ads.AdRuntime
-import com.aicleanerstorage.spaceclean.common.ads.ColdStartAdSession
+import com.aicleanerstorage.spaceclean.app.commercial.AdvertiseAdDriver
+import com.aicleanerstorage.spaceclean.common.ads.showColdStart
 import com.aicleanerstorage.spaceclean.common.ui.theme.LocalAppThemeTokens
 import com.aicleanerstorage.spaceclean.common.ui.theme.StorageCleanAppTheme
 import java.util.concurrent.atomic.AtomicBoolean
@@ -52,7 +52,6 @@ class OpenAdHostActivity : ComponentActivity() {
     private val mainHandler = Handler(Looper.getMainLooper())
     private val loadingVisible = mutableStateOf(true)
     private var startupJob: Job? = null
-    private var session: ColdStartAdSession? = null
     private var openAdLoaded = false
     private var openAdEverLoaded = false
     private var hostCreatedAtMillis = 0L
@@ -98,14 +97,9 @@ class OpenAdHostActivity : ComponentActivity() {
                         return@launch
                     }
                     if (isFinishing || isDestroyed) return@launch
-                    val createdSession =
-                        AdRuntime(activityProvider = { this@OpenAdHostActivity }).runColdStart(
-                            context = applicationContext,
-                            onOpenAdStateChanged = ::dispatchOpenAdState,
-                            onFinished = ::complete,
-                        )
-                    session = createdSession
-                    if (completed.get()) createdSession.cancel()
+                    AdvertiseAdDriver(applicationContext) { this@OpenAdHostActivity }
+                        .showColdStart(onOpenAdStateChanged = ::dispatchOpenAdState)
+                    complete()
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Throwable) {
@@ -127,8 +121,6 @@ class OpenAdHostActivity : ComponentActivity() {
         pendingFinishHostRunnable?.let(mainHandler::removeCallbacks)
         pendingFinishHostRunnable = null
         watchdog.dispose()
-        session?.cancel()
-        session = null
         super.onDestroy()
     }
 
@@ -139,7 +131,7 @@ class OpenAdHostActivity : ComponentActivity() {
                 Runnable {
                     pendingFinishHostRunnable = null
                     watchdog.dispose()
-                    session?.cancel()
+                    startupJob?.cancel()
                     setResult(Activity.RESULT_OK)
                     loadingVisible.value = false
                     overridePendingTransition(0, 0)

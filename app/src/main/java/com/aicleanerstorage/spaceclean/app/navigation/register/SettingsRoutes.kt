@@ -7,7 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsRoute
 import com.aicleanerstorage.spaceclean.feature.settings.SettingsRoute
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsViewModel
@@ -28,7 +28,7 @@ internal fun NavGraphBuilder.registerSettingsRoutes(
     composable(AppDestination.ManagePermissions.route) {
         ManagePermissionsRoute(
             navigator = navigator,
-            permissionCoordinator = LocalPermissionCoordinator.current,
+            permissionGateway = LocalPermissionGateway.current,
             viewModel = koinViewModel<ManagePermissionsViewModel>(),
         )
     }

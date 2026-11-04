@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.antivirus
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import android.content.ActivityNotFoundException
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,8 +22,7 @@ import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.appSettingsIntent
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.antivirus.ui.AntiVirusScreen
 
 @Composable
@@ -28,21 +32,35 @@ fun AntiVirusRoute(
     featureFlow: FeatureFlow,
     externalActivities: ExternalActivityTracker,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val state by viewModel.homeState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
 
     LaunchedEffect(viewModel, navigator, featureFlow, externalActivities) {
         viewModel.onHomeAction(VirusHomeAction.Entered)
         viewModel.homeEffects.collect { effect ->
             when (effect) {
                 VirusHomeEffect.Exit ->
-                    featureFlow.exit(FeatureKey.ANTI_VIRUS, FeatureExitReason.Return) { navigator.back() }
+                    run {
+                        if (!exiting) {
+                            exiting = true
+                            permissionJob?.cancel()
+                            routeScope.launch {
+                                featureFlow.exit(FeatureKey.ANTI_VIRUS, FeatureExitReason.Return)
+                                ensureActive()
+                                navigator.back()
+                            }
+                        }
+                    }
                 VirusHomeEffect.OpenInstalledAppsSettings -> {
                     externalActivities.markLaunch()
                     try {
-                        context.startActivity(appSettingsIntent(context))
+                        context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:${context.packageName}")))
                     } catch (_: ActivityNotFoundException) {
                         externalActivities.cancelLaunch()
                         viewModel.onHomeAction(VirusHomeAction.SettingsLaunchFailed)
@@ -52,15 +70,15 @@ fun AntiVirusRoute(
                     }
                 }
                 is VirusHomeEffect.RequestDeepScanPermission -> {
-                    permissionCoordinator.ensure(
-                        action = ProtectedAction.VirusDeepScanStart,
-                        onGranted = {
-                            viewModel.onHomeAction(VirusHomeAction.DeepScanPermissionResult(granted = true))
-                        },
-                        onDenied = {
-                            viewModel.onHomeAction(VirusHomeAction.DeepScanPermissionResult(granted = false))
-                        },
-                    )
+                    if (!exiting && permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.VirusDeepScanStart))) {
+                                PermissionResult.Granted -> { viewModel.onHomeAction(VirusHomeAction.DeepScanPermissionResult(granted = true)) }
+                                PermissionResult.Denied -> { viewModel.onHomeAction(VirusHomeAction.DeepScanPermissionResult(granted = false)) }
+                                PermissionResult.Busy -> Unit
+                            }
+                        }
+                    }
                 }
                 is VirusHomeEffect.NavigateToScan -> {
                     navigator.open(
@@ -86,6 +104,6 @@ fun AntiVirusRoute(
 
     AntiVirusScreen(
         state = state,
-        onAction = viewModel::onHomeAction,
+        onAction = { if (!exiting) viewModel.onHomeAction(it) },
     )
 }

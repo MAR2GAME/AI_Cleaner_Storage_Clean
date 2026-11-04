@@ -10,12 +10,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavGraph
 import com.aicleanerstorage.spaceclean.app.runtime.AppSessionCoordinator
-import com.aicleanerstorage.spaceclean.app.runtime.AdRuntimeLifecycleEffect
+import com.aicleanerstorage.spaceclean.app.runtime.AdLifecycleEffect
 import com.aicleanerstorage.spaceclean.app.runtime.NotificationLaunchEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RouteAnalyticsEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RuntimeBusyReason
 import com.aicleanerstorage.spaceclean.app.permission.AppPermissionHost
-import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionHost
 import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
 import com.aicleanerstorage.spaceclean.app.runtime.rememberAppRuntimeBindings
 import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
@@ -43,17 +42,21 @@ fun AppRoot(
     val runtimeBindings =
         rememberAppRuntimeBindings(
             context = context,
-            notificationPermissionFlowActive = notificationState.permissionUiActive,
+            notificationPermissionFlowActive = notificationState.permissionFlowActive,
             sessionCoordinator = sessionCoordinator,
             cleanupHistory = cleanupHistory,
         )
 
-    AdRuntimeLifecycleEffect(lifecycleOwner, runtimeBindings.ads)
+    AdLifecycleEffect(lifecycleOwner, runtimeBindings.externalGuard)
     RouteAnalyticsEffect(currentRoute, context, runtimeBindings.ads)
 
     AppPermissionHost(
         externalActivityTracker = runtimeBindings.externalActivities,
         onPermissionFlowActiveChange = { sessionCoordinator.set(RuntimeBusyReason.Permission, it) },
+        notificationViewModel = notificationPermissionViewModel,
+        currentRoute = currentRoute,
+        analyticsReporter = runtimeBindings.analyticsReporter,
+        onNotificationGranted = onNotificationPermissionGranted,
     ) {
         AppView(appViewModel)
         AppEffectHost(appViewModel)
@@ -63,13 +66,6 @@ fun AppRoot(
             runtime = runtimeBindings,
             splashPaused = notificationState.splashPaused,
             notificationPermissionUiActive = notificationState.permissionUiActive,
-        )
-        NotificationPermissionHost(
-            viewModel = notificationPermissionViewModel,
-            currentRoute = currentRoute,
-            externalActivityTracker = runtimeBindings.externalActivities,
-            analyticsReporter = runtimeBindings.analyticsReporter,
-            onPermissionGranted = onNotificationPermissionGranted,
         )
         NotificationLaunchEffect(pendingRequest, currentRoute, navController)
     }

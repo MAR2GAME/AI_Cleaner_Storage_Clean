@@ -14,7 +14,7 @@ import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 @Composable
 fun rememberPermissionGranted(permission: PermissionType): Boolean {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val coordinator = LocalPermissionCoordinator.current
+    val coordinator = LocalPermissionGateway.current
     fun checkGranted(): Boolean = coordinator.isGranted(permission)
     var granted by remember(permission, coordinator) { mutableStateOf(checkGranted()) }
 

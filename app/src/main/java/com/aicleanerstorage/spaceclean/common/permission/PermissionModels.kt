@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.common.permission
 
-import android.content.Intent
-
 enum class ProtectedAction(
     val key: String,
     val requiredPermissions: List<PermissionType>,
@@ -44,23 +42,3 @@ enum class PermissionPromptMode {
     Explained,
     Direct,
 }
-
-data class PermissionStatus(
-    val granted: Boolean,
-    val missing: List<PermissionType>,
-)
-
-sealed interface PermissionDecision {
-    data object Granted : PermissionDecision
-
-    data class RequestRuntime(
-        val permissions: Array<String>,
-    ) : PermissionDecision
-
-    data class OpenSettings(
-        val intents: List<Intent>,
-    ) : PermissionDecision
-
-    data object Unavailable : PermissionDecision
-}
-

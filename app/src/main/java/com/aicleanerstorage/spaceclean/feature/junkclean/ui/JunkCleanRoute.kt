@@ -18,6 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.ensureActive
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
@@ -42,8 +44,10 @@ fun JunkCleanRoute(
     fun exitOnce(reason: FeatureExitReason, onContinue: () -> Unit) {
         if (exitStarted) return
         exitStarted = true
-        featureFlow.exit(FeatureKey.JUNK_CLEAN, reason) {
-            if (routeScope.isActive) onContinue()
+        routeScope.launch {
+            featureFlow.exit(FeatureKey.JUNK_CLEAN, reason)
+            ensureActive()
+            onContinue()
         }
     }
     val deleteAuthorizationLauncher =

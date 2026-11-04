@@ -11,9 +11,6 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.MemoryClea
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.ScanProgress
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.ScanResult
 
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import androidx.lifecycle.viewModelScope
 import androidx.activity.result.IntentSenderRequest
 import com.aicleanerstorage.spaceclean.feature.junkclean.ui.launchJunkDeleteAuthorization
@@ -21,14 +18,9 @@ import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
 import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.common.permission.PermissionEngine
-import com.aicleanerstorage.spaceclean.common.permission.PermissionHandler
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
-import com.aicleanerstorage.spaceclean.common.permission.RuntimePermissionDenialStore
-import com.aicleanerstorage.spaceclean.app.permission.PermissionCoordinator
 import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
 import com.aicleanerstorage.spaceclean.feature.junkclean.data.session.SharedScanState
 import kotlinx.coroutines.*
@@ -46,7 +38,6 @@ class JunkCleanViewModelTest {
     private val repository = RecordingRepository()
     private val session = SharedScanState()
     private val gateway = RecordingGateway()
-    private val context = allocate<TestContext>()
 
     @Before
     fun setup() = Dispatchers.setMain(dispatcher)
@@ -113,37 +104,39 @@ class JunkCleanViewModelTest {
     }
 
     @Test
-    fun `settings return without storage permission emits rejection exit through real coordinator`() = runTest {
-        val coordinator = coordinator()
-        val vm = model(coordinator)
+    fun `settings return without storage permission emits rejection exit through real interceptor`() = runTest {
+        val permissionInterceptor = permissionInterceptor()
+        val vm = model(permissionInterceptor)
         val effects = effects(vm)
         vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        coordinator.onDialogSubmit()
-        coordinator.markSettingsLaunchObservedPause()
-        coordinator.onSettingsReturnIfReady()
+        permissionInterceptor.confirm(permissionInterceptor.request.value!!.owner)
+        permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!.owner, false)
+        permissionInterceptor.markPaused(permissionInterceptor.request.value!!.owner)
+        permissionInterceptor.settingsReturned(permissionInterceptor.request.value!!.owner)
         advanceUntilIdle()
         assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
         assertNull(vm.state.value.errorMessageRes)
         assertNull(vm.state.value.errorMessage)
         assertEquals(0, repository.scanCalls)
-        assertNull(coordinator.session)
+        assertNull(permissionInterceptor.request.value)
     }
 
     @Test
     fun `dialog cancellation and runtime refusal exit without showing error`() = runTest {
         for (runtime in listOf(false, true)) {
-            val coordinator = coordinator(runtime)
-            val vm = model(coordinator)
+            val permissionInterceptor = permissionInterceptor()
+            val vm = model(permissionInterceptor)
             val effects = effects(vm)
             vm.dispatch(JunkCleanIntent.Entered)
             runCurrent()
             if (runtime) {
-                coordinator.onDialogSubmit()
-                coordinator.onRuntimeResult(mapOf("storage" to false))
+                permissionInterceptor.confirm(permissionInterceptor.request.value!!.owner)
+                permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!.owner, true)
+                permissionInterceptor.runtimeReturned(permissionInterceptor.request.value!!.owner)
             } else {
-                coordinator.dismiss()
+                permissionInterceptor.dismiss(permissionInterceptor.request.value!!.owner)
             }
             advanceUntilIdle()
             assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
@@ -655,26 +648,10 @@ class JunkCleanViewModelTest {
         assertFalse(effects.filterIsInstance<JunkCleanEffect.Operation>().any { it.event is FeatureOperationEvent.OperationFinished })
     }
 
-    private fun coordinator(runtime: Boolean = false) = PermissionCoordinator(
-        context,
-        PermissionEngine(
-            handlers = listOf(object : PermissionHandler {
-                override val permission = PermissionType.StorageFiles
-                override fun isGranted(context: Context) = false
-                override fun runtimePermissions(context: Context) = if (runtime) listOf("storage") else emptyList()
-                override fun settingsIntents(context: Context) = listOf(allocate<Intent>())
-            }),
-            denialStore = object : RuntimePermissionDenialStore {
-                override fun hasDenied(permission: PermissionType) = false
-                override fun markDenied(permission: PermissionType) = Unit
-            },
-            isRuntimePermissionGranted = { _, _ -> false },
-            settingsIntentKey = { "storage" },
-        ),
-    )
+    private fun permissionInterceptor() = PermissionInterceptor({ false })
 
-    private fun model(permissionGateway: PermissionGateway = gateway) = JunkCleanViewModel(
-        repository, session, listOf(PermissionInterceptor(permissionGateway)), dispatcher,
+    private fun model(permission: com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor = gateway) = JunkCleanViewModel(
+        repository, session, listOf(permission), dispatcher,
         scanPreviewMinMillis = 0L,
         cleaningAnimationMinMillis = 0L,
     ).also(models::add)
@@ -691,13 +668,17 @@ class JunkCleanViewModelTest {
 
 }
 
-private class RecordingGateway : PermissionGateway {
+private class RecordingGateway : com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor {
     var calls = 0
     var answer: suspend () -> PermissionResult = { PermissionResult.Granted }
-    override suspend fun ensure(need: PermissionNeed): PermissionResult {
-        assertEquals(PermissionNeed.StorageFiles, need)
+    override suspend fun intercept(policy: com.aicleanerstorage.spaceclean.core.presentation.IntentPolicy): com.aicleanerstorage.spaceclean.core.presentation.InterceptResult {
+        assertEquals(PermissionNeed.StorageFiles, policy)
         calls += 1
-        return answer()
+        return when (answer()) {
+            PermissionResult.Granted -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Continue
+            PermissionResult.Denied -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Block
+            PermissionResult.Busy -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Busy
+        }
     }
 }
 
@@ -740,10 +721,6 @@ private class RecordingRepository : CleanRepository {
         assertEquals(listOf(mixedOutcomes.last()), pendingOutcomes)
         return JunkAuthorizedDeleteResult(listOf(files[2]), emptyList(), 300L)
     }
-}
-
-private class TestContext : ContextWrapper(null) {
-    override fun getApplicationContext(): Context = this
 }
 
 private inline fun <reified T> allocate(): T {

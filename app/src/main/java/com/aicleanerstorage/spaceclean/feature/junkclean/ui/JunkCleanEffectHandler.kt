@@ -47,7 +47,7 @@ internal suspend fun collectJunkCleanEffects(
                     featureFlow.recordOperation(effect.event)
                     completionAdJob?.start()
                 } else {
-                    featureFlow.handleOperation(effect.event)
+                    launch { if (!isExiting()) featureFlow.handleOperation(effect.event) }
                 }
             }
             is JunkCleanEffect.Exit -> {

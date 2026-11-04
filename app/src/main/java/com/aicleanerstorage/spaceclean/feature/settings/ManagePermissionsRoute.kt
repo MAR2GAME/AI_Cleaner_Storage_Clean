@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.settings
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import com.aicleanerstorage.spaceclean.feature.settings.*
 
 import com.aicleanerstorage.spaceclean.feature.settings.ManagePermissionsViewModel
@@ -19,7 +24,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXScaffoldPage
-import com.aicleanerstorage.spaceclean.common.permission.AppPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.feature.settings.ui.ManagePermissionsContent
 import com.aicleanerstorage.spaceclean.feature.settings.ui.PermissionRowUi
 import com.aicleanerstorage.spaceclean.common.ui.theme.CleanXContentPadding
@@ -32,20 +37,24 @@ import com.aicleanerstorage.spaceclean.feature.settings.ui.ManagePermissionsScre
 @Composable
 fun ManagePermissionsRoute(
     navigator: AppNavigator,
-    permissionCoordinator: AppPermissionCoordinator,
+    permissionGateway: PermissionGateway,
     viewModel: ManagePermissionsViewModel,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     fun refreshStatuses() {
         viewModel.onAction(
             ManagePermissionsAction.StatusesChanged(
-                uiState.rows.associate { row -> row.item to permissionCoordinator.isGranted(row.item) },
+                uiState.rows.associate { row -> row.item to permissionGateway.isGranted(row.item) },
             ),
         )
     }
 
-    DisposableEffect(lifecycleOwner, viewModel, permissionCoordinator) {
+    DisposableEffect(lifecycleOwner, viewModel, permissionGateway) {
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME) {
@@ -56,24 +65,31 @@ fun ManagePermissionsRoute(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(viewModel, permissionCoordinator) {
+    LaunchedEffect(viewModel, permissionGateway) {
         refreshStatuses()
     }
 
     ManagePermissionsScreen(
         state = uiState,
-        onAction = { action ->
+        onAction = actions@{ action ->
+            if (exiting) return@actions
             when (action) {
-                ManagePermissionsAction.Back -> navigator.back()
+                ManagePermissionsAction.Back -> {
+                    exiting = true
+                    permissionJob?.cancel()
+                    navigator.back()
+                }
                 ManagePermissionsAction.Refresh -> refreshStatuses()
                 is ManagePermissionsAction.PermissionClicked -> {
-                    permissionCoordinator.openSettings(action.item) {
-                        refreshStatuses()
+                    if (permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            if (permissionGateway.openSettings(action.item) != PermissionResult.Busy) { refreshStatuses() }
+                        }
                     }
                 }
                 is ManagePermissionsAction.StatusesChanged -> viewModel.onAction(action)
             }
         },
-        onNavigate = navigator::open,
+        onNavigate = { if (!exiting) navigator.open(it) },
     )
 }

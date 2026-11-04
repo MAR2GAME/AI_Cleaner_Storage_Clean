@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.notificationcleaner
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -15,7 +20,7 @@ import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.ui.NotificationCleanerScreen
@@ -26,9 +31,14 @@ fun NotificationCleanerRoute(
     viewModel: NotificationCleanerViewModel,
     featureFlow: FeatureFlow,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var operationJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
 
     DisposableEffect(lifecycleOwner, viewModel) {
         val observer = LifecycleEventObserver { _, event ->
@@ -43,35 +53,49 @@ fun NotificationCleanerRoute(
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.operationEvents.collect { operationEvent ->
             val event = operationEvent.event
+            if (exiting) return@collect
             when {
                 event.isNotificationCleanerScanFinished() -> {
-                    featureFlow.handleOperation(event) {
-                        operationEvent.scanGeneration?.let { scanGeneration ->
-                            viewModel.onAction(NotificationCleanerAction.ShowStatus(scanGeneration))
-                        }
+                    featureFlow.recordOperation(event)
+                    operationEvent.scanGeneration?.let { scanGeneration ->
+                        viewModel.onAction(NotificationCleanerAction.ShowStatus(scanGeneration))
                     }
                 }
                 event.isNotificationCleanerCompletionSuccess() -> {
-                    if (!viewModel.uiState.value.completionAdInFlight) {
+                    if (!viewModel.uiState.value.completionAdInFlight && operationJob?.isActive != true) {
                         viewModel.onAction(NotificationCleanerAction.CompletionAdStarted)
-                        featureFlow.handleOperation(event) {
-                            viewModel.onAction(NotificationCleanerAction.CompletionAdFinished)
-                            viewModel.onAction(NotificationCleanerAction.ShowStatusAfterCompletionAd)
+                        operationJob = routeScope.launch {
+                            featureFlow.handleOperation(event)
+                            ensureActive()
+                            if (!exiting) {
+                                viewModel.onAction(NotificationCleanerAction.CompletionAdFinished)
+                                viewModel.onAction(NotificationCleanerAction.ShowStatusAfterCompletionAd)
+                            }
                         }
                     }
                 }
-                else -> {
-                    featureFlow.handleOperation(event)
-                }
+                else -> routeScope.launch { featureFlow.handleOperation(event) }
             }
         }
     }
 
     fun exitBack() {
-        featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return) { navigator.back() }
+        run {
+            if (!exiting) {
+                exiting = true
+                permissionJob?.cancel()
+                operationJob?.cancel()
+                routeScope.launch {
+                    featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return)
+                    ensureActive()
+                    navigator.back()
+                }
+            }
+        }
     }
 
     fun handleBack() {
+        if (exiting) return
         if (state.completionAdInFlight) return
         when (state.page) {
             NotificationCleanerPage.Settings -> viewModel.onAction(NotificationCleanerAction.LeaveSettings)
@@ -84,7 +108,8 @@ fun NotificationCleanerRoute(
 
     NotificationCleanerScreen(
         state = state,
-        onAction = { action ->
+        onAction = actions@{ action ->
+            if (exiting) return@actions
             when (action) {
                 NotificationCleanerAction.Back -> handleBack()
                 NotificationCleanerAction.QuitStoppedOperation -> {
@@ -92,14 +117,20 @@ fun NotificationCleanerRoute(
                     exitBack()
                 }
                 NotificationCleanerAction.EnableBlocking -> {
-                    permissionCoordinator.ensure(ProtectedAction.NotificationCleanerEnable) {
-                        viewModel.onAction(action)
+                    if (!exiting && permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.NotificationCleanerEnable))) {
+                                PermissionResult.Granted -> { viewModel.onAction(action) }
+                                PermissionResult.Denied -> { Unit }
+                                PermissionResult.Busy -> Unit
+                            }
+                        }
                     }
                 }
                 else -> viewModel.onAction(action)
             }
         },
-        onNavigate = navigator::open,
+        onNavigate = { if (!exiting) navigator.open(it) },
     )
 }
 

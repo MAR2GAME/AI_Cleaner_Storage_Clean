@@ -1,5 +1,10 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner
 
+import androidx.compose.runtime.*
+import kotlinx.coroutines.*
+import com.aicleanerstorage.spaceclean.common.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,7 +16,7 @@ import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.common.feature.OperationAction
 import com.aicleanerstorage.spaceclean.common.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionCoordinator
+import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerAction
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.ui.WhatsAppCleanerScreen
@@ -22,58 +27,107 @@ fun WhatsAppCleanerRoute(
     viewModel: WhatsAppCleanerViewModel,
     featureFlow: FeatureFlow,
 ) {
+    val routeScope = rememberCoroutineScope()
+    var permissionJob by remember { mutableStateOf<Job?>(null) }
+    var operationJob by remember { mutableStateOf<Job?>(null) }
+    var exiting by remember { mutableStateOf(false) }
+
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val permissionCoordinator = LocalPermissionCoordinator.current
+    val permissionGateway = LocalPermissionGateway.current
 
     fun exitToHomeAfterPermissionRejected() {
-        featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.PermissionRejected) {
-            viewModel.onAction(WhatsAppCleanerAction.ClearResult)
-            navigator.home()
+        run {
+            if (!exiting) {
+                exiting = true
+                permissionJob?.cancel()
+                operationJob?.cancel()
+                routeScope.launch {
+                    featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.PermissionRejected)
+                    ensureActive()
+                    viewModel.onAction(WhatsAppCleanerAction.ClearResult)
+                    navigator.home()
+                }
+            }
         }
     }
 
-    LaunchedEffect(viewModel, permissionCoordinator) {
-        permissionCoordinator.ensure(
-            action = ProtectedAction.WhatsAppStartScan,
-            onGranted = { viewModel.onAction(WhatsAppCleanerAction.StartScan) },
-            onDenied = ::exitToHomeAfterPermissionRejected,
-        )
+    LaunchedEffect(viewModel, permissionGateway) {
+        if (!exiting && permissionJob?.isActive != true) {
+            permissionJob = routeScope.launch {
+                when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.WhatsAppStartScan))) {
+                    PermissionResult.Granted -> { viewModel.onAction(WhatsAppCleanerAction.StartScan) }
+                    PermissionResult.Denied -> { exitToHomeAfterPermissionRejected() }
+                    PermissionResult.Busy -> Unit
+                }
+            }
+        }
     }
 
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.operationEvents.collect { event ->
             if (event.isWhatsAppCompletionSuccess()) {
-                featureFlow.handleOperation(event) {
-                    viewModel.onAction(WhatsAppCleanerAction.ShowResult)
+                if (!exiting && operationJob?.isActive != true) {
+                    operationJob = routeScope.launch {
+                        featureFlow.handleOperation(event)
+                        ensureActive()
+                        if (!exiting) { viewModel.onAction(WhatsAppCleanerAction.ShowResult) }
+                    }
                 }
             } else {
-                featureFlow.handleOperation(event)
+                if (!exiting) routeScope.launch { if (!exiting) featureFlow.handleOperation(event) }
             }
         }
     }
 
     WhatsAppCleanerScreen(
         state = state,
-        onAction = { action ->
+        onAction = actions@{ action ->
+            if (exiting) return@actions
             when (action) {
                 WhatsAppCleanerAction.Back -> {
-                    featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.Return) { navigator.back() }
+                    run {
+                        if (!exiting) {
+                            exiting = true
+                            permissionJob?.cancel()
+                            operationJob?.cancel()
+                            routeScope.launch {
+                                featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.Return)
+                                ensureActive()
+                                navigator.back()
+                            }
+                        }
+                    }
                 }
                 WhatsAppCleanerAction.ExitAfterComplete -> {
-                    featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.Return) {
-                        viewModel.onAction(WhatsAppCleanerAction.ClearResult)
-                        navigator.home()
+                    run {
+                        if (!exiting) {
+                            exiting = true
+                            permissionJob?.cancel()
+                            operationJob?.cancel()
+                            routeScope.launch {
+                                featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, FeatureExitReason.Return)
+                                ensureActive()
+                                viewModel.onAction(WhatsAppCleanerAction.ClearResult)
+                                navigator.home()
+                            }
+                        }
                     }
                 }
                 WhatsAppCleanerAction.CleanSelected -> {
-                    permissionCoordinator.ensure(ProtectedAction.WhatsAppCleanSelected) {
-                        viewModel.onAction(action)
+                    if (!exiting && permissionJob?.isActive != true) {
+                        permissionJob = routeScope.launch {
+                            when (permissionGateway.ensure(PermissionTarget.Action(ProtectedAction.WhatsAppCleanSelected))) {
+                                PermissionResult.Granted -> { viewModel.onAction(action) }
+                                PermissionResult.Denied -> { Unit }
+                                PermissionResult.Busy -> Unit
+                            }
+                        }
                     }
                 }
                 else -> viewModel.onAction(action)
             }
         },
-        onNavigate = navigator::open,
+        onNavigate = { if (!exiting) navigator.open(it) },
     )
 }
 

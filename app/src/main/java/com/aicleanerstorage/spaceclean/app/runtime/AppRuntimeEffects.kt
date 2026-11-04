@@ -12,34 +12,34 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
-import com.aicleanerstorage.spaceclean.app.commercial.AdRuntimeFacade
+import com.aicleanerstorage.spaceclean.common.ads.AdDriver
+import com.aicleanerstorage.spaceclean.common.ads.ExternalAppOpenGuard
 import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
 import com.aicleanerstorage.spaceclean.common.ads.AdPreloadStage
 import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
 
 @Composable
-internal fun AdRuntimeLifecycleEffect(lifecycleOwner: LifecycleOwner, adRuntime: AdRuntimeFacade) {
-    DisposableEffect(lifecycleOwner, adRuntime) {
+internal fun AdLifecycleEffect(lifecycleOwner: LifecycleOwner, guard: ExternalAppOpenGuard) {
+    DisposableEffect(lifecycleOwner, guard) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) adRuntime.onHostResumed()
+            if (event == Lifecycle.Event.ON_RESUME) guard.onHostResumed()
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-            adRuntime.dispose()
         }
     }
 }
 
 @Composable
-internal fun RouteAnalyticsEffect(route: String?, context: Context, adRuntime: AdRuntimeFacade) {
+internal fun RouteAnalyticsEffect(route: String?, context: Context, adDriver: AdDriver) {
     var previousRoute by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(route) {
         val current = route ?: return@LaunchedEffect
         if (current in AppDestination.homeRoutes) {
             AnalyticsTracker.trackHomeEntered(AnalyticsTracker.homepageReferrer(previousRoute))
-            adRuntime.preload(AdPreloadStage.MainPage, context.applicationContext)
+            adDriver.preload(AdPreloadStage.MainPage)
         }
         AnalyticsTracker.featureForPrimaryRoute(current)?.let(AnalyticsTracker::trackCoreFeatureEntered)
         previousRoute = current
