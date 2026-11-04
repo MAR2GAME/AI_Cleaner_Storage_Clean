@@ -124,7 +124,31 @@ class AdFeatureFlowTest {
             ),
             ads.requests,
         )
-        assertEquals(emptyList<AnalyticsEvent>(), reports.events)
+        assertEquals(
+            listOf(
+                AnalyticsEvent.FeatureExit(FeatureKey.NETWORK_SPEED, FeatureExitReason.Return),
+                AnalyticsEvent.FeatureExit(FeatureKey.APP_USAGE, FeatureExitReason.PermissionRejected),
+            ),
+            reports.events,
+        )
+    }
+
+    @Test
+    fun `junk permission rejection reports exit and navigates only once after ad continuation`() {
+        val ads = RecordingAdRunner()
+        val reports = RecordingAnalyticsReporter()
+        val busy = mutableListOf<Boolean>()
+        var navigations = 0
+        runtime(ads, reports, busy).exit(FeatureKey.JUNK_CLEAN, FeatureExitReason.PermissionRejected) {
+            navigations += 1
+        }
+        assertEquals(listOf(AnalyticsEvent.FeatureExit(FeatureKey.JUNK_CLEAN, FeatureExitReason.PermissionRejected)), reports.events)
+        assertEquals(listOf(AdRequest(AdScene.PermissionRejected(FeatureKey.JUNK_CLEAN), "permission_rejected_JUNK_CLEAN")), ads.requests)
+        assertEquals(listOf(false), busy)
+        assertEquals(0, navigations)
+        ads.continueRequest()
+        ads.continueRequest()
+        assertEquals(1, navigations)
     }
 
     private fun runtime(

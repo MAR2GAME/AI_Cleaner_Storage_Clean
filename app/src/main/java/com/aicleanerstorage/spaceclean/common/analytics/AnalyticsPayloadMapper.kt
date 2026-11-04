@@ -57,6 +57,13 @@ object AnalyticsPayloadMapper {
                 else AnalyticsTracker.Event.DISAGREE_PUSH_PERMISSION,
             )
             is AnalyticsEvent.FeatureOperation -> AnalyticsPayload(null, emptyMap())
+            is AnalyticsEvent.FeatureExit -> AnalyticsPayload(
+                AnalyticsTracker.Event.FEATURE_EXIT,
+                mapOf(
+                    AnalyticsTracker.Param.DETAILS to event.feature.analyticsDetails(),
+                    AnalyticsTracker.Param.EXIT_REASON to event.reason.name,
+                ),
+            )
         }
 
     private fun FeatureKey.analyticsDetails(): String? = when (this) {

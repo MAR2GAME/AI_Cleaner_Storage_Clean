@@ -70,6 +70,7 @@ internal fun JunkScanResultView(
     selectedSummary: SelectionSummary,
     onToggleCategorySelection: (List<JunkCategory>) -> Unit,
     onToggleItem: (CleanItem) -> Unit,
+    interactionsEnabled: Boolean = true,
 ) {
     val rows = displayGroups(groups)
     var expandedIndex by remember { mutableStateOf(-1) }
@@ -78,7 +79,7 @@ internal fun JunkScanResultView(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState(), enabled = interactionsEnabled)
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 24.dp),
     ) {
@@ -95,6 +96,7 @@ internal fun JunkScanResultView(
                     val items = row.group.items
                     CategoryGroupSection(
                         row = row,
+                        interactionsEnabled = interactionsEnabled,
                         checked =
                             row.group.items.takeIf { it.isNotEmpty() }?.all { it.isChecked }
                                 ?: (row.group.category in checkedEmptyCategories),
@@ -263,6 +265,7 @@ internal fun JunkRemoveButton(
 @Composable
 private fun CategoryGroupSection(
     row: ResultDisplayRow,
+    interactionsEnabled: Boolean,
     checked: Boolean,
     expanded: Boolean,
     onToggleExpanded: () -> Unit,
@@ -284,7 +287,7 @@ private fun CategoryGroupSection(
                 modifier =
                     Modifier
                         .weight(1f)
-                        .clickable(enabled = items.isNotEmpty()) { onToggleExpanded() },
+                        .clickable(enabled = interactionsEnabled && items.isNotEmpty()) { onToggleExpanded() },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -323,7 +326,7 @@ private fun CategoryGroupSection(
                     modifier =
                         Modifier
                             .size(24.dp)
-                            .clickable { onToggleCategorySelection() },
+                            .clickable(enabled = interactionsEnabled) { onToggleCategorySelection() },
                 )
             }
         }
@@ -338,6 +341,7 @@ private fun CategoryGroupSection(
                 items.forEach { item ->
                     JunkItemCard(
                         item = item,
+                        enabled = interactionsEnabled,
                         modifier = Modifier.width(55.dp),
                         onClick = { onToggleItem(item) },
                     )
@@ -350,6 +354,7 @@ private fun CategoryGroupSection(
 @Composable
 private fun JunkItemCard(
     item: CleanItem,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -357,6 +362,7 @@ private fun JunkItemCard(
     Column(
         modifier =
             modifier.clickable(
+                enabled = enabled,
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick,

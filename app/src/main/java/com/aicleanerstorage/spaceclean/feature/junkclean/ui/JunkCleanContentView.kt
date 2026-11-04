@@ -14,6 +14,7 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.CleanItem
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.common.ui.components.CleanXBackground
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.JunkPermissionRequest
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanXDeleteCompleteStage
 
@@ -24,31 +25,33 @@ internal fun JunkCleanContentView(
     onToggleItem: (CleanItem) -> Unit,
     onNavigateTool: (AppDestination) -> Unit,
     onContinueFromResult: () -> Unit,
+    interactionsEnabled: Boolean = true,
 ) {
-    when (uiState.phase) {
-        JunkCleanPhase.CheckingPermission -> JunkScanningView(uiState = uiState)
-        JunkCleanPhase.MissingPermission ->
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(CleanXBackground)
-                        .padding(horizontal = 24.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                JunkCleanErrorView(
-                    message = stringResource(com.aicleanerstorage.spaceclean.R.string.permission_is_required),
+    when (val phase = uiState.phase) {
+        JunkCleanPhase.Idle,
+        JunkCleanPhase.Scanning -> JunkScanningView(uiState = uiState)
+        is JunkCleanPhase.CheckingPermission -> {
+            when (phase.request) {
+                JunkPermissionRequest.Scan -> JunkScanningView(uiState = uiState)
+                JunkPermissionRequest.Clean -> JunkScanResultView(
+                    groups = uiState.groups,
+                    checkedEmptyCategories = uiState.checkedEmptyCategories,
+                    selectedSummary = uiState.selectedSummary,
+                    onToggleCategorySelection = onToggleCategorySelection,
+                    onToggleItem = onToggleItem,
+                    interactionsEnabled = false,
                 )
             }
-        JunkCleanPhase.Scanning -> JunkScanningView(uiState = uiState)
+        }
         JunkCleanPhase.Preview ->
-            JunkScanResultView(
-                groups = uiState.groups,
-                checkedEmptyCategories = uiState.checkedEmptyCategories,
-                selectedSummary = uiState.selectedSummary,
-                onToggleCategorySelection = onToggleCategorySelection,
-                onToggleItem = onToggleItem,
-            )
+                JunkScanResultView(
+                    groups = uiState.groups,
+                    checkedEmptyCategories = uiState.checkedEmptyCategories,
+                    selectedSummary = uiState.selectedSummary,
+                    onToggleCategorySelection = onToggleCategorySelection,
+                    onToggleItem = onToggleItem,
+                    interactionsEnabled = interactionsEnabled,
+                )
         JunkCleanPhase.Cleaning,
         JunkCleanPhase.CompleteAnimation -> JunkCleaningView(
             stage =
@@ -74,7 +77,7 @@ internal fun JunkCleanContentView(
                 uiState = uiState.cleanResult,
                 onNavigateTool = onNavigateTool,
             )
-        JunkCleanPhase.Error ->
+        is JunkCleanPhase.Failed ->
             Box(
                 modifier =
                     Modifier

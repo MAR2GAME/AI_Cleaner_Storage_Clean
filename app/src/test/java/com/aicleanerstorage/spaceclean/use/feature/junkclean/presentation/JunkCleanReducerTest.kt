@@ -16,6 +16,71 @@ import org.junit.Test
 
 class JunkCleanReducerTest {
     @Test
+    fun `scan denial exits without error and clears stop dialog`() {
+        val stale = JunkCleanUiState(
+            phase = JunkCleanPhase.Failed(JunkOperation.Scan),
+            progress = 80f,
+            currentCategory = JunkCategory.CACHE,
+            foundItemCount = 10,
+            foundTotalSize = 2048L,
+            formattedFoundSize = "2 KB",
+        )
+        val checking = JunkCleanReducer.reduce(stale, JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Scan))
+        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Scan), checking.phase)
+        assertEquals(0f, checking.progress, 0f)
+        assertNull(checking.currentCategory)
+        assertEquals(0, checking.foundItemCount)
+        assertEquals(0L, checking.foundTotalSize)
+        assertEquals("0 B", checking.formattedFoundSize)
+        val denied = JunkCleanReducer.reduce(
+            stale.copy(
+                errorMessageRes = R.string.scan_failed,
+                errorMessage = "previous failure",
+                showStopDialog = true,
+                stopDialogPhase = JunkCleanPhase.Scanning,
+            ),
+            JunkCleanAction.PermissionDenied(JunkPermissionRequest.Scan),
+        )
+        assertEquals(JunkCleanPhase.Idle, denied.phase)
+        assertEquals(0f, denied.progress, 0f)
+        assertNull(denied.currentCategory)
+        assertEquals(0, denied.foundItemCount)
+        assertEquals(0L, denied.foundTotalSize)
+        assertEquals("0 B", denied.formattedFoundSize)
+        assertNull(denied.errorMessageRes)
+        assertNull(denied.errorMessage)
+        assertFalse(denied.showStopDialog)
+        assertNull(denied.stopDialogPhase)
+    }
+
+    @Test
+    fun `clean denial and busy preserve restored preview including selection`() {
+        val previous = JunkCleanReducer.reduce(
+            JunkCleanUiState(),
+            JunkCleanAction.PreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+        )
+        val denied = JunkCleanReducer.reduce(previous, JunkCleanAction.PermissionDenied(JunkPermissionRequest.Clean))
+        assertEquals(previous, denied)
+        JunkPermissionRequest.entries.forEach { request ->
+            assertSame(previous, JunkCleanReducer.reduce(previous, JunkCleanAction.PermissionBusy(request)))
+        }
+        assertFalse(previous.cleanResult.hasVisibleResult)
+    }
+
+    @Test
+    fun `permission check purpose is stored only in phase and clean denial restores preview`() {
+        val preview = JunkCleanReducer.reduce(
+            JunkCleanUiState(), JunkCleanAction.PreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+        ).copy(progress = 100f, foundItemCount = 1, foundTotalSize = 100L, formattedFoundSize = "100 B")
+        val checking = JunkCleanReducer.reduce(preview, JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Clean))
+        assertEquals(JunkCleanPhase.CheckingPermission(JunkPermissionRequest.Clean), checking.phase)
+        assertEquals(preview.copy(phase = checking.phase), checking)
+        assertEquals(preview.groups, checking.groups)
+        val denied = JunkCleanReducer.reduce(checking, JunkCleanAction.PermissionDenied(JunkPermissionRequest.Clean))
+        assertEquals(preview, denied)
+    }
+
+    @Test
     fun `preview selects scanned files and tracks empty display categories`() {
         val result = scanResult(file("cache", 120L, JunkCategory.CACHE))
 
@@ -127,21 +192,21 @@ class JunkCleanReducerTest {
     }
 
     @Test
-    fun `scan failure records scan state while cleaning failure preserves it`() {
+    fun `failure operation is expressed by the single phase`() {
         val scanFailure =
             JunkCleanReducer.reduce(
-                JunkCleanUiState(scanState = JunkCleanScanState.Scanning),
+                JunkCleanUiState(phase = JunkCleanPhase.Scanning),
                 JunkCleanAction.Failed(R.string.scan_failed, "scan", duringScan = true),
             )
         val cleanFailure =
             JunkCleanReducer.reduce(
-                JunkCleanUiState(scanState = JunkCleanScanState.Completed),
+                JunkCleanUiState(phase = JunkCleanPhase.Cleaning),
                 JunkCleanAction.Failed(R.string.result_clean_error, "clean"),
             )
 
-        assertEquals(JunkCleanScanState.Error, scanFailure.scanState)
+        assertEquals(JunkCleanPhase.Failed(JunkOperation.Scan), scanFailure.phase)
         assertEquals("scan", scanFailure.errorMessage)
-        assertEquals(JunkCleanScanState.Completed, cleanFailure.scanState)
+        assertEquals(JunkCleanPhase.Failed(JunkOperation.Clean), cleanFailure.phase)
         assertEquals("clean", cleanFailure.errorMessage)
     }
 

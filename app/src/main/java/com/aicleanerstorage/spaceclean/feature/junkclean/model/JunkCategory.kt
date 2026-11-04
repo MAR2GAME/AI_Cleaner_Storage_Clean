@@ -1,9 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.model
 
-/**
- * 閸ㄥ啫婧囬弬鍥︽娑撴艾濮熼崚鍡欒 *
- * 閻劋绨幍顐ｅ伎閵嗕胶绮ㄩ弸婊堫暕鐟欏牆鎷板〒鍛倞濮瑰洦鈧崵鐡戞稉缁樼閻炲棝鎽肩捄顖ょ礉
- * 閸ョ姵顒濋弨鎯ф躬 domain 鐏炲倷缍旀稉楦挎硶 data 閿?presentation 閻ㄥ嫮菙鐎规碍膩閸ㄥ鎷? */
 enum class JunkCategory(
     val displayName: String,
     val description: String,

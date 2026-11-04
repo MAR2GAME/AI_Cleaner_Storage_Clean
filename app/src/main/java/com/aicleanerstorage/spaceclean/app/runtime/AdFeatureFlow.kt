@@ -34,6 +34,7 @@ internal class AdFeatureFlow(
 
     override fun exit(feature: FeatureKey, reason: FeatureExitReason, onContinue: () -> Unit) {
         onOperationBusyChanged(false)
+        analyticsReporter.report(AnalyticsEvent.FeatureExit(feature, reason))
         executor.execute(adPolicy.exitRequest(feature, reason), once(onContinue))
     }
 }

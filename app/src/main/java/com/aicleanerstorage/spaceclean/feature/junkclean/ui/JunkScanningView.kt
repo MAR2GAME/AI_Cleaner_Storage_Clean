@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.common.ui.components.animations.CleanSpiralAnimation
-import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanScanState
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 
@@ -32,15 +31,6 @@ internal fun JunkScanningView(uiState: JunkCleanUiState) {
     val scanningText =
         categoryLabel?.let { stringResource(R.string.scan_scanning_category, it) }
             ?: stringResource(R.string.scan_loading_fallback)
-    val errorText =
-        uiState.errorMessage ?: uiState.errorMessageRes?.let { stringResource(it) }
-            ?: stringResource(R.string.scan_failed)
-    val caption =
-        if (uiState.scanState == JunkCleanScanState.Error) {
-            errorText
-        } else {
-            scanningText
-        }
     val foundSize = normalizeScanSize(uiState.formattedFoundSize)
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -57,7 +47,7 @@ internal fun JunkScanningView(uiState: JunkCleanUiState) {
             ScanSizeLabel(formattedSize = foundSize)
         }
         Text(
-            text = caption,
+            text = scanningText,
             color = JunkScanText,
             fontSize = 20.sp,
             lineHeight = 24.sp,

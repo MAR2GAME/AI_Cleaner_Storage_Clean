@@ -19,30 +19,41 @@ internal val DefaultResultDisplayCategories =
 object JunkCleanReducer {
     fun reduce(state: JunkCleanUiState, action: JunkCleanAction): JunkCleanUiState =
         when (action) {
-            JunkCleanAction.PermissionCheckStarted ->
+            is JunkCleanAction.PermissionCheckStarted ->
                 state.copy(
-                    phase = JunkCleanPhase.CheckingPermission,
+                    phase = JunkCleanPhase.CheckingPermission(action.request),
+                    progress = if (action.request == JunkPermissionRequest.Scan) 0f else state.progress,
+                    currentCategory = if (action.request == JunkPermissionRequest.Scan) null else state.currentCategory,
+                    foundItemCount = if (action.request == JunkPermissionRequest.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (action.request == JunkPermissionRequest.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (action.request == JunkPermissionRequest.Scan) "0 B" else state.formattedFoundSize,
                     errorMessageRes = null,
                     errorMessage = null,
                 )
 
-            JunkCleanAction.PermissionDenied ->
+            is JunkCleanAction.PermissionDenied ->
                 state.copy(
-                    phase = JunkCleanPhase.MissingPermission,
-                    scanState = JunkCleanScanState.Error,
-                    errorMessageRes = R.string.permission_is_required,
+                    phase = if (action.request == JunkPermissionRequest.Scan) JunkCleanPhase.Idle else JunkCleanPhase.Preview,
+                    progress = if (action.request == JunkPermissionRequest.Scan) 0f else state.progress,
+                    currentCategory = if (action.request == JunkPermissionRequest.Scan) null else state.currentCategory,
+                    foundItemCount = if (action.request == JunkPermissionRequest.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (action.request == JunkPermissionRequest.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (action.request == JunkPermissionRequest.Scan) "0 B" else state.formattedFoundSize,
+                    errorMessageRes = null,
                     errorMessage = null,
+                    showStopDialog = false,
+                    stopDialogPhase = null,
                 )
+
+            is JunkCleanAction.PermissionBusy -> state
 
             JunkCleanAction.ScanStarted ->
                 JunkCleanUiState(
                     phase = JunkCleanPhase.Scanning,
-                    scanState = JunkCleanScanState.Scanning,
                 )
 
             is JunkCleanAction.ScanProgressUpdated ->
                 state.takeIf { it.phase == JunkCleanPhase.Scanning }?.copy(
-                    scanState = JunkCleanScanState.Scanning,
                     progress = action.progress,
                     currentCategory = action.currentCategory,
                     foundItemCount = action.foundItemCount,
@@ -54,7 +65,6 @@ object JunkCleanReducer {
 
             is JunkCleanAction.ScanCompleted ->
                 state.copy(
-                    scanState = JunkCleanScanState.Completed,
                     progress = 100f,
                     currentCategory = null,
                     foundItemCount = action.result.totalCount,
@@ -68,7 +78,7 @@ object JunkCleanReducer {
 
             JunkCleanAction.PreviewUnavailable ->
                 state.copy(
-                    phase = JunkCleanPhase.Error,
+                    phase = JunkCleanPhase.Failed(JunkOperation.Scan),
                     errorMessageRes = R.string.result_no_data,
                     errorMessage = null,
                 )
@@ -100,15 +110,14 @@ object JunkCleanReducer {
 
             is JunkCleanAction.Failed ->
                 state.copy(
-                    phase = JunkCleanPhase.Error,
-                    scanState = if (action.duringScan) JunkCleanScanState.Error else state.scanState,
+                    phase = JunkCleanPhase.Failed(if (action.duringScan) JunkOperation.Scan else JunkOperation.Clean),
                     errorMessageRes = action.messageRes,
                     errorMessage = action.message,
                 )
 
             JunkCleanAction.ResultCleared ->
                 state.copy(
-                    phase = JunkCleanPhase.Scanning,
+                    phase = JunkCleanPhase.Idle,
                     cleanResult = JunkCleanResultUiState(),
                 )
 
@@ -119,7 +128,7 @@ object JunkCleanReducer {
                     state
                 }
 
-            JunkCleanAction.ActiveOperationCancelled -> state.copy(scanState = JunkCleanScanState.Idle)
+            JunkCleanAction.ActiveOperationCancelled -> state.copy(phase = JunkCleanPhase.Idle)
 
             JunkCleanAction.CleaningCancelled ->
                 if (state.phase == JunkCleanPhase.Cleaning || state.phase == JunkCleanPhase.AwaitingAuthorization) {
@@ -187,7 +196,7 @@ object JunkCleanReducer {
             )
         }
         return state.copy(
-            phase = JunkCleanPhase.Error,
+            phase = JunkCleanPhase.Failed(JunkOperation.Clean),
             errorMessageRes =
                 if (state.checkedEmptyCategories.isNotEmpty()) {
                     R.string.result_zero_byte_selection_hint
@@ -209,7 +218,6 @@ object JunkCleanReducer {
             }.toSet()
         return state.copy(
             phase = JunkCleanPhase.Preview,
-            scanState = JunkCleanScanState.Completed,
             groups = groups,
             checkedEmptyCategories = checkedEmptyCategories,
             selectedSummary =

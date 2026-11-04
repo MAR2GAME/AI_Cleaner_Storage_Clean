@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean
 
+import android.app.PendingIntent
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -15,6 +16,7 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.MemoryCleanResult
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.common.feature.OperationAction
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanSessionStore
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanRepository
@@ -28,6 +30,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +50,13 @@ class JunkCleanViewModel(
     private val ioDispatcher: CoroutineDispatcher,
     private val scanPreviewMinMillis: Long = SCAN_PREVIEW_MIN_MILLIS,
     private val cleaningAnimationMinMillis: Long = CLEANING_ANIMATION_MIN_MILLIS,
+    private val createDeleteRequest: (Context, List<String>) -> PendingIntent? = { context, uris ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            MediaStore.createDeleteRequest(context.contentResolver, uris.map(Uri::parse))
+        } else {
+            null
+        }
+    },
 ) : ViewModel() {
     private data class CleaningExecutionState(
         val pendingAuthorizationOutcomes: List<JunkDeleteOutcome> = emptyList(),
@@ -59,8 +71,8 @@ class JunkCleanViewModel(
     private val _uiState = MutableStateFlow(JunkCleanUiState())
     val uiState: StateFlow<JunkCleanUiState> = _uiState.asStateFlow()
 
-    private val eventsChannel = Channel<JunkCleanEvent>(Channel.BUFFERED)
-    val events = eventsChannel.receiveAsFlow()
+    private val effectsChannel = Channel<JunkCleanEffect>(Channel.BUFFERED)
+    val effects = effectsChannel.receiveAsFlow()
 
     private val operationEventsChannel = Channel<FeatureOperationEvent>(Channel.BUFFERED)
     val operationEvents = operationEventsChannel.receiveAsFlow()
@@ -72,36 +84,43 @@ class JunkCleanViewModel(
     private var progressJob: Job? = null
     private var scanJob: Job? = null
     private var cleaningJob: Job? = null
-    private var hasStarted = false
+    private var exitEffectSent = false
     private var cleaningExecutionState = CleaningExecutionState()
 
     private fun dispatch(action: JunkCleanAction) {
+        if (exitEffectSent) return
         _uiState.value = JunkCleanReducer.reduce(_uiState.value, action)
+        if (action is JunkCleanAction.PermissionDenied) {
+            exitEffectSent = true
+            effectsChannel.trySend(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected))
+        }
     }
 
     fun startScanIfNeeded() {
-        if (hasStarted) return
+        if (_uiState.value.phase != JunkCleanPhase.Idle) return
         startScanInternal(resetSession = true)
     }
 
     fun retryScan() {
-        hasStarted = false
         startScanInternal(resetSession = true)
     }
 
     fun toggleItemSelection(itemId: String) {
+        if (exitEffectSent) return
         val previous = _uiState.value
         dispatch(JunkCleanAction.ToggleItem(itemId))
         if (_uiState.value !== previous) trackPreviewPublished()
     }
 
     fun toggleCategorySelection(categories: List<JunkCategory>) {
+        if (exitEffectSent) return
         val previous = _uiState.value
         dispatch(JunkCleanAction.ToggleCategories(categories))
         if (_uiState.value !== previous) trackPreviewPublished()
     }
 
     fun startCleaning(context: Context) {
+        if (exitEffectSent) return
         val appContext = context.applicationContext ?: context
         val requestContext = context
         val state = _uiState.value.takeIf { it.phase == JunkCleanPhase.Preview } ?: return
@@ -112,21 +131,26 @@ class JunkCleanViewModel(
         }
         if (cleaningJob?.isActive == true) return
         val previous = state
-        dispatch(JunkCleanAction.PermissionCheckStarted)
+        dispatch(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Clean))
 
         cleaningJob =
             viewModelScope.launch {
                 try {
-                    when (permissionGateway.ensure(PermissionNeed.StorageFiles)) {
+                    when (ensureFilePermission()) {
                         PermissionResult.Granted -> Unit
-                        PermissionResult.Denied,
-                        PermissionResult.Busy,
-                        -> {
+                        PermissionResult.Busy -> {
                             _uiState.value = previous
+                            dispatch(JunkCleanAction.PermissionBusy(JunkPermissionRequest.Clean))
+                            return@launch
+                        }
+                        PermissionResult.Denied -> {
+                            _uiState.value = previous
+                            dispatch(JunkCleanAction.PermissionDenied(JunkPermissionRequest.Clean))
                             return@launch
                         }
                     }
 
+                    _uiState.value = previous
                     dispatch(JunkCleanAction.CleaningRequested)
                     if (_uiState.value.phase != JunkCleanPhase.Cleaning) return@launch
 
@@ -136,10 +160,12 @@ class JunkCleanViewModel(
                         withContext(ioDispatcher) {
                             cleanRepository.deleteFileItems(selectedItems)
                         }
+                    currentCoroutineContext().ensureActive()
                     val deleted = outcomes.filter { it.deleted }
                     val pending = outcomes.filter { !it.deleted && it.authorizationUri != null }
                     val failed = outcomes.filter { !it.deleted && it.authorizationUri == null }
                     val memoryResult = withContext(ioDispatcher) { cleanRepository.cleanMemory() }
+                    currentCoroutineContext().ensureActive()
 
                     cleaningExecutionState =
                         CleaningExecutionState(
@@ -150,12 +176,12 @@ class JunkCleanViewModel(
                             memoryResult = memoryResult,
                         )
 
-                    val uris = pending.mapNotNull { it.authorizationUri }.map(Uri::parse).distinct()
-                    if (uris.isNotEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        val request = MediaStore.createDeleteRequest(requestContext.contentResolver, uris)
-                        val message = appContext.getString(R.string.result_confirm_system_deletion, uris.size)
+                    val uris = pending.mapNotNull { it.authorizationUri }.distinct()
+                    val request = if (uris.isNotEmpty()) createDeleteRequest(requestContext, uris) else null
+                    if (request != null) {
+                        val message = appContext.resources.getString(R.string.result_confirm_system_deletion, uris.size)
                         dispatch(JunkCleanAction.DeleteAuthorizationRequested(message))
-                        eventsChannel.send(JunkCleanEvent.RequestDeleteAuthorization(request))
+                        effectsChannel.send(JunkCleanEffect.RequestDeleteAuthorization(request))
                     } else {
                         delayRemainingCleaningAnimation(cleaningStartedAt)
                         finishCleaning(
@@ -167,6 +193,7 @@ class JunkCleanViewModel(
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
+                    currentCoroutineContext().ensureActive()
                     trackOperationEvent(FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, success = false))
                     dispatch(JunkCleanAction.Failed(R.string.result_clean_error, error.message))
                 }
@@ -174,6 +201,7 @@ class JunkCleanViewModel(
     }
 
     fun handleAuthorizationResult(approved: Boolean) {
+        if (_uiState.value.phase != JunkCleanPhase.AwaitingAuthorization) return
         val pending = cleaningExecutionState.pendingAuthorizationOutcomes
         if (pending.isEmpty()) return
 
@@ -204,6 +232,7 @@ class JunkCleanViewModel(
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
+                    currentCoroutineContext().ensureActive()
                     trackOperationEvent(FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, success = false))
                     dispatch(JunkCleanAction.Failed(R.string.result_clean_error_after_authorization, error.message))
                 }
@@ -215,28 +244,37 @@ class JunkCleanViewModel(
         dispatch(JunkCleanAction.ResultCleared)
     }
 
+    fun clearSharedResults() {
+        sharedState.clearCleanResults()
+    }
+
     fun showResult() {
+        if (!viewModelScope.isActive) return
         dispatch(JunkCleanAction.ResultAnimationCompleted)
     }
 
     private fun startScanInternal(resetSession: Boolean) {
+        if (exitEffectSent || cleaningJob?.isActive == true) return
+        when (val phase = _uiState.value.phase) {
+            JunkCleanPhase.Idle, JunkCleanPhase.Preview -> Unit
+            is JunkCleanPhase.Failed -> if (phase.operation != JunkOperation.Scan) return
+            else -> return
+        }
         if (scanJob?.isActive == true) return
-        hasStarted = true
         val previous = _uiState.value
-        dispatch(JunkCleanAction.PermissionCheckStarted)
+        dispatch(JunkCleanAction.PermissionCheckStarted(JunkPermissionRequest.Scan))
         scanJob =
             viewModelScope.launch {
                 try {
-                    when (permissionGateway.ensure(PermissionNeed.StorageFiles)) {
+                    when (ensureFilePermission()) {
                         PermissionResult.Granted -> Unit
                         PermissionResult.Busy -> {
-                            hasStarted = false
                             _uiState.value = previous
+                            dispatch(JunkCleanAction.PermissionBusy(JunkPermissionRequest.Scan))
                             return@launch
                         }
                         PermissionResult.Denied -> {
-                            hasStarted = false
-                            dispatch(JunkCleanAction.PermissionDenied)
+                            dispatch(JunkCleanAction.PermissionDenied(JunkPermissionRequest.Scan))
                             return@launch
                         }
                     }
@@ -251,6 +289,7 @@ class JunkCleanViewModel(
                     val result = withContext(ioDispatcher) {
                         cleanRepository.performFullScan()
                     }
+                    currentCoroutineContext().ensureActive()
                     progressJob?.cancel()
                     dispatch(JunkCleanAction.ScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
@@ -258,11 +297,12 @@ class JunkCleanViewModel(
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
+                    currentCoroutineContext().ensureActive()
                     progressJob?.cancel()
                     dispatch(JunkCleanAction.Failed(R.string.scan_failed, error.message, duringScan = true))
                 }
             }
-        }
+    }
 
     fun cancelActiveOperation() {
         scanJob?.cancel()
@@ -271,9 +311,14 @@ class JunkCleanViewModel(
         progressJob = null
         cleaningJob?.cancel()
         cleaningJob = null
-        hasStarted = false
         dispatch(JunkCleanAction.ActiveOperationCancelled)
         cleaningExecutionState = CleaningExecutionState()
+    }
+
+    private suspend fun ensureFilePermission(): PermissionResult {
+        return permissionGateway.ensure(PermissionNeed.StorageFiles).also {
+            currentCoroutineContext().ensureActive()
+        }
     }
 
     fun cancelCleaningAndReturnToPreview() {
@@ -343,6 +388,7 @@ class JunkCleanViewModel(
         extraFailedFiles: List<JunkFile>,
         extraFreedSpace: Long,
     ) {
+        currentCoroutineContext().ensureActive()
         val cleanedFiles = cleaningExecutionState.directCleanedFiles + extraCleanedFiles
         val failedFiles = cleaningExecutionState.directFailedFiles + extraFailedFiles
         val freedSpace = cleaningExecutionState.directFreedSpace + extraFreedSpace

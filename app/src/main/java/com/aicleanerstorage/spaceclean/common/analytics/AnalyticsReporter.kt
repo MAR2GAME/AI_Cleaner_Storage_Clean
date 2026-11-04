@@ -2,6 +2,7 @@
 
 import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 
 interface AnalyticsReporter {
     fun report(event: AnalyticsEvent)
@@ -24,4 +25,5 @@ sealed interface AnalyticsEvent {
     data class FilePermissionResult(val accepted: Boolean) : AnalyticsEvent
     data class NotificationPermissionResult(val accepted: Boolean) : AnalyticsEvent
     data class FeatureOperation(val operation: FeatureOperationEvent) : AnalyticsEvent
+    data class FeatureExit(val feature: FeatureKey, val reason: FeatureExitReason) : AnalyticsEvent
 }

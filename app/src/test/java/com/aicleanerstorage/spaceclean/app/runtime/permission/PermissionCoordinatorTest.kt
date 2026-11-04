@@ -15,9 +15,64 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
+import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.test.runTest
 
 class PermissionCoordinatorTest {
     private val context: Context = coordinatorContextWithoutAndroidRuntime()
+
+    @Test
+    fun `suspend gateway grants immediately when storage already granted`() = runTest {
+        val coordinator = coordinator(CoordinatorFakeHandler(PermissionType.StorageFiles, granted = true))
+        assertEquals(PermissionResult.Granted, coordinator.ensure(PermissionNeed.StorageFiles))
+        assertNull(coordinator.session)
+    }
+
+    @Test
+    fun `suspend second request is busy without replacing first and dismissal denies first`() = runTest {
+        val coordinator = coordinator(CoordinatorFakeHandler(PermissionType.StorageFiles))
+        val first = async(start = CoroutineStart.UNDISPATCHED) { coordinator.ensure(PermissionNeed.StorageFiles) }
+        val original = coordinator.session
+        assertEquals(PermissionResult.Busy, coordinator.ensure(PermissionNeed.StorageFiles))
+        assertTrue(original === coordinator.session)
+        assertFalse(first.isCompleted)
+        coordinator.dismiss()
+        assertEquals(PermissionResult.Denied, first.await())
+        assertNull(coordinator.session)
+    }
+
+    @Test
+    fun `suspend settings return rechecks actual storage grant`() = runTest {
+        for (granted in listOf(false, true)) {
+            val handler = CoordinatorFakeHandler(
+                PermissionType.StorageFiles,
+                settingsIntents = listOf(coordinatorIntentWithoutAndroidRuntime()),
+            )
+            val coordinator = coordinator(handler)
+            val result = async(start = CoroutineStart.UNDISPATCHED) { coordinator.ensure(PermissionNeed.StorageFiles) }
+            coordinator.onDialogSubmit()
+            handler.granted = granted
+            coordinator.onSettingsReturnIfReady()
+            assertFalse(result.isCompleted)
+            coordinator.markSettingsLaunchObservedPause()
+            coordinator.onSettingsReturnIfReady()
+            assertEquals(if (granted) PermissionResult.Granted else PermissionResult.Denied, result.await())
+            assertNull(coordinator.session)
+        }
+    }
+
+    @Test
+    fun `suspend runtime refusal returns denied`() = runTest {
+        val coordinator = coordinator(CoordinatorFakeHandler(PermissionType.StorageFiles, runtimePermissions = listOf("storage")))
+        val result = async(start = CoroutineStart.UNDISPATCHED) { coordinator.ensure(PermissionNeed.StorageFiles) }
+        coordinator.onDialogSubmit()
+        coordinator.onRuntimeResult(mapOf("storage" to false))
+        assertEquals(PermissionResult.Denied, result.await())
+        assertNull(coordinator.session)
+    }
 
     @Test
     fun `explained and direct modes produce different first UI steps`() {

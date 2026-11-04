@@ -6,24 +6,23 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.model.CategoryCleanGrou
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.ScanResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
+import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
 
-enum class JunkCleanPhase {
-    CheckingPermission,
-    MissingPermission,
-    Scanning,
-    Preview,
-    Cleaning,
-    AwaitingAuthorization,
-    CompleteAnimation,
-    Complete,
-    Error,
+sealed interface JunkCleanPhase {
+    data object Idle : JunkCleanPhase
+    data class CheckingPermission(val request: JunkPermissionRequest) : JunkCleanPhase
+    data object Scanning : JunkCleanPhase
+    data object Preview : JunkCleanPhase
+    data object Cleaning : JunkCleanPhase
+    data object AwaitingAuthorization : JunkCleanPhase
+    data object CompleteAnimation : JunkCleanPhase
+    data object Complete : JunkCleanPhase
+    data class Failed(val operation: JunkOperation) : JunkCleanPhase
 }
 
-enum class JunkCleanScanState {
-    Idle,
-    Scanning,
-    Completed,
-    Error,
+enum class JunkOperation {
+    Scan,
+    Clean,
 }
 
 data class JunkCleanResultUiState(
@@ -44,8 +43,7 @@ data class SelectionSummary(
 )
 
 data class JunkCleanUiState(
-    val phase: JunkCleanPhase = JunkCleanPhase.Scanning,
-    val scanState: JunkCleanScanState = JunkCleanScanState.Idle,
+    val phase: JunkCleanPhase = JunkCleanPhase.Idle,
     val progress: Float = 0f,
     val currentCategory: JunkCategory? = null,
     val foundItemCount: Int = 0,
@@ -62,9 +60,15 @@ data class JunkCleanUiState(
     val stopDialogPhase: JunkCleanPhase? = null,
 )
 
+enum class JunkPermissionRequest {
+    Scan,
+    Clean,
+}
+
 sealed interface JunkCleanAction {
-    data object PermissionCheckStarted : JunkCleanAction
-    data object PermissionDenied : JunkCleanAction
+    data class PermissionCheckStarted(val request: JunkPermissionRequest) : JunkCleanAction
+    data class PermissionDenied(val request: JunkPermissionRequest) : JunkCleanAction
+    data class PermissionBusy(val request: JunkPermissionRequest) : JunkCleanAction
     data object ScanStarted : JunkCleanAction
 
     data class ScanProgressUpdated(
@@ -102,6 +106,7 @@ sealed interface JunkCleanUiAction {
     data object ResumeStoppedOperation : JunkCleanUiAction
 }
 
-sealed interface JunkCleanEvent {
-    data class RequestDeleteAuthorization(val deleteRequest: PendingIntent) : JunkCleanEvent
+sealed interface JunkCleanEffect {
+    data class Exit(val reason: FeatureExitReason) : JunkCleanEffect
+    data class RequestDeleteAuthorization(val deleteRequest: PendingIntent) : JunkCleanEffect
 }

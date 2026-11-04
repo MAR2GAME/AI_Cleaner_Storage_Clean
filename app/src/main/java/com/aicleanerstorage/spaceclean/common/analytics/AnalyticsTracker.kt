@@ -253,6 +253,7 @@ object AnalyticsTracker {
         const val NOTIFICATION_POPUP = "notification_popup"
         const val CHECK_PRIVACY = "check_privacy"
         const val CHECK_TERMS = "check_terms"
+        const val FEATURE_EXIT = "feature_exit"
     }
 
     object Param {
@@ -262,6 +263,7 @@ object AnalyticsTracker {
         const val IF_OK = "if_ok"
         const val NOTICE_FLAG = "noticeflag"
         const val TRAFFIC_SOURCE = "traffic_source"
+        const val EXIT_REASON = "exit_reason"
     }
 
     object Referrer {

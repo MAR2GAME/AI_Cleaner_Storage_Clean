@@ -26,13 +26,16 @@ fun JunkCleanScreen(
     state: JunkCleanUiState,
     onNavigateTool: (AppDestination) -> Unit,
     onAction: (JunkCleanUiAction) -> Unit,
+    interactionsEnabled: Boolean = true,
 ) {
-    BackHandler { onAction(JunkCleanUiAction.Back) }
+    BackHandler {
+        if (interactionsEnabled) onAction(JunkCleanUiAction.Back)
+    }
 
     JunkCleanScaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (state.phase == JunkCleanPhase.Preview) {
+            if (interactionsEnabled && state.phase == JunkCleanPhase.Preview) {
                 JunkRemoveButton(
                     selectedSummary = state.selectedSummary,
                     onClick = { onAction(JunkCleanUiAction.CleanSelected) },
@@ -42,6 +45,7 @@ fun JunkCleanScreen(
     ) {
         JunkCleanContentView(
             uiState = state,
+            interactionsEnabled = interactionsEnabled,
             onToggleCategorySelection = { onAction(JunkCleanUiAction.ToggleCategories(it)) },
             onToggleItem = { onAction(JunkCleanUiAction.ToggleItem(it.junkFile.id)) },
             onNavigateTool = onNavigateTool,
@@ -49,7 +53,10 @@ fun JunkCleanScreen(
         )
         CleanXTopAppBar(
             title = stringResource(R.string.junk_removal),
-            onBack = { onAction(JunkCleanUiAction.Back) },
+            showBack = true,
+            onBack = {
+                if (interactionsEnabled) onAction(JunkCleanUiAction.Back)
+            },
         )
     }
 
