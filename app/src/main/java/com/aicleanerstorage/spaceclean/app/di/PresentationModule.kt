@@ -81,7 +81,7 @@ val presentationModule =
             JunkCleanViewModel(
                 cleanRepository = get(),
                 sharedState = get(),
-                permissionGateway = get(),
+                interceptors = listOf(get<PermissionInterceptor>()),
                 appContext = androidApplication(),
                 ioDispatcher = Dispatchers.IO,
             )

@@ -22,9 +22,9 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.CleanupSummary
 import com.aicleanerstorage.spaceclean.feature.junkclean.CleanRepository
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkAuthorizedDeleteResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.JunkDeleteOutcome
-import com.aicleanerstorage.spaceclean.common.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
-import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
+import com.aicleanerstorage.spaceclean.common.presentation.IntentInterceptor
+import com.aicleanerstorage.spaceclean.common.presentation.InterceptResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -41,7 +41,7 @@ private const val CLEANING_ANIMATION_MIN_MILLIS = 1_600L
 class JunkCleanViewModel(
     private val cleanRepository: CleanRepository,
     private val sharedState: CleanSessionStore,
-    private val permissionGateway: PermissionGateway,
+    interceptors: List<IntentInterceptor>,
     private val appContext: Context,
     private val ioDispatcher: CoroutineDispatcher,
     private val scanPreviewMinMillis: Long = SCAN_PREVIEW_MIN_MILLIS,
@@ -53,7 +53,10 @@ class JunkCleanViewModel(
             null
         }
     },
-) : MviViewModel<JunkCleanUiState, JunkCleanIntent, JunkCleanEffect>(JunkCleanUiState()) {
+) : MviViewModel<JunkCleanUiState, JunkCleanIntent, JunkCleanEffect>(
+    initialState = JunkCleanUiState(),
+    interceptors = interceptors,
+) {
     private data class CleaningExecutionState(
         val pendingAuthorizationOutcomes: List<JunkDeleteOutcome> = emptyList(),
         val directCleanedFiles: List<JunkFile> = emptyList(),
@@ -317,22 +320,24 @@ class JunkCleanViewModel(
         request: JunkPermissionRequest,
         previous: JunkCleanUiState,
     ): Boolean {
-        val result = permissionGateway.ensure(PermissionNeed.StorageFiles)
+        val result = resolvePolicies(PermissionNeed.StorageFiles)
         currentCoroutineContext().ensureActive()
         return when (result) {
-            PermissionResult.Granted -> {
+            InterceptResult.Continue -> {
                 reduce(JunkCleanAction.PermissionCheckRestored(request, previous))
                 true
             }
-            PermissionResult.Busy -> {
+            InterceptResult.Busy -> {
                 reduce(JunkCleanAction.PermissionCheckRestored(request, previous))
                 false
             }
-            PermissionResult.Denied -> {
+            InterceptResult.Block -> {
                 reduce(JunkCleanAction.PermissionDenied(request))
                 requestExit(FeatureExitReason.PermissionRejected)
                 false
             }
+            InterceptResult.NotHandled ->
+                error("resolvePolicies must resolve unhandled policies to Block")
         }
     }
 

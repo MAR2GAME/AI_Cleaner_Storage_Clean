@@ -18,6 +18,7 @@ import com.aicleanerstorage.spaceclean.common.permission.PermissionHandler
 import com.aicleanerstorage.spaceclean.common.permission.PermissionType
 import com.aicleanerstorage.spaceclean.common.permission.RuntimePermissionDenialStore
 import com.aicleanerstorage.spaceclean.app.permission.PermissionCoordinator
+import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
 import com.aicleanerstorage.spaceclean.feature.junkclean.model.*
 import com.aicleanerstorage.spaceclean.feature.junkclean.scanner.SharedScanState
 import kotlinx.coroutines.*
@@ -558,7 +559,7 @@ class JunkCleanViewModelTest {
     )
 
     private fun model(permissionGateway: PermissionGateway = gateway) = JunkCleanViewModel(
-        repository, session, permissionGateway, context, dispatcher,
+        repository, session, listOf(PermissionInterceptor(permissionGateway)), context, dispatcher,
         scanPreviewMinMillis = 0L,
         cleaningAnimationMinMillis = 0L,
         createDeleteRequest = { requestContext, uris ->

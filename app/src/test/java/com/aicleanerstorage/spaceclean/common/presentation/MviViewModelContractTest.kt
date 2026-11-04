@@ -23,16 +23,36 @@ class MviViewModelContractTest {
 
     @Test
     fun `block and busy stop policy resolution`() = runTest {
-        val block = Subject(listOf(interceptor { InterceptResult.Block }))
-        val busy = Subject(listOf(interceptor { InterceptResult.Busy }))
+        for (result in listOf(InterceptResult.Block, InterceptResult.Busy)) {
+            var handledCalls = 0
+            var subsequentCalls = 0
+            val subject = Subject(
+                listOf(
+                    interceptor {
+                        handledCalls += 1
+                        result
+                    },
+                    interceptor {
+                        subsequentCalls += 1
+                        InterceptResult.Continue
+                    },
+                ),
+            )
+            val nextPolicy = object : IntentPolicy {
+                override val priority: Int = policy.priority + 1
+            }
 
-        assertEquals(InterceptResult.Block, block.resolve(policy))
-        assertEquals(InterceptResult.Busy, busy.resolve(policy))
+            assertEquals(result, subject.resolve(policy, nextPolicy))
+            assertEquals(1, handledCalls)
+            assertEquals(0, subsequentCalls)
+        }
     }
 
     @Test
     fun `missing policy handler blocks`() = runTest {
         assertEquals(InterceptResult.Block, Subject(emptyList()).resolve(policy))
+        val unhandled = Subject(listOf(interceptor { InterceptResult.NotHandled }))
+        assertEquals(InterceptResult.Block, unhandled.resolve(policy))
     }
 
     private class Subject(
@@ -40,8 +60,8 @@ class MviViewModelContractTest {
     ) : MviViewModel<Unit, Unit, Unit>(Unit, interceptors) {
         override fun onIntent(intent: Unit) = Unit
 
-        suspend fun resolve(policy: IntentPolicy): InterceptResult =
-            resolvePolicies(policy)
+        suspend fun resolve(vararg policies: IntentPolicy): InterceptResult =
+            resolvePolicies(*policies)
     }
 
     private fun interceptor(
