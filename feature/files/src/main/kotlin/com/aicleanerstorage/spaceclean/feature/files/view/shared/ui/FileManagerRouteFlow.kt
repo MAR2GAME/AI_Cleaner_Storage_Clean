@@ -37,18 +37,10 @@ fun FileManagerFlowEffects(
     errorMessage: String?,
     onClearError: () -> Unit,
     onStartIfNeeded: () -> Unit,
-    onPermissionRejected: () -> Unit,
-    flowState: FileManagerFlowState,
 ) {
     FileManagerOperationEventsEffect(effects, onCompletionAdFinished, featureFlow, permissionState, navigator, feature)
     FileManagerErrorToastEffect(errorMessage, onClearError)
-    FileManagerStartEffect(
-        feature,
-        permissionState,
-        featureFlow,
-        onStartIfNeeded,
-        onPermissionRejected,
-    )
+    FileManagerStartEffect(permissionState, onStartIfNeeded)
 }
 
 @Composable
@@ -84,6 +76,7 @@ fun FileManagerFlowDialogs(
         visible = deleteDialogVisible,
         permissionGranted = permissionState.granted,
         selectedUris = selectedUris,
+        ownerState = permissionState,
         onCancel = onCancelDelete,
         onDeleteReady = onDeleteReady,
         onRejected = onDeleteRejected,

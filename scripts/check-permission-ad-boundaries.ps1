@@ -24,6 +24,19 @@ foreach ($file in $files) {
 }
 
 foreach ($entry in $main.GetEnumerator()) {
+    if ($entry.Value -match '\b(LocalFileManagerPermissionState|LocalPermissionGateway|EntryNavigationRequests)\b') {
+        $failures.Add("Retired navigation compatibility state: $($entry.Key)")
+    }
+    if ($entry.Key -match '^app/navigation/' -and $entry.Value -match '\b(AdDriver|InterstitialRequest|RouteEntryAdPolicy|ShowInterstitial)\b') {
+        $failures.Add("Navigation depends on advertising: $($entry.Key)")
+    }
+    if ($entry.Key -match '^app/navigation/(NavigationCoordinator|NavHostAppNavigator)\.kt$' -and
+        $entry.Value -match '\b(PermissionGateway|UiRequestBroker|FeatureFlow)\b') {
+        $failures.Add("Navigation core depends on feature or platform policy: $($entry.Key)")
+    }
+    if ($entry.Value -match 'ActivityResultContracts\.StartIntentSenderForResult\(' -and $entry.Key -ne 'app/ui/AppUiRequestHost.kt') {
+        $failures.Add("Additional MediaStore launcher: $($entry.Key)")
+    }
     if ($entry.Value -match 'AdvertiseSdkAdapter\.showInterstitial\(' -and $entry.Key -ne 'app/commercial/AdvertiseAdDriver.kt') {
         $failures.Add("SDK playback bypasses Driver: $($entry.Key)")
     }

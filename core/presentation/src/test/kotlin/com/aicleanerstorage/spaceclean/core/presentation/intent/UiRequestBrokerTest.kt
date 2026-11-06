@@ -6,11 +6,43 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import org.junit.Assert.assertEquals
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.supervisorScope
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class UiRequestBrokerTest {
+    @Test
+    fun callerTimeoutIsNotConvertedToBusinessFailure() = runTest {
+        val broker = UiRequestBroker(timeoutMillis = 1_000)
+        var returned = false
+        val result = runCatching {
+            withTimeout(10) {
+                broker.request(UiRequest.Confirm("outer-timeout", "Title", "Message"))
+                returned = true
+            }
+        }
+        assertTrue(result.exceptionOrNull() is kotlinx.coroutines.TimeoutCancellationException)
+        assertFalse(returned)
+        assertTrue(broker.activeIds.value.isEmpty())
+        assertFalse(broker.respond("outer-timeout", UiResult.Confirmed))
+    }
+
+    @Test
+    fun hostDisposalDoesNotCloseApplicationBroker() = runTest {
+        val broker = UiRequestBroker()
+        val old = async { broker.request(UiRequest.Confirm("old-host", "Title", "Message")) }
+        broker.requests.first()
+        broker.cancelAll()
+        assertTrue(runCatching { old.await() }.isFailure)
+        val next = async { broker.request(UiRequest.Confirm("new-host", "Title", "Message")) }
+        assertEquals("new-host", broker.requests.first().requestId)
+        assertTrue(broker.respond("new-host", UiResult.Confirmed))
+        assertEquals(UiResult.Confirmed, next.await())
+    }
+
     @Test
     fun responseCompletesMatchingRequestAndDuplicateResponseIsIgnored() = runTest {
         val broker = UiRequestBroker()
@@ -62,5 +94,31 @@ class UiRequestBrokerTest {
         assertEquals(0, broker.pendingRequestCount())
         assertFalse(broker.respond(first.requestId, UiResult.Confirmed))
         assertFalse(broker.respond(second.requestId, UiResult.Confirmed))
+    }
+
+    @Test
+    fun callerCancellationRemovesPendingAndRejectsLateResponse() = runTest {
+        val broker = UiRequestBroker()
+        val result = async { broker.request(UiRequest.MediaStoreDelete("delete", listOf("content://media/1"))) }
+        broker.requests.first()
+        result.cancelAndJoin()
+        assertEquals(emptySet<String>(), broker.activeIds.value)
+        assertEquals(0, broker.pendingRequestCount())
+        assertFalse(broker.respond("delete", UiResult.Confirmed))
+    }
+
+    @Test
+    fun duplicateIdDoesNotReplaceOriginalWaiter() = runTest {
+        supervisorScope {
+            val broker = UiRequestBroker()
+            val request = UiRequest.MediaStoreDelete("delete", listOf("content://media/1"))
+            val first = async { broker.request(request) }
+            broker.requests.first()
+            val duplicate = async { broker.request(request) }
+            assertTrue(runCatching { duplicate.await() }.isFailure)
+            assertTrue(broker.respond("delete", UiResult.Confirmed))
+            assertEquals(UiResult.Confirmed, first.await())
+            assertFalse(broker.respond("delete", UiResult.Confirmed))
+        }
     }
 }

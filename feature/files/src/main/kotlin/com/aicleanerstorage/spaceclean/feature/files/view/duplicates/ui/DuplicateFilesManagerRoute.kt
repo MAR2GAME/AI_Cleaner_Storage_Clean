@@ -8,7 +8,7 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.Fi
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerFlowDialogs
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.rememberFileManagerPermissionState
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveHome
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveBackForPermissionRejected
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveBack
@@ -39,8 +39,9 @@ fun DuplicateFilesManagerRoute(
     navigator: AppNavigator,
     viewModel: DuplicateFilesManagerViewModel,
     featureFlow: FeatureFlow,
+    permissionState: FileManagerPermissionState,
 ) {
-    DuplicateFilesManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
+    DuplicateFilesManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow, permissionState = permissionState)
 }
 
 @Composable
@@ -48,10 +49,10 @@ private fun DuplicateFilesManagerRouteContent(
     navigator: AppNavigator,
     viewModel: DuplicateFilesManagerViewModel,
     featureFlow: FeatureFlow,
+    permissionState: FileManagerPermissionState,
 ) {
     val router = navigator
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionState = rememberFileManagerPermissionState()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val selectedGroup = displayState.selectedGroup

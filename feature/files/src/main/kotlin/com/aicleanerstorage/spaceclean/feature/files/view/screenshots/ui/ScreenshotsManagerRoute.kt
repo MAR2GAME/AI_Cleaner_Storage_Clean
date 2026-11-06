@@ -4,7 +4,7 @@ import com.aicleanerstorage.spaceclean.feature.files.view.screenshots.presentati
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerFlowDialogs
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.rememberFileManagerPermissionState
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveHome
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveBackForPermissionRejected
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileOperationPhase
@@ -31,8 +31,9 @@ fun ScreenshotsManagerRoute(
     navigator: AppNavigator,
     viewModel: ScreenshotsManagerViewModel,
     featureFlow: FeatureFlow,
+    permissionState: FileManagerPermissionState,
 ) {
-    ScreenshotsManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow)
+    ScreenshotsManagerRouteContent(navigator = navigator, viewModel = viewModel, featureFlow = featureFlow, permissionState = permissionState)
 }
 
 @Composable
@@ -40,10 +41,10 @@ private fun ScreenshotsManagerRouteContent(
     navigator: AppNavigator,
     viewModel: ScreenshotsManagerViewModel,
     featureFlow: FeatureFlow,
+    permissionState: FileManagerPermissionState,
 ) {
     val router = navigator
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionState = rememberFileManagerPermissionState()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null

@@ -9,6 +9,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.key
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.CoroutineStart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -35,8 +38,8 @@ fun AppUiRequestHost(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val queue = remember { mutableStateListOf<UiRequest>() }
-    var current by remember { mutableStateOf<UiRequest?>(null) }
+    val queue = remember(broker) { mutableStateListOf<UiRequest>() }
+    var current by remember(broker) { mutableStateOf<UiRequest?>(null) }
 
     fun respond(requestId: String, result: UiResult) {
         scope.launch { broker.respond(requestId, result) }
@@ -44,7 +47,17 @@ fun AppUiRequestHost(
 
     LaunchedEffect(broker) {
         broker.requests.collect { request ->
+            if (request.requestId !in broker.activeIds.value) return@collect
             if (current == null) current = request else queue += request
+        }
+    }
+
+    LaunchedEffect(broker) {
+        broker.activeIds.collect { active ->
+            queue.removeAll { it.requestId !in active }
+            if (current?.requestId !in active) {
+                current = if (queue.isEmpty()) null else queue.removeAt(0)
+            }
         }
     }
 
@@ -62,10 +75,11 @@ fun AppUiRequestHost(
 
     DisposableEffect(broker) {
         onDispose {
-            scope.launch { broker.cancelAll() }
+            scope.launch(NonCancellable, start = CoroutineStart.UNDISPATCHED) { broker.cancelAll() }
         }
     }
 
+    key(broker, current?.requestId) {
     val permissionRequest = current as? UiRequest.Permission
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -100,22 +114,39 @@ fun AppUiRequestHost(
 
     LaunchedEffect(permissionRequest?.requestId) {
         permissionRequest?.let {
-            permissionLauncher.launch(it.permissions.toTypedArray())
+            if (it.requestId !in broker.activeIds.value) return@let
+            try {
+                permissionLauncher.launch(it.permissions.toTypedArray())
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                finish(it, UiResult.Failed)
+            }
         }
     }
 
     LaunchedEffect(activityRequest?.requestId) {
         activityRequest?.let { request ->
+            if (request.requestId !in broker.activeIds.value) return@let
             val intent = Intent(request.action).apply {
                 request.payload.forEach { (key, value) -> putExtra(key, value) }
             }
-            activityLauncher.launch(intent)
+            try {
+                activityLauncher.launch(intent)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                finish(request, UiResult.Failed)
+            }
         }
     }
 
     LaunchedEffect(deleteRequest?.requestId) {
         deleteRequest?.let { request ->
+            if (request.requestId !in broker.activeIds.value) return@let
             runCatching {
+                check(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R)
+                require(request.uris.isNotEmpty())
                 val intent = MediaStore.createDeleteRequest(
                     context.contentResolver,
                     request.uris.map(Uri::parse),
@@ -125,7 +156,6 @@ fun AppUiRequestHost(
         }
     }
 
-    content()
 
     when (val request = current) {
         is UiRequest.Confirm -> {
@@ -168,4 +198,6 @@ fun AppUiRequestHost(
 
         is UiRequest.Permission, is UiRequest.MediaStoreDelete, null -> Unit
     }
+    }
+    content()
 }

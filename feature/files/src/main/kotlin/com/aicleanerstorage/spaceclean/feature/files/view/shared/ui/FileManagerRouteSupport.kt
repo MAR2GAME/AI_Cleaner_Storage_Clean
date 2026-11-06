@@ -5,19 +5,6 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.Fi
 
 import com.aicleanerstorage.spaceclean.core.contracts.files.FileUri
 
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerOperationEventsEffect
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.rememberFileManagerPermissionState
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveHome
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveBackForPermissionRejected
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.leaveBack
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerErrorToastEffect
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerStartEffect
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerStopOperationDialog
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerDeleteConfirmDialog
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerNoResultsDialog
-
-
 import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
 
 import kotlinx.coroutines.*
@@ -35,7 +22,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.core.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult
@@ -44,10 +30,6 @@ import com.aicleanerstorage.spaceclean.core.ui.permission.rememberPermissionGran
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import kotlinx.coroutines.flow.Flow
 import org.koin.compose.koinInject
-
-
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.NoResultsDialog
-
 
 @Composable
 fun FileManagerOperationEventsEffect(
@@ -61,6 +43,7 @@ fun FileManagerOperationEventsEffect(
     val currentNavigator by rememberUpdatedState(navigator)
     LaunchedEffect(effects, featureFlow) {
         effects.collect { effect ->
+            if (permissionState.leavingPage) return@collect
             when (effect) {
                 is FileManagerEffect.Exit -> {
                     if (effect.home) permissionState.leaveHome(currentNavigator, feature, featureFlow)
@@ -113,31 +96,19 @@ private fun FeatureOperationEvent.isFileManagerCompletionSuccess(): Boolean =
         feature in FileManagerFeatureKeys &&
         success
 
-val LocalFileManagerPermissionState = androidx.compose.runtime.staticCompositionLocalOf<FileManagerPermissionState?> { null }
-
-@Composable
-fun rememberFileManagerPermissionState(): FileManagerPermissionState {
-    LocalFileManagerPermissionState.current?.let { return it }
-    val permissionGateway: com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway = koinInject()
-    val granted = rememberPermissionGranted(PermissionType.StorageFiles, permissionGateway)
-    val scope = rememberCoroutineScope()
-    val state = remember(scope) { FileManagerPermissionState(granted, scope) }
-    LaunchedEffect(granted) { state.onPermissionChanged(granted) }
-    return state
-}
-
 class FileManagerPermissionState(initialGranted: Boolean, val scope: CoroutineScope) {
     var granted by mutableStateOf(initialGranted)
         private set
     var leavingPage by mutableStateOf(false)
         private set
     var operationJob: Job? = null
-    var permissionJob: Job? = null
+    var uiRequestJob: Job? = null
+    fun activate() { leavingPage = false }
     fun onPermissionChanged(value: Boolean) { granted = value }
     fun markLeaving() {
         leavingPage = true
         operationJob?.cancel()
-        permissionJob?.cancel()
+        uiRequestJob?.cancel()
     }
 }
 
@@ -181,11 +152,8 @@ fun FileManagerErrorToastEffect(
 
 @Composable
 fun FileManagerStartEffect(
-    feature: FeatureKey,
     permissionState: FileManagerPermissionState,
-    featureFlow: FeatureFlow,
     onStartIfNeeded: () -> Unit,
-    onPermissionRejected: () -> Unit,
 ) {
     val latestStartIfNeeded by rememberUpdatedState(onStartIfNeeded)
     LaunchedEffect(permissionState.leavingPage) {
@@ -201,8 +169,6 @@ fun FileManagerStopOperationDialog(
     onQuit: () -> Unit,
     onResume: () -> Unit,
 ) {
-    val broker: UiRequestBroker = koinInject()
-    val scope = rememberCoroutineScope()
     if (permissionGranted && visible) {
         StopScanDialog(
             onQuit = onQuit,
@@ -216,25 +182,42 @@ fun FileManagerDeleteConfirmDialog(
     visible: Boolean,
     permissionGranted: Boolean,
     selectedUris: List<FileUri>,
+    ownerState: FileManagerPermissionState,
     onCancel: () -> Unit,
-    onBeforeDeleteRequest: () -> Unit = {},
     onDeleteReady: () -> Unit,
     onRejected: () -> Unit,
 ) {
     if (permissionGranted && visible) {
+        val broker: UiRequestBroker = koinInject()
+        val scope = rememberCoroutineScope()
+        var requestJob by remember { mutableStateOf<Job?>(null) }
+        val ready by rememberUpdatedState(onDeleteReady)
+        val rejected by rememberUpdatedState(onRejected)
         DeleteConfirmDialog(
             onCancel = onCancel,
             onDelete = {
-                onBeforeDeleteRequest()
-                scope.launch {
+                if (ownerState.leavingPage || requestJob?.isActive == true) return@DeleteConfirmDialog
+                requestJob = scope.launch {
+                    val mediaUris = selectedUris.map { android.net.Uri.parse(it.value) }.filter {
+                        it.scheme == "content" && it.authority == "media" &&
+                            runCatching { android.content.ContentUris.parseId(it); true }.getOrDefault(false)
+                    }
+                    if (android.os.Build.VERSION.SDK_INT < 30 || mediaUris.isEmpty()) {
+                        ready()
+                        return@launch
+                    }
                     val result = broker.request(
                         UiRequest.MediaStoreDelete(
                             requestId = UiRequestBroker.newRequestId(),
-                            uris = selectedUris.map { it.value },
+                            uris = mediaUris.map { it.toString() },
                         ),
                     )
-                    if (result == UiResult.Confirmed) onDeleteReady() else onRejected()
+                    ensureActive()
+                    if (!ownerState.leavingPage) {
+                        if (result == UiResult.Confirmed) ready() else rejected()
+                    }
                 }
+                ownerState.uiRequestJob = requestJob
             },
         )
     }

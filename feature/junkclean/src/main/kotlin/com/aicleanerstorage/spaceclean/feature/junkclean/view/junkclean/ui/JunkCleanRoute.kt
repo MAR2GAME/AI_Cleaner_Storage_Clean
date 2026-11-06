@@ -34,10 +34,12 @@ fun JunkCleanRoute(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
     val routeScope = rememberCoroutineScope()
+    var authorizationJob by remember(viewModel) { mutableStateOf<kotlinx.coroutines.Job?>(null) }
 
     fun exitOnce(reason: FeatureExitReason, onContinue: () -> Unit) {
         if (exitStarted) return
         exitStarted = true
+        authorizationJob?.cancel()
         routeScope.launch {
             featureFlow.exit(FeatureKey.JUNK_CLEAN, reason)
             ensureActive()
@@ -48,7 +50,7 @@ fun JunkCleanRoute(
         viewModel.dispatch(JunkCleanIntent.Entered)
     }
 
-    LaunchedEffect(viewModel, featureFlow, uiRequestBroker, context) {
+    LaunchedEffect(viewModel, featureFlow, uiRequestBroker) {
         collectJunkCleanEffects(
             effects = viewModel.effects,
             featureFlow = featureFlow,
@@ -66,13 +68,16 @@ fun JunkCleanRoute(
                 }
             },
             onDeleteAuthorization = { effect ->
-                routeScope.launch {
+                if (authorizationJob?.isActive == true) return@collectJunkCleanEffects
+                authorizationJob = routeScope.launch {
                     val result = uiRequestBroker.request(
                         com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest.MediaStoreDelete(
                             requestId = UiRequestBroker.newRequestId(),
                             uris = effect.uris,
                         ),
                     )
+                    ensureActive()
+                    if (exitStarted) return@launch
                     viewModel.dispatch(
                         JunkCleanIntent.DeleteAuthorizationResult(
                             result == com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult.Confirmed,
