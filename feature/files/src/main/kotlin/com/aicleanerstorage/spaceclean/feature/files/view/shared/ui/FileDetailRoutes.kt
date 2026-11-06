@@ -278,7 +278,6 @@ private fun FileDetailRoute(
         visible = uiState.confirmDeleteVisible,
         permissionGranted = permissionState.granted,
         selectedUris = uiState.selectedUris,
-        permissionGateway = permissionGateway,
         onCancel = onCancelDelete,
         onDeleteReady = {
             onDeleteReady()

@@ -19,6 +19,8 @@ import com.aicleanerstorage.spaceclean.core.presentation.MviViewModel
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerIntent
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.core.contracts.files.ManagedFileItem
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerMediaType
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -34,10 +36,12 @@ class AudiosManagerViewModel(
     private val testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 800L
+    private val completeDelayMillis: Long = 800L,
+    private val executorFactory: FileManagerExecutorFactory? = null
 ) : MviViewModel<AudiosManagerUiState, FileManagerIntent, FileManagerEffect>(AudiosManagerUiState()) {
     private val featureKey = FeatureKey.AUDIOS
     private var activeJob: Job? = null
+    private val filePipeline by lazy { executorFactory?.pipeline(viewModelScope) }
     private var pendingResult: (() -> Unit)? = null
     private val stateUpdateLock = Any()
 
@@ -166,7 +170,7 @@ class AudiosManagerViewModel(
         trackScanStarted()
         publishState(AudiosManagerUiState(phase = FileOperationPhase.Scanning))
         launchOperation {
-            runCatching { mapAudios(repository.loadAudios()) }
+            runCatching { mapAudios(filePipeline?.load(FileManagerMediaType.Audios)?.files ?: repository.loadAudios()) }
                 .onSuccess { audios ->
                     delayIfNeeded(scanDelayMillis)
                     trackScanFinished(hasResult = audios.isNotEmpty())
@@ -252,12 +256,12 @@ class AudiosManagerViewModel(
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = {
-                val result = repository.deleteFiles(selectedFiles)
+                val result = filePipeline?.delete(selectedFiles) ?: repository.deleteFiles(selectedFiles)
                 FileOperationOutcome(freedBytes = result.freedBytes, changedCount = result.deletedCount)
             },
             isSuccessful = { it.changedCount > 0 },
             onCompleteAnimation = { outcome ->
-                val rebuilt = mapAudios(repository.loadAudios())
+                val rebuilt = mapAudios(filePipeline?.load(FileManagerMediaType.Audios)?.files ?: repository.loadAudios())
                 changeState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,

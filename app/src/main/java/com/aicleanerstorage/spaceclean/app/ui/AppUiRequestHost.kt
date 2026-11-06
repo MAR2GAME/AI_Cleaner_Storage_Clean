@@ -1,8 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.ui
 
 import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -15,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult
@@ -30,6 +34,7 @@ fun AppUiRequestHost(
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val queue = remember { mutableStateListOf<UiRequest>() }
     var current by remember { mutableStateOf<UiRequest?>(null) }
 
@@ -82,6 +87,17 @@ fun AppUiRequestHost(
         finish(request, UiResult.ActivityResult(result.resultCode))
     }
 
+    val deleteRequest = current as? UiRequest.MediaStoreDelete
+    val deleteLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        val request = deleteRequest ?: return@rememberLauncherForActivityResult
+        finish(
+            request,
+            if (result.resultCode == android.app.Activity.RESULT_OK) UiResult.Confirmed else UiResult.Denied,
+        )
+    }
+
     LaunchedEffect(permissionRequest?.requestId) {
         permissionRequest?.let {
             permissionLauncher.launch(it.permissions.toTypedArray())
@@ -94,6 +110,18 @@ fun AppUiRequestHost(
                 request.payload.forEach { (key, value) -> putExtra(key, value) }
             }
             activityLauncher.launch(intent)
+        }
+    }
+
+    LaunchedEffect(deleteRequest?.requestId) {
+        deleteRequest?.let { request ->
+            runCatching {
+                val intent = MediaStore.createDeleteRequest(
+                    context.contentResolver,
+                    request.uris.map(Uri::parse),
+                )
+                deleteLauncher.launch(IntentSenderRequest.Builder(intent.intentSender).build())
+            }.onFailure { finish(request, UiResult.Failed) }
         }
     }
 
@@ -138,6 +166,6 @@ fun AppUiRequestHost(
 
         is UiRequest.LaunchActivity -> Unit
 
-        is UiRequest.Permission, null -> Unit
+        is UiRequest.Permission, is UiRequest.MediaStoreDelete, null -> Unit
     }
 }

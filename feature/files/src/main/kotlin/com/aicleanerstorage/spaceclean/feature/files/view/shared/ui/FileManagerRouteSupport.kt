@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.feature.files.view.shared.ui
 
 import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerOperation
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerMediaType
 import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerPermissionGate
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerEffect
@@ -190,35 +191,14 @@ fun FileManagerErrorToastEffect(
 fun FileManagerStartEffect(
     feature: FeatureKey,
     permissionState: FileManagerPermissionState,
-    permissionGateway: PermissionGateway,
     featureFlow: FeatureFlow,
     onStartIfNeeded: () -> Unit,
     onPermissionRejected: () -> Unit,
 ) {
     val latestStartIfNeeded by rememberUpdatedState(onStartIfNeeded)
-    val latestPermissionRejected by rememberUpdatedState(onPermissionRejected)
-    LaunchedEffect(permissionState.granted, permissionState.leavingPage) {
+    LaunchedEffect(permissionState.leavingPage) {
         if (permissionState.leavingPage) return@LaunchedEffect
-        if (permissionState.granted) {
-            latestStartIfNeeded()
-            return@LaunchedEffect
-        }
-        if (permissionState.permissionJob?.isActive != true) {
-            permissionState.permissionJob = permissionState.scope.launch {
-                when (FileManagerPermissionGate(permissionGateway).checkOperation(FileManagerOperation.LoadFiles(feature))) {
-                    GateResult.Allow -> {
-                        if (!permissionState.leavingPage) {
-                            permissionState.onPermissionChanged(true)
-                            latestStartIfNeeded()
-                        }
-                    }
-                    is GateResult.Deny -> permissionState.exit(feature, FeatureExitReason.PermissionRejected, featureFlow) {
-                        latestPermissionRejected()
-                    }
-                    GateResult.Busy -> Unit
-                }
-            }
-        }
+        latestStartIfNeeded()
     }
 }
 
@@ -242,14 +222,11 @@ fun FileManagerDeleteConfirmDialog(
     visible: Boolean,
     permissionGranted: Boolean,
     selectedUris: List<FileUri>,
-    permissionGateway: PermissionGateway,
     onCancel: () -> Unit,
     onBeforeDeleteRequest: () -> Unit = {},
     onDeleteReady: () -> Unit,
     onRejected: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     val context = LocalContext.current
     val (launchDeleteRequest, deleteDirectly) = rememberMediaStoreDeleteLauncher(
         onConfirmed = onDeleteReady,
@@ -259,21 +236,29 @@ fun FileManagerDeleteConfirmDialog(
         DeleteConfirmDialog(
             onCancel = onCancel,
             onDelete = {
-                if (permissionJob?.isActive != true) permissionJob = scope.launch {
-                    if (FileManagerPermissionGate(permissionGateway).checkOperation(FileManagerOperation.DeleteFiles(emptyList())) == GateResult.Allow) {
-                        ensureActive()
-                        onBeforeDeleteRequest()
-                        requestMediaStoreDeleteOrDeleteDirectly(
-                            context = context,
-                            uris = selectedUris,
-                            launchRequest = launchDeleteRequest,
-                            deleteDirectly = deleteDirectly,
-                        )
-                    }
-                }
+                onBeforeDeleteRequest()
+                requestMediaStoreDeleteOrDeleteDirectly(
+                    context = context,
+                    uris = selectedUris,
+                    launchRequest = launchDeleteRequest,
+                    deleteDirectly = deleteDirectly,
+                )
             },
         )
     }
+}
+
+private fun mediaType(feature: FeatureKey): FileManagerMediaType = when (feature) {
+    FeatureKey.PHOTOS -> FileManagerMediaType.Photos
+    FeatureKey.SIMILAR_PHOTOS -> FileManagerMediaType.SimilarPhotos
+    FeatureKey.PHOTO_PRIVACY -> FileManagerMediaType.PhotoPrivacy
+    FeatureKey.SCREENSHOTS -> FileManagerMediaType.Screenshots
+    FeatureKey.VIDEOS -> FileManagerMediaType.Videos
+    FeatureKey.AUDIOS -> FileManagerMediaType.Audios
+    FeatureKey.LARGE_FILES -> FileManagerMediaType.LargeFiles
+    FeatureKey.DOCUMENTS -> FileManagerMediaType.Documents
+    FeatureKey.DUPLICATE_FILES -> FileManagerMediaType.DuplicateFiles
+    else -> FileManagerMediaType.Photos
 }
 
 @Composable

@@ -26,6 +26,11 @@ sealed interface UiRequest {
         override val requestId: String,
         val placement: String,
     ) : UiRequest
+
+    data class MediaStoreDelete(
+        override val requestId: String,
+        val uris: List<String>,
+    ) : UiRequest
 }
 
 sealed interface UiResult {

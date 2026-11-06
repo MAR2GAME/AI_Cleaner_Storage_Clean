@@ -17,7 +17,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.core.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerIntent
 
 
@@ -75,7 +74,6 @@ private fun PhotoPrivacyManagerRouteContent(
         permissionState = permissionState,
         router = router,
         featureFlow = featureFlow,
-        permissionGateway = LocalPermissionGateway.current,
         feature = FEATURE,
         phase = displayState.phase,
         deleteDialogVisible = false,

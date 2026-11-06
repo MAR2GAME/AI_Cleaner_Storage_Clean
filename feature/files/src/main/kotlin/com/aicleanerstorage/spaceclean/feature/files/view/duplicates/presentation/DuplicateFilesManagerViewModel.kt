@@ -12,6 +12,8 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.to
 import com.aicleanerstorage.spaceclean.core.ui.R
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.core.contracts.files.ManagedFileItem
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerMediaType
 import com.aicleanerstorage.spaceclean.core.contracts.files.FileRepository
 import com.aicleanerstorage.spaceclean.feature.files.domain.duplicates.DuplicateFilesPreferences
 import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
@@ -34,10 +36,12 @@ class DuplicateFilesManagerViewModel(
     private val testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 800L
+    private val completeDelayMillis: Long = 800L,
+    private val executorFactory: FileManagerExecutorFactory? = null
 ) : MviViewModel<DuplicateFilesManagerUiState, FileManagerIntent, FileManagerEffect>(DuplicateFilesManagerUiState(showWarning = !preferences.isWarningAccepted())) {
     private val featureKey = FeatureKey.DUPLICATE_FILES
     private var activeJob: Job? = null
+    private val filePipeline by lazy { executorFactory?.pipeline(viewModelScope) }
     private var pendingResult: (() -> Unit)? = null
     private val stateUpdateLock = Any()
 
@@ -185,7 +189,7 @@ class DuplicateFilesManagerViewModel(
                 showWarning = !preferences.isWarningAccepted(),
             ))
         launchOperation {
-            runCatching { mapDuplicateGroups(repository.loadDuplicateFiles()) }
+            runCatching { mapDuplicateGroups((filePipeline?.load(FileManagerMediaType.DuplicateFiles)?.groups ?: repository.loadDuplicateFiles())) }
                 .onSuccess { groups ->
                     delayIfNeeded(scanDelayMillis)
                     trackScanFinished(hasResult = groups.isNotEmpty())
@@ -322,14 +326,14 @@ class DuplicateFilesManagerViewModel(
             completeDelayMillis = completeDelayMillis,
             operation = {
                 val verifiedFiles = selectedFiles.filter { !it.duplicateHash.isNullOrBlank() && it.duplicatePeers.isNotEmpty() }
-                val result = repository.deleteFiles(verifiedFiles)
+                val result = filePipeline?.delete(verifiedFiles) ?: repository.deleteFiles(verifiedFiles)
                 val skipped = selectedFiles.size - verifiedFiles.size + result.skippedCount
                 changeState { it.copy(skippedDeleteCount = skipped) }
                 FileOperationOutcome(freedBytes = result.freedBytes, changedCount = result.deletedCount)
             },
             isSuccessful = { it.changedCount > 0 },
             onCompleteAnimation = { outcome ->
-                val groups = mapDuplicateGroups(repository.loadDuplicateFiles())
+                val groups = mapDuplicateGroups((filePipeline?.load(FileManagerMediaType.DuplicateFiles)?.groups ?: repository.loadDuplicateFiles()))
                 changeState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,

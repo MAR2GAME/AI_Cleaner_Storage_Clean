@@ -169,15 +169,15 @@ val presentationModule =
             )
         }
         viewModel { SplashViewModel(get()) }
-        viewModel { PhotosManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { ScreenshotsManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { VideosManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { AudiosManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { SimilarPhotosManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { PhotoPrivacyManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { LargeFilesManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { DocumentsManagerViewModel(get(), Dispatchers.IO) }
-        viewModel { DuplicateFilesManagerViewModel(get(), get(), Dispatchers.IO) }
+        viewModel { PhotosManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { ScreenshotsManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { VideosManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { AudiosManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { SimilarPhotosManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { PhotoPrivacyManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { LargeFilesManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { DocumentsManagerViewModel(get(), Dispatchers.IO, executorFactory = get()) }
+        viewModel { DuplicateFilesManagerViewModel(get(), get(), Dispatchers.IO, executorFactory = get()) }
         viewModel { VirusScanViewModel(get(), get(), get(), get()) }
         viewModel { ManagePermissionsViewModel(get()) }
         viewModel { SettingsViewModel(get()) }

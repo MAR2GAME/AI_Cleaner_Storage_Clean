@@ -19,8 +19,8 @@ class FileManagerPermissionGate(
     suspend fun checkOperation(operation: FileManagerOperation): GateResult =
         ActionPermissionGate(permissions).checkAction(
         when (operation) {
-            is FileManagerOperation.LoadFiles -> ProtectedAction.FileManagerLoadFiles
-            is FileManagerOperation.DeleteFiles -> ProtectedAction.FileManagerDeleteFiles
+            is FileManagerOperation.Load -> ProtectedAction.FileManagerLoadFiles
+            is FileManagerOperation.Delete -> ProtectedAction.FileManagerDeleteFiles
         },
     )
 }

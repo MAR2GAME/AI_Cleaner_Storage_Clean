@@ -18,6 +18,8 @@ import com.aicleanerstorage.spaceclean.core.presentation.MviViewModel
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerIntent
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
 import com.aicleanerstorage.spaceclean.core.contracts.files.ManagedFileItem
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerMediaType
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -33,10 +35,12 @@ class PhotoPrivacyManagerViewModel(
     private val testLoader: (((suspend () -> Unit)) -> Unit)? = null,
     private val scanDelayMillis: Long = 900L,
     private val removeDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
-    private val completeDelayMillis: Long = 800L
+    private val completeDelayMillis: Long = 800L,
+    private val executorFactory: FileManagerExecutorFactory? = null
 ) : MviViewModel<PhotoPrivacyManagerUiState, FileManagerIntent, FileManagerEffect>(PhotoPrivacyManagerUiState()) {
     private val featureKey = FeatureKey.PHOTO_PRIVACY
     private var activeJob: Job? = null
+    private val filePipeline by lazy { executorFactory?.pipeline(viewModelScope) }
     private var pendingResult: (() -> Unit)? = null
     private val stateUpdateLock = Any()
 
@@ -157,7 +161,7 @@ class PhotoPrivacyManagerViewModel(
         trackScanStarted()
         publishState(PhotoPrivacyManagerUiState(phase = FileOperationPhase.Scanning))
         launchOperation {
-            runCatching { mapPrivacyPhotos(repository.loadPrivacyImages()) }
+            runCatching { mapPrivacyPhotos(filePipeline?.load(FileManagerMediaType.PhotoPrivacy)?.files ?: repository.loadPrivacyImages()) }
                 .onSuccess { items ->
                     delayIfNeeded(scanDelayMillis)
                     trackScanFinished(hasResult = items.isNotEmpty())
@@ -231,7 +235,7 @@ class PhotoPrivacyManagerViewModel(
             operation = { FileOperationOutcome(changedCount = repository.removeLocationData(selectedFiles)) },
             isSuccessful = { it.changedCount > 0 },
             onCompleteAnimation = { outcome ->
-                val rebuilt = mapPrivacyPhotos(repository.loadPrivacyImages())
+                val rebuilt = mapPrivacyPhotos(filePipeline?.load(FileManagerMediaType.PhotoPrivacy)?.files ?: repository.loadPrivacyImages())
                 changeState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,
