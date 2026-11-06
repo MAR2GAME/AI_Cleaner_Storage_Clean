@@ -5,8 +5,6 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.Fi
 
 import com.aicleanerstorage.spaceclean.core.contracts.files.FileUri
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
-
 import kotlinx.coroutines.*
 import androidx.compose.runtime.rememberCoroutineScope
 import android.widget.Toast
@@ -26,7 +24,6 @@ import com.aicleanerstorage.spaceclean.core.ui.components.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult
 import com.aicleanerstorage.spaceclean.core.presentation.intent.UiRequestBroker
-import com.aicleanerstorage.spaceclean.core.ui.permission.rememberPermissionGranted
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import kotlinx.coroutines.flow.Flow
 import org.koin.compose.koinInject
