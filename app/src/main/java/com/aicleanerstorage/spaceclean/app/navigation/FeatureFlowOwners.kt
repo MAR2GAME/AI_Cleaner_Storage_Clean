@@ -12,7 +12,7 @@ import org.koin.androidx.compose.koinViewModel
 import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.runtime.AppRuntimeBindings
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
+
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.*
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.presentation.VirusScanViewModel
@@ -61,7 +61,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.PHOTOS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -79,7 +79,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.SIMILAR_PHOTOS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -97,7 +97,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.SCREENSHOTS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -115,7 +115,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.VIDEOS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -133,7 +133,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.AUDIOS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -151,7 +151,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.LARGE_FILES,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -169,7 +169,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.DOCUMENTS,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -187,7 +187,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.PHOTO_PRIVACY,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,
@@ -205,7 +205,7 @@ internal fun FeatureFlowOwners(
                         navigator = pageNavigator,
                         onCompletionAdFinished = { vm.dispatch(FileManagerIntent.CompletionAdFinished) },
                         featureFlow = runtime.featureFlow,
-                        permissionGateway = LocalPermissionGateway.current,
+                        permissionGateway = org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(),
                         feature = FeatureKey.DUPLICATE_FILES,
                         permissionState = permissionState,
                         errorMessage = state.errorMessage,

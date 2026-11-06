@@ -13,12 +13,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 
 class AppLockViewModel(
 
     private val repository: AppLockRepository,
     private val monitoringController: AppLockMonitoringController? = null,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val permissions: PermissionGateway? = null
 ) : MviViewModel<AppLockUiState, AppLockIntent, AppLockEffect>(AppLockUiState(
             page = if (repository.isPinSet()) AppLockPage.Pin else AppLockPage.SelectApps,
             pinStep = if (repository.isPinSet()) AppLockPinStep.Verify else AppLockPinStep.Create,
@@ -35,7 +40,7 @@ class AppLockViewModel(
             is AppLockIntent.UpdateSearchQuery -> updateSearchQuery(intent.query)
             AppLockIntent.ReturnToManage -> returnToManage()
             AppLockIntent.LeavePinPage -> leavePinPage()
-            is AppLockIntent.SetMonitoringEnabled -> setMonitoringEnabled(intent.enabled)
+            is AppLockIntent.SetMonitoringEnabled -> guard(ProtectedAction.AppLockEnableMonitoring) { setMonitoringEnabled(intent.enabled) }
             is AppLockIntent.SetAutoLockEnabled -> setAutoLockEnabled(intent.enabled)
             is AppLockIntent.SetVibrationEnabled -> setVibrationEnabled(intent.enabled)
             else -> {
@@ -70,21 +75,32 @@ class AppLockViewModel(
             AppLockIntent.Back -> if (!handleBack()) emitEffect(AppLockEffect.Exit)
             AppLockIntent.RefreshAfterResume -> refreshAfterResume()
             AppLockIntent.ConsumeToast -> consumeToast()
-            AppLockIntent.ConsumeOverlayPermissionRequest -> consumeOverlayPermissionRequest()
+            AppLockIntent.ConsumeOverlayPermissionRequest -> guard(ProtectedAction.AppLockRequestOverlay) { consumeOverlayPermissionRequest() }
             AppLockIntent.OpenSettings -> openSettings()
             AppLockIntent.OpenSearch -> openSearch()
-            AppLockIntent.ToggleAllApps -> toggleAllApps()
-            AppLockIntent.BeginCreatePin -> beginCreatePin()
+            AppLockIntent.ToggleAllApps -> guard(ProtectedAction.AppLockOpenProtectedArea) { toggleAllApps() }
+            AppLockIntent.BeginCreatePin -> guard(ProtectedAction.AppLockOpenProtectedArea) { beginCreatePin() }
             AppLockIntent.RemovePinDigit -> removePinDigit()
             AppLockIntent.StartChangePin -> startChangePin()
-            is AppLockIntent.TogglePackage -> togglePackage(action.packageName)
+            is AppLockIntent.TogglePackage -> guard(ProtectedAction.AppLockOpenProtectedArea) { togglePackage(action.packageName) }
             is AppLockIntent.AddPinDigit -> addPinDigit(action.digit)
             is AppLockIntent.SearchQueryChanged -> updateSearchQuery(action.query)
-            is AppLockIntent.MonitoringChanged -> setMonitoringEnabled(action.enabled)
+            is AppLockIntent.MonitoringChanged -> if (action.enabled) {
+                guard(ProtectedAction.AppLockEnableMonitoring) { setMonitoringEnabled(true) }
+            } else setMonitoringEnabled(false)
             is AppLockIntent.AutoLockChanged -> setAutoLockEnabled(action.enabled)
             is AppLockIntent.VibrationChanged -> setVibrationEnabled(action.enabled)
             is AppLockStateChanged -> Unit
             else -> Unit
+        }
+    }
+
+    private fun guard(action: ProtectedAction, block: () -> Unit) {
+        launchTask {
+            when (permissions?.let { ActionPermissionGate(it).checkAction(action) } ?: GateResult.Allow) {
+                GateResult.Allow -> block()
+                is GateResult.Deny, GateResult.Busy, GateResult.Cancelled -> Unit
+            }
         }
     }
 

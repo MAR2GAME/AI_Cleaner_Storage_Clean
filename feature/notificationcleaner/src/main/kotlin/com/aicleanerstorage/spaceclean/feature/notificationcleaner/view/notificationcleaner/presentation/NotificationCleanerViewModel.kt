@@ -16,11 +16,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 
 class NotificationCleanerViewModel(
     private val message: (Int) -> String,
     private val repository: NotificationRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val permissions: PermissionGateway? = null,
 ) : MviViewModel<NotificationCleanerUiState, NotificationCleanerIntent, NotificationCleanerEffect>(NotificationCleanerUiState()) {
     private val stateUpdateLock = Any()
     override fun onIntent(intent: NotificationCleanerIntent) {
@@ -74,7 +79,7 @@ class NotificationCleanerViewModel(
             NotificationCleanerIntent.Refresh -> refreshState()
             NotificationCleanerIntent.ShowSettings -> showSettings()
             NotificationCleanerIntent.LeaveSettings -> leaveSettings()
-            NotificationCleanerIntent.EnableBlocking -> setBlockingEnabled(true)
+            NotificationCleanerIntent.EnableBlocking -> guardEnableBlocking()
             NotificationCleanerIntent.DisableBlocking -> setBlockingEnabled(false)
             NotificationCleanerIntent.TidyUp -> tidyUp()
             NotificationCleanerIntent.FinishScanning -> finishScanning()
@@ -89,6 +94,15 @@ class NotificationCleanerViewModel(
             is NotificationCleanerIntent.TogglePackage -> togglePackage(action.packageName)
             is NotificationCleanerStateChanged -> Unit
             else -> Unit
+        }
+    }
+
+    private fun guardEnableBlocking() {
+        launchTask {
+            when (permissions?.let { ActionPermissionGate(it).checkAction(ProtectedAction.NotificationCleanerEnable) } ?: GateResult.Allow) {
+                GateResult.Allow -> setBlockingEnabled(true)
+                is GateResult.Deny, GateResult.Busy, GateResult.Cancelled -> changeState { it.copy(hasAccess = false, enabled = false) }
+            }
         }
     }
 

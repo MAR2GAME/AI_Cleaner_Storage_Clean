@@ -115,6 +115,7 @@ sealed interface NetworkUsageEffect {
 }
 
 sealed interface NetworkUsageIntent {
+    data object Load : NetworkUsageIntent
     data object Resumed : NetworkUsageIntent
     data object PermissionRequestConsumed : NetworkUsageIntent
     data object PermissionGranted : NetworkUsageIntent

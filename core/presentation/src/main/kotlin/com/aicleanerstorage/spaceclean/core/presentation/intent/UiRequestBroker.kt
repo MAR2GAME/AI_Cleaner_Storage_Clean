@@ -63,6 +63,8 @@ class UiRequestBroker(
         }
     }
 
+    suspend fun pendingRequestCount(): Int = mutex.withLock { pending.size }
+
     fun close() {
         requestChannel.close()
     }

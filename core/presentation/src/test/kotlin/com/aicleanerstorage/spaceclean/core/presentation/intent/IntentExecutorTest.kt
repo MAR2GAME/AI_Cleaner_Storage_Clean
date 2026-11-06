@@ -7,6 +7,9 @@ import com.aicleanerstorage.spaceclean.core.contracts.intent.IntentGate
 import com.aicleanerstorage.spaceclean.core.contracts.intent.IntentRequest
 import com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequestPort
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -86,6 +89,45 @@ class IntentExecutorTest {
         val result = executor.execute("intent", "test")
         assertTrue(result is ExecutionResult.Failed)
         assertTrue(!effected)
+        executor.close()
+    }
+
+    @Test
+    fun telemetryFailureDoesNotChangeAcceptedResult() = runTest {
+        val executor = IntentExecutor(
+            ui = NoopUi,
+            gates = emptyList(),
+            handler = object : IntentHandler<String, Int> {
+                override suspend fun handle(request: IntentRequest<String>) = 7
+            },
+            telemetry = object : com.aicleanerstorage.spaceclean.core.contracts.intent.IntentTelemetry<String, Int> {
+                override suspend fun onReceived(request: IntentRequest<String>) = error("telemetry")
+                override suspend fun onAccepted(request: IntentRequest<String>, result: Int) = error("telemetry")
+            },
+        )
+
+        assertEquals(7, (executor.execute("intent", "test") as ExecutionResult.Accepted).value)
+        executor.close()
+    }
+
+    @Test
+    fun externalCancellationIsPropagated() = runTest {
+        val started = CompletableDeferred<Unit>()
+        val executor = IntentExecutor(
+            ui = NoopUi,
+            gates = emptyList(),
+            handler = object : IntentHandler<String, Int> {
+                override suspend fun handle(request: IntentRequest<String>): Int {
+                    started.complete(Unit)
+                    kotlinx.coroutines.awaitCancellation()
+                }
+            },
+        )
+
+        val job = async { executor.execute("intent", "test") }
+        withTimeout(1_000) { started.await() }
+        job.cancel()
+        assertTrue(runCatching { job.await() }.exceptionOrNull() is CancellationException)
         executor.close()
     }
 

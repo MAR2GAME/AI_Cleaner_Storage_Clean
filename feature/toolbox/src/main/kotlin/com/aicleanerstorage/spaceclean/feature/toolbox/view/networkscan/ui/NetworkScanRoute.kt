@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.presentation.NetworkScanEffect
 
@@ -12,8 +10,6 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.presenta
 
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
 
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.ui.NetworkScanRoute
 
@@ -37,10 +33,7 @@ import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionPromptMode
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.ui.NetworkScanScreen
 
 @Composable
@@ -51,19 +44,16 @@ fun NetworkScanRoute(
     externalActivities: ExternalActivityTracker,
 ) {
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionGateway = LocalPermissionGateway.current
 
     fun handleBack() {
         if (exiting) return
         if (!exiting) {
             exiting = true
-            permissionJob?.cancel()
             routeScope.launch {
                 featureFlow.exit(FeatureKey.NETWORK_SCAN, FeatureExitReason.Return)
                 ensureActive()
@@ -111,15 +101,7 @@ fun NetworkScanRoute(
         onRefreshWifi = { viewModel.dispatch(NetworkScanIntent.RefreshNetworkStateUntilWifiConnected) },
         onSwitchWifi = { viewModel.dispatch(NetworkScanIntent.SwitchWifi) },
         onScan = {
-            if (!exiting && permissionJob?.isActive != true) {
-                permissionJob = routeScope.launch {
-                    when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.NetworkScanStart, PermissionPromptMode.Direct)) {
-                        GateResult.Allow -> { viewModel.dispatch(NetworkScanIntent.StartScan) }
-                        is GateResult.Deny,
-                        GateResult.Busy -> Unit
-                    }
-                }
-            }
+            if (!exiting) viewModel.dispatch(NetworkScanIntent.StartScan)
         },
         onOpenDevices = { viewModel.dispatch(NetworkScanIntent.OpenDevices) },
     )

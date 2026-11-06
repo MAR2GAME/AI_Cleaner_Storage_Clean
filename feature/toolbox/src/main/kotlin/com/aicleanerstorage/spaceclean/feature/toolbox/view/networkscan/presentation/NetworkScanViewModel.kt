@@ -13,11 +13,15 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.intent.NetworkScanExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.intent.NetworkScanOperation
 
 class NetworkScanViewModel(
     private val repository: NetworkRepository,
     private val networkInfoReader: NetworkInfoReader,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val executorFactory: NetworkScanExecutorFactory? = null,
     private val nowLabel: () -> String = {
         SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US).format(Date())
     },
@@ -53,6 +57,7 @@ class NetworkScanViewModel(
     
     private var networkRefreshJob: Job? = null
     private var scanJob: Job? = null
+    private val executor = executorFactory?.create(viewModelScope)
 
     init {
         refreshNetworkState()
@@ -103,7 +108,17 @@ class NetworkScanViewModel(
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 runCatching {
-                    val scan = repository.scanWifi()
+                    val scan = if (executor == null) {
+                        repository.scanWifi()
+                    } else {
+                        when (val result = executor.execute(NetworkScanOperation.Start, "network_scan")) {
+                            is ExecutionResult.Accepted -> result.value
+                            is ExecutionResult.Rejected -> error(result.reason)
+                            is ExecutionResult.Busy -> error("busy")
+                            is ExecutionResult.Cancelled -> throw CancellationException()
+                            is ExecutionResult.Failed -> throw result.error
+                        }
+                    }
                     NetworkScanSessionStore.save(scan)
                     repeat(SCAN_DETAIL_COUNT) { index ->
                         delay(PROGRESS_DELAY_MILLIS)

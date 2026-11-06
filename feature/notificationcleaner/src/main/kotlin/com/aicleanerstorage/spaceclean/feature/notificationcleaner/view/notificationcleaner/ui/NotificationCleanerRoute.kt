@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.presentation.NotificationCleanerEffect
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.presentation.NotificationCleanerOperationEvent
@@ -12,8 +10,6 @@ import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notifica
 
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -30,8 +26,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEv
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.ui.NotificationCleanerScreen
 
 @Composable
@@ -41,13 +35,11 @@ fun NotificationCleanerRoute(
     featureFlow: FeatureFlow,
 ) {
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var operationJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val permissionGateway = LocalPermissionGateway.current
 
     DisposableEffect(lifecycleOwner, viewModel) {
         val observer = LifecycleEventObserver { _, event ->
@@ -62,7 +54,6 @@ fun NotificationCleanerRoute(
     fun exitBack() {
         if (!exiting) {
             exiting = true
-            permissionJob?.cancel()
             operationJob?.cancel()
             routeScope.launch {
                 featureFlow.exit(FeatureKey.NOTIFICATION_CLEANER, FeatureExitReason.Return)
@@ -121,15 +112,7 @@ fun NotificationCleanerRoute(
                     viewModel.dispatch(action)
                 }
                 NotificationCleanerIntent.EnableBlocking -> {
-                    if (!exiting && permissionJob?.isActive != true) {
-                        permissionJob = routeScope.launch {
-                            when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.NotificationCleanerEnable)) {
-                                GateResult.Allow -> { viewModel.dispatch(action) }
-                                is GateResult.Deny,
-                                GateResult.Busy -> Unit
-                            }
-                        }
-                    }
+                    viewModel.dispatch(action)
                 }
                 else -> viewModel.dispatch(action)
             }

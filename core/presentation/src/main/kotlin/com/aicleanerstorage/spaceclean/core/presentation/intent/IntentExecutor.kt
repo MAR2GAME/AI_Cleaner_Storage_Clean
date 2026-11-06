@@ -62,7 +62,7 @@ class IntentExecutor<I, R>(
                         effect.afterAccepted(request, value, ui)
                     } catch (error: CancellationException) {
                         throw error
-                    } catch (error: Exception) {
+                    } catch (error: Throwable) {
                         runTelemetry { telemetry?.onEffectFailed(request, effect::class.simpleName ?: "effect", error) }
                     }
                 }
@@ -78,7 +78,7 @@ class IntentExecutor<I, R>(
             block()
         } catch (error: CancellationException) {
             throw error
-        } catch (_: Exception) {
+        } catch (_: Throwable) {
             // Telemetry is best effort and cannot change business execution.
         }
     }

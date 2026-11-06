@@ -34,4 +34,33 @@ class UiRequestBrokerTest {
         runCatching { result.await() }
         assertFalse(broker.respond(request.requestId, UiResult.Confirmed))
     }
+
+    @Test
+    fun timeoutRemovesPendingRequestAndRejectsLateResponse() = runTest {
+        val broker = UiRequestBroker(timeoutMillis = 10)
+        val request = UiRequest.Confirm("request-timeout", "Title", "Message")
+        val result = async { broker.request(request) }
+
+        withTimeout(1_000) { broker.requests.first() }
+        assertTrue(result.await() === UiResult.Failed)
+        assertEquals(0, broker.pendingRequestCount())
+        assertFalse(broker.respond(request.requestId, UiResult.Confirmed))
+    }
+
+    @Test
+    fun cancelAllCompletesAllPendingRequestsAndRejectsLateResponses() = runTest {
+        val broker = UiRequestBroker()
+        val first = UiRequest.Confirm("request-a", "Title", "Message")
+        val second = UiRequest.Confirm("request-b", "Title", "Message")
+        val firstResult = async { broker.request(first) }
+        val secondResult = async { broker.request(second) }
+
+        withTimeout(1_000) { broker.requests.first() }
+        broker.cancelAll()
+        runCatching { firstResult.await() }
+        runCatching { secondResult.await() }
+        assertEquals(0, broker.pendingRequestCount())
+        assertFalse(broker.respond(first.requestId, UiResult.Confirmed))
+        assertFalse(broker.respond(second.requestId, UiResult.Confirmed))
+    }
 }

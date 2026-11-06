@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 
 import com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.presentation.VirusScanIntent
 import com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.presentation.VirusScanEffect
@@ -11,8 +9,6 @@ import com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.presentat
 
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
 
 import android.content.ActivityNotFoundException
 import androidx.compose.runtime.Composable
@@ -25,8 +21,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 
 @Composable
 fun VirusEffectHandler(
@@ -37,10 +31,8 @@ fun VirusEffectHandler(
 ) {
     val currentNavigator by rememberUpdatedState(navigator)
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val permissionGateway = LocalPermissionGateway.current
     LaunchedEffect(viewModel, featureFlow, externalActivities) {
         viewModel.effects.collect { effect ->
             when (effect) {
@@ -63,7 +55,6 @@ fun VirusEffectHandler(
                     {
                         if (!exiting) {
                             exiting = true
-                            permissionJob?.cancel()
                             routeScope.launch {
                                 featureFlow.exit(FeatureKey.ANTI_VIRUS, FeatureExitReason.Return)
                                 ensureActive()
@@ -83,17 +74,7 @@ fun VirusEffectHandler(
                         viewModel.dispatch(VirusScanIntent.SettingsLaunchFailed)
                     }
                 }
-                is VirusScanEffect.RequestDeepScanPermission -> {
-                    if (!exiting && permissionJob?.isActive != true) {
-                        permissionJob = routeScope.launch {
-                            when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.VirusDeepScanStart)) {
-                                GateResult.Allow -> { viewModel.dispatch(VirusScanIntent.DeepScanPermissionResult(granted = true)) }
-                                is GateResult.Deny -> { viewModel.dispatch(VirusScanIntent.DeepScanPermissionResult(granted = false)) }
-                                GateResult.Busy -> Unit
-                            }
-                        }
-                    }
-                }
+                is VirusScanEffect.RequestDeepScanPermission -> Unit
                 is VirusScanEffect.NavigateToScan -> {
                     currentNavigator.navigate(
                         when (effect.mode) {

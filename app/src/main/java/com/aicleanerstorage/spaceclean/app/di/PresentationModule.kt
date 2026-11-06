@@ -48,6 +48,8 @@ import com.aicleanerstorage.spaceclean.app.analytics.AppAnalyticsReporter
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.intent.AppUsageExecutorFactory
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.intent.AppUsageOperation
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.intent.AppUsageResult
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.intent.NetworkUsageExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.intent.NetworkScanExecutorFactory
 import com.aicleanerstorage.spaceclean.feature.settings.view.permissions.presentation.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.view.settings.presentation.SettingsViewModel
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.presentation.NotificationCleanerViewModel
@@ -103,6 +105,20 @@ val presentationModule =
                 ),
             )
         }
+        single {
+            NetworkUsageExecutorFactory(
+                repository = get(),
+                permissions = get(),
+                ui = get<UiRequestPort>(),
+            )
+        }
+        single {
+            NetworkScanExecutorFactory(
+                repository = get(),
+                permissions = get(),
+                ui = get<UiRequestPort>(),
+            )
+        }
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel {
             NotificationPermissionViewModel(
@@ -113,16 +129,17 @@ val presentationModule =
         viewModel { AppUsageViewModel(get(), get<AppDispatchers>().io, get()) }
         viewModel { DeviceInfoViewModel(get(), get(), get(), get(), get<AppDispatchers>().io, ProcCpuUsageReader(get<AppDispatchers>().io)) }
         viewModel { BatteryInfoViewModel(get(), get(), get(), get(), get(), get<AppDispatchers>().io, ProcCpuUsageReader(get<AppDispatchers>().io)) }
-        viewModel { NetworkScanViewModel(get(), get(), get<AppDispatchers>().io) }
+        viewModel { NetworkScanViewModel(get(), get(), get<AppDispatchers>().io, get()) }
         viewModel { NetworkScanDevicesViewModel(get(), get<AppDispatchers>().io) }
         viewModel { NetworkSpeedViewModel(get(), get(), get<AppDispatchers>().io) }
-        viewModel { NetworkUsageViewModel(get(), get<AppDispatchers>().io) }
-        viewModel { WhatsAppCleanerViewModel(androidApplication()::getString, get(), get<AppDispatchers>().io) }
+        viewModel { NetworkUsageViewModel(get(), get<AppDispatchers>().io, get()) }
+        viewModel { WhatsAppCleanerViewModel(androidApplication()::getString, get(), get<AppDispatchers>().io, get()) }
         viewModel {
             NotificationCleanerViewModel(
                 message = androidApplication()::getString,
                 repository = get(),
                 ioDispatcher = get<AppDispatchers>().io,
+                permissions = get(),
             )
         }
         viewModel { OnboardingScanViewModel(get(), get()) }
@@ -144,7 +161,7 @@ val presentationModule =
         viewModel { LargeFilesManagerViewModel(get(), Dispatchers.IO) }
         viewModel { DocumentsManagerViewModel(get(), Dispatchers.IO) }
         viewModel { DuplicateFilesManagerViewModel(get(), get(), Dispatchers.IO) }
-        viewModel { VirusScanViewModel( get(), get(), get()) }
+        viewModel { VirusScanViewModel(get(), get(), get(), get()) }
         viewModel { ManagePermissionsViewModel(get()) }
         viewModel { SettingsViewModel(get()) }
         viewModel {
@@ -152,6 +169,7 @@ val presentationModule =
                 repository = get(),
                 monitoringController = get(),
                 ioDispatcher = Dispatchers.IO,
+                permissions = get(),
             )
         }
     }

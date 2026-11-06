@@ -21,12 +21,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.ui.NetworkUsageScreen
 
@@ -37,12 +33,10 @@ fun NetworkUsageRoute(
     featureFlow: FeatureFlow,
 ) {
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val permissionGate = ActionPermissionGate(LocalPermissionGateway.current)
     LaunchedEffect(viewModel, featureFlow, navigator) {
         viewModel.effects.collect { effect ->
             when (effect) {
@@ -53,7 +47,6 @@ fun NetworkUsageRoute(
                     }
                     if (!exiting) {
                         exiting = true
-                        permissionJob?.cancel()
                         routeScope.launch {
                             featureFlow.exit(FeatureKey.NETWORK_USAGE, reason)
                             ensureActive()
@@ -74,21 +67,6 @@ fun NetworkUsageRoute(
             }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
-    LaunchedEffect(uiState.permissionRequestPending) {
-        if (uiState.permissionRequestPending) {
-            viewModel.dispatch(NetworkUsageIntent.PermissionRequestConsumed)
-            if (!exiting && permissionJob?.isActive != true) {
-                permissionJob = routeScope.launch {
-                    when (permissionGate.checkAction(ProtectedAction.NetworkUsageLoadStats)) {
-                        GateResult.Allow -> viewModel.dispatch(NetworkUsageIntent.PermissionGranted)
-                        is GateResult.Deny -> viewModel.dispatch(NetworkUsageIntent.PermissionRejected)
-                        GateResult.Busy, GateResult.Cancelled -> Unit
-                    }
-                }
-            }
-        }
     }
 
     BackHandler { viewModel.dispatch(NetworkUsageIntent.Back) }

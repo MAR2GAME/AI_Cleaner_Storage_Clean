@@ -19,6 +19,10 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
+import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 
 private const val TAG = "VirusScan"
 private const val PROGRESS_TICK_MILLIS = 40L
@@ -38,6 +42,7 @@ class VirusScanViewModel constructor(
     private val scanEngine: VirusScanEngine,
     private val securityRepository: VirusSecurityRepository,
     private val preferences: AntivirusPreferences,
+    private val permissions: PermissionGateway? = null,
 ) : MviViewModel<VirusScanUiState, VirusScanIntent, VirusScanEffect>(VirusScanUiState()) {
 
     private var resultVisible = false
@@ -190,7 +195,15 @@ class VirusScanViewModel constructor(
                     )
                 }
                 if (mode == VirusScanMode.Deep) {
-                    emitEffect(VirusScanEffect.RequestDeepScanPermission(mode))
+                    when (permissions?.let { ActionPermissionGate(it).checkAction(ProtectedAction.VirusDeepScanStart) } ?: GateResult.Allow) {
+                        GateResult.Allow -> {
+                            changeHome { it.copy(scanRequestPending = false) }
+                            emitEffect(VirusScanEffect.NavigateToScan(mode))
+                        }
+                        is GateResult.Deny, GateResult.Busy, GateResult.Cancelled -> {
+                            changeHome { it.copy(scanRequestPending = false) }
+                        }
+                    }
                 } else {
                     changeHome { it.copy(scanRequestPending = false) }
                     emitEffect(VirusScanEffect.NavigateToScan(mode))

@@ -15,11 +15,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 
 class WhatsAppCleanerViewModel(
     private val message: (Int) -> String,
     private val repository: FileRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val permissions: PermissionGateway? = null,
 ) : MviViewModel<WhatsAppCleanerUiState, WhatsAppCleanerIntent, WhatsAppCleanerEffect>(WhatsAppCleanerUiState()) {
     private val stateUpdateLock = Any()
     override fun onIntent(intent: WhatsAppCleanerIntent) {
@@ -80,6 +85,21 @@ class WhatsAppCleanerViewModel(
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
+                    when (val decision = permissions?.let {
+                        ActionPermissionGate(it).checkAction(ProtectedAction.WhatsAppStartScan)
+                    } ?: GateResult.Allow) {
+                        GateResult.Allow -> Unit
+                        is GateResult.Deny -> {
+                            hasStarted = false
+                            changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = decision.reason) }
+                            return@launch
+                        }
+                        GateResult.Busy, GateResult.Cancelled -> {
+                            hasStarted = false
+                            changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = "permission_unavailable") }
+                            return@launch
+                        }
+                    }
                     val files = repository.loadWhatsAppFiles()
                     delay(SCAN_DELAY_MILLIS)
                     val nextState = buildScanResultState(files)
@@ -188,6 +208,19 @@ class WhatsAppCleanerViewModel(
         cleanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
+                    when (val decision = permissions?.let {
+                        ActionPermissionGate(it).checkAction(ProtectedAction.WhatsAppCleanSelected)
+                    } ?: GateResult.Allow) {
+                        GateResult.Allow -> Unit
+                        is GateResult.Deny -> {
+                            changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = decision.reason) }
+                            return@launch
+                        }
+                        GateResult.Busy, GateResult.Cancelled -> {
+                            changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = "permission_unavailable") }
+                            return@launch
+                        }
+                    }
                     val result = repository.deleteFiles(selectedFiles)
                     if (result.deletedCount <= 0) error(appString(R.string.whatsapp_clean_unavailable))
                     delayRemainingCleaningAnimation(cleaningStartedAt)

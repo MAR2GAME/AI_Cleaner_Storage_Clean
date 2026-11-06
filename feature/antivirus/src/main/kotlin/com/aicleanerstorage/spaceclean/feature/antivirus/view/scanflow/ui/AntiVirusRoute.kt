@@ -19,7 +19,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.antivirus.view.scanflow.ui.AntiVirusScreen
 
 @Composable
@@ -30,14 +29,12 @@ fun AntiVirusRoute(
     externalActivities: ExternalActivityTracker,
 ) {
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
 
     val flowState by viewModel.state.collectAsStateWithLifecycle()
     val state = flowState.home
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val permissionGateway = LocalPermissionGateway.current
 
     LaunchedEffect(viewModel) { viewModel.dispatch(VirusScanIntent.Entered) }
 

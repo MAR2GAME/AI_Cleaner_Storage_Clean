@@ -10,10 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.intent.NetworkUsageExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.intent.NetworkUsageOperation
+import com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult
 
 class NetworkUsageViewModel(
     private val repository: NetworkRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val executorFactory: NetworkUsageExecutorFactory? = null,
 ) : MviViewModel<NetworkUsageUiState, NetworkUsageIntent, NetworkUsageEffect>(NetworkUsageUiState(
                 hasAccess = repository.hasNetworkUsageAccess(),
             )) {
@@ -44,6 +48,7 @@ class NetworkUsageViewModel(
     private var scanDelayFinished = false
     private var scanJob: Job? = null
     private var permissionRequestAttempted = false
+    private val executor = executorFactory?.create(viewModelScope)
 
     init {
         refreshUsage(startScan = true)
@@ -52,6 +57,7 @@ class NetworkUsageViewModel(
     private fun handleIntent(action: NetworkUsageIntent) {
         when (action) {
             NetworkUsageIntent.Resumed -> refreshUsage(startScan = true)
+            NetworkUsageIntent.Load -> refreshUsage(startScan = true)
             NetworkUsageIntent.PermissionRequestConsumed -> {
                 permissionRequestAttempted = true
                 changeState { it.copy(permissionRequestPending = false) }
@@ -90,6 +96,10 @@ class NetworkUsageViewModel(
     }
 
     private fun refreshUsage(startScan: Boolean) {
+        if (executor != null) {
+            refreshUsageThroughPipeline(startScan)
+            return
+        }
         val hasAccess = repository.hasNetworkUsageAccess()
         changeState {
             it.copy(
@@ -131,6 +141,43 @@ class NetworkUsageViewModel(
                 }
                 finishScanIfReady()
             }
+        }
+    }
+
+    private fun refreshUsageThroughPipeline(startScan: Boolean) {
+        val pipeline = executor ?: return
+        if (currentState.isLoading && currentState.isScanning) return
+        changeState {
+            it.copy(
+                hasAccess = repository.hasNetworkUsageAccess(),
+                isLoading = true,
+                errorMessage = null,
+                isScanning = startScan,
+                showStopDialog = false,
+                permissionRequestPending = false,
+            )
+        }
+        if (startScan) startScanDelay()
+        launchTask {
+            when (val result = pipeline.execute(NetworkUsageOperation.LoadStats, "network_usage")) {
+                is ExecutionResult.Accepted -> changeState {
+                    it.copy(
+                        hasAccess = true,
+                        usage = result.value,
+                        isLoading = false,
+                        errorMessage = null,
+                    )
+                }
+                is ExecutionResult.Rejected -> changeState {
+                    it.copy(isLoading = false, isScanning = false, errorMessage = result.reason)
+                }
+                is ExecutionResult.Busy -> changeState { it.copy(isLoading = false, isScanning = false) }
+                is ExecutionResult.Cancelled -> changeState { it.copy(isLoading = false, isScanning = false) }
+                is ExecutionResult.Failed -> changeState {
+                    it.copy(isLoading = false, isScanning = false, errorMessage = result.error.message)
+                }
+            }
+            finishScanIfReady()
         }
     }
 

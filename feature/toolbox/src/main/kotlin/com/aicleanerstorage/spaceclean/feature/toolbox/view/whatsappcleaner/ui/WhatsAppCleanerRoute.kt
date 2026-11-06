@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.presentation.WhatsAppCleanerEffect
 
@@ -10,8 +8,6 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.pres
 
 import androidx.compose.runtime.*
 import kotlinx.coroutines.*
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,8 +20,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEv
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.ui.WhatsAppCleanerScreen
 
 @Composable
@@ -35,17 +29,14 @@ fun WhatsAppCleanerRoute(
     featureFlow: FeatureFlow,
 ) {
     val routeScope = rememberCoroutineScope()
-    var permissionJob by remember { mutableStateOf<Job?>(null) }
     var operationJob by remember { mutableStateOf<Job?>(null) }
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val permissionGateway = LocalPermissionGateway.current
 
     fun exitOnce(reason: FeatureExitReason, navigate: () -> Unit) {
         if (exiting) return
         exiting = true
-        permissionJob?.cancel()
         operationJob?.cancel()
         routeScope.launch {
             featureFlow.exit(FeatureKey.WHATSAPP_CLEANER, reason)
@@ -54,20 +45,7 @@ fun WhatsAppCleanerRoute(
         }
     }
 
-    LaunchedEffect(viewModel, permissionGateway) {
-        if (!exiting && permissionJob?.isActive != true) {
-            permissionJob = routeScope.launch {
-                when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.WhatsAppStartScan)) {
-                    GateResult.Allow -> { viewModel.dispatch(WhatsAppCleanerIntent.StartScan) }
-                    is GateResult.Deny -> exitOnce(FeatureExitReason.PermissionRejected) {
-                        viewModel.dispatch(WhatsAppCleanerIntent.ClearResult)
-                        navigator.backToMain()
-                    }
-                    GateResult.Busy -> Unit
-                }
-            }
-        }
-    }
+    LaunchedEffect(viewModel) { viewModel.dispatch(WhatsAppCleanerIntent.StartScan) }
 
     LaunchedEffect(viewModel, featureFlow) {
         viewModel.effects.collect { effect ->
@@ -103,15 +81,7 @@ fun WhatsAppCleanerRoute(
             if (exiting) return@actions
             when (action) {
                 WhatsAppCleanerIntent.CleanSelected -> {
-                    if (!exiting && permissionJob?.isActive != true) {
-                        permissionJob = routeScope.launch {
-                            when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.WhatsAppCleanSelected)) {
-                                GateResult.Allow -> { viewModel.dispatch(action) }
-                                is GateResult.Deny,
-                                GateResult.Busy -> Unit
-                            }
-                        }
-                    }
+                    if (!exiting) viewModel.dispatch(action)
                 }
                 else -> viewModel.dispatch(action)
             }
