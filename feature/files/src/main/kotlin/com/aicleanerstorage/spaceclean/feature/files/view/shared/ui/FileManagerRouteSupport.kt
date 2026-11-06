@@ -1,7 +1,8 @@
 package com.aicleanerstorage.spaceclean.feature.files.view.shared.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ActionPermissionGate
 import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerOperation
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerPermissionGate
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerEffect
 
@@ -46,7 +47,6 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.core.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.core.contracts.permission.ProtectedAction
 import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.core.ui.permission.rememberPermissionGranted
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
@@ -55,6 +55,7 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.requestMedia
 
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.NoResultsDialog
+
 
 @Composable
 fun FileManagerOperationEventsEffect(
@@ -204,7 +205,7 @@ fun FileManagerStartEffect(
         }
         if (permissionState.permissionJob?.isActive != true) {
             permissionState.permissionJob = permissionState.scope.launch {
-                when (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.FileManagerLoadFiles)) {
+                when (FileManagerPermissionGate(permissionGateway).checkOperation(FileManagerOperation.LoadFiles(feature))) {
                     GateResult.Allow -> {
                         if (!permissionState.leavingPage) {
                             permissionState.onPermissionChanged(true)
@@ -259,7 +260,7 @@ fun FileManagerDeleteConfirmDialog(
             onCancel = onCancel,
             onDelete = {
                 if (permissionJob?.isActive != true) permissionJob = scope.launch {
-                    if (ActionPermissionGate(permissionGateway).checkAction(ProtectedAction.FileManagerDeleteFiles) == GateResult.Allow) {
+                    if (FileManagerPermissionGate(permissionGateway).checkOperation(FileManagerOperation.DeleteFiles(emptyList())) == GateResult.Allow) {
                         ensureActive()
                         onBeforeDeleteRequest()
                         requestMediaStoreDeleteOrDeleteDirectly(

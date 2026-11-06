@@ -50,6 +50,8 @@ import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.intent.AppU
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.intent.AppUsageResult
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.intent.NetworkUsageExecutorFactory
 import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.intent.NetworkScanExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.junkclean.intent.JunkCleanExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerExecutorFactory
 import com.aicleanerstorage.spaceclean.feature.settings.view.permissions.presentation.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.feature.settings.view.settings.presentation.SettingsViewModel
 import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.presentation.NotificationCleanerViewModel
@@ -119,6 +121,20 @@ val presentationModule =
                 ui = get<UiRequestPort>(),
             )
         }
+        single {
+            JunkCleanExecutorFactory(
+                repository = get(),
+                permissions = get(),
+                ui = get<UiRequestPort>(),
+            )
+        }
+        single {
+            FileManagerExecutorFactory(
+                repository = get(),
+                permissions = get(),
+                ui = get<UiRequestPort>(),
+            )
+        }
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel {
             NotificationPermissionViewModel(
@@ -149,6 +165,7 @@ val presentationModule =
                 sharedState = get(),
                 permissionGateway = get(),
                 ioDispatcher = Dispatchers.IO,
+                executorFactory = get(),
             )
         }
         viewModel { SplashViewModel(get()) }

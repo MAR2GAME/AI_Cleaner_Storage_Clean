@@ -19,6 +19,8 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkAuthor
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkDeleteOutcome
 import com.aicleanerstorage.spaceclean.feature.junkclean.intent.JunkCleanOperation
 import com.aicleanerstorage.spaceclean.feature.junkclean.intent.JunkCleanPermissionGate
+import com.aicleanerstorage.spaceclean.feature.junkclean.intent.JunkCleanExecutorFactory
+import com.aicleanerstorage.spaceclean.feature.junkclean.intent.JunkCleanResult
 import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
 import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
 import kotlinx.coroutines.CancellationException
@@ -39,6 +41,7 @@ class JunkCleanViewModel(
     private val sharedState: CleanSessionStore,
     private val permissionGateway: PermissionGateway,
     private val ioDispatcher: CoroutineDispatcher,
+    private val executorFactory: JunkCleanExecutorFactory? = null,
     private val scanPreviewMinMillis: Long = SCAN_PREVIEW_MIN_MILLIS,
     private val cleaningAnimationMinMillis: Long = CLEANING_ANIMATION_MIN_MILLIS,
 ) : MviViewModel<JunkCleanUiState, JunkCleanIntent, JunkCleanEffect>(
@@ -64,6 +67,7 @@ class JunkCleanViewModel(
     private var exitEffectSent = false
     private var cleaningExecutionState = CleaningExecutionState()
     private val permissionGate = JunkCleanPermissionGate(permissionGateway)
+    private val executor = executorFactory?.create(viewModelScope)
 
     override fun onIntent(intent: JunkCleanIntent) {
         if (!viewModelScope.isActive) return
@@ -165,16 +169,28 @@ class JunkCleanViewModel(
         cleaningJob =
             viewModelScope.launch {
                 try {
-                    if (!checkPermission(JunkPermissionRequest.Clean, previous)) return@launch
+                    if (executor == null && !checkPermission(JunkPermissionRequest.Clean, previous)) return@launch
                     dispatch(JunkCleaningRequested)
                     if (currentState.phase != JunkCleanPhase.Cleaning) return@launch
 
                     trackOperationEvent(FeatureOperationEvent.OperationStarted(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN))
                     val cleaningStartedAt = System.currentTimeMillis()
-                    val outcomes =
-                        withContext(ioDispatcher) {
-                            cleanRepository.deleteFileItems(selectedFiles)
+                    val outcomes = if (executor == null) {
+                        withContext(ioDispatcher) { cleanRepository.deleteFileItems(selectedFiles) }
+                    } else {
+                        when (val result = executor.execute(JunkCleanOperation.Clean(selectedFiles), "junk_clean")) {
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Accepted ->
+                                (result.value as JunkCleanResult.Deleted).outcomes
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Rejected -> {
+                                dispatch(JunkPermissionDenied(JunkPermissionRequest.Clean))
+                                requestExit(FeatureExitReason.PermissionRejected)
+                                return@launch
+                            }
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Busy,
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Cancelled -> return@launch
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Failed -> throw result.error
                         }
+                    }
                     currentCoroutineContext().ensureActive()
                     val deleted = outcomes.filter { it.deleted }
                     val pending = outcomes.filter { !it.deleted && it.authorizationUri != null }
@@ -265,7 +281,7 @@ class JunkCleanViewModel(
         scanJob =
             viewModelScope.launch {
                 try {
-                    if (!checkPermission(JunkPermissionRequest.Scan, previous)) return@launch
+                    if (executor == null && !checkPermission(JunkPermissionRequest.Scan, previous)) return@launch
 
                     if (resetSession) {
                         sharedState.clear()
@@ -274,8 +290,21 @@ class JunkCleanViewModel(
                     dispatch(JunkScanStarted)
                     observeProgress()
                     trackOperationEvent(FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN))
-                    val result = withContext(ioDispatcher) {
-                        cleanRepository.performFullScan()
+                    val result = if (executor == null) {
+                        withContext(ioDispatcher) { cleanRepository.performFullScan() }
+                    } else {
+                        when (val execution = executor.execute(JunkCleanOperation.Scan, "junk_scan")) {
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Accepted ->
+                                (execution.value as JunkCleanResult.Scanned).result
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Rejected -> {
+                                dispatch(JunkPermissionDenied(JunkPermissionRequest.Scan))
+                                requestExit(FeatureExitReason.PermissionRejected)
+                                return@launch
+                            }
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Busy,
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Cancelled -> return@launch
+                            is com.aicleanerstorage.spaceclean.core.contracts.intent.ExecutionResult.Failed -> throw execution.error
+                        }
                     }
                     currentCoroutineContext().ensureActive()
                     progressJob?.cancel()
