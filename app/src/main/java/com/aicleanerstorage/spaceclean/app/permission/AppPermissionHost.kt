@@ -17,7 +17,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
 import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
 import com.aicleanerstorage.spaceclean.core.ui.components.NotificationPermissionDialog
 import com.aicleanerstorage.spaceclean.core.ui.permission.StorageCleanPermissionUi
 import kotlinx.coroutines.CancellationException
@@ -116,22 +115,20 @@ internal fun AppPermissionHost(
     LaunchedEffect(prompt != null, notification.splashPaused, showNotification) {
         onBusy(prompt != null || notification.splashPaused || showNotification)
     }
-    CompositionLocalProvider(LocalPermissionGateway provides permission) {
-        content()
-        NotificationPermissionEffects(notificationViewModel, currentRoute, permission, onNotificationGranted)
-        prompt?.takeIf { it.stage == PermissionInterceptor.Stage.AwaitingUser }?.let {
-            StorageCleanPermissionUi.PermissionPrompt(
-                PermissionPromptRequest(it.owner.target, it.missing),
-                onSubmit = { permission.confirm(it) },
-                onDismiss = { permission.dismiss(it) },
-            )
-        }
-        if (showNotification) {
-            LaunchedEffect(notificationViewModel) { notificationViewModel.onCustomPromptShown() }
-            NotificationPermissionDialog(
-                onConfirm = notificationViewModel::onCustomPromptConfirmed,
-                onDismiss = notificationViewModel::onCustomPromptDismissed,
-            )
-        }
+    content()
+    NotificationPermissionEffects(notificationViewModel, currentRoute, permission, onNotificationGranted)
+    prompt?.takeIf { it.stage == PermissionInterceptor.Stage.AwaitingUser }?.let {
+        StorageCleanPermissionUi.PermissionPrompt(
+            PermissionPromptRequest(it.owner.target, it.missing),
+            onSubmit = { permission.confirm(it) },
+            onDismiss = { permission.dismiss(it) },
+        )
+    }
+    if (showNotification) {
+        LaunchedEffect(notificationViewModel) { notificationViewModel.onCustomPromptShown() }
+        NotificationPermissionDialog(
+            onConfirm = notificationViewModel::onCustomPromptConfirmed,
+            onDismiss = notificationViewModel::onCustomPromptDismissed,
+        )
     }
 }

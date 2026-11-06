@@ -10,11 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
 
 @Composable
-fun rememberPermissionGranted(permission: PermissionType): Boolean {
+fun rememberPermissionGranted(permission: PermissionType, coordinator: PermissionGateway): Boolean {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val coordinator = LocalPermissionGateway.current
     fun checkGranted(): Boolean = coordinator.isGranted(permission)
     var granted by remember(permission, coordinator) { mutableStateOf(checkGranted()) }
 

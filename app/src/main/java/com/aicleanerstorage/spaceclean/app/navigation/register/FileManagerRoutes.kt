@@ -55,7 +55,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<PhotosFlow>()
         }
         val viewModel: PhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        PhotosFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.PhotosDetail>().initialIndex.coerceAtLeast(0))
+        PhotosFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.PhotosDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     navigation<SimilarPhotosFlow>(startDestination = AppDestination.SimilarPhotosManager) {
@@ -69,7 +69,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<SimilarPhotosFlow>()
         }
         val viewModel: SimilarPhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        SimilarPhotosFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.SimilarPhotosDetail>().initialIndex.coerceAtLeast(0))
+        SimilarPhotosFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.SimilarPhotosDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     composable<AppDestination.PhotoPrivacyManager> { entry ->
@@ -87,7 +87,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<ScreenshotsFlow>()
         }
         val viewModel: ScreenshotsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        ScreenshotsFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.ScreenshotsDetail>().initialIndex.coerceAtLeast(0))
+        ScreenshotsFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.ScreenshotsDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     navigation<VideosFlow>(startDestination = AppDestination.VideosManager) {
@@ -101,7 +101,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<VideosFlow>()
         }
         val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VideosFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.VideosDetail>().initialIndex.coerceAtLeast(0))
+        VideosFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.VideosDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     navigation<AudiosFlow>(startDestination = AppDestination.AudiosManager) {
@@ -115,7 +115,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<AudiosFlow>()
         }
         val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        AudiosFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.AudiosDetail>().initialIndex.coerceAtLeast(0))
+        AudiosFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.AudiosDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     navigation<LargeFilesFlow>(startDestination = AppDestination.LargeFilesManager) {
@@ -129,7 +129,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<LargeFilesFlow>()
         }
         val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        LargeFilesFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.LargeFilesDetail>().initialIndex.coerceAtLeast(0))
+        LargeFilesFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.LargeFilesDetail>().initialIndex.coerceAtLeast(0))
     }
     }
     composable<AppDestination.DuplicateFilesManager> { entry ->
@@ -147,7 +147,7 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
             navController.getBackStackEntry<DocumentsFlow>()
         }
         val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        DocumentsFileDetailRoute(pageNavigator, org.koin.compose.koinInject<com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway>(), viewModel, backStackEntry.toRoute<AppDestination.DocumentsDetail>().initialIndex.coerceAtLeast(0))
+        DocumentsFileDetailRoute(pageNavigator, viewModel, backStackEntry.toRoute<AppDestination.DocumentsDetail>().initialIndex.coerceAtLeast(0))
     }
     }
 }

@@ -1,9 +1,5 @@
 package com.aicleanerstorage.spaceclean.feature.files.view.shared.ui
 
-import com.aicleanerstorage.spaceclean.core.contracts.intent.GateResult
-import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerOperation
-import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerMediaType
-import com.aicleanerstorage.spaceclean.feature.files.intent.FileManagerPermissionGate
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.presentation.FileManagerEffect
 
@@ -20,20 +16,13 @@ import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerS
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerStopOperationDialog
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerDeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.FileManagerNoResultsDialog
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.rememberMediaStoreDeleteLauncher
 
 
 import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
 
 import kotlinx.coroutines.*
 import androidx.compose.runtime.rememberCoroutineScope
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
-import android.app.Activity
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,11 +37,13 @@ import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.core.ui.components.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest
+import com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult
+import com.aicleanerstorage.spaceclean.core.presentation.intent.UiRequestBroker
 import com.aicleanerstorage.spaceclean.core.ui.permission.rememberPermissionGranted
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import kotlinx.coroutines.flow.Flow
-import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.requestMediaStoreDeleteOrDeleteDirectly
+import org.koin.compose.koinInject
 
 
 import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.NoResultsDialog
@@ -127,7 +118,8 @@ val LocalFileManagerPermissionState = androidx.compose.runtime.staticComposition
 @Composable
 fun rememberFileManagerPermissionState(): FileManagerPermissionState {
     LocalFileManagerPermissionState.current?.let { return it }
-    val granted = rememberPermissionGranted(PermissionType.StorageFiles)
+    val permissionGateway: com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway = koinInject()
+    val granted = rememberPermissionGranted(PermissionType.StorageFiles, permissionGateway)
     val scope = rememberCoroutineScope()
     val state = remember(scope) { FileManagerPermissionState(granted, scope) }
     LaunchedEffect(granted) { state.onPermissionChanged(granted) }
@@ -209,6 +201,8 @@ fun FileManagerStopOperationDialog(
     onQuit: () -> Unit,
     onResume: () -> Unit,
 ) {
+    val broker: UiRequestBroker = koinInject()
+    val scope = rememberCoroutineScope()
     if (permissionGranted && visible) {
         StopScanDialog(
             onQuit = onQuit,
@@ -227,38 +221,23 @@ fun FileManagerDeleteConfirmDialog(
     onDeleteReady: () -> Unit,
     onRejected: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val (launchDeleteRequest, deleteDirectly) = rememberMediaStoreDeleteLauncher(
-        onConfirmed = onDeleteReady,
-        onRejected = onRejected,
-    )
     if (permissionGranted && visible) {
         DeleteConfirmDialog(
             onCancel = onCancel,
             onDelete = {
                 onBeforeDeleteRequest()
-                requestMediaStoreDeleteOrDeleteDirectly(
-                    context = context,
-                    uris = selectedUris,
-                    launchRequest = launchDeleteRequest,
-                    deleteDirectly = deleteDirectly,
-                )
+                scope.launch {
+                    val result = broker.request(
+                        UiRequest.MediaStoreDelete(
+                            requestId = UiRequestBroker.newRequestId(),
+                            uris = selectedUris.map { it.value },
+                        ),
+                    )
+                    if (result == UiResult.Confirmed) onDeleteReady() else onRejected()
+                }
             },
         )
     }
-}
-
-private fun mediaType(feature: FeatureKey): FileManagerMediaType = when (feature) {
-    FeatureKey.PHOTOS -> FileManagerMediaType.Photos
-    FeatureKey.SIMILAR_PHOTOS -> FileManagerMediaType.SimilarPhotos
-    FeatureKey.PHOTO_PRIVACY -> FileManagerMediaType.PhotoPrivacy
-    FeatureKey.SCREENSHOTS -> FileManagerMediaType.Screenshots
-    FeatureKey.VIDEOS -> FileManagerMediaType.Videos
-    FeatureKey.AUDIOS -> FileManagerMediaType.Audios
-    FeatureKey.LARGE_FILES -> FileManagerMediaType.LargeFiles
-    FeatureKey.DOCUMENTS -> FileManagerMediaType.Documents
-    FeatureKey.DUPLICATE_FILES -> FileManagerMediaType.DuplicateFiles
-    else -> FileManagerMediaType.Photos
 }
 
 @Composable
@@ -270,19 +249,4 @@ fun FileManagerNoResultsDialog(
     if (permissionGranted && visible) {
         NoResultsDialog(onBack = onBack)
     }
-}
-
-@Composable
-fun rememberMediaStoreDeleteLauncher(
-    onConfirmed: () -> Unit,
-    onRejected: () -> Unit,
-): Pair<(IntentSenderRequest) -> Unit, () -> Unit> {
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            onConfirmed()
-        } else {
-            onRejected()
-        }
-    }
-    return ({ request: IntentSenderRequest -> launcher.launch(request) }) to onConfirmed
 }

@@ -5,11 +5,7 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presenta
 
 import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanViewModel
 
-import android.app.Activity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,7 +34,6 @@ fun JunkCleanRoute(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
     val routeScope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     fun exitOnce(reason: FeatureExitReason, onContinue: () -> Unit) {
         if (exitStarted) return
@@ -49,13 +44,6 @@ fun JunkCleanRoute(
             onContinue()
         }
     }
-    val deleteAuthorizationLauncher =
-        rememberLauncherForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult(),
-        ) { result ->
-            viewModel.dispatch(JunkCleanIntent.DeleteAuthorizationResult(result.resultCode == Activity.RESULT_OK))
-        }
-
     LaunchedEffect(viewModel) {
         viewModel.dispatch(JunkCleanIntent.Entered)
     }
@@ -78,14 +66,19 @@ fun JunkCleanRoute(
                 }
             },
             onDeleteAuthorization = { effect ->
-                launchJunkDeleteAuthorization(
-                    uris = effect.uris,
-                    createRequest = { createJunkDeleteRequest(context, it) },
-                    launch = { deleteAuthorizationLauncher.launch(it) },
-                    onUnavailable = {
-                        viewModel.dispatch(JunkCleanIntent.DeleteAuthorizationResult(false))
-                    },
-                )
+                routeScope.launch {
+                    val result = uiRequestBroker.request(
+                        com.aicleanerstorage.spaceclean.core.contracts.intent.UiRequest.MediaStoreDelete(
+                            requestId = UiRequestBroker.newRequestId(),
+                            uris = effect.uris,
+                        ),
+                    )
+                    viewModel.dispatch(
+                        JunkCleanIntent.DeleteAuthorizationResult(
+                            result == com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult.Confirmed,
+                        ),
+                    )
+                }
             },
         )
     }
