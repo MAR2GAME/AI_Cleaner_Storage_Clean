@@ -11,7 +11,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aicleanerstorage.spaceclean.app.navigation.AppNavGraph
 import com.aicleanerstorage.spaceclean.app.runtime.AppSessionCoordinator
 import com.aicleanerstorage.spaceclean.app.runtime.AdLifecycleEffect
-import com.aicleanerstorage.spaceclean.app.runtime.NotificationLaunchEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RouteAnalyticsEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RuntimeBusyReason
 import com.aicleanerstorage.spaceclean.app.permission.AppPermissionHost
@@ -37,7 +36,6 @@ fun AppRoot(
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route?.substringBefore('?')
-    val pendingRequest by launchCoordinator.pendingRequest.collectAsStateWithLifecycle()
 
     val sessionCoordinator = remember { AppSessionCoordinator() }
     val runtimeBindings =
@@ -72,7 +70,6 @@ fun AppRoot(
                 splashPaused = notificationState.splashPaused,
                 notificationPermissionUiActive = notificationState.permissionUiActive,
             )
-            NotificationLaunchEffect(pendingRequest, currentRoute, navController)
         }
     }
 }

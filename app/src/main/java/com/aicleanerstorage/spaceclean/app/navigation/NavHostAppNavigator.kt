@@ -1,57 +1,53 @@
 package com.aicleanerstorage.spaceclean.app.navigation
 
-import androidx.lifecycle.withResumed
 import androidx.navigation.NavBackStackEntry
+import androidx.lifecycle.withResumed
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
-import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
 import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.core.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.core.navigation.MainTab
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.launch
 
 class NavHostAppNavigator(
     private val navController: NavHostController,
-    private val showAd: suspend (InterstitialRequest) -> Unit,
-    private val scope: CoroutineScope,
-    private val policy: RouteEntryAdPolicy = RouteEntryAdPolicy(),
+    scope: CoroutineScope,
 ) {
-    private val requests = EntryNavigationRequests(scope)
+    private val coordinator = NavigationCoordinator(scope)
+
+    internal val events get() = coordinator.events
+    private var committing = false
+
+    internal fun sourceChanged(entryId: String?) {
+        if (!committing) coordinator.sourceChanged(entryId)
+    }
+
+    internal fun close() = coordinator.cancel()
 
     fun forEntry(source: NavBackStackEntry): AppNavigator = object : AppNavigator {
-        override fun navigate(destination: AppDestination) = open(source, destination, reset = false)
+        override fun navigate(destination: AppDestination) = submit(source, destination, NavigationKind.Navigate)
 
-        override fun resetTo(destination: AppDestination) = open(source, destination, reset = true)
+        override fun resetTo(destination: AppDestination) = submit(source, destination, NavigationKind.ResetTo)
 
         override fun replaceCurrent(destination: AppDestination) {
             if (!isCurrent(source)) return
-            cancelPending()
-            navController.navigate(destination) {
-                popUpTo(source.destination.id) { inclusive = true }
-                launchSingleTop = true
-            }
+            submit(source, destination, NavigationKind.ReplaceCurrent)
         }
 
         override fun navigateTopLevel(tab: MainTab) {
             if (!isCurrent(source)) return
-            cancelPending()
-            showMain(tab)
+            submit(source, AppDestination.Main(tab), NavigationKind.TopLevel)
         }
 
         override fun backToMain() {
             if (!isCurrent(source)) return
-            cancelPending()
+            coordinator.cancelForSource(source.id)
             showMain(null)
         }
 
         override fun back(): Boolean {
             if (!isCurrent(source)) return false
-            cancelPending()
+            coordinator.cancelForSource(source.id)
             if (source.destination.hasRoute<AppDestination.Main>() ||
                 source.destination.hasRoute<AppDestination.Splash>() ||
                 source.destination.hasRoute<AppDestination.OnboardingScan>()) return false
@@ -63,40 +59,44 @@ class NavHostAppNavigator(
     private fun isCurrent(source: NavBackStackEntry): Boolean =
         navController.currentBackStackEntry?.id == source.id
 
-    private fun open(source: NavBackStackEntry, destination: AppDestination, reset: Boolean) {
+    private fun submit(source: NavBackStackEntry, destination: AppDestination, kind: NavigationKind) {
         if (!isCurrent(source)) return
-        requests.start(source.id, destination) {
-            val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, _, _ ->
-                if (!isCurrent(source)) requests.cancel()
-            }
-            navController.addOnDestinationChangedListener(listener)
-            try {
-                val sourceRoute = source.destination.route?.substringBefore('?')
-                    ?.takeUnless { reset && it in AppDestination.startupRoutes }
-                policy.entryAdDecision(sourceRoute, destination.route)?.let { decision ->
-                    showAd(InterstitialRequest(
-                        AdScene.EnterFeature(decision.feature, decision.route),
-                        "route_enter_${decision.feature.name}_${decision.route}",
-                    ))
-                }
-                ensureActive()
+        coordinator.submit(source.id, destination, kind, source.destination.route?.substringBefore('?')) {
+            if (!isCurrent(source)) {
+                false
+            } else {
+                var accepted = false
                 source.lifecycle.withResumed {
                     if (isCurrent(source)) {
-                        navController.removeOnDestinationChangedListener(listener)
-                        if (reset) {
-                            navController.navigate(destination as? AppDestination.Main ?: AppDestination.Main()) {
-                                popUpTo(navController.graph.id) { inclusive = true }
-                                launchSingleTop = true
+                        committing = true
+                        try {
+                            when (kind) {
+                                NavigationKind.Navigate -> {
+                                    if (destination is AppDestination.Main) showMain(destination.initialTab)
+                                    else navController.navigate(destination) { launchSingleTop = true }
+                                }
+                                NavigationKind.ReplaceCurrent -> navController.navigate(destination) {
+                                    popUpTo(source.destination.id) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                                NavigationKind.ResetTo -> {
+                                    navController.navigate(destination as? AppDestination.Main ?: AppDestination.Main()) {
+                                        popUpTo(navController.graph.id) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                    if (destination !is AppDestination.Main) {
+                                        navController.navigate(destination) { launchSingleTop = true }
+                                    }
+                                }
+                                NavigationKind.TopLevel -> showMain((destination as AppDestination.Main).initialTab)
                             }
+                        } finally {
+                            committing = false
                         }
-                        if (destination is AppDestination.Main) {
-                            if (!reset) showMain(destination.initialTab)
-                        }
-                        else navController.navigate(destination) { launchSingleTop = true }
+                        accepted = true
                     }
                 }
-            } finally {
-                navController.removeOnDestinationChangedListener(listener)
+                accepted
             }
         }
     }
@@ -117,39 +117,6 @@ class NavHostAppNavigator(
         }
     }
 
-    private fun cancelPending() {
-        requests.cancel()
-    }
-}
-
-internal class EntryNavigationRequests(private val scope: CoroutineScope) {
-    private var pending: Job? = null
-    private var key: Pair<String, AppDestination>? = null
-
-    fun start(sourceId: String, destination: AppDestination, action: suspend CoroutineScope.() -> Unit) {
-        val requestedKey = sourceId to destination
-        if (key == requestedKey && pending?.isActive == true) return
-        cancel()
-        key = requestedKey
-        val job = scope.launch(start = CoroutineStart.LAZY) {
-            try {
-                action()
-            } finally {
-                if (pending === coroutineContext[Job]) {
-                    pending = null
-                    key = null
-                }
-            }
-        }
-        pending = job
-        job.start()
-    }
-
-    fun cancel() {
-        pending?.cancel()
-        pending = null
-        key = null
-    }
 }
 
 internal const val MAIN_TAB_REQUEST = "main_tab_request"

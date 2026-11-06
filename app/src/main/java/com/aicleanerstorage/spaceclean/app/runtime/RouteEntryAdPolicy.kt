@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.navigation
+package com.aicleanerstorage.spaceclean.app.runtime
 
 import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 

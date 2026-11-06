@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavHostController
 import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
 import com.aicleanerstorage.spaceclean.core.contracts.ads.ExternalAppOpenGuard
 import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
@@ -50,11 +49,11 @@ internal fun RouteAnalyticsEffect(route: String?, context: Context, adDriver: Ad
 internal fun NotificationLaunchEffect(
     pendingRequest: AppLaunchRequest?,
     currentRoute: String?,
-    navController: NavHostController,
+    onNavigateToSplash: () -> Unit,
 ) {
     LaunchedEffect(pendingRequest, currentRoute) {
         if (shouldRouteNotificationRequestToSplash(pendingRequest, currentRoute)) {
-            navController.navigate(AppDestination.Splash) { launchSingleTop = true }
+            onNavigateToSplash()
         }
     }
 }

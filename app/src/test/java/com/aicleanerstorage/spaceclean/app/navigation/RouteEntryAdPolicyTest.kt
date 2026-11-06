@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.navigation
 
+import com.aicleanerstorage.spaceclean.app.runtime.RouteEntryAdPolicy
+
 import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import org.junit.Assert.*

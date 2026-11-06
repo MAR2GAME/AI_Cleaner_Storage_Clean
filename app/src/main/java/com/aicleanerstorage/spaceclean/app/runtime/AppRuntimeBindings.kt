@@ -72,3 +72,15 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
+
+internal suspend fun AppRuntimeBindings.onboardingScanFinished() {
+    interstitials.show(com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest(
+        AdScene.OnboardingScanFinished, "onboarding_scan_finish",
+    ))
+}
+
+internal suspend fun AppRuntimeBindings.onboardingCompletion(skipped: Boolean) {
+    interstitials.show(com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest(
+        AdScene.OnboardingSkipped, if (skipped) "onboarding_skip" else "onboarding_get_started",
+    ))
+}
