@@ -2,7 +2,7 @@ package com.aicleanerstorage.spaceclean.app.notification
 
 import android.content.Intent
 import android.util.Log
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 import kotlin.collections.listOf
 
 internal object NotificationIntentRouteResolver {
@@ -42,7 +42,7 @@ internal object NotificationIntentRouteResolver {
             runCatching {
                 Log.w(TAG, "unknown notification route candidates=$candidates; fallback to home")
             }
-            return AppDestination.Home.route
+            return AppDestination.Main().route
         }
         return null
     }

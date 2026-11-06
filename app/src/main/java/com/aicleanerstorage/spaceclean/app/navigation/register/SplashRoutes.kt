@@ -23,32 +23,33 @@ import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.OPEN_AD_ACTIVE
 import com.aicleanerstorage.spaceclean.app.OPEN_AD_STATE_CHANGED
 import com.aicleanerstorage.spaceclean.app.OpenAdHostContract
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigator
+import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
 import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
-import com.aicleanerstorage.spaceclean.common.intent.openUrl
-import com.aicleanerstorage.spaceclean.feature.startup.SplashAction
-import com.aicleanerstorage.spaceclean.feature.startup.SplashEffect
-import com.aicleanerstorage.spaceclean.feature.startup.SplashViewModel
-import com.aicleanerstorage.spaceclean.feature.startup.ui.SplashLegalDocument
-import com.aicleanerstorage.spaceclean.feature.startup.ui.SplashScreen
+import com.aicleanerstorage.spaceclean.core.ui.platform.openUrl
+import com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashIntent
+import com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashEffect
+import com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModel
+import com.aicleanerstorage.spaceclean.feature.startup.view.splash.ui.SplashLegalDocument
+import com.aicleanerstorage.spaceclean.feature.startup.view.splash.ui.SplashScreen
 import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerSplashRoute(
-    navigator: AppNavigator,
+    navigator: NavHostAppNavigator,
     launchCoordinator: AppLaunchCoordinator,
     externalActivityTracker: ExternalActivityTracker,
     splashPermissionPaused: Boolean,
     analyticsReporter: AnalyticsReporter,
 ) {
-    composable(AppDestination.Splash.route) {
+    composable<AppDestination.Splash> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val viewModel: SplashViewModel = koinViewModel()
-        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val pendingRequest by launchCoordinator.pendingRequest.collectAsStateWithLifecycle()
         var externalLinkActive by remember { mutableStateOf(false) }
         val splashStartedAt = remember { SystemClock.elapsedRealtime() }
@@ -58,8 +59,8 @@ internal fun NavGraphBuilder.registerSplashRoute(
                 object : ResultReceiver(Handler(Looper.getMainLooper())) {
                     override fun onReceiveResult(resultCode: Int, resultData: android.os.Bundle?) {
                         if (resultCode != OPEN_AD_STATE_CHANGED) return
-                        viewModel.onAction(
-                            SplashAction.OpenAdStateChanged(
+                        viewModel.dispatch(
+                            SplashIntent.OpenAdStateChanged(
                                 resultData?.getBoolean(OPEN_AD_ACTIVE) == true,
                             ),
                         )
@@ -68,26 +69,26 @@ internal fun NavGraphBuilder.registerSplashRoute(
             }
         val openAdHostLauncher =
             rememberLauncherForActivityResult(OpenAdHostContract()) {
-                viewModel.onAction(SplashAction.OpenAdStateChanged(false))
-                viewModel.onAction(SplashAction.OpenAdFinished)
+                viewModel.dispatch(SplashIntent.OpenAdStateChanged(false))
+                viewModel.dispatch(SplashIntent.OpenAdFinished)
             }
 
         fun dispatch(effect: SplashEffect) {
             when (effect) {
                 SplashEffect.RunColdStartAd -> Unit
-                is SplashEffect.OpenNotificationTarget -> navigator.openNotificationTarget(effect.route)
-                is SplashEffect.Navigate -> navigator.replace(effect.destination)
+                is SplashEffect.OpenNotificationTarget -> pageNavigator.resetTo(effect.destination)
+                is SplashEffect.Navigate -> pageNavigator.replaceCurrent(effect.destination)
             }
         }
 
         LaunchedEffect(pendingRequest) {
             val request = pendingRequest ?: return@LaunchedEffect
             if (launchCoordinator.consumeRequestIfCurrent(request)) {
-                viewModel.onAction(SplashAction.LaunchRequestChanged(request))
+                viewModel.dispatch(SplashIntent.LaunchRequestChanged(request))
             }
         }
         LaunchedEffect(splashPermissionPaused) {
-            viewModel.onAction(SplashAction.PermissionPauseChanged(splashPermissionPaused))
+            viewModel.dispatch(SplashIntent.PermissionPauseChanged(splashPermissionPaused))
         }
         LaunchedEffect(viewModel, navigator) {
             viewModel.effects.collect { effect ->
@@ -97,8 +98,8 @@ internal fun NavGraphBuilder.registerSplashRoute(
                         runCatching {
                             openAdHostLauncher.launch(openAdStateReceiver)
                         }.onFailure {
-                            viewModel.onAction(SplashAction.OpenAdStateChanged(false))
-                            viewModel.onAction(SplashAction.OpenAdFinished)
+                            viewModel.dispatch(SplashIntent.OpenAdStateChanged(false))
+                            viewModel.dispatch(SplashIntent.OpenAdFinished)
                         }
                     }
                     is SplashEffect.OpenNotificationTarget,
@@ -111,7 +112,7 @@ internal fun NavGraphBuilder.registerSplashRoute(
             val observer = LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME && externalLinkActive) {
                     externalLinkActive = false
-                    viewModel.onAction(SplashAction.ExternalLinkStateChanged(active = false))
+                    viewModel.dispatch(SplashIntent.ExternalLinkStateChanged(active = false))
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -121,17 +122,17 @@ internal fun NavGraphBuilder.registerSplashRoute(
         SplashScreen(
             state = state,
             onAction = { action ->
-                if (action == SplashAction.VisualFinished && !splashReported) {
+                if (action == SplashIntent.VisualFinished && !splashReported) {
                     splashReported = true
                     analyticsReporter.report(
                         AnalyticsEvent.SplashDisplayed(SystemClock.elapsedRealtime() - splashStartedAt),
                     )
                 }
-                viewModel.onAction(action)
+                viewModel.dispatch(action)
             },
             onOpenLegalDocument = { document ->
                 externalLinkActive = true
-                viewModel.onAction(SplashAction.ExternalLinkStateChanged(active = true))
+                viewModel.dispatch(SplashIntent.ExternalLinkStateChanged(active = true))
                 externalActivityTracker.markLaunch()
                 val opened =
                     when (document) {
@@ -141,7 +142,7 @@ internal fun NavGraphBuilder.registerSplashRoute(
                 if (!opened) {
                     externalActivityTracker.cancelLaunch()
                     externalLinkActive = false
-                    viewModel.onAction(SplashAction.ExternalLinkStateChanged(active = false))
+                    viewModel.dispatch(SplashIntent.ExternalLinkStateChanged(active = false))
                 }
             },
         )

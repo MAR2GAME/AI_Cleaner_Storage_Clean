@@ -1,8 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.navigation
 
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 
 data class RouteEntryAdDecision(
     val feature: FeatureKey,
@@ -48,7 +49,7 @@ class RouteEntryAdPolicy(
             setOf(
                 AppDestination.Splash.route,
                 AppDestination.OnboardingScan.route,
-                AppDestination.Home.route,
+                AppDestination.Main().route,
                 ROUTE_HOME_FILE_MANAGER,
                 ROUTE_HOME_TOOLBOX,
                 AppDestination.Settings.route,

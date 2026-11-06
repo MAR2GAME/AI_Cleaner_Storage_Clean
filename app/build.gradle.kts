@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -61,6 +62,21 @@ ktlint {
 }
 
 dependencies {
+    implementation(project(":core:contracts"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:presentation"))
+    implementation(project(":core:ui"))
+    implementation(project(":feature:startup"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:junkclean"))
+    implementation(project(":feature:antivirus"))
+    implementation(project(":feature:files"))
+    implementation(project(":feature:applock"))
+    implementation(project(":feature:notificationcleaner"))
+    implementation(project(":feature:toolbox"))
+
     implementation(project(":junkcc"))
     implementation(libs.pdffox.advertise) {
         exclude(group = "com.pangle.global", module = "pag-sdk")

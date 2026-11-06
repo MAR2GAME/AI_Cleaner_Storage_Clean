@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app
+package com.aicleanerstorage.spaceclean.app
 
 internal fun interface OpenAdHostWatchdogCancellation {
     fun cancel()

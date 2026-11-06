@@ -1,8 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.permission
 
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionPromptMode
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
+
+import com.aicleanerstorage.spaceclean.app.platform.permission.PermissionPreferences
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
+
 import android.content.Context
-import com.aicleanerstorage.spaceclean.common.permission.*
-import com.aicleanerstorage.spaceclean.core.presentation.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +26,7 @@ class PermissionInterceptor internal constructor(
     private val checkGranted: (PermissionType) -> Boolean,
     private val recordRequested: (PermissionType) -> Unit = {},
     private val recordDenied: (PermissionType) -> Unit = {},
-) : IntentInterceptor, PermissionGateway {
+) : PermissionGateway {
     constructor(context: Context, preferences: PermissionPreferences) : this(
         checkGranted = { permissionGranted(context.applicationContext, it) },
         recordRequested = {
@@ -30,20 +40,15 @@ class PermissionInterceptor internal constructor(
     )
 
     internal enum class Stage { AwaitingUser, LaunchRequested, WaitingRuntime, WaitingSettings }
-    internal class Request(
-        val target: PermissionTarget,
-        val settingsOnly: Boolean,
-        missing: PermissionType,
-        stage: Stage,
-    ) {
-        internal val result = CompletableDeferred<PermissionResult>()
-        internal var abandoned = false
-        internal var observedPause = false
-        internal var runtimeLaunched = false
-        internal var explanationAccepted = false
-        internal var stage = stage
-        internal var missing = missing
+
+    internal class Request(val target: PermissionTarget, val settingsOnly: Boolean) {
+        val result = CompletableDeferred<PermissionResult>()
+        var abandoned = false
+        var observedPause = false
+        var runtimeLaunched = false
+        var explanationAccepted = false
     }
+
     internal data class Prompt(val owner: Request, val stage: Stage, val missing: PermissionType)
     private val mutableRequest = MutableStateFlow<Prompt?>(null)
     internal val request = mutableRequest.asStateFlow()
@@ -51,15 +56,6 @@ class PermissionInterceptor internal constructor(
     override fun isGranted(permission: PermissionType): Boolean = try {
         checkGranted(permission)
     } catch (error: CancellationException) { throw error } catch (_: Exception) { false }
-
-    override suspend fun intercept(policy: IntentPolicy): InterceptResult {
-        if (policy !is PermissionNeed) return InterceptResult.NotHandled
-        return when (ensure(policy)) {
-            PermissionResult.Granted -> InterceptResult.Continue
-            PermissionResult.Denied -> InterceptResult.Block
-            PermissionResult.Busy -> InterceptResult.Busy
-        }
-    }
 
     override suspend fun ensure(target: PermissionTarget, mode: PermissionPromptMode): PermissionResult =
         await(target, mode, settingsOnly = false)
@@ -73,72 +69,76 @@ class PermissionInterceptor internal constructor(
             if (mutableRequest.value != null) return@withContext PermissionResult.Busy
             val missing = target.requiredPermissions.firstOrNull { !isGranted(it) }
             if (missing == null && !settingsOnly) return@withContext PermissionResult.Granted
-            val owner = Request(target, settingsOnly, missing ?: target.requiredPermissions.first(),
-                if (settingsOnly || mode == PermissionPromptMode.Direct) Stage.LaunchRequested else Stage.AwaitingUser)
-            publish(owner)
+            val owner = Request(target, settingsOnly)
+            mutableRequest.value = Prompt(
+                owner = owner,
+                stage = if (settingsOnly || mode == PermissionPromptMode.Direct) Stage.LaunchRequested else Stage.AwaitingUser,
+                missing = missing ?: target.requiredPermissions.first(),
+            )
             try {
                 owner.result.await()
             } finally {
-                if (isCurrent(owner)) {
+                val current = mutableRequest.value
+                if (current?.owner === owner) {
                     owner.abandoned = true
                     owner.result.cancel()
-                    if (owner.stage == Stage.AwaitingUser || owner.stage == Stage.LaunchRequested) clear(owner)
+                    if (current.stage == Stage.AwaitingUser || current.stage == Stage.LaunchRequested) clear(owner)
                 }
             }
         }
 
-    internal fun confirm(owner: Request) {
-        if (!isCurrent(owner) || owner.stage != Stage.AwaitingUser) return
-        owner.explanationAccepted = true
-        owner.stage = Stage.LaunchRequested
-        publish(owner)
+    internal fun confirm(prompt: Prompt) {
+        val current = current(prompt, Stage.AwaitingUser) ?: return
+        current.owner.explanationAccepted = true
+        mutableRequest.value = current.copy(stage = Stage.LaunchRequested)
     }
 
-    internal fun dismiss(owner: Request) {
-        if (isCurrent(owner) && owner.stage == Stage.AwaitingUser) finish(owner, PermissionResult.Denied)
+    internal fun dismiss(prompt: Prompt) {
+        current(prompt, Stage.AwaitingUser)?.let { finish(it.owner, PermissionResult.Denied) }
     }
 
-    internal fun explainSettings(owner: Request): Boolean {
-        if (!isCurrent(owner) || owner.stage != Stage.LaunchRequested || owner.settingsOnly || owner.explanationAccepted) return false
-        owner.stage = Stage.AwaitingUser
-        publish(owner)
+    internal fun explainSettings(prompt: Prompt): Boolean {
+        val current = current(prompt, Stage.LaunchRequested) ?: return false
+        if (current.owner.settingsOnly || current.owner.explanationAccepted) return false
+        mutableRequest.value = current.copy(stage = Stage.AwaitingUser)
         return true
     }
 
-    internal fun beginLaunch(owner: Request, runtime: Boolean): Boolean {
-        if (!isCurrent(owner) || owner.stage != Stage.LaunchRequested) return false
-        owner.stage = if (runtime) Stage.WaitingRuntime else Stage.WaitingSettings
-        owner.observedPause = false
-        publish(owner)
+    internal fun beginLaunch(prompt: Prompt, runtime: Boolean): Boolean {
+        val current = current(prompt, Stage.LaunchRequested) ?: return false
+        current.owner.observedPause = false
+        mutableRequest.value = current.copy(stage = if (runtime) Stage.WaitingRuntime else Stage.WaitingSettings)
         return true
     }
 
-    internal fun runtimeStarted(owner: Request) {
-        if (!isCurrent(owner) || owner.stage != Stage.WaitingRuntime || owner.runtimeLaunched) return
-        owner.runtimeLaunched = true
-        recordRequested(owner.missing)
+    internal fun runtimeStarted(prompt: Prompt) {
+        val current = current(prompt, Stage.WaitingRuntime) ?: return
+        if (current.owner.runtimeLaunched) return
+        current.owner.runtimeLaunched = true
+        recordRequested(current.missing)
     }
 
-    internal fun runtimeReturned(owner: Request): Boolean {
-        if (!isCurrent(owner) || owner.stage != Stage.WaitingRuntime) return false
-        runtimeStarted(owner)
-        if (!owner.abandoned && !isGranted(owner.missing)) recordDenied(owner.missing)
-        recheck(owner)
-        return true
+    internal fun runtimeReturned(prompt: Prompt): Boolean {
+        val current = current(prompt, Stage.WaitingRuntime) ?: return false
+        runtimeStarted(current)
+        val notify = !current.owner.abandoned
+        if (notify && !isGranted(current.missing)) recordDenied(current.missing)
+        recheck(current)
+        return notify
     }
 
-    internal fun markPaused(owner: Request) {
-        if (isCurrent(owner) && owner.stage == Stage.WaitingSettings) owner.observedPause = true
+    internal fun markPaused(prompt: Prompt) {
+        current(prompt, Stage.WaitingSettings)?.owner?.observedPause = true
     }
 
-    internal fun settingsReturned(owner: Request, activityResult: Boolean = false) {
-        if (!isCurrent(owner) || owner.stage != Stage.WaitingSettings) return
-        if (!activityResult && !owner.observedPause) return
-        recheck(owner)
+    internal fun settingsReturned(prompt: Prompt, activityResult: Boolean = false) {
+        val current = current(prompt, Stage.WaitingSettings) ?: return
+        if (!activityResult && !current.owner.observedPause) return
+        recheck(current)
     }
 
-    internal fun launchFailed(owner: Request) {
-        if (isCurrent(owner)) recheck(owner, allowNext = false)
+    internal fun launchFailed(prompt: Prompt) {
+        current(prompt)?.let { recheck(it, allowNext = false) }
     }
 
     internal fun cancelAll() {
@@ -147,28 +147,34 @@ class PermissionInterceptor internal constructor(
         owner.result.cancel()
     }
 
-    private fun recheck(owner: Request, allowNext: Boolean = true) {
+    private fun recheck(prompt: Prompt, allowNext: Boolean = true) {
+        val owner = prompt.owner
         if (owner.abandoned) { clear(owner); return }
         val missing = owner.target.requiredPermissions.firstOrNull { !isGranted(it) }
         when {
             missing == null -> finish(owner, PermissionResult.Granted)
-            allowNext && !owner.settingsOnly && missing != owner.missing -> {
-                owner.missing = missing
-                owner.stage = Stage.AwaitingUser
+            allowNext && !owner.settingsOnly && missing != prompt.missing -> {
                 owner.observedPause = false
                 owner.runtimeLaunched = false
                 owner.explanationAccepted = false
-                publish(owner)
+                mutableRequest.value = prompt.copy(stage = Stage.AwaitingUser, missing = missing)
             }
             else -> finish(owner, PermissionResult.Denied)
         }
     }
+
     private fun finish(owner: Request, result: PermissionResult) {
-        if (!isCurrent(owner)) return
+        if (mutableRequest.value?.owner !== owner) return
         clear(owner)
         if (!owner.abandoned) owner.result.complete(result)
     }
-    private fun clear(owner: Request) { if (isCurrent(owner)) mutableRequest.value = null }
-    private fun isCurrent(owner: Request) = mutableRequest.value?.owner === owner
-    private fun publish(owner: Request) { mutableRequest.value = Prompt(owner, owner.stage, owner.missing) }
+
+    private fun clear(owner: Request) {
+        if (mutableRequest.value?.owner === owner) mutableRequest.value = null
+    }
+
+    private fun current(prompt: Prompt, stage: Stage? = null): Prompt? =
+        mutableRequest.value?.takeIf {
+            it.owner === prompt.owner && it.missing == prompt.missing && (stage == null || it.stage == stage)
+        }
 }

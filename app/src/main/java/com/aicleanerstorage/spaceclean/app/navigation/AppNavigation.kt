@@ -1,6 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.navigation
 
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
@@ -30,16 +34,18 @@ internal fun AppNavGraph(
     val navigationScope = rememberCoroutineScope()
     val navigator =
         remember(navController, runtime.interstitials) {
-            FeatureEntryNavigator(
-                navigator = NavHostControllerAppNavigator(navController),
+            NavHostAppNavigator(
+                navController = navController,
                 showAd = runtime.interstitials::show,
                 scope = navigationScope,
             )
         }
 
+    val entry by navController.currentBackStackEntryAsState()
+    FeatureFlowOwners(entry, navController, navigator, runtime) {
     NavHost(
         navController = navController,
-        startDestination = AppDestination.Splash.route,
+        startDestination = AppDestination.Splash,
         modifier = Modifier.fillMaxSize(),
         enterTransition = {
             AppRouteTransitions.enterTransition(
@@ -90,7 +96,6 @@ internal fun AppNavGraph(
         registerCleanRoutes(
             navigator = navigator,
             featureFlow = runtime.featureFlow,
-            completionAdInterceptor = runtime.interstitials,
         )
         registerAntiVirusRoutes(
             navController = navController,
@@ -118,4 +123,5 @@ internal fun AppNavGraph(
             analyticsReporter = runtime.analyticsReporter,
         )
     }
+}
 }

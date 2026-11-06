@@ -25,7 +25,7 @@ import android.widget.TextView;
 import java.lang.System;
 import android.widget.Toast;
 import java.util.Date;
-
+//宋哥，我想先跟你同步一下：因为个人状态和后续职业规划，我考虑了很久，决定提出离职。我会按公司流程执行离职流程，在离开前，配合团队做好同步和交接工作，按流程做完，不给团队留坑。
 public class CwbhwklwtvsweylgzfmqihuaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

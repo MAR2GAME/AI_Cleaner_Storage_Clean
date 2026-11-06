@@ -1,0 +1,1302 @@
+ M .idea/gradle.xml
+ M .idea/kotlinc.xml
+ M app/build.gradle.kts
+ M app/src/main/AndroidManifest.xml
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/AppConfig.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/AppRoot.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/AppView.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/AppViewModel.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/MainActivity.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/MyApp.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/OpenAdHostActivity.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/OpenAdHostWatchdog.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/analytics/AppAnalyticsReporter.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/analytics/AppSessionAnalytics.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/background/AppBackgroundRuntimeService.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/background/BackgroundAppLockMonitoringService.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/app/background/BackgroundBatterySamplingController.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/background/ForegroundServiceNotificationController.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/background/PersistentServiceCommand.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/commercial/AdInterceptor.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/commercial/AdvertiseAdDriver.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/commercial/policy/FeatureEventAdPolicy.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/di/DataModule.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/di/PresentationModule.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/AppDestination.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/AppNavigation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/AppNavigator.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/AppRouteTransitions.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/FeatureEntryNavigator.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/RouteEntryAdPolicy.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/AntiVirusRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/AppLockRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/CleanRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/FileManagerRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/HomeRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/OnboardingRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/SettingsRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/SplashRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/register/ToolboxRoutes.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/notification/NotificationChannelManager.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/notification/NotificationIntentRouteResolver.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/AppPermissionHost.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/NotificationPermissionEffects.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/NotificationPermissionPolicy.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/NotificationPermissionViewModel.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/PermissionInterceptor.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/permission/PermissionPlatform.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/runtime/AppFeatureFlow.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/runtime/AppRuntimeBindings.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/runtime/AppRuntimeEffects.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/startup/AppLaunchCoordinator.kt
+ M app/src/main/java/com/aicleanerstorage/spaceclean/app/startup/SdkInitializationCoordinator.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdAreaKeys.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdCallbacks.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdDriver.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdHosts.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdPlacementRegistry.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdPrivacyGateway.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdScene.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdvertiseConfigFactory.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdvertiseSdkAdapter.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/AdvertiseSdkPrivacyGateway.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/ColdStartAds.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ads/ExternalAppOpenGuard.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsDispatcher.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsPayloadMapper.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsReporter.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsSink.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsTracker.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/analytics/SdkAnalyticsSink.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/commercial/InterstitialRequest.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/coroutines/AppDispatchers.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/feature/FeatureFlow.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/feature/FeatureGroup.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/feature/FeatureKey.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/files/DuplicateContentGuard.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/format/FileSizeFormatter.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/intent/ExternalActivityTracker.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/intent/ExternalUrlLauncher.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/PermissionGateway.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/PermissionModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/PermissionPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/PermissionPromptRequest.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/PermissionType.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/ui/PermissionCompositionLocal.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/permission/ui/PermissionObservation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/startup/SdkInitialization.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/storage/preferences/AppPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/storage/preferences/CleanupHistoryStore.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/AppIcon.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXCheckBadge.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXCompat.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXEmptyScanResult.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXScaffoldPage.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXSelectionCircle.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXStatusBadge.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXSurfaceComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/CleanXTopAppBar.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/FileManagerUiTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/NotificationPermissionDialog.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/RoundedProgressBar.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/ToolFeatureBanners.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/WindowInsetsModifiers.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanCompleteBadge.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanSpiralAnimation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanXDeleteCompleteAnimation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanXLottieAnimations.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanXScanProgress.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanXScanRingAnimation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/CleanXSpiralCleaningContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/PhoneScanIllustration.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/RotatingRingAnimation.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/animations/SemiCircularGauge.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/buttons/CleanXGradientBottomActionBar.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/buttons/CleanXPrimaryButton.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/buttons/CleanXSettingsRowButton.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/popups/CleanXDialogPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/popups/PermissionCopy.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/popups/PermissionPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/components/popups/StopScanDialog.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/permission/AppLockPermissionPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/permission/NotificationEnableGuideDialog.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/permission/StorageCleanPermissionUi.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/AppThemeTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/CleanXColors.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/CleanXDimens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/Color.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/StorageCleanThemeTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/Theme.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/common/ui/theme/Type.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/core/presentation/IntentInterceptor.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/core/presentation/IntentPolicy.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/core/presentation/InterceptResult.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/core/presentation/MviViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/AntiVirusRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/AntivirusPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/AntivirusPreferencesImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/TrustlookVirusScanEngine.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusAndroidActions.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusHomeContract.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusResultRoutes.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusScanEngine.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusScanMode.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusScanModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusScanSupport.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusScanViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusSecurityRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/VirusSecurityRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/AntiVirusHomeView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/AntiVirusScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/NoVirusResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusFigmaComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusInstalledAppsAccessDialog.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusResultFigmaComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusResultScreens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusScanScreens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusScanningView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusThreatResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/antivirus/ui/VirusUiTheme.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AdvancedLockAppInfoHelper.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockApp.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockManager.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockMonitorHandler.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockMonitoringController.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockMonitoringControllerImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockMonitoringService.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockPermissionUtils.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppLockViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/AppPrefsUtils.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/service/AppLockServiceCoordinator.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/service/LockScreenOverlayService.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockManageView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockPinView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockRows.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockSearchView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockSelectAppsView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockSettingsView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/applock/ui/AppLockViewTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/audios/AudiosManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/audios/AudiosManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/audios/AudiosManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/audios/ui/AudiosManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/documents/DocumentsManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/documents/DocumentsManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/documents/DocumentsManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/documents/ui/DocumentsManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/DuplicateFilesManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/DuplicateFilesManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/DuplicateFilesManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/data/DuplicateFilesPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/data/DuplicateFilesPreferencesImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/ui/DuplicateFilesManagerContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/ui/DuplicateFilesManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/duplicates/ui/DuplicateFilesManagerViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/largefiles/LargeFilesManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/largefiles/LargeFilesManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/largefiles/LargeFilesManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/largefiles/ui/LargeFilesManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photoprivacy/PhotoPrivacyManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photoprivacy/PhotoPrivacyManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photoprivacy/PhotoPrivacyManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photoprivacy/ui/PhotoPrivacyManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photos/PhotosManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photos/PhotosManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photos/PhotosManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/photos/ui/PhotosManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/screenshots/ScreenshotsManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/screenshots/ScreenshotsManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/screenshots/ScreenshotsManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/screenshots/ui/ScreenshotsManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/BaseFileManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileDetailRoutes.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileManagerDisplayModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileManagerFilters.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileManagerMessages.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileManagerRouteFlow.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileManagerRouteSupport.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileOperationExecutor.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileOperationPhase.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/FileSelectionReducers.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ManagedFileModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/FileRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/FileRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/AndroidFileUri.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/DirectoryFileScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/FileContentHasher.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/FileManagerDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/ManagedFileClassifier.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/MediaStoreFileQuery.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileDeleteRequests.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileDetailScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileDetailTopBar.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileDetailUiState.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerAction.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerBrowserViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerComponents.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerDeletingView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerDetailViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerDisplayPalette.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerMediaViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerNoResultsContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerPhaseColors.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerScaffold.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileManagerScanningView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/shared/ui/FileOperationPhaseContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/similarphotos/SimilarPhotosManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/similarphotos/SimilarPhotosManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/similarphotos/SimilarPhotosManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/similarphotos/ui/SimilarPhotosManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/videos/VideosManagerModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/videos/VideosManagerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/videos/VideosManagerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/files/videos/ui/VideosManagerScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/HomeRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/HomeViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/FilesManagerTabContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/HomeExitPromptDialog.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/HomeFeatureGridPanel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/HomeFeatureUiSpec.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/HomeScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/HomeTabContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/ToolBoxTabContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/home/ui/ToolNotificationSpecs.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/CleanRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/AdJunkScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ApkScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/BaseFileScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/CacheScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/DuplicateFileScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/JunkFileDeleteHelper.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/JunkScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/MemoryCleaner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ResidualScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ScanDirectoryHelper.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/TempFileScanner.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/session/SharedScanState.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/CleanRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/CleanSessionStore.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/CleanResult.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/CleanSessionModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkCategory.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkDeleteModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkFile.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/MemoryCleanResult.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/ScanProgress.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/ScanResult.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/JunkCleanContract.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/JunkCleanReducer.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/JunkCleanViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/model/CategoryCleanGroup.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/model/CleanItem.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanEffectHandler.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleaningView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkDeleteAuthorizationLauncher.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkScanResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkScanningView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/BlockableNotificationApp.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationCleanerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationCleanerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/NotificationSettingsGateway.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/ui/NotificationCleanerViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/notificationcleaner/ui/NotificationPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/onboarding/OnboardingPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/onboarding/OnboardingPreferencesImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/onboarding/OnboardingRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/onboarding/OnboardingScanViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/onboarding/ui/OnboardingScanScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ManagePermissionsRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ManagePermissionsViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/SettingsRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/SettingsRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/SettingsRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/SettingsViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ui/ManagePermissionsScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ui/ManagePermissionsViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ui/SettingsFigmaChrome.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ui/SettingsPopups.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/settings/ui/SettingsScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/startup/SplashContract.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/startup/SplashStateMachine.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/startup/SplashViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/startup/ui/SplashScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/startup/ui/SplashStageProgressBar.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/AppUsageModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/AppUsageRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/AppUsageViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/data/AppUsageDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/data/AppUsageRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/data/AppUsageRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/appusage/ui/AppUsageScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/BatteryInfoRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/BatteryInfoViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BackgroundBatterySamplingPreferences.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatteryHistoryConfig.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatteryHistoryRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatteryHistoryRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatteryHistorySampler.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatteryHistorySamplerImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/data/BatterySamplingCoordinator.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/model/BatteryHistorySample.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/ui/BatteryChartModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/battery/ui/BatteryInfoScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/deviceinfo/CpuUsageReader.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/deviceinfo/DeviceInfoRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/deviceinfo/DeviceInfoViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/deviceinfo/ui/DeviceInfoScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/NetworkScanDevicesRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/NetworkScanDevicesViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/NetworkScanRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/NetworkScanSessionStore.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/NetworkScanViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanCards.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanDevicesContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanDevicesErrorView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanDevicesLoadingView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanDevicesResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanDevicesScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanErrorView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanIdleView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanScanningView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkscan/ui/NetworkScanViewTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/NetworkSpeedRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/NetworkSpeedViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedCards.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedContentView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedErrorView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedIdleView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedResultView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedTestingView.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkspeed/ui/NetworkSpeedViewTokens.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkusage/NetworkUsageRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkusage/NetworkUsageViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkusage/ui/NetworkUsageScreen.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/networkusage/ui/NetworkUsageViews.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/CpuTemperatureResolver.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/DeviceInfoDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/DeviceInfoRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/DeviceInfoRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/StorageDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/model/DeviceInfoModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/device/model/DeviceRuntimeModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/AndroidNetworkInfoReader.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/NetworkInfoReader.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/NetworkModels.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/NetworkRepository.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/NetworkRepositoryImpl.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/network/NetworkToolboxDataSource.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/shared/ui/ToolboxScanningContent.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/whatsappcleaner/WhatsAppCleanerRoute.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/whatsappcleaner/WhatsAppCleanerViewModel.kt
+ D app/src/main/java/com/aicleanerstorage/spaceclean/feature/toolbox/whatsappcleaner/ui/WhatsAppCleanerViews.kt
+ D app/src/main/res/drawable-nodpi/app_lock_permission_figma.png
+ D app/src/main/res/drawable-nodpi/file_empty_scan_result.png
+ D app/src/main/res/drawable-nodpi/home_app_lock_figma.png
+ D app/src/main/res/drawable-nodpi/home_bg_figma_bitmap.png
+ D app/src/main/res/drawable-nodpi/home_virus_figma_cropped.png
+ D app/src/main/res/drawable-nodpi/ic_app_usage.png
+ D app/src/main/res/drawable-nodpi/ic_audios.png
+ D app/src/main/res/drawable-nodpi/ic_battery.png
+ D app/src/main/res/drawable-nodpi/ic_device_phone.png
+ D app/src/main/res/drawable-nodpi/ic_documents.png
+ D app/src/main/res/drawable-nodpi/ic_duplicate_files.png
+ D app/src/main/res/drawable-nodpi/ic_large_files.png
+ D app/src/main/res/drawable-nodpi/ic_network_scan.png
+ D app/src/main/res/drawable-nodpi/ic_network_speed.png
+ D app/src/main/res/drawable-nodpi/ic_network_usage.png
+ D app/src/main/res/drawable-nodpi/ic_notification_cleaner.png
+ D app/src/main/res/drawable-nodpi/ic_photo_privacy.png
+ D app/src/main/res/drawable-nodpi/ic_photos.png
+ D app/src/main/res/drawable-nodpi/ic_scan_app_usage.png
+ D app/src/main/res/drawable-nodpi/ic_scan_notification_clean.png
+ D app/src/main/res/drawable-nodpi/ic_screenshots.png
+ D app/src/main/res/drawable-nodpi/ic_similar_photos.png
+ D app/src/main/res/drawable-nodpi/ic_videos.png
+ D app/src/main/res/drawable-nodpi/junk_cleaning_trash_figma.png
+ D app/src/main/res/drawable-nodpi/junk_result_bucket_figma.png
+ D app/src/main/res/drawable-nodpi/junk_scan_spiral_figma.png
+ D app/src/main/res/drawable-nodpi/network_usage_empty_figma.png
+ D app/src/main/res/drawable-nodpi/notification_bar_guide_1.png
+ D app/src/main/res/drawable-nodpi/notification_bar_guide_2.png
+ D app/src/main/res/drawable-nodpi/notification_bar_guide_3.png
+ D app/src/main/res/drawable-nodpi/notification_bar_guide_4.png
+ D app/src/main/res/drawable-nodpi/onboarding_trash_can.png
+ D app/src/main/res/drawable-nodpi/rate_hand.png
+ D app/src/main/res/drawable-nodpi/rate_star_unselected.png
+ D app/src/main/res/drawable-nodpi/splash_bg.png
+ D app/src/main/res/drawable-nodpi/virus_app_list_permission.png
+ D app/src/main/res/drawable-nodpi/virus_engine_figma.png
+ D app/src/main/res/drawable/app_lock.png
+ D app/src/main/res/drawable/app_lock_pin_background.xml
+ D app/src/main/res/drawable/app_logo.png
+ D app/src/main/res/drawable/battery_health.png
+ D app/src/main/res/drawable/battery_info.xml
+ D app/src/main/res/drawable/device_model.xml
+ D app/src/main/res/drawable/file_yellow.png
+ D app/src/main/res/drawable/home_bg_figma_bitmap.png
+ D app/src/main/res/drawable/ic_audio_yellow.xml
+ D app/src/main/res/drawable/ic_clean_ok.xml
+ D app/src/main/res/drawable/ic_duplicate_files.xml
+ D app/src/main/res/drawable/ic_file.xml
+ D app/src/main/res/drawable/ic_file_blue.xml
+ D app/src/main/res/drawable/ic_file_bule.xml
+ D app/src/main/res/drawable/ic_file_yellow.xml
+ D app/src/main/res/drawable/ic_junk_result_file.xml
+ D app/src/main/res/drawable/ic_left.xml
+ D app/src/main/res/drawable/ic_n_battery_info.xml
+ D app/src/main/res/drawable/ic_n_device_info.xml
+ D app/src/main/res/drawable/ic_n_junk_removal.xml
+ D app/src/main/res/drawable/ic_n_network_scan.xml
+ D app/src/main/res/drawable/ic_n_network_usage.xml
+ D app/src/main/res/drawable/ic_n_notification_cleaner.xml
+ D app/src/main/res/drawable/ic_network_scan_unknown.xml
+ D app/src/main/res/drawable/ic_notification_status_bell.xml
+ D app/src/main/res/drawable/ic_ok.xml
+ D app/src/main/res/drawable/ic_permission_junk.xml
+ D app/src/main/res/drawable/ic_permission_privacy.xml
+ D app/src/main/res/drawable/ic_persistent_battery.xml
+ D app/src/main/res/drawable/ic_persistent_clean.xml
+ D app/src/main/res/drawable/ic_persistent_file.xml
+ D app/src/main/res/drawable/ic_persistent_tools.xml
+ D app/src/main/res/drawable/ic_pin_delete_figma.xml
+ D app/src/main/res/drawable/ic_result_ok.xml
+ D app/src/main/res/drawable/ic_scan_battery_info.xml
+ D app/src/main/res/drawable/ic_scan_device_info.xml
+ D app/src/main/res/drawable/ic_scan_whatsapp_cleanner.xml
+ D app/src/main/res/drawable/ic_selected.xml
+ D app/src/main/res/drawable/ic_settings.xml
+ D app/src/main/res/drawable/ic_switch_close.xml
+ D app/src/main/res/drawable/ic_switch_open.xml
+ D app/src/main/res/drawable/ic_unselected.xml
+ D app/src/main/res/drawable/ic_unselected_green.xml
+ D app/src/main/res/drawable/ic_virus_protection_shield.xml
+ D app/src/main/res/drawable/ic_virus_result_usb_figma.xml
+ D app/src/main/res/drawable/ic_virus_safe_check_figma.xml
+ D app/src/main/res/drawable/ic_whats_app_cleaner.xml
+ D app/src/main/res/drawable/life.png
+ D app/src/main/res/drawable/pin_dot_selected.xml
+ D app/src/main/res/drawable/pin_dot_unselected.xml
+ D app/src/main/res/drawable/pin_key_background.xml
+ D app/src/main/res/drawable/rate_hand.png
+ D app/src/main/res/drawable/scan_phone.png
+ D app/src/main/res/drawable/scan_phone_bg.png
+ D app/src/main/res/drawable/scan_phone_border.png
+ D app/src/main/res/drawable/scan_phone_line.xml
+ D app/src/main/res/drawable/temperature.png
+ D app/src/main/res/drawable/trash_can.png
+ D app/src/main/res/drawable/virus_shield.png
+ D app/src/main/res/drawable/voltage.png
+ D app/src/main/res/font/wix_madefor_text_variable.ttf
+ D app/src/main/res/layout/layout_lock_screen_pin.xml
+ D app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+ D app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+ D app/src/main/res/mipmap-hdpi/ic_launcher.webp
+ D app/src/main/res/mipmap-hdpi/ic_launcher_background.webp
+ D app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp
+ D app/src/main/res/mipmap-hdpi/ic_launcher_monochrome.webp
+ D app/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+ D app/src/main/res/mipmap-mdpi/ic_launcher.webp
+ D app/src/main/res/mipmap-mdpi/ic_launcher_background.webp
+ D app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp
+ D app/src/main/res/mipmap-mdpi/ic_launcher_monochrome.webp
+ D app/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+ D app/src/main/res/mipmap-xhdpi/ic_launcher.webp
+ D app/src/main/res/mipmap-xhdpi/ic_launcher_background.webp
+ D app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp
+ D app/src/main/res/mipmap-xhdpi/ic_launcher_monochrome.webp
+ D app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+ D app/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+ D app/src/main/res/mipmap-xxhdpi/ic_launcher_background.webp
+ D app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp
+ D app/src/main/res/mipmap-xxhdpi/ic_launcher_monochrome.webp
+ D app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_close.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_file_small.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_high.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_launcher_background.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+ D app/src/main/res/mipmap-xxxhdpi/ic_lock_small.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_malware.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_malware_small.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_medium.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_next.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_privacy.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_scan_nor_bg.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_ser.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_setting.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_usb.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_virus.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_virus_file.png
+ D app/src/main/res/mipmap-xxxhdpi/ic_virus_small.png
+ D app/src/main/res/raw/adload_config.json
+ D app/src/main/res/raw/keep_storage_clean_notification.xml
+ D app/src/main/res/raw/native_ad_policy.json
+ D app/src/main/res/raw/notification_config.json
+ D app/src/main/res/raw/notification_content.json
+ D app/src/main/res/raw/push.json
+ D app/src/main/res/values-de/plurals.xml
+ D app/src/main/res/values-de/strings.xml
+ D app/src/main/res/values-es/plurals.xml
+ D app/src/main/res/values-es/strings.xml
+ D app/src/main/res/values-fr/plurals.xml
+ D app/src/main/res/values-fr/strings.xml
+ D app/src/main/res/values-id/plurals.xml
+ D app/src/main/res/values-id/strings.xml
+ D app/src/main/res/values-ja/plurals.xml
+ D app/src/main/res/values-ja/strings.xml
+ D app/src/main/res/values-ko/plurals.xml
+ D app/src/main/res/values-ko/strings.xml
+ D app/src/main/res/values-night/themes.xml
+ D app/src/main/res/values-pt/plurals.xml
+ D app/src/main/res/values-pt/strings.xml
+ D app/src/main/res/values-th/plurals.xml
+ D app/src/main/res/values-th/strings.xml
+ D app/src/main/res/values-vi/plurals.xml
+ D app/src/main/res/values-vi/strings.xml
+ D app/src/main/res/values-zh/plurals.xml
+ D app/src/main/res/values-zh/strings.xml
+ D app/src/main/res/values/attrs.xml
+ D app/src/main/res/values/colors.xml
+ D app/src/main/res/values/plurals.xml
+ D app/src/main/res/values/strings.xml
+ D app/src/main/res/values/styles.xml
+ D app/src/main/res/values/themes.xml
+ D app/src/main/res/xml/backup_rules.xml
+ D app/src/main/res/xml/data_extraction_rules.xml
+ D app/src/main/res/xml/locales_config.xml
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/AppViewModelTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/commercial/AdInterceptorTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/commercial/AdQueueTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/permission/NotificationPermissionStateMachineTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/permission/PermissionInterceptorTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/app/permission/PermissionTypeContractTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/app/runtime/AppFeatureFlowTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/architecture/MotherTemplateBoundaryTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/battery/BatteryChartModelTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/common/ads/ColdStartAdsTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/common/analytics/AnalyticsPayloadMapperTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/common/files/DuplicateContentGuardTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/common/storage/preferences/CleanupHistoryStoreTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/common/ui/components/ToolFeatureRecommendationTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/config/VariantProfileTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/core/presentation/MviEffectContractTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/core/presentation/MviViewModelContractTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/feature/files/shared/data/source/DuplicateDeletionSafetyTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/DuplicateFileSafetyTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/JunkCleanReducerTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/feature/junkclean/presentation/JunkCleanViewModelTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkCleanRouteEffectsTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/feature/junkclean/ui/JunkDeleteAuthorizationLauncherTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/navigation/AppDestinationTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/navigation/FeatureEntryNavigatorTest.kt
+ M app/src/test/java/com/aicleanerstorage/spaceclean/operation/FeatureFlowRuntimeTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/presentation/app/AppLaunchCoordinatorTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/presentation/app/AppNotificationTargetRoutingTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/app/runtime/notification/BackgroundBatterySamplingControllerTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/app/runtime/notification/PersistentServiceCommandDispatcherTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/core/common/coroutines/AppDispatchersTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/data/source/DuplicateFileGroupingTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/data/source/FileContentHasherTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/domain/model/FileUriTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/presentation/duplicates/DuplicateFilesWarningStateTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/presentation/photoprivacy/PhotoPrivacySelectionTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/presentation/similarphotos/SimilarPhotosSelectionTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/files/presentation/videos/VideosManagerDeletionTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/startup/presentation/SplashViewModelTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/toolbox/data/CpuTemperatureResolverTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/toolbox/presentation/appusage/AppUsageViewModelEffectTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/toolbox/presentation/common/device/CpuUsageReaderTest.kt
+ D app/src/test/java/com/aicleanerstorage/spaceclean/use/feature/toolbox/presentation/common/device/DeviceViewModelCompositionTest.kt
+ M build.gradle.kts
+ M docs/mvi-architecture.md
+ M docs/refactor-sample.md
+ M scripts/check-dependencies.ps1
+ M scripts/check-mvi-boundaries.ps1
+ M scripts/check-permission-ad-boundaries.ps1
+ M scripts/check-template.ps1
+ M scripts/check-variant-boundaries.ps1
+ M settings.gradle.kts
+?? app/src/androidTest/java/com/aicleanerstorage/spaceclean/app/permission/AppPermissionHostTest.kt
+?? app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/FeatureFlowOwners.kt
+?? app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/FeatureGraphs.kt
+?? app/src/main/java/com/aicleanerstorage/spaceclean/app/navigation/NavHostAppNavigator.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/ads/AdHosts.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/ads/AdPrivacyGateway.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/ads/AdvertiseConfigFactory.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/ads/AdvertiseSdkAdapter.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/ads/AdvertiseSdkPrivacyGateway.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/analytics/AnalyticsPayloadMapper.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/analytics/AnalyticsPreferences.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/analytics/AnalyticsTracker.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/analytics/SdkAnalyticsSink.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/permission/PermissionPreferences.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/storage/preferences/AppPreferences.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/platform/storage/preferences/CleanupHistoryStore.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/storage/AntivirusPreferencesImpl.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/storage/BackgroundBatterySamplingPreferencesImpl.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/storage/DuplicateFilesPreferencesImpl.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/storage/OnboardingPreferencesImpl.kt
+?? app/src/main/kotlin/com/aicleanerstorage/spaceclean/app/storage/SettingsRepositoryImpl.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/background/PersistentServiceCommandDispatcherTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/navigation/NavHostAppNavigatorTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/navigation/RouteEntryAdPolicyTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/permission/NotificationPermissionEffectsTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/runtime/AppNotificationTargetRoutingTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/app/startup/AppLaunchCoordinatorTest.kt
+?? app/src/test/java/com/aicleanerstorage/spaceclean/common/permission/PermissionTypeContractTest.kt
+?? core/contracts/build.gradle.kts
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/AdAreaKeys.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/AdCallbacks.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/AdDriver.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/AdPlacementRegistry.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/AdScene.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/ColdStartAds.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/ads/ExternalAppOpenGuard.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/analytics/AnalyticsDispatcher.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/analytics/AnalyticsReporter.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/analytics/AnalyticsSink.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/applock/AppLockApp.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/applock/AppLockRepository.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/commercial/InterstitialRequest.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/coroutines/AppDispatchers.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/device/DeviceInfoModels.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/device/DeviceInfoRepository.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/device/DeviceRuntimeModels.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/feature/CleanupHistoryStore.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/feature/FeatureFlow.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/feature/FeatureGroup.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/feature/FeatureKey.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/files/DuplicateContentGuard.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/files/FileRepository.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/files/ManagedFileModels.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/format/FileSizeFormatter.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/intent/ExternalActivityTracker.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/onboarding/OnboardingPreferences.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/permission/PermissionGateway.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/permission/PermissionModels.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/permission/PermissionPromptRequest.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/permission/PermissionType.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/policy/IntentPolicy.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/settings/SettingsRepository.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/startup/AppLaunchRequest.kt
+?? core/contracts/src/main/kotlin/com/aicleanerstorage/spaceclean/core/contracts/startup/SdkInitialization.kt
+?? core/contracts/src/test/kotlin/com/aicleanerstorage/spaceclean/core/contracts/coroutines/AppDispatchersTest.kt
+?? core/contracts/src/test/kotlin/com/aicleanerstorage/spaceclean/core/contracts/files/FileUriTest.kt
+?? core/navigation/build.gradle.kts
+?? core/navigation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/navigation/AppDestination.kt
+?? core/navigation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/navigation/AppNavigator.kt
+?? core/navigation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/navigation/MainTab.kt
+?? core/navigation/src/test/kotlin/com/aicleanerstorage/spaceclean/core/navigation/AppDestinationTest.kt
+?? core/navigation/src/test/kotlin/com/aicleanerstorage/spaceclean/core/navigation/TypedDestinationTest.kt
+?? core/presentation/build.gradle.kts
+?? core/presentation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/presentation/IntentInterceptor.kt
+?? core/presentation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/presentation/InterceptResult.kt
+?? core/presentation/src/main/kotlin/com/aicleanerstorage/spaceclean/core/presentation/MviViewModel.kt
+?? core/presentation/src/test/kotlin/com/aicleanerstorage/spaceclean/core/presentation/MviEffectContractTest.kt
+?? core/presentation/src/test/kotlin/com/aicleanerstorage/spaceclean/core/presentation/MviViewModelContractTest.kt
+?? core/ui/build.gradle.kts
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/LocalAnalyticsReporter.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/AppIcon.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXCheckBadge.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXCompat.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXEmptyScanResult.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXScaffoldPage.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXSelectionCircle.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXStatusBadge.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXSurfaceComponents.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/CleanXTopAppBar.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/FileManagerUiTokens.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/NotificationPermissionDialog.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/RoundedProgressBar.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/SettingsPopups.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/ToolFeatureBanners.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/ToolboxScanningContent.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/WindowInsetsModifiers.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanCompleteBadge.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanSpiralAnimation.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanXDeleteCompleteAnimation.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanXLottieAnimations.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanXScanProgress.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanXScanRingAnimation.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/CleanXSpiralCleaningContent.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/PhoneScanIllustration.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/RotatingRingAnimation.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/animations/SemiCircularGauge.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/buttons/CleanXGradientBottomActionBar.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/buttons/CleanXPrimaryButton.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/buttons/CleanXSettingsRowButton.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/popups/CleanXDialogPopups.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/popups/PermissionCopy.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/popups/PermissionPopups.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/popups/StopScanDialog.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/permission/AppLockPermissionPopups.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/permission/NotificationEnableGuideDialog.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/permission/PermissionCompositionLocal.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/permission/PermissionObservation.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/permission/StorageCleanPermissionUi.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/platform/ExternalUrlLauncher.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/AppThemeTokens.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/CleanXColors.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/CleanXDimens.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/Color.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/StorageCleanThemeTokens.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/Theme.kt
+?? core/ui/src/main/kotlin/com/aicleanerstorage/spaceclean/core/ui/theme/Type.kt
+?? core/ui/src/main/res/drawable-nodpi/app_lock_permission_figma.png
+?? core/ui/src/main/res/drawable-nodpi/file_empty_scan_result.png
+?? core/ui/src/main/res/drawable-nodpi/home_app_lock_figma.png
+?? core/ui/src/main/res/drawable-nodpi/home_bg_figma_bitmap.png
+?? core/ui/src/main/res/drawable-nodpi/home_virus_figma_cropped.png
+?? core/ui/src/main/res/drawable-nodpi/ic_app_usage.png
+?? core/ui/src/main/res/drawable-nodpi/ic_audios.png
+?? core/ui/src/main/res/drawable-nodpi/ic_battery.png
+?? core/ui/src/main/res/drawable-nodpi/ic_device_phone.png
+?? core/ui/src/main/res/drawable-nodpi/ic_documents.png
+?? core/ui/src/main/res/drawable-nodpi/ic_duplicate_files.png
+?? core/ui/src/main/res/drawable-nodpi/ic_large_files.png
+?? core/ui/src/main/res/drawable-nodpi/ic_network_scan.png
+?? core/ui/src/main/res/drawable-nodpi/ic_network_speed.png
+?? core/ui/src/main/res/drawable-nodpi/ic_network_usage.png
+?? core/ui/src/main/res/drawable-nodpi/ic_notification_cleaner.png
+?? core/ui/src/main/res/drawable-nodpi/ic_photo_privacy.png
+?? core/ui/src/main/res/drawable-nodpi/ic_photos.png
+?? core/ui/src/main/res/drawable-nodpi/ic_scan_app_usage.png
+?? core/ui/src/main/res/drawable-nodpi/ic_scan_notification_clean.png
+?? core/ui/src/main/res/drawable-nodpi/ic_screenshots.png
+?? core/ui/src/main/res/drawable-nodpi/ic_similar_photos.png
+?? core/ui/src/main/res/drawable-nodpi/ic_videos.png
+?? core/ui/src/main/res/drawable-nodpi/junk_cleaning_trash_figma.png
+?? core/ui/src/main/res/drawable-nodpi/junk_result_bucket_figma.png
+?? core/ui/src/main/res/drawable-nodpi/junk_scan_spiral_figma.png
+?? core/ui/src/main/res/drawable-nodpi/network_usage_empty_figma.png
+?? core/ui/src/main/res/drawable-nodpi/notification_bar_guide_1.png
+?? core/ui/src/main/res/drawable-nodpi/notification_bar_guide_2.png
+?? core/ui/src/main/res/drawable-nodpi/notification_bar_guide_3.png
+?? core/ui/src/main/res/drawable-nodpi/notification_bar_guide_4.png
+?? core/ui/src/main/res/drawable-nodpi/onboarding_trash_can.png
+?? core/ui/src/main/res/drawable-nodpi/rate_hand.png
+?? core/ui/src/main/res/drawable-nodpi/rate_star_unselected.png
+?? core/ui/src/main/res/drawable-nodpi/splash_bg.png
+?? core/ui/src/main/res/drawable-nodpi/virus_app_list_permission.png
+?? core/ui/src/main/res/drawable-nodpi/virus_engine_figma.png
+?? core/ui/src/main/res/drawable/app_lock.png
+?? core/ui/src/main/res/drawable/app_lock_pin_background.xml
+?? core/ui/src/main/res/drawable/app_logo.png
+?? core/ui/src/main/res/drawable/battery_health.png
+?? core/ui/src/main/res/drawable/battery_info.xml
+?? core/ui/src/main/res/drawable/device_model.xml
+?? core/ui/src/main/res/drawable/file_yellow.png
+?? core/ui/src/main/res/drawable/home_bg_figma_bitmap.png
+?? core/ui/src/main/res/drawable/ic_audio_yellow.xml
+?? core/ui/src/main/res/drawable/ic_clean_ok.xml
+?? core/ui/src/main/res/drawable/ic_duplicate_files.xml
+?? core/ui/src/main/res/drawable/ic_file.xml
+?? core/ui/src/main/res/drawable/ic_file_blue.xml
+?? core/ui/src/main/res/drawable/ic_file_bule.xml
+?? core/ui/src/main/res/drawable/ic_file_yellow.xml
+?? core/ui/src/main/res/drawable/ic_junk_result_file.xml
+?? core/ui/src/main/res/drawable/ic_left.xml
+?? core/ui/src/main/res/drawable/ic_n_battery_info.xml
+?? core/ui/src/main/res/drawable/ic_n_device_info.xml
+?? core/ui/src/main/res/drawable/ic_n_junk_removal.xml
+?? core/ui/src/main/res/drawable/ic_n_network_scan.xml
+?? core/ui/src/main/res/drawable/ic_n_network_usage.xml
+?? core/ui/src/main/res/drawable/ic_n_notification_cleaner.xml
+?? core/ui/src/main/res/drawable/ic_network_scan_unknown.xml
+?? core/ui/src/main/res/drawable/ic_notification_status_bell.xml
+?? core/ui/src/main/res/drawable/ic_ok.xml
+?? core/ui/src/main/res/drawable/ic_permission_junk.xml
+?? core/ui/src/main/res/drawable/ic_permission_privacy.xml
+?? core/ui/src/main/res/drawable/ic_persistent_battery.xml
+?? core/ui/src/main/res/drawable/ic_persistent_clean.xml
+?? core/ui/src/main/res/drawable/ic_persistent_file.xml
+?? core/ui/src/main/res/drawable/ic_persistent_tools.xml
+?? core/ui/src/main/res/drawable/ic_pin_delete_figma.xml
+?? core/ui/src/main/res/drawable/ic_result_ok.xml
+?? core/ui/src/main/res/drawable/ic_scan_battery_info.xml
+?? core/ui/src/main/res/drawable/ic_scan_device_info.xml
+?? core/ui/src/main/res/drawable/ic_scan_whatsapp_cleanner.xml
+?? core/ui/src/main/res/drawable/ic_selected.xml
+?? core/ui/src/main/res/drawable/ic_settings.xml
+?? core/ui/src/main/res/drawable/ic_switch_close.xml
+?? core/ui/src/main/res/drawable/ic_switch_open.xml
+?? core/ui/src/main/res/drawable/ic_unselected.xml
+?? core/ui/src/main/res/drawable/ic_unselected_green.xml
+?? core/ui/src/main/res/drawable/ic_virus_protection_shield.xml
+?? core/ui/src/main/res/drawable/ic_virus_result_usb_figma.xml
+?? core/ui/src/main/res/drawable/ic_virus_safe_check_figma.xml
+?? core/ui/src/main/res/drawable/ic_whats_app_cleaner.xml
+?? core/ui/src/main/res/drawable/life.png
+?? core/ui/src/main/res/drawable/pin_dot_selected.xml
+?? core/ui/src/main/res/drawable/pin_dot_unselected.xml
+?? core/ui/src/main/res/drawable/pin_key_background.xml
+?? core/ui/src/main/res/drawable/rate_hand.png
+?? core/ui/src/main/res/drawable/scan_phone.png
+?? core/ui/src/main/res/drawable/scan_phone_bg.png
+?? core/ui/src/main/res/drawable/scan_phone_border.png
+?? core/ui/src/main/res/drawable/scan_phone_line.xml
+?? core/ui/src/main/res/drawable/temperature.png
+?? core/ui/src/main/res/drawable/trash_can.png
+?? core/ui/src/main/res/drawable/virus_shield.png
+?? core/ui/src/main/res/drawable/voltage.png
+?? core/ui/src/main/res/font/wix_madefor_text_variable.ttf
+?? core/ui/src/main/res/layout/layout_lock_screen_pin.xml
+?? core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+?? core/ui/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+?? core/ui/src/main/res/mipmap-hdpi/ic_launcher.webp
+?? core/ui/src/main/res/mipmap-hdpi/ic_launcher_background.webp
+?? core/ui/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp
+?? core/ui/src/main/res/mipmap-hdpi/ic_launcher_monochrome.webp
+?? core/ui/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+?? core/ui/src/main/res/mipmap-mdpi/ic_launcher.webp
+?? core/ui/src/main/res/mipmap-mdpi/ic_launcher_background.webp
+?? core/ui/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp
+?? core/ui/src/main/res/mipmap-mdpi/ic_launcher_monochrome.webp
+?? core/ui/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+?? core/ui/src/main/res/mipmap-xhdpi/ic_launcher.webp
+?? core/ui/src/main/res/mipmap-xhdpi/ic_launcher_background.webp
+?? core/ui/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp
+?? core/ui/src/main/res/mipmap-xhdpi/ic_launcher_monochrome.webp
+?? core/ui/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+?? core/ui/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+?? core/ui/src/main/res/mipmap-xxhdpi/ic_launcher_background.webp
+?? core/ui/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp
+?? core/ui/src/main/res/mipmap-xxhdpi/ic_launcher_monochrome.webp
+?? core/ui/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_close.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_file_small.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_high.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_launcher_background.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_lock_small.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_malware.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_malware_small.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_medium.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_next.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_privacy.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_scan_nor_bg.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_ser.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_setting.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_usb.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_virus.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_virus_file.png
+?? core/ui/src/main/res/mipmap-xxxhdpi/ic_virus_small.png
+?? core/ui/src/main/res/raw/adload_config.json
+?? core/ui/src/main/res/raw/keep_storage_clean_notification.xml
+?? core/ui/src/main/res/raw/native_ad_policy.json
+?? core/ui/src/main/res/raw/notification_config.json
+?? core/ui/src/main/res/raw/notification_content.json
+?? core/ui/src/main/res/raw/push.json
+?? core/ui/src/main/res/values-de/plurals.xml
+?? core/ui/src/main/res/values-de/strings.xml
+?? core/ui/src/main/res/values-es/plurals.xml
+?? core/ui/src/main/res/values-es/strings.xml
+?? core/ui/src/main/res/values-fr/plurals.xml
+?? core/ui/src/main/res/values-fr/strings.xml
+?? core/ui/src/main/res/values-id/plurals.xml
+?? core/ui/src/main/res/values-id/strings.xml
+?? core/ui/src/main/res/values-ja/plurals.xml
+?? core/ui/src/main/res/values-ja/strings.xml
+?? core/ui/src/main/res/values-ko/plurals.xml
+?? core/ui/src/main/res/values-ko/strings.xml
+?? core/ui/src/main/res/values-night/themes.xml
+?? core/ui/src/main/res/values-pt/plurals.xml
+?? core/ui/src/main/res/values-pt/strings.xml
+?? core/ui/src/main/res/values-th/plurals.xml
+?? core/ui/src/main/res/values-th/strings.xml
+?? core/ui/src/main/res/values-vi/plurals.xml
+?? core/ui/src/main/res/values-vi/strings.xml
+?? core/ui/src/main/res/values-zh/plurals.xml
+?? core/ui/src/main/res/values-zh/strings.xml
+?? core/ui/src/main/res/values/attrs.xml
+?? core/ui/src/main/res/values/colors.xml
+?? core/ui/src/main/res/values/plurals.xml
+?? core/ui/src/main/res/values/strings.xml
+?? core/ui/src/main/res/values/styles.xml
+?? core/ui/src/main/res/values/themes.xml
+?? core/ui/src/main/res/xml/backup_rules.xml
+?? core/ui/src/main/res/xml/data_extraction_rules.xml
+?? core/ui/src/main/res/xml/locales_config.xml
+?? core/ui/src/test/kotlin/com/aicleanerstorage/spaceclean/core/ui/components/ToolFeatureRecommendationTest.kt
+?? docs/multi-module-migration.md
+?? docs/permission-ad-acceptance.md
+?? docs/verification/multi-module-2026-11-04/cleaner-final-targeted.txt
+?? docs/verification/multi-module-2026-11-04/cleaner-migration-final-fixes.txt
+?? docs/verification/multi-module-2026-11-04/cleaner-multimodule-assemble-debug.txt
+?? docs/verification/multi-module-2026-11-04/cleaner-targeted-tests.txt
+?? docs/verification/multi-module-2026-11-04/cleaner-targeted-tests2.txt
+?? docs/verification/multi-module-2026-11-04/latest-test-reports.json
+?? docs/verification/permission-ad-2026-11-04/boundaries.txt
+?? docs/verification/permission-ad-2026-11-04/gradle.txt
+?? docs/verification/permission-ad-2026-11-04/host-cached-compile.txt
+?? feature/antivirus/build.gradle.kts
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/data/TrustlookVirusScanEngine.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/data/VirusScanSupport.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/data/VirusSecurityRepositoryImpl.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/AntivirusPreferences.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/TrustlookConfigurationException.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/VirusScanEngine.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/VirusScanMode.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/VirusSecurityRepository.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/domain/VirusThreat.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/presentation/VirusHomeContract.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/presentation/VirusScanContract.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/presentation/VirusScanModels.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/presentation/VirusScanReducer.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/presentation/VirusScanViewModel.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/AntiVirusHomeView.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/AntiVirusRoute.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/AntiVirusScreen.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/NoVirusResultView.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusAndroidActions.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusComponents.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusEffectHandler.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusFigmaComponents.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusIcon.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusInstalledAppsAccessDialog.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusPopups.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusResultFigmaComponents.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusResultRoutes.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusResultScreens.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusScanRoutes.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusScanningView.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusThreatResultView.kt
+?? feature/antivirus/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/antivirus/view/scanflow/ui/VirusUiTheme.kt
+?? feature/applock/build.gradle.kts
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AdvancedLockAppInfoHelper.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppLockManager.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppLockMonitoringControllerImpl.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppLockMonitoringService.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppLockPermissionUtils.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppLockRepositoryImpl.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/data/AppPrefsUtils.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/domain/AppLockMonitoringController.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/presentation/AppLockContract.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/presentation/AppLockReducer.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/presentation/AppLockViewModel.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockComponents.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockContentView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockManageView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockMonitorHandler.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockPinView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockRoute.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockRows.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockScreen.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockSearchView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockSelectAppsView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockServiceCoordinator.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockSettingsView.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/AppLockViewTokens.kt
+?? feature/applock/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/applock/view/applock/ui/LockScreenOverlayService.kt
+?? feature/files/build.gradle.kts
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/AndroidFileUri.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/DirectoryFileScanner.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/FileContentHasher.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/FileManagerDataSource.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/FileRepositoryImpl.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/ManagedFileClassifier.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/MediaStoreFileQuery.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/domain/duplicates/DuplicateFilesPreferences.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/presentation/AudiosManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/presentation/AudiosManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/presentation/AudiosManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/presentation/AudiosManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/ui/AudiosManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/audios/ui/AudiosManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/presentation/DocumentsManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/presentation/DocumentsManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/presentation/DocumentsManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/presentation/DocumentsManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/ui/DocumentsManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/documents/ui/DocumentsManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/presentation/DuplicateFilesManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/presentation/DuplicateFilesManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/presentation/DuplicateFilesManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/presentation/DuplicateFilesManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/ui/DuplicateFilesManagerContentView.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/ui/DuplicateFilesManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/ui/DuplicateFilesManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/ui/DuplicateFilesManagerViews.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/presentation/LargeFilesManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/presentation/LargeFilesManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/presentation/LargeFilesManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/presentation/LargeFilesManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/ui/LargeFilesManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/largefiles/ui/LargeFilesManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/presentation/PhotoPrivacyManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/presentation/PhotoPrivacyManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/presentation/PhotoPrivacyManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/presentation/PhotoPrivacyManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/ui/PhotoPrivacyManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/ui/PhotoPrivacyManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/presentation/PhotosManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/presentation/PhotosManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/presentation/PhotosManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/presentation/PhotosManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/ui/PhotosManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photos/ui/PhotosManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/presentation/ScreenshotsManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/presentation/ScreenshotsManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/presentation/ScreenshotsManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/presentation/ScreenshotsManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/ui/ScreenshotsManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/screenshots/ui/ScreenshotsManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileManagerDisplayModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileManagerFilters.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileManagerFlowState.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileManagerMessages.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileOperationPhase.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/presentation/FileSelectionReducers.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileDeleteRequests.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileDetailRoutes.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileDetailScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileDetailTopBar.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileDetailUiState.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerBrowserViews.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerComponents.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerDeletingView.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerDetailViews.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerDisplayPalette.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerMediaViews.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerNoResultsContent.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerPhaseColors.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerPopups.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerResultView.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerRouteFlow.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerRouteSupport.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerScaffold.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileManagerScanningView.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/shared/ui/FileOperationPhaseContent.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/presentation/SimilarPhotosManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/presentation/SimilarPhotosManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/presentation/SimilarPhotosManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/presentation/SimilarPhotosManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/ui/SimilarPhotosManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/ui/SimilarPhotosManagerScreen.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/presentation/VideosManagerContract.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/presentation/VideosManagerModels.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/presentation/VideosManagerReducer.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/presentation/VideosManagerViewModel.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/ui/VideosManagerRoute.kt
+?? feature/files/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/ui/VideosManagerScreen.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/DuplicateDeletionSafetyTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/DuplicateFileGroupingTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/data/shared/FileContentHasherTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/duplicates/presentation/DuplicateFilesWarningStateTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/photoprivacy/presentation/PhotoPrivacySelectionTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/similarphotos/presentation/SimilarPhotosSelectionTest.kt
+?? feature/files/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/files/view/videos/presentation/VideosManagerDeletionTest.kt
+?? feature/home/build.gradle.kts
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/presentation/HomeContract.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/presentation/HomeReducer.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/presentation/HomeViewModel.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/FilesManagerTabContent.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeExitPromptDialog.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeFeatureGridPanel.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeFeatureUiSpec.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeRoute.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeScreen.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/HomeTabContent.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/ToolBoxTabContent.kt
+?? feature/home/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/ui/ToolNotificationSpecs.kt
+?? feature/home/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/home/view/home/presentation/HomeViewModelTest.kt
+?? feature/junkclean/build.gradle.kts
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/CleanRepositoryImpl.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/AdJunkScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ApkScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/BaseFileScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/CacheScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/DuplicateFileScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/JunkFileDeleteHelper.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/JunkScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/MemoryCleaner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ResidualScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/ScanDirectoryHelper.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/scanner/TempFileScanner.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/data/session/SharedScanState.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/CleanRepository.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/CleanSessionStore.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/CleanResult.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/CleanSessionModels.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkCategory.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkDeleteModels.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/JunkFile.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/MemoryCleanResult.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/ScanProgress.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/ScanResult.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/JunkCleanContract.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/JunkCleanReducer.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/JunkCleanViewModel.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/model/CategoryCleanGroup.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/model/CleanItem.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleanContentView.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleanEffectHandler.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleanResultView.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleanRoute.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleanScreen.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkCleaningView.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkDeleteAuthorizationLauncher.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkScanResultView.kt
+?? feature/junkclean/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkScanningView.kt
+?? feature/junkclean/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/domain/model/DuplicateFileSafetyTest.kt
+?? feature/junkclean/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/presentation/JunkCleanReducerTest.kt
+?? feature/junkclean/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/junkclean/view/junkclean/ui/JunkDeleteAuthorizationLauncherTest.kt
+?? feature/notificationcleaner/build.gradle.kts
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/data/NotificationDataSource.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/data/NotificationRepositoryImpl.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/domain/BlockableNotificationApp.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/domain/NotificationRepository.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/presentation/NotificationCleanerContract.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/presentation/NotificationCleanerReducer.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/presentation/NotificationCleanerViewModel.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/ui/NotificationCleanerRoute.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/ui/NotificationCleanerViews.kt
+?? feature/notificationcleaner/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/notificationcleaner/view/notificationcleaner/ui/NotificationPopups.kt
+?? feature/onboarding/build.gradle.kts
+?? feature/onboarding/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/onboarding/view/scan/presentation/OnboardingScanContract.kt
+?? feature/onboarding/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/onboarding/view/scan/presentation/OnboardingScanReducer.kt
+?? feature/onboarding/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/onboarding/view/scan/presentation/OnboardingScanViewModel.kt
+?? feature/onboarding/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/onboarding/view/scan/ui/OnboardingRoute.kt
+?? feature/onboarding/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/onboarding/view/scan/ui/OnboardingScanScreen.kt
+?? feature/settings/build.gradle.kts
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/presentation/ManagePermissionsContract.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/presentation/ManagePermissionsReducer.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/presentation/ManagePermissionsViewModel.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/ui/ManagePermissionsRoute.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/ui/ManagePermissionsScreen.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/permissions/ui/ManagePermissionsViews.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/presentation/SettingsContract.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/presentation/SettingsReducer.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/presentation/SettingsViewModel.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/ui/SettingsFigmaChrome.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/ui/SettingsRoute.kt
+?? feature/settings/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/settings/view/settings/ui/SettingsScreen.kt
+?? feature/startup/build.gradle.kts
+?? feature/startup/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/presentation/SplashContract.kt
+?? feature/startup/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/presentation/SplashStateMachine.kt
+?? feature/startup/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/presentation/SplashViewModel.kt
+?? feature/startup/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/ui/SplashScreen.kt
+?? feature/startup/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/ui/SplashStageProgressBar.kt
+?? feature/startup/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/startup/view/splash/presentation/SplashViewModelTest.kt
+?? feature/toolbox/build.gradle.kts
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/appusage/AppUsageDataSource.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/appusage/AppUsageRepositoryImpl.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/battery/BatteryHistoryRepositoryImpl.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/battery/BatteryHistorySamplerImpl.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/battery/BatterySamplingCoordinator.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/deviceinfo/CpuUsageReader.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/AndroidNetworkInfoReader.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/DeviceInfoDataSource.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/DeviceInfoRepositoryImpl.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/NetworkRepositoryImpl.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/NetworkToolboxDataSource.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/shared/StorageDataSource.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/appusage/AppUsageModels.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/appusage/AppUsageRepository.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BackgroundBatterySamplingController.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BackgroundBatterySamplingPreferences.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BatteryHistoryConfig.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BatteryHistoryRepository.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BatteryHistorySample.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BatteryHistorySampler.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/deviceinfo/CpuUsageReader.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/shared/CpuTemperatureResolver.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/shared/NetworkInfoReader.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/shared/NetworkModels.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/shared/NetworkRepository.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/appusage/presentation/AppUsageContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/appusage/presentation/AppUsageReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/appusage/presentation/AppUsageViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/appusage/ui/AppUsageRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/appusage/ui/AppUsageScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/presentation/BatteryInfoContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/presentation/BatteryInfoReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/presentation/BatteryInfoViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/ui/BatteryChartModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/ui/BatteryInfoRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/ui/BatteryInfoScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/presentation/DeviceInfoContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/presentation/DeviceInfoReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/presentation/DeviceInfoViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/ui/DeviceInfoRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/ui/DeviceInfoScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanDevicesContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanDevicesReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanDevicesViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanSessionStore.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/presentation/NetworkScanViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanCards.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanContentView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesContentView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesErrorView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesLoadingView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesResultView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanDevicesScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanErrorView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanIdleView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanResultView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanScanningView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkscan/ui/NetworkScanViewTokens.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/presentation/NetworkSpeedContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/presentation/NetworkSpeedReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/presentation/NetworkSpeedViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedCards.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedContentView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedErrorView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedIdleView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedResultView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedTestingView.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkspeed/ui/NetworkSpeedViewTokens.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/presentation/NetworkUsageContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/presentation/NetworkUsageReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/presentation/NetworkUsageViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/ui/NetworkUsageRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/ui/NetworkUsageScreen.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/networkusage/ui/NetworkUsageViews.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/whatsappcleaner/presentation/WhatsAppCleanerContract.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/whatsappcleaner/presentation/WhatsAppCleanerReducer.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/whatsappcleaner/presentation/WhatsAppCleanerViewModel.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/whatsappcleaner/ui/WhatsAppCleanerRoute.kt
+?? feature/toolbox/src/main/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/whatsappcleaner/ui/WhatsAppCleanerViews.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/data/deviceinfo/CpuUsageReaderTest.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/appusage/AppUsageViewModelEffectTest.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/domain/battery/BackgroundBatterySamplingControllerTest.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/battery/ui/BatteryChartModelTest.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/deviceinfo/presentation/DeviceViewModelCompositionTest.kt
+?? feature/toolbox/src/test/kotlin/com/aicleanerstorage/spaceclean/feature/toolbox/view/shared/presentation/CpuTemperatureResolverTest.kt

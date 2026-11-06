@@ -1,25 +1,28 @@
 package com.aicleanerstorage.spaceclean.app.navigation.register
 
+import androidx.compose.runtime.remember
+
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.common.ads.AdScene
-import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.feature.onboarding.OnboardingRoute
-import com.aicleanerstorage.spaceclean.feature.onboarding.OnboardingScanViewModel
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigator
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
+import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.feature.onboarding.view.scan.ui.OnboardingRoute
+import com.aicleanerstorage.spaceclean.feature.onboarding.view.scan.presentation.OnboardingScanViewModel
 import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerOnboardingRoute(
-    navigator: AppNavigator,
+    navigator: NavHostAppNavigator,
     showAd: suspend (InterstitialRequest) -> Unit,
     analyticsReporter: AnalyticsReporter,
 ) {
-    composable(AppDestination.OnboardingScan.route) {
+    composable<AppDestination.OnboardingScan> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val viewModel: OnboardingScanViewModel = koinViewModel()
         OnboardingRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             analyticsReporter = analyticsReporter,
             onScanFinishedAd = {
                 showAd(InterstitialRequest(AdScene.OnboardingScanFinished, "onboarding_scan_finish"))

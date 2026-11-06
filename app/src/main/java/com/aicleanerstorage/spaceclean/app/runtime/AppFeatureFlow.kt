@@ -1,18 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.runtime
 
 import com.aicleanerstorage.spaceclean.app.commercial.policy.FeatureEventAdPolicy
-import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
+import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
-import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.feature.FeatureGroup
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureGroup
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
+import com.aicleanerstorage.spaceclean.core.contracts.feature.CleanupHistoryStore
 
 internal class AppFeatureFlow(
     private val showAd: suspend (InterstitialRequest) -> Unit,

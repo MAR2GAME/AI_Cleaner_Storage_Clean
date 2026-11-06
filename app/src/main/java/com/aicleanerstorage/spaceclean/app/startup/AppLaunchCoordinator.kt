@@ -1,22 +1,13 @@
 package com.aicleanerstorage.spaceclean.app.startup
 
+import com.aicleanerstorage.spaceclean.core.contracts.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.core.contracts.startup.NotificationLaunchSource
+
 import android.content.Intent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-sealed interface AppLaunchRequest {
-    data object Normal : AppLaunchRequest
-    data class NotificationTarget(
-        val route: String,
-        val source: NotificationLaunchSource = NotificationLaunchSource.InitialIntent,
-    ) : AppLaunchRequest
-}
-
-enum class NotificationLaunchSource {
-    InitialIntent,
-    NewIntent,
-}
 
 class AppLaunchCoordinator(
     private val targetRouteResolver: (Intent?) -> String? = { null },

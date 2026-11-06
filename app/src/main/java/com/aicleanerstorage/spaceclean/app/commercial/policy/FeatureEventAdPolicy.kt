@@ -1,12 +1,12 @@
-﻿package com.aicleanerstorage.spaceclean.app.commercial.policy
+package com.aicleanerstorage.spaceclean.app.commercial.policy
 
-import com.aicleanerstorage.spaceclean.common.ads.AdScene
-import com.aicleanerstorage.spaceclean.common.ads.adRequestId
-import com.aicleanerstorage.spaceclean.common.ads.toAdScene
-import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
-import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
+import com.aicleanerstorage.spaceclean.core.contracts.ads.adRequestId
+import com.aicleanerstorage.spaceclean.core.contracts.ads.toAdScene
+import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
 
 class FeatureEventAdPolicy {
     fun request(event: FeatureOperationEvent): InterstitialRequest? =

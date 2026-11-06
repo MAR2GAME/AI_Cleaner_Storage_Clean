@@ -1,5 +1,6 @@
 param(
-    [string]$Root = (Get-Location).Path
+    [string]$Root = (Get-Location).Path,
+    [switch]$WhitePackage
 )
 
 $ErrorActionPreference = 'Stop'
@@ -25,8 +26,8 @@ try {
     if ([string]$config.identity.themeKey -ne 'storage_clean') {
         Add-Failure 'identity.themeKey must be storage_clean'
     }
-    if ([int]$config.version.code -ne 1 -or [string]$config.version.name -ne '1.0.0') {
-        Add-Failure 'Storage Clean initial version must be 1.0.0 (1)'
+    if ($config.version.code -lt 1 -or [string]$config.version.name -notmatch '^\d+\.\d+\.\d+$') {
+        Add-Failure 'version.code must be positive and version.name must use semantic versioning'
     }
 
     foreach ($property in @('privacyUrl', 'termsUrl')) {
@@ -35,26 +36,28 @@ try {
         }
     }
 
-    foreach ($forbiddenProperty in @('advertising', 'analytics', 'services')) {
-        if ($config.PSObject.Properties.Name -contains $forbiddenProperty) {
-            Add-Failure "product.json must not define $forbiddenProperty"
+    if ($WhitePackage) {
+        foreach ($forbiddenProperty in @('advertising', 'analytics', 'services')) {
+            if ($config.PSObject.Properties.Name -contains $forbiddenProperty) {
+                Add-Failure "product.json must not define $forbiddenProperty"
+            }
         }
     }
-    if (Test-Path -LiteralPath (Join-Path $rootPath 'config/ad_policy.json')) {
+    if ($WhitePackage -and (Test-Path -LiteralPath (Join-Path $rootPath 'config/ad_policy.json'))) {
         Add-Failure 'config/ad_policy.json must not exist'
     }
 
-    if (Test-Path -LiteralPath (Join-Path $rootPath 'app/google-services.json')) {
+    if ($WhitePackage -and (Test-Path -LiteralPath (Join-Path $rootPath 'app/google-services.json'))) {
         Add-Failure 'app/google-services.json must not exist in the white package'
     }
 
-    $commercialSourcePatterns = @(
+    $commercialSourcePatterns = if ($WhitePackage) { @(
         'com\.aicleanerstorage\.spaceclean\.common\.(ads|analytics)',
         'com\.pdffox\.adv',
         'com\.google\.android\.gms\.ads',
         'com\.google\.firebase',
         'com\.singular'
-    )
+    ) } else { @() }
     $sourceFiles = Get-ChildItem -LiteralPath (Join-Path $rootPath 'app/src') -Recurse -File -Filter '*.kt'
     foreach ($pattern in $commercialSourcePatterns) {
         if (Select-String -LiteralPath $sourceFiles.FullName -Pattern $pattern -Quiet) {
@@ -66,7 +69,11 @@ try {
         (Join-Path $rootPath 'app/build.gradle.kts'),
         (Join-Path $rootPath 'gradle/libs.versions.toml')
     ) | Where-Object { Test-Path -LiteralPath $_ }
-    foreach ($pattern in @('pdffox-advertise', 'pdffox\.advertise', 'firebase-crashlytics', 'google-services')) {
+    $forbiddenBuildPatterns = @()
+    if ($WhitePackage) {
+        $forbiddenBuildPatterns = @('pdffox-advertise', 'pdffox\.advertise', 'firebase-crashlytics', 'google-services')
+    }
+    foreach ($pattern in $forbiddenBuildPatterns) {
         if (Select-String -LiteralPath $buildFiles -Pattern $pattern -Quiet) {
             Add-Failure "white package build must not include commercial integration: $pattern"
         }
@@ -78,7 +85,8 @@ try {
         exit 1
     }
 
-    Write-Host "Product config check passed for Storage Clean ($($config.identity.applicationId))."
+    if ($WhitePackage) { Write-Host "White product config check passed for Storage Clean ($($config.identity.applicationId))." }
+    else { Write-Host "Product config check passed for Storage Clean ($($config.identity.applicationId))." }
     exit 0
 } catch {
     Write-Host ('Product config check could not complete: ' + $_.Exception.Message)

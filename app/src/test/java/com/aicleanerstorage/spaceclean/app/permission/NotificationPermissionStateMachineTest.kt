@@ -64,7 +64,7 @@ class NotificationPermissionStateMachineTest {
         val transition =
             reduceNotificationPermissionState(
                 state = state(surface = NotificationPermissionSurface.Home, facts = facts(hasRequestedBefore = false)),
-                action = NotificationPermissionAction.HomePromptDelayElapsed,
+                action = NotificationPermissionIntent.AppResumed(facts(hasRequestedBefore = false)),
                 nowMillis = NOW,
             )
 
@@ -81,7 +81,7 @@ class NotificationPermissionStateMachineTest {
                         surface = NotificationPermissionSurface.Home,
                         facts = facts(shouldShowRationale = true),
                     ),
-                action = NotificationPermissionAction.HomePromptDelayElapsed,
+                action = NotificationPermissionIntent.AppResumed(facts(shouldShowRationale = true)),
                 nowMillis = NOW,
             )
 
@@ -103,7 +103,7 @@ class NotificationPermissionStateMachineTest {
         val first =
             reduceNotificationPermissionState(
                 state = state(surface = NotificationPermissionSurface.Home),
-                action = NotificationPermissionAction.HomePromptDelayElapsed,
+                action = NotificationPermissionIntent.AppResumed(facts()),
                 nowMillis = NOW,
             )
 
@@ -111,7 +111,7 @@ class NotificationPermissionStateMachineTest {
         assertTrue(first.state.permissionUiActive)
         assertEquals(
             listOf(NotificationPermissionCommand.SaveLastCustomPromptAt(NOW)),
-            reduceNotificationPermissionState(first.state, NotificationPermissionAction.CustomPromptShown, NOW).commands,
+            reduceNotificationPermissionState(first.state, NotificationPermissionIntent.CustomPromptShown, NOW).commands,
         )
         assertTrue(first.commands.isEmpty())
 
@@ -122,7 +122,7 @@ class NotificationPermissionStateMachineTest {
                         surface = NotificationPermissionSurface.Home,
                         facts = facts(lastCustomPromptAt = NOW),
                     ),
-                action = NotificationPermissionAction.HomePromptDelayElapsed,
+                action = NotificationPermissionIntent.AppResumed(facts(lastCustomPromptAt = NOW)),
                 nowMillis = NOW + 1_000L,
             )
 
@@ -139,7 +139,7 @@ class NotificationPermissionStateMachineTest {
                         surface = NotificationPermissionSurface.Home,
                         customPromptDeferredForSession = true,
                     ),
-                action = NotificationPermissionAction.HomePromptDelayElapsed,
+                action = NotificationPermissionIntent.AppResumed(facts()),
                 nowMillis = NOW,
             )
 
@@ -161,7 +161,7 @@ class NotificationPermissionStateMachineTest {
                             ),
                     ),
                 action =
-                    NotificationPermissionAction.SystemPermissionResult(
+                    NotificationPermissionIntent.SystemPermissionResult(
                         facts = facts(shouldShowRationale = false),
                     ),
                 nowMillis = NOW,
@@ -185,7 +185,7 @@ class NotificationPermissionStateMachineTest {
                             ),
                     ),
                 action =
-                    NotificationPermissionAction.SystemPermissionResult(
+                    NotificationPermissionIntent.SystemPermissionResult(
                         facts = facts(shouldShowRationale = false),
                     ),
                 nowMillis = NOW,
@@ -207,7 +207,7 @@ class NotificationPermissionStateMachineTest {
                             ),
                     ),
                 action =
-                    NotificationPermissionAction.SystemPermissionResult(
+                    NotificationPermissionIntent.SystemPermissionResult(
                         facts = facts(hasPermission = true),
                     ),
                 nowMillis = NOW,
@@ -230,7 +230,7 @@ class NotificationPermissionStateMachineTest {
                         surface = NotificationPermissionSurface.Home,
                         phase = NotificationPermissionPhase.ShowingCustomPrompt,
                     ),
-                action = NotificationPermissionAction.CustomPromptConfirmed,
+                action = NotificationPermissionIntent.CustomPromptConfirmed,
                 nowMillis = NOW,
             )
 
@@ -244,7 +244,7 @@ class NotificationPermissionStateMachineTest {
         val launchFailed =
             reduceNotificationPermissionState(
                 state = confirmed.state,
-                action = NotificationPermissionAction.SettingsFinished(facts()),
+                action = NotificationPermissionIntent.SettingsFinished(facts()),
                 nowMillis = NOW,
             )
 
@@ -263,7 +263,7 @@ class NotificationPermissionStateMachineTest {
                         phase = NotificationPermissionPhase.LaunchingSettings,
                     ),
                 action =
-                    NotificationPermissionAction.SettingsFinished(
+                    NotificationPermissionIntent.SettingsFinished(
                         facts = facts(hasPermission = true),
                     ),
                 nowMillis = NOW,
@@ -316,7 +316,7 @@ class NotificationPermissionStateMachineTest {
             facts = facts(hasRequestedBefore = false),
             phase = NotificationPermissionPhase.RequestingSystem(NotificationPermissionRequestSource.HomeSystem),
         )
-        val after = reduceNotificationPermissionState(before, NotificationPermissionAction.SystemRequestUnavailable, NOW)
+        val after = reduceNotificationPermissionState(before, NotificationPermissionIntent.SystemRequestUnavailable, NOW)
         assertEquals(NotificationPermissionPhase.Idle, after.state.phase)
         assertFalse(after.state.facts.hasRequestedBefore)
         assertFalse(after.state.customPromptDeferredForSession)
@@ -333,9 +333,9 @@ class NotificationPermissionStateMachineTest {
                 surface(NotificationPermissionSurface.Other), NOW).state
             assertEquals(NotificationPermissionPhase.Idle, left.phase)
             val system = reduceNotificationPermissionState(left,
-                NotificationPermissionAction.SystemPermissionResult(facts(hasPermission = true)), NOW)
+                NotificationPermissionIntent.SystemPermissionResult(facts(hasPermission = true)), NOW)
             val settings = reduceNotificationPermissionState(left,
-                NotificationPermissionAction.SettingsFinished(facts(hasPermission = true)), NOW)
+                NotificationPermissionIntent.SettingsFinished(facts(hasPermission = true)), NOW)
             assertEquals(left, system.state)
             assertEquals(left, settings.state)
             assertTrue(system.commands.isEmpty())
@@ -346,8 +346,8 @@ class NotificationPermissionStateMachineTest {
     private fun surface(
         surface: NotificationPermissionSurface,
         hasRequestedBefore: Boolean = true,
-    ): NotificationPermissionAction.SurfaceChanged =
-        NotificationPermissionAction.SurfaceChanged(
+    ): NotificationPermissionIntent.SurfaceChanged =
+        NotificationPermissionIntent.SurfaceChanged(
             surface = surface,
             facts = facts(hasRequestedBefore = hasRequestedBefore),
         )

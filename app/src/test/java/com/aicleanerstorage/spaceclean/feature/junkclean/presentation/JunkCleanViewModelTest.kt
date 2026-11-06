@@ -1,8 +1,15 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.presentation
 
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkOperation
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkPermissionRequest
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanIntent
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkExitTarget
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanEffect
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanViewModel
+
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.CleanRepository
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.CleanResult
-import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.CleanupSummary
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkAuthorizedDeleteResult
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkCategory
 import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.JunkDeleteOutcome
@@ -13,14 +20,16 @@ import com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.ScanResult
 
 import androidx.lifecycle.viewModelScope
 import androidx.activity.result.IntentSenderRequest
-import com.aicleanerstorage.spaceclean.feature.junkclean.ui.launchJunkDeleteAuthorization
-import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
-import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
-import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.permission.PermissionNeed
-import com.aicleanerstorage.spaceclean.common.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.common.permission.PermissionType
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.launchJunkDeleteAuthorization
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionGateway
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionPromptMode
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
 import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
 import com.aicleanerstorage.spaceclean.feature.junkclean.data.session.SharedScanState
 import kotlinx.coroutines.*
@@ -110,10 +119,10 @@ class JunkCleanViewModelTest {
         val effects = effects(vm)
         vm.dispatch(JunkCleanIntent.Entered)
         runCurrent()
-        permissionInterceptor.confirm(permissionInterceptor.request.value!!.owner)
-        permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!.owner, false)
-        permissionInterceptor.markPaused(permissionInterceptor.request.value!!.owner)
-        permissionInterceptor.settingsReturned(permissionInterceptor.request.value!!.owner)
+        permissionInterceptor.confirm(permissionInterceptor.request.value!!)
+        permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!, false)
+        permissionInterceptor.markPaused(permissionInterceptor.request.value!!)
+        permissionInterceptor.settingsReturned(permissionInterceptor.request.value!!)
         advanceUntilIdle()
         assertEquals(listOf(JunkCleanEffect.Exit(FeatureExitReason.PermissionRejected)), effects.filterIsInstance<JunkCleanEffect.Exit>())
         assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
@@ -132,11 +141,11 @@ class JunkCleanViewModelTest {
             vm.dispatch(JunkCleanIntent.Entered)
             runCurrent()
             if (runtime) {
-                permissionInterceptor.confirm(permissionInterceptor.request.value!!.owner)
-                permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!.owner, true)
-                permissionInterceptor.runtimeReturned(permissionInterceptor.request.value!!.owner)
+                permissionInterceptor.confirm(permissionInterceptor.request.value!!)
+                permissionInterceptor.beginLaunch(permissionInterceptor.request.value!!, true)
+                permissionInterceptor.runtimeReturned(permissionInterceptor.request.value!!)
             } else {
-                permissionInterceptor.dismiss(permissionInterceptor.request.value!!.owner)
+                permissionInterceptor.dismiss(permissionInterceptor.request.value!!)
             }
             advanceUntilIdle()
             assertEquals(JunkCleanPhase.Idle, vm.state.value.phase)
@@ -650,8 +659,8 @@ class JunkCleanViewModelTest {
 
     private fun permissionInterceptor() = PermissionInterceptor({ false })
 
-    private fun model(permission: com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor = gateway) = JunkCleanViewModel(
-        repository, session, listOf(permission), dispatcher,
+    private fun model(permission: PermissionGateway = gateway) = JunkCleanViewModel(
+        repository, session, permission, dispatcher,
         scanPreviewMinMillis = 0L,
         cleaningAnimationMinMillis = 0L,
     ).also(models::add)
@@ -668,17 +677,18 @@ class JunkCleanViewModelTest {
 
 }
 
-private class RecordingGateway : com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor {
+private class RecordingGateway : PermissionGateway {
     var calls = 0
     var answer: suspend () -> PermissionResult = { PermissionResult.Granted }
-    override suspend fun intercept(policy: com.aicleanerstorage.spaceclean.core.presentation.IntentPolicy): com.aicleanerstorage.spaceclean.core.presentation.InterceptResult {
-        assertEquals(PermissionNeed.StorageFiles, policy)
+    override fun isGranted(permission: PermissionType) = false
+    override suspend fun ensure(target: PermissionTarget, mode: PermissionPromptMode): PermissionResult {
         calls += 1
-        return when (answer()) {
-            PermissionResult.Granted -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Continue
-            PermissionResult.Denied -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Block
-            PermissionResult.Busy -> com.aicleanerstorage.spaceclean.core.presentation.InterceptResult.Busy
-        }
+        return answer()
+    }
+
+    override suspend fun openSettings(permission: PermissionType): PermissionResult {
+        calls += 1
+        return answer()
     }
 }
 

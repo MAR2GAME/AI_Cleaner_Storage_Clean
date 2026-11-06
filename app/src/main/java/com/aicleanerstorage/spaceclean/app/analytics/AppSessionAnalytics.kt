@@ -1,7 +1,7 @@
-﻿package com.aicleanerstorage.spaceclean.app.analytics
+package com.aicleanerstorage.spaceclean.app.analytics
 
 import android.content.Intent
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsTracker
 
 class AppSessionAnalytics {
     fun onForeground() = AnalyticsTracker.onAppForeground()

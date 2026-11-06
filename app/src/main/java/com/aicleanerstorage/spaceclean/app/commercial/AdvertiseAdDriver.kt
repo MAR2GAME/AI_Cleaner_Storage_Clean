@@ -1,8 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.commercial
 
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdAreaKeys
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdPreloadStage
+
+import com.aicleanerstorage.spaceclean.app.platform.ads.AdvertiseSdkAdapter
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
+
 import android.app.Activity
 import android.content.Context
-import com.aicleanerstorage.spaceclean.common.ads.*
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume

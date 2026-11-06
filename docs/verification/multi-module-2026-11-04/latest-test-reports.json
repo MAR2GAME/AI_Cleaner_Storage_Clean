@@ -1,0 +1,1025 @@
+[
+  {
+    "module": "app",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigatorTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:12:11.236Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.158"
+    },
+    "tests": [
+      {
+        "name": "replaced request ignores noncancellable late ad closure",
+        "classname": "com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigatorTest",
+        "time": "0.142",
+        "outcome": "passed"
+      },
+      {
+        "name": "completed or cancelled request releases its key",
+        "classname": "com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigatorTest",
+        "time": "0.005",
+        "outcome": "passed"
+      },
+      {
+        "name": "duplicate entry waits for one ad and commits once",
+        "classname": "com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigatorTest",
+        "time": "0.005",
+        "outcome": "passed"
+      },
+      {
+        "name": "explicit back and page disposal cancel pending navigation",
+        "classname": "com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigatorTest",
+        "time": "0.006",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "app",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+      "tests": "5",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:12:10.796Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.417"
+    },
+    "tests": [
+      {
+        "name": "manifest component classes exist after module migration",
+        "classname": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+        "time": "0.273",
+        "outcome": "passed"
+      },
+      {
+        "name": "presentation has no Android platform or feature data imports",
+        "classname": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+        "time": "0.034",
+        "outcome": "passed"
+      },
+      {
+        "name": "every feature view model uses the single MVI state owner",
+        "classname": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+        "time": "0.022",
+        "outcome": "passed"
+      },
+      {
+        "name": "screens do not hold view models repositories or navigation implementations",
+        "classname": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+        "time": "0.039",
+        "outcome": "passed"
+      },
+      {
+        "name": "core and feature modules never import application implementations",
+        "classname": "com.aicleanerstorage.spaceclean.architecture.MotherTemplateBoundaryTest",
+        "time": "0.046",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/contracts",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.contracts.coroutines.AppDispatchersTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:14.300Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.115"
+    },
+    "tests": [
+      {
+        "name": "run suspend catching never converts cancellation into failure",
+        "classname": "com.aicleanerstorage.spaceclean.core.contracts.coroutines.AppDispatchersTest",
+        "time": "0.109",
+        "outcome": "passed"
+      },
+      {
+        "name": "run suspend catching returns ordinary failures",
+        "classname": "com.aicleanerstorage.spaceclean.core.contracts.coroutines.AppDispatchersTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "provided dispatchers remain independently addressable",
+        "classname": "com.aicleanerstorage.spaceclean.core.contracts.coroutines.AppDispatchersTest",
+        "time": "0.001",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/contracts",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.contracts.files.FileUriTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:14.417Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.0"
+    },
+    "tests": [
+      {
+        "name": "preserves serialized uri as identity",
+        "classname": "com.aicleanerstorage.spaceclean.core.contracts.files.FileUriTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/navigation",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.navigation.AppDestinationTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:47:52.110Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.002"
+    },
+    "tests": [
+      {
+        "name": "routeLookupDelegatesToDestinations",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.AppDestinationTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "routesAndFeatureEntriesAreUnique",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.AppDestinationTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "destinationsOwnFeatureEntryAndNestedRouteMappings",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.AppDestinationTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "everyNotificationAliasResolvesToItsRegisteredDestination",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.AppDestinationTest",
+        "time": "0.001",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/navigation",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.navigation.TypedDestinationTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:47:51.999Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.108"
+    },
+    "tests": [
+      {
+        "name": "all registered destinations survive serialization with metadata intact",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.TypedDestinationTest",
+        "time": "0.102",
+        "outcome": "passed"
+      },
+      {
+        "name": "notification home aliases preserve selected tab",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.TypedDestinationTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "legacy detail indexes survive conversion to typed routes",
+        "classname": "com.aicleanerstorage.spaceclean.core.navigation.TypedDestinationTest",
+        "time": "0.001",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/presentation",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.presentation.MviEffectContractTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:45:12.224Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.159"
+    },
+    "tests": [
+      {
+        "name": "effects queued before collection retain order beyond buffered capacity",
+        "classname": "com.aicleanerstorage.spaceclean.core.presentation.MviEffectContractTest",
+        "time": "0.152",
+        "outcome": "passed"
+      },
+      {
+        "name": "clearing drops pending effects and rejects subsequent sends",
+        "classname": "com.aicleanerstorage.spaceclean.core.presentation.MviEffectContractTest",
+        "time": "0.003",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/presentation",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.presentation.MviViewModelContractTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:45:12.386Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.013"
+    },
+    "tests": [
+      {
+        "name": "not handled interceptor can be followed by continue",
+        "classname": "com.aicleanerstorage.spaceclean.core.presentation.MviViewModelContractTest",
+        "time": "0.007",
+        "outcome": "passed"
+      },
+      {
+        "name": "missing policy handler blocks",
+        "classname": "com.aicleanerstorage.spaceclean.core.presentation.MviViewModelContractTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "block and busy stop policy resolution",
+        "classname": "com.aicleanerstorage.spaceclean.core.presentation.MviViewModelContractTest",
+        "time": "0.003",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "core/ui",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:15.355Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.069"
+    },
+    "tests": [
+      {
+        "name": "different seeds can return different recommendations",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.058",
+        "outcome": "passed"
+      },
+      {
+        "name": "tool feature click tracks feature before navigating",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.003",
+        "outcome": "passed"
+      },
+      {
+        "name": "same seed returns stable recommendations",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "excluded and duplicate destinations are omitted",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "tool feature click without feature key only navigates",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "selection returns at most two recommendations by default",
+        "classname": "com.aicleanerstorage.spaceclean.core.ui.components.ToolFeatureRecommendationTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.view.duplicates.presentation.DuplicateFilesWarningStateTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.702Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.043"
+    },
+    "tests": [
+      {
+        "name": "accepting warning updates state and feature preferences",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.duplicates.presentation.DuplicateFilesWarningStateTest",
+        "time": "0.043",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.presentation.SimilarPhotosSelectionTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.834Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.024"
+    },
+    "tests": [
+      {
+        "name": "group with only best photo is not all selected",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.presentation.SimilarPhotosSelectionTest",
+        "time": "0.004",
+        "outcome": "passed"
+      },
+      {
+        "name": "group toggle skips best photo",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.presentation.SimilarPhotosSelectionTest",
+        "time": "0.016",
+        "outcome": "passed"
+      },
+      {
+        "name": "global toggle selects only non best photos and preserves manually selected best photo",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.presentation.SimilarPhotosSelectionTest",
+        "time": "0.004",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.presentation.PhotoPrivacySelectionTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.749Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.08"
+    },
+    "tests": [
+      {
+        "name": "removing location data submits only selected photos and rebuilds groups",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.presentation.PhotoPrivacySelectionTest",
+        "time": "0.071",
+        "outcome": "passed"
+      },
+      {
+        "name": "groups seconds and milliseconds by descending local month",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.presentation.PhotoPrivacySelectionTest",
+        "time": "0.004",
+        "outcome": "passed"
+      },
+      {
+        "name": "global and group toggles keep selection states synchronized",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.presentation.PhotoPrivacySelectionTest",
+        "time": "0.005",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateDeletionSafetyTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.637Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.052"
+    },
+    "tests": [
+      {
+        "name": "selecting every copy blocks deletion",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateDeletionSafetyTest",
+        "time": "0.044",
+        "outcome": "passed"
+      },
+      {
+        "name": "changed or unreadable retained copy blocks deletion",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateDeletionSafetyTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "missing scan evidence cannot authorize duplicate deletion",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateDeletionSafetyTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "scan evidence supports keeping any unselected verified copy",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateDeletionSafetyTest",
+        "time": "0.004",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+      "tests": "5",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.691Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.002"
+    },
+    "tests": [
+      {
+        "name": "does not group same name and size when hashing fails",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "groups matching hashes and keeps newest file first",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "hashes only files that share a nonzero size",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "hash failure does not combine successfully hashed different contents",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "hash failure preserves only verified duplicate group",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.DuplicateFileGroupingTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.data.shared.FileContentHasherTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.695Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.005"
+    },
+    "tests": [
+      {
+        "name": "sha256 returns stable lowercase digest",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.FileContentHasherTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "sha256 checks cancellation while reading",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.data.shared.FileContentHasherTest",
+        "time": "0.003",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/files",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerDeletionTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:17.861Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.042"
+    },
+    "tests": [
+      {
+        "name": "zero byte file deletion succeeds when one file was deleted",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerDeletionTest",
+        "time": "0.022",
+        "outcome": "passed"
+      },
+      {
+        "name": "permission exit is emitted once and subsequent operations are ignored",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerDeletionTest",
+        "time": "0.007",
+        "outcome": "passed"
+      },
+      {
+        "name": "deletion fails when no selected file was deleted",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerDeletionTest",
+        "time": "0.003",
+        "outcome": "passed"
+      },
+      {
+        "name": "detail input emits typed navigation and keeps list selection in the same state",
+        "classname": "com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerDeletionTest",
+        "time": "0.009",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/home",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.home.view.home.presentation.HomeViewModelTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:12:05.831Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.145"
+    },
+    "tests": [
+      {
+        "name": "restored tab request wins over initial entry regardless of delivery order",
+        "classname": "com.aicleanerstorage.spaceclean.feature.home.view.home.presentation.HomeViewModelTest",
+        "time": "0.142",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/junkclean",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+      "tests": "13",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:45:31.587Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.029"
+    },
+    "tests": [
+      {
+        "name": "phase guarded actions do not mutate unrelated states",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.01",
+        "outcome": "passed"
+      },
+      {
+        "name": "empty category toggles independently and changes cleaning validation",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.006",
+        "outcome": "passed"
+      },
+      {
+        "name": "scan denial exits without error and clears stop dialog",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "stop dialog preserves the interrupted phase until dismissed",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "failure operation is expressed by the single phase",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "permission check purpose is stored only in phase and clean denial restores preview",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.004",
+        "outcome": "passed"
+      },
+      {
+        "name": "completion and cancellation clear pending authorization count",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.004",
+        "outcome": "passed"
+      },
+      {
+        "name": "item and category toggles update one selection summary",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "selection creates new items without mutating previous state snapshot",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "preview selects scanned files and tracks empty display categories",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "permission restore returns entire snapshot only for matching check",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "cleaning follows authorization animation and complete phases",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "clean denial and busy preserve restored preview including selection",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanReducerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/junkclean",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:45:31.621Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.008"
+    },
+    "tests": [
+      {
+        "name": "failure callback exceptions are not caught and reported a second time",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "supported request is created and launched without reporting rejection",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "creation and launch cancellation propagate without refusal",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "launch failure rejects once",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "unsupported platform and empty uris reject once without creating request",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "creation returning null or throwing rejects once without launching",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.JunkDeleteAuthorizationLauncherTest",
+        "time": "0.001",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/junkclean",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.DuplicateFileSafetyTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T10:45:31.504Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.079"
+    },
+    "tests": [
+      {
+        "name": "junk grouping excludes failed hashes without discarding verified matches",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.DuplicateFileSafetyTest",
+        "time": "0.036",
+        "outcome": "passed"
+      },
+      {
+        "name": "junk deletion requires unchanged retained file outside deletion batch",
+        "classname": "com.aicleanerstorage.spaceclean.feature.junkclean.domain.model.DuplicateFileSafetyTest",
+        "time": "0.04",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/startup",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+      "tests": "9",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:18.865Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.146"
+    },
+    "tests": [
+      {
+        "name": "progress stages use fixed targets",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "view model navigates to onboarding for a fresh install",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.125",
+        "outcome": "passed"
+      },
+      {
+        "name": "open ad active pauses splash and reports showing ad stage",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "open ad finished advances to finishing",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "initial notification launch opens target after visual completion",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.014",
+        "outcome": "passed"
+      },
+      {
+        "name": "normal launch waits for open ad after request and visual readiness",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "permission and legal pauses are tracked independently",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "new intent notification bypasses the remaining splash animation",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "open ad inactive clears pause without navigating",
+        "classname": "com.aicleanerstorage.spaceclean.feature.startup.view.splash.presentation.SplashViewModelTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:20.079Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.004"
+    },
+    "tests": [
+      {
+        "name": "excludedOnlyNodesReturnNull",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "rawHardwareTemperaturesUseHighestValidValue",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "rawTemperatureUnitsAreNormalized",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "socAndTsensNodesFallbackWhenCpuNodesAreAbsent",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "invalidTemperaturesAreFiltered",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "cpuThermalNodesWinOverExcludedNodes",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.shared.presentation.CpuTemperatureResolverTest",
+        "time": "0.001",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.view.deviceinfo.presentation.DeviceViewModelCompositionTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:20.077Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.0"
+    },
+    "tests": [
+      {
+        "name": "battery view model composes shared controller instead of inheriting device view model",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.deviceinfo.presentation.DeviceViewModelCompositionTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingControllerTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:20.065Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.001"
+    },
+    "tests": [
+      {
+        "name": "activate persists preference but disables service sampling without permission",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingControllerTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "reconcile enables only when preference and permission are both present",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingControllerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "activate persists preference and enables service sampling when permission is granted",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingControllerTest",
+        "time": "0.0",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.data.deviceinfo.CpuUsageReaderTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:19.932Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.029"
+    },
+    "tests": [
+      {
+        "name": "parse proc stat includes io wait in idle and all fields in total",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.data.deviceinfo.CpuUsageReaderTest",
+        "time": "0.022",
+        "outcome": "passed"
+      },
+      {
+        "name": "calculate usage rejects inconsistent samples",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.data.deviceinfo.CpuUsageReaderTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "parse proc stat rejects unrelated lines",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.data.deviceinfo.CpuUsageReaderTest",
+        "time": "0.0",
+        "outcome": "passed"
+      },
+      {
+        "name": "calculate usage uses deltas between samples",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.data.deviceinfo.CpuUsageReaderTest",
+        "time": "0.002",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.appusage.AppUsageViewModelEffectTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:19.962Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.101"
+    },
+    "tests": [
+      {
+        "name": "permission rejection exits through domain effect",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.appusage.AppUsageViewModelEffectTest",
+        "time": "0.098",
+        "outcome": "passed"
+      },
+      {
+        "name": "open app info emits package name without exposing intent",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.domain.appusage.AppUsageViewModelEffectTest",
+        "time": "0.003",
+        "outcome": "passed"
+      }
+    ]
+  },
+  {
+    "module": "feature/toolbox",
+    "suite": {
+      "name": "com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.ui.BatteryChartModelTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-04T11:03:20.067Z",
+      "hostname": "DESKTOP-D1CQNQN",
+      "time": "0.008"
+    },
+    "tests": [
+      {
+        "name": "emptyCurrentAxisHasStableBounds",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.ui.BatteryChartModelTest",
+        "time": "0.001",
+        "outcome": "passed"
+      },
+      {
+        "name": "downsamplingKeepsFirstAndLastPoint",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.ui.BatteryChartModelTest",
+        "time": "0.002",
+        "outcome": "passed"
+      },
+      {
+        "name": "oneMinuteRangeKeepsOrderedSamplesAndUsesAbsoluteCurrent",
+        "classname": "com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.ui.BatteryChartModelTest",
+        "time": "0.004",
+        "outcome": "passed"
+      }
+    ]
+  }
+]

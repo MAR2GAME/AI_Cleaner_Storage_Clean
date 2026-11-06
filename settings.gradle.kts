@@ -38,3 +38,18 @@ dependencyResolutionManagement {
 rootProject.name = "AICleanerStorageClean"
 include(":app")
 include(":junkcc")
+
+include(":core:contracts")
+include(":core:navigation")
+include(":core:presentation")
+include(":core:ui")
+include(":feature:startup")
+include(":feature:onboarding")
+include(":feature:home")
+include(":feature:settings")
+include(":feature:junkclean")
+include(":feature:antivirus")
+include(":feature:files")
+include(":feature:applock")
+include(":feature:notificationcleaner")
+include(":feature:toolbox")

@@ -1,14 +1,14 @@
 package com.aicleanerstorage.spaceclean.operation
 
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import com.aicleanerstorage.spaceclean.app.runtime.AppFeatureFlow
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
 import kotlinx.coroutines.test.runTest
-import com.aicleanerstorage.spaceclean.common.feature.FeatureExitReason
-import com.aicleanerstorage.spaceclean.common.feature.FeatureOperationEvent
-import com.aicleanerstorage.spaceclean.common.feature.OperationAction
-import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
+import com.aicleanerstorage.spaceclean.core.contracts.feature.CleanupHistoryStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

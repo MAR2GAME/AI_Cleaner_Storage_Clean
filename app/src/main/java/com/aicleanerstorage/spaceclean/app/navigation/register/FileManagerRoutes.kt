@@ -1,131 +1,153 @@
 package com.aicleanerstorage.spaceclean.app.navigation.register
 
 import androidx.compose.runtime.remember
-import androidx.navigation.NavBackStackEntry
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigator
 
+import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
+import com.aicleanerstorage.spaceclean.app.navigation.*
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.permission.ui.LocalPermissionGateway
-import com.aicleanerstorage.spaceclean.app.navigation.DETAIL_INITIAL_INDEX_ARG
-import com.aicleanerstorage.spaceclean.feature.files.audios.AudiosManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.documents.DocumentsManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.duplicates.DuplicateFilesManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.largefiles.LargeFilesManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.photos.PhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.photoprivacy.PhotoPrivacyManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.screenshots.ScreenshotsManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.similarphotos.SimilarPhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.videos.VideosManagerViewModel
-import com.aicleanerstorage.spaceclean.feature.files.audios.AudiosManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.AudiosFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.DocumentsFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.LargeFilesFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.PhotosFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.ScreenshotsFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.SimilarPhotosFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.shared.VideosFileDetailRoute
-import com.aicleanerstorage.spaceclean.feature.files.duplicates.DuplicateFilesManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.documents.DocumentsManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.largefiles.LargeFilesManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.photoprivacy.PhotoPrivacyManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.photos.PhotosManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.screenshots.ScreenshotsManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.similarphotos.SimilarPhotosManagerRoute
-import com.aicleanerstorage.spaceclean.feature.files.videos.VideosManagerRoute
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.core.ui.permission.LocalPermissionGateway
+import com.aicleanerstorage.spaceclean.feature.files.view.audios.presentation.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.documents.presentation.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.duplicates.presentation.DuplicateFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.largefiles.presentation.LargeFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.photos.presentation.PhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.presentation.PhotoPrivacyManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.screenshots.presentation.ScreenshotsManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.presentation.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.videos.presentation.VideosManagerViewModel
+import com.aicleanerstorage.spaceclean.feature.files.view.audios.ui.AudiosManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.AudiosFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.DocumentsFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.LargeFilesFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.PhotosFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.ScreenshotsFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.SimilarPhotosFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.shared.ui.VideosFileDetailRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.duplicates.ui.DuplicateFilesManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.documents.ui.DocumentsManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.largefiles.ui.LargeFilesManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.photoprivacy.ui.PhotoPrivacyManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.photos.ui.PhotosManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.screenshots.ui.ScreenshotsManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.similarphotos.ui.SimilarPhotosManagerRoute
+import com.aicleanerstorage.spaceclean.feature.files.view.videos.ui.VideosManagerRoute
 import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerFileManagerRoutes(
     navController: NavHostController,
-    navigator: AppNavigator,
+    navigator: NavHostAppNavigator,
     featureFlow: FeatureFlow,
 ) {
-    composable(AppDestination.PhotosManager.route) {
-        PhotosManagerRoute(navigator, koinViewModel<PhotosManagerViewModel>(), featureFlow)
+    navigation<PhotosFlow>(startDestination = AppDestination.PhotosManager) {
+    composable<AppDestination.PhotosManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        PhotosManagerRoute(pageNavigator, koinViewModel<PhotosManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<PhotosFlow>() }), featureFlow)
     }
-    composable(AppDestination.PhotosDetail.detailPattern()) { backStackEntry ->
+    composable<AppDestination.PhotosDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.PhotosManager, backStackEntry)
+            navController.getBackStackEntry<PhotosFlow>()
         }
         val viewModel: PhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        PhotosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        PhotosFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.PhotosDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.SimilarPhotosManager.route) {
-        SimilarPhotosManagerRoute(navigator, koinViewModel<SimilarPhotosManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.SimilarPhotosDetail.detailPattern()) { backStackEntry ->
+    navigation<SimilarPhotosFlow>(startDestination = AppDestination.SimilarPhotosManager) {
+    composable<AppDestination.SimilarPhotosManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        SimilarPhotosManagerRoute(pageNavigator, koinViewModel<SimilarPhotosManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<SimilarPhotosFlow>() }), featureFlow)
+    }
+    composable<AppDestination.SimilarPhotosDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.SimilarPhotosManager, backStackEntry)
+            navController.getBackStackEntry<SimilarPhotosFlow>()
         }
         val viewModel: SimilarPhotosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        SimilarPhotosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        SimilarPhotosFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.SimilarPhotosDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.PhotoPrivacyManager.route) {
-        PhotoPrivacyManagerRoute(navigator, koinViewModel<PhotoPrivacyManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.ScreenshotsManager.route) {
-        ScreenshotsManagerRoute(navigator, koinViewModel<ScreenshotsManagerViewModel>(), featureFlow)
+    composable<AppDestination.PhotoPrivacyManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        PhotoPrivacyManagerRoute(pageNavigator, koinViewModel<PhotoPrivacyManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.ScreenshotsDetail.detailPattern()) { backStackEntry ->
+    navigation<ScreenshotsFlow>(startDestination = AppDestination.ScreenshotsManager) {
+    composable<AppDestination.ScreenshotsManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        ScreenshotsManagerRoute(pageNavigator, koinViewModel<ScreenshotsManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<ScreenshotsFlow>() }), featureFlow)
+    }
+    composable<AppDestination.ScreenshotsDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.ScreenshotsManager, backStackEntry)
+            navController.getBackStackEntry<ScreenshotsFlow>()
         }
         val viewModel: ScreenshotsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        ScreenshotsFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        ScreenshotsFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.ScreenshotsDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.VideosManager.route) {
-        VideosManagerRoute(navigator, koinViewModel<VideosManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.VideosDetail.detailPattern()) { backStackEntry ->
+    navigation<VideosFlow>(startDestination = AppDestination.VideosManager) {
+    composable<AppDestination.VideosManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        VideosManagerRoute(pageNavigator, koinViewModel<VideosManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<VideosFlow>() }), featureFlow)
+    }
+    composable<AppDestination.VideosDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.VideosManager, backStackEntry)
+            navController.getBackStackEntry<VideosFlow>()
         }
         val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VideosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        VideosFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.VideosDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.AudiosManager.route) {
-        AudiosManagerRoute(navigator, koinViewModel<AudiosManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.AudiosDetail.detailPattern()) { backStackEntry ->
+    navigation<AudiosFlow>(startDestination = AppDestination.AudiosManager) {
+    composable<AppDestination.AudiosManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        AudiosManagerRoute(pageNavigator, koinViewModel<AudiosManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<AudiosFlow>() }), featureFlow)
+    }
+    composable<AppDestination.AudiosDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.AudiosManager, backStackEntry)
+            navController.getBackStackEntry<AudiosFlow>()
         }
         val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        AudiosFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        AudiosFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.AudiosDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.LargeFilesManager.route) {
-        LargeFilesManagerRoute(navigator, koinViewModel<LargeFilesManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.LargeFilesDetail.detailPattern()) { backStackEntry ->
+    navigation<LargeFilesFlow>(startDestination = AppDestination.LargeFilesManager) {
+    composable<AppDestination.LargeFilesManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        LargeFilesManagerRoute(pageNavigator, koinViewModel<LargeFilesManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<LargeFilesFlow>() }), featureFlow)
+    }
+    composable<AppDestination.LargeFilesDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.LargeFilesManager, backStackEntry)
+            navController.getBackStackEntry<LargeFilesFlow>()
         }
         val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        LargeFilesFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        LargeFilesFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.LargeFilesDetail>().initialIndex.coerceAtLeast(0))
     }
-    composable(AppDestination.DuplicateFilesManager.route) {
-        DuplicateFilesManagerRoute(navigator, koinViewModel<DuplicateFilesManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.DocumentsManager.route) {
-        DocumentsManagerRoute(navigator, koinViewModel<DocumentsManagerViewModel>(), featureFlow)
+    composable<AppDestination.DuplicateFilesManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        DuplicateFilesManagerRoute(pageNavigator, koinViewModel<DuplicateFilesManagerViewModel>(), featureFlow)
     }
-    composable(AppDestination.DocumentsDetail.detailPattern()) { backStackEntry ->
+    navigation<DocumentsFlow>(startDestination = AppDestination.DocumentsManager) {
+    composable<AppDestination.DocumentsManager> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        DocumentsManagerRoute(pageNavigator, koinViewModel<DocumentsManagerViewModel>(viewModelStoreOwner = remember(entry) { navController.getBackStackEntry<DocumentsFlow>() }), featureFlow)
+    }
+    composable<AppDestination.DocumentsDetail> { backStackEntry ->
+        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
-            navController.fileManagerViewModelOwnerOr(AppDestination.DocumentsManager, backStackEntry)
+            navController.getBackStackEntry<DocumentsFlow>()
         }
         val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        DocumentsFileDetailRoute(navigator, LocalPermissionGateway.current, viewModel, backStackEntry.initialIndex())
+        DocumentsFileDetailRoute(pageNavigator, LocalPermissionGateway.current, viewModel, backStackEntry.toRoute<AppDestination.DocumentsDetail>().initialIndex.coerceAtLeast(0))
+    }
     }
 }
-
-private fun NavBackStackEntry.initialIndex(): Int =
-    arguments?.getString(DETAIL_INITIAL_INDEX_ARG)?.toIntOrNull()?.coerceAtLeast(0) ?: 0
-
-private fun NavHostController.fileManagerViewModelOwnerOr(
-    destination: AppDestination,
-    fallback: NavBackStackEntry,
-): NavBackStackEntry =
-    runCatching { getBackStackEntry(destination.route) }.getOrDefault(fallback)

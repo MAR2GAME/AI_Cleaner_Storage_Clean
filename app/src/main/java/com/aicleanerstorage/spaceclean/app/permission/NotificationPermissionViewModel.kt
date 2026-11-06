@@ -4,7 +4,7 @@ import android.app.Application
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import com.aicleanerstorage.spaceclean.app.AppConfig
-import com.aicleanerstorage.spaceclean.common.permission.PermissionPreferences
+import com.aicleanerstorage.spaceclean.app.platform.permission.PermissionPreferences
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,12 +17,12 @@ class NotificationPermissionViewModel(
     private val nowMillis: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val runtimePermissionRequired = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-    private var machineState =
+    private val _uiState = MutableStateFlow(
         initialNotificationPermissionState(
             runtimePermissionRequired = runtimePermissionRequired,
             facts = readFacts(shouldShowRationale = false),
         )
-    private val _uiState = MutableStateFlow(machineState)
+    )
     val uiState: StateFlow<NotificationPermissionUiState> = _uiState.asStateFlow()
 
     private val effectsChannel = Channel<NotificationPermissionCommand.Host>(Channel.UNLIMITED)
@@ -33,19 +33,15 @@ class NotificationPermissionViewModel(
         shouldShowRationale: Boolean,
     ) {
         dispatch(
-            NotificationPermissionAction.SurfaceChanged(
+            NotificationPermissionIntent.SurfaceChanged(
                 surface = surface,
                 facts = readFacts(shouldShowRationale),
             ),
         )
     }
 
-    fun onHomePromptDelayElapsed() {
-        dispatch(NotificationPermissionAction.HomePromptDelayElapsed)
-    }
-
     fun onAppResumed(shouldShowRationale: Boolean) {
-        dispatch(NotificationPermissionAction.AppResumed(readFacts(shouldShowRationale)))
+        dispatch(NotificationPermissionIntent.AppResumed(readFacts(shouldShowRationale)))
     }
 
     fun onSystemPermissionResult(
@@ -53,7 +49,7 @@ class NotificationPermissionViewModel(
         shouldShowRationale: Boolean,
     ) {
         dispatch(
-            NotificationPermissionAction.SystemPermissionResult(
+            NotificationPermissionIntent.SystemPermissionResult(
                 readFacts(
                     shouldShowRationale = shouldShowRationale,
                     grantedOverride = granted,
@@ -62,29 +58,28 @@ class NotificationPermissionViewModel(
         )
     }
 
-    fun onSystemRequestUnavailable() { dispatch(NotificationPermissionAction.SystemRequestUnavailable) }
+    fun onSystemRequestUnavailable() { dispatch(NotificationPermissionIntent.SystemRequestUnavailable) }
 
     fun onCustomPromptConfirmed() {
-        dispatch(NotificationPermissionAction.CustomPromptConfirmed)
+        dispatch(NotificationPermissionIntent.CustomPromptConfirmed)
     }
 
     fun onCustomPromptDismissed() {
-        dispatch(NotificationPermissionAction.CustomPromptDismissed)
+        dispatch(NotificationPermissionIntent.CustomPromptDismissed)
     }
 
     fun onSettingsFinished(shouldShowRationale: Boolean) {
-        dispatch(NotificationPermissionAction.SettingsFinished(readFacts(shouldShowRationale)))
+        dispatch(NotificationPermissionIntent.SettingsFinished(readFacts(shouldShowRationale)))
     }
 
-    fun onCustomPromptShown() { dispatch(NotificationPermissionAction.CustomPromptShown) }
+    fun onCustomPromptShown() { dispatch(NotificationPermissionIntent.CustomPromptShown) }
 
     override fun onCleared() { effectsChannel.cancel(); super.onCleared() }
 
-    private fun dispatch(action: NotificationPermissionAction) {
+    private fun dispatch(action: NotificationPermissionIntent) {
         if (!runtimePermissionRequired) return
-        val transition = reduceNotificationPermissionState(machineState, action, nowMillis())
-        machineState = transition.state
-        _uiState.value = machineState
+        val transition = reduceNotificationPermissionState(_uiState.value, action, nowMillis())
+        _uiState.value = transition.state
         transition.commands.forEach(::handleCommand)
     }
 

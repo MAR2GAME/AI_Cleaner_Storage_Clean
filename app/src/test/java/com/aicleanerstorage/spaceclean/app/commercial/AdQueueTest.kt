@@ -1,8 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.commercial
 
-import com.aicleanerstorage.spaceclean.common.ads.*
-import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
+
+import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
@@ -15,7 +18,7 @@ class AdQueueTest {
     @Test fun `queue wait consumes timeout so second playback receives only remaining budget`() = runTest {
         var calls = 0
         val firstClose = CompletableDeferred<Unit>()
-        val subject = AdInterceptor(AdDriver { calls++; firstClose.await() }, dispatcher = StandardTestDispatcher(testScheduler))
+        val subject = InterstitialController(AdDriver { calls++; firstClose.await() }, dispatcher = StandardTestDispatcher(testScheduler))
         val first = launch { subject.show(request("first")) }
         runCurrent()
         advanceTimeBy(1000)
@@ -36,7 +39,7 @@ class AdQueueTest {
     @Test fun `duplicate id completes without cancelling owner and queued cancellation releases id`() = runTest {
         var calls = 0
         val closed = CompletableDeferred<Unit>()
-        val subject = AdInterceptor(AdDriver { calls++; closed.await() }, dispatcher = StandardTestDispatcher(testScheduler))
+        val subject = InterstitialController(AdDriver { calls++; closed.await() }, dispatcher = StandardTestDispatcher(testScheduler))
         val first = launch { subject.show(request("first")) }
         runCurrent()
         subject.show(request("first"))
@@ -58,7 +61,7 @@ class AdQueueTest {
         var allowed = true
         var calls = 0
         val busy = mutableListOf<Boolean>()
-        val subject = AdInterceptor(AdDriver { calls++; awaitCancellation() },
+        val subject = InterstitialController(AdDriver { calls++; awaitCancellation() },
             canShow = { allowed }, onBusyChanged = busy::add, dispatcher = StandardTestDispatcher(testScheduler))
         val first = launch { subject.show(request("first")) }
         runCurrent()
@@ -79,7 +82,7 @@ class AdQueueTest {
 
     @Test fun `dispose cancels owned waits without cancelling parent and startup exception releases id`() = runTest {
         var calls = 0
-        val subject = AdInterceptor(AdDriver { calls++; if (calls == 1) error("startup") else awaitCancellation() },
+        val subject = InterstitialController(AdDriver { calls++; if (calls == 1) error("startup") else awaitCancellation() },
             dispatcher = StandardTestDispatcher(testScheduler))
         subject.show(request("same"))
         val current = launch { subject.show(request("same")) }

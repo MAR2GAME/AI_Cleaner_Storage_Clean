@@ -1,15 +1,22 @@
 package com.aicleanerstorage.spaceclean.feature.junkclean.ui
 
-import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanEffect
-import com.aicleanerstorage.spaceclean.feature.junkclean.presentation.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui.collectJunkCleanEffects
 
-import com.aicleanerstorage.spaceclean.app.commercial.AdInterceptor
-import com.aicleanerstorage.spaceclean.common.ads.AdDriver
-import com.aicleanerstorage.spaceclean.common.feature.*
-import com.aicleanerstorage.spaceclean.core.presentation.IntentInterceptor
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanEffect
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanPhase
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
+import com.aicleanerstorage.spaceclean.core.contracts.intent.UiResult
+import com.aicleanerstorage.spaceclean.core.presentation.intent.UiRequestBroker
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
 import org.junit.Before
@@ -28,7 +35,7 @@ class JunkCleanRouteEffectsTest {
         val closed = CompletableDeferred<Unit>()
         var shows = 0
         val route = RouteHarness()
-        route.start(this, AdInterceptor(AdDriver { shows += 1; closed.await() }))
+        route.start(this, AdDriver { shows += 1; closed.await() })
         route.send(JunkCleanEffect.Operation(completion))
         route.send(JunkCleanEffect.Operation(completion))
         runCurrent()
@@ -51,11 +58,11 @@ class JunkCleanRouteEffectsTest {
         var cancelled = false
         val route = RouteHarness()
         route.onExitFlow = { assertTrue(cancelled) }
-        route.start(this, AdInterceptor(AdDriver {
+        route.start(this, AdDriver {
             suspendCancellableCoroutine<Unit> { continuation ->
                 continuation.invokeOnCancellation { cancelled = true }
             }
-        }))
+        })
         route.send(JunkCleanEffect.Operation(completion))
         runCurrent()
         route.send(JunkCleanEffect.Exit(FeatureExitReason.Return))
@@ -69,7 +76,7 @@ class JunkCleanRouteEffectsTest {
     @Test
     fun `timeout continues to result and disposal never sends completion`() = runTest {
         val timed = RouteHarness()
-        timed.start(this, AdInterceptor(AdDriver { awaitCancellation() }, timeoutMillis = 100L))
+        timed.start(this, AdDriver { awaitCancellation() })
         timed.send(JunkCleanEffect.Operation(completion))
         runCurrent()
         advanceTimeBy(100L)
@@ -78,9 +85,9 @@ class JunkCleanRouteEffectsTest {
 
         val disposed = RouteHarness()
         var cancelled = false
-        val job = disposed.start(this, AdInterceptor(AdDriver {
+        val job = disposed.start(this, AdDriver {
             try { awaitCancellation() } finally { cancelled = true }
-        }))
+        })
         disposed.send(JunkCleanEffect.Operation(completion))
         runCurrent()
         job.cancelAndJoin()
@@ -92,7 +99,7 @@ class JunkCleanRouteEffectsTest {
     fun `late non cooperative driver return after exit cannot enter results`() = runTest {
         val closed = CompletableDeferred<Unit>()
         val route = RouteHarness()
-        route.start(this, AdInterceptor(AdDriver { withContext(NonCancellable) { closed.await() } }))
+        route.start(this, AdDriver { withContext(NonCancellable) { closed.await() } })
         route.send(JunkCleanEffect.Operation(completion))
         runCurrent()
         route.send(JunkCleanEffect.Exit(FeatureExitReason.Return))
@@ -108,7 +115,7 @@ class JunkCleanRouteEffectsTest {
         val route = RouteHarness()
         route.phase = JunkCleanPhase.Preview
         var shows = 0
-        route.start(this, AdInterceptor(AdDriver { shows += 1 }))
+        route.start(this, AdDriver { shows += 1 })
         val started = FeatureOperationEvent.ScanStarted(FeatureKey.JUNK_CLEAN)
         val failed = FeatureOperationEvent.OperationFinished(FeatureKey.JUNK_CLEAN, OperationAction.CLEAN, false)
         route.send(JunkCleanEffect.Operation(completion))
@@ -124,7 +131,7 @@ class JunkCleanRouteEffectsTest {
     @Test
     fun `delete authorization executes only while awaiting and before exit`() = runTest {
         val route = RouteHarness()
-        route.start(this, AdInterceptor(AdDriver { fail("Unexpected ad") }))
+        route.start(this, AdDriver { fail("Unexpected ad") })
         val request = JunkCleanEffect.RequestDeleteAuthorization(listOf("content://media/external/file/3"))
         route.send(request)
         runCurrent()
@@ -154,6 +161,7 @@ class JunkCleanRouteEffectsTest {
         var exits = 0
         var onExitFlow: () -> Unit = {}
         private val effects = Channel<JunkCleanEffect>(Channel.UNLIMITED)
+        private lateinit var broker: UiRequestBroker
         private val flow = object : FeatureFlow {
             override fun recordOperation(event: FeatureOperationEvent) { records += event }
             override suspend fun handleOperation(event: FeatureOperationEvent) {
@@ -165,12 +173,28 @@ class JunkCleanRouteEffectsTest {
             }
         }
         fun send(effect: JunkCleanEffect) { check(effects.trySend(effect).isSuccess) }
-        fun start(scope: TestScope, interceptor: IntentInterceptor) =
+        fun start(scope: TestScope, driver: AdDriver): Job {
+            broker = UiRequestBroker(timeoutMillis = 100L)
             scope.backgroundScope.launch(UnconfinedTestDispatcher(scope.testScheduler)) {
+                broker.requests.collect { request ->
+                    launch {
+                        val result = try {
+                            driver.play("junk_clean_completion")
+                            UiResult.Confirmed
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (_: Exception) {
+                            UiResult.Failed
+                        }
+                        broker.respond(request.requestId, result)
+                    }
+                }
+            }
+            return scope.backgroundScope.launch(UnconfinedTestDispatcher(scope.testScheduler)) {
                 collectJunkCleanEffects(
                     effects = effects.receiveAsFlow(),
                     featureFlow = flow,
-                    completionAdInterceptor = interceptor,
+                    uiRequestBroker = broker,
                     currentPhase = { phase },
                     isExiting = { exiting },
                     onCompletionAdFinished = { results += 1; phase = JunkCleanPhase.Complete },
@@ -183,5 +207,6 @@ class JunkCleanRouteEffectsTest {
                     onDeleteAuthorization = { authorizations += it },
                 )
             }
+        }
     }
 }

@@ -37,11 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
-import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.core.ui.R
 import com.aicleanerstorage.spaceclean.app.commercial.AdvertiseAdDriver
-import com.aicleanerstorage.spaceclean.common.ads.showColdStart
-import com.aicleanerstorage.spaceclean.common.ui.theme.LocalAppThemeTokens
-import com.aicleanerstorage.spaceclean.common.ui.theme.StorageCleanAppTheme
+import com.aicleanerstorage.spaceclean.core.contracts.ads.showColdStart
+import com.aicleanerstorage.spaceclean.core.ui.theme.LocalAppThemeTokens
+import com.aicleanerstorage.spaceclean.core.ui.theme.StorageCleanAppTheme
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -81,7 +81,7 @@ class OpenAdHostActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         hostCreatedAtMillis = SystemClock.elapsedRealtime()
         setContent {
-            StorageCleanAppTheme {
+            StorageCleanAppTheme(themeKey = com.aicleanerstorage.spaceclean.BuildConfig.PRODUCT_THEME_KEY) {
                 if (loadingVisible.value) OpenAdLoadingOverlay()
             }
         }

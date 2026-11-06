@@ -1,0 +1,91 @@
+package com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.ui
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.aicleanerstorage.spaceclean.core.ui.R
+import com.aicleanerstorage.spaceclean.core.ui.components.CleanXTopAppBar
+import com.aicleanerstorage.spaceclean.core.ui.components.popups.StopScanDialog
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanIntent
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanPhase
+import com.aicleanerstorage.spaceclean.feature.junkclean.view.junkclean.presentation.JunkCleanUiState
+
+private val JunkFigmaBackground = Color(0xFFF4F4F4)
+
+@Composable
+fun JunkCleanScreen(
+    state: JunkCleanUiState,
+    resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
+    onAction: (JunkCleanIntent) -> Unit,
+    interactionsEnabled: Boolean = true,
+) {
+    BackHandler {
+        if (interactionsEnabled) onAction(JunkCleanIntent.Back)
+    }
+
+    JunkCleanScaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            if (interactionsEnabled && state.phase == JunkCleanPhase.Preview) {
+                JunkRemoveButton(
+                    selectedSummary = state.selectedSummary,
+                    onClick = { onAction(JunkCleanIntent.CleanSelected) },
+                )
+            }
+        },
+    ) {
+        JunkCleanContentView(
+            uiState = state,
+            interactionsEnabled = interactionsEnabled,
+            onToggleCategorySelection = { onAction(JunkCleanIntent.ToggleCategories(it)) },
+            onToggleItem = { onAction(JunkCleanIntent.ToggleItem(it.junkFile.id)) },
+            resultTools = resultTools,
+            onContinueFromResult = { onAction(JunkCleanIntent.ContinueFromResult) },
+        )
+        CleanXTopAppBar(
+            title = stringResource(R.string.junk_removal),
+            showBack = true,
+            onBack = {
+                if (interactionsEnabled) onAction(JunkCleanIntent.Back)
+            },
+        )
+    }
+
+    if (state.showStopDialog) {
+        StopScanDialog(
+            onQuit = { onAction(JunkCleanIntent.QuitStoppedOperation) },
+            onResume = { onAction(JunkCleanIntent.ResumeStoppedOperation) },
+        )
+    }
+}
+
+@Composable
+private fun JunkCleanScaffold(
+    modifier: Modifier = Modifier,
+    bottomBar: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = JunkFigmaBackground,
+        bottomBar = bottomBar,
+        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+    ) { paddingValues ->
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+        ) {
+            content()
+        }
+    }
+}

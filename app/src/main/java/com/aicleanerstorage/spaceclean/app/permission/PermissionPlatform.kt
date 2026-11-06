@@ -13,8 +13,8 @@ import android.os.Environment
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
-import com.aicleanerstorage.spaceclean.common.permission.PermissionPreferences
-import com.aicleanerstorage.spaceclean.common.permission.PermissionType
+import com.aicleanerstorage.spaceclean.app.platform.permission.PermissionPreferences
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
 
 internal fun permissionGranted(context: Context, permission: PermissionType): Boolean = when (permission) {
     PermissionType.StorageFiles -> if (Build.VERSION.SDK_INT >= 30) Environment.isExternalStorageManager()

@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.navigation
 
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition

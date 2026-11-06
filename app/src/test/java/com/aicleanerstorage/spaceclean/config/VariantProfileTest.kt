@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.config
 
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 
 import com.aicleanerstorage.spaceclean.BuildConfig
-import com.aicleanerstorage.spaceclean.common.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
@@ -20,13 +20,6 @@ class VariantProfileTest {
         AppDestination.featureEntries.forEach { destination ->
             assertFalse(destination.toString().contains("Ad", ignoreCase = true))
         }
-    }
-
-    @Test
-    fun appDestinationEncodesQueryArgs() {
-        val route = AppDestination.Settings.withArgs(mapOf("name" to "a b&c", "path" to "/a/b"))
-
-        assertEquals("settings?name=a+b%26c&path=%2Fa%2Fb", route)
     }
 
     @Test

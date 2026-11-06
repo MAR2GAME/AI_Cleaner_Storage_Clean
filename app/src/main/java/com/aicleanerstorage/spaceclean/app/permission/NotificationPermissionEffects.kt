@@ -1,16 +1,22 @@
 package com.aicleanerstorage.spaceclean.app.permission
 
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionResult
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionPromptMode
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionType
+
+import com.aicleanerstorage.spaceclean.core.contracts.permission.PermissionTarget
+
 import android.os.Build
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.common.permission.*
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -23,7 +29,6 @@ internal fun NotificationPermissionEffects(
     if (Build.VERSION.SDK_INT < 33) return
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
     val granted by rememberUpdatedState(onPermissionGranted)
     val surface = when {
         currentRoute == null || currentRoute == AppDestination.Splash.route -> NotificationPermissionSurface.Splash
@@ -31,10 +36,11 @@ internal fun NotificationPermissionEffects(
         else -> NotificationPermissionSurface.Other
     }
     LaunchedEffect(surface) { viewModel.onSurfaceChanged(surface, context.postNotificationRationale()) }
-    LaunchedEffect(surface) {
+    LaunchedEffect(viewModel, lifecycleOwner, surface, context) {
         if (surface == NotificationPermissionSurface.Home) {
-            delay(HOME_NOTIFICATION_PERMISSION_PROMPT_DELAY_MILLIS)
-            viewModel.onHomePromptDelayElapsed()
+            lifecycleOwner.lifecycle.observeNotificationHomePrompt {
+                viewModel.onAppResumed(context.postNotificationRationale())
+            }
         }
     }
     LaunchedEffect(viewModel, permission, surface) {
@@ -71,20 +77,12 @@ internal fun NotificationPermissionEffects(
             }
         }
     }
-    DisposableEffect(lifecycleOwner, viewModel, context) {
-        var refresh: Job? = null
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && viewModel.uiState.value.surface == NotificationPermissionSurface.Home) {
-                refresh?.cancel()
-                refresh = scope.launch {
-                    delay(HOME_NOTIFICATION_PERMISSION_PROMPT_DELAY_MILLIS)
-                    if (viewModel.uiState.value.surface == NotificationPermissionSurface.Home) {
-                        viewModel.onAppResumed(context.postNotificationRationale())
-                    }
-                }
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { refresh?.cancel(); lifecycleOwner.lifecycle.removeObserver(observer) }
+}
+
+internal suspend fun Lifecycle.observeNotificationHomePrompt(onReady: () -> Unit) {
+    repeatOnLifecycle(Lifecycle.State.RESUMED) {
+        delay(HOME_NOTIFICATION_PERMISSION_PROMPT_DELAY_MILLIS)
+        onReady()
+        awaitCancellation()
     }
 }

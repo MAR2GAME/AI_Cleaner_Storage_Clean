@@ -15,10 +15,11 @@ import com.aicleanerstorage.spaceclean.app.runtime.NotificationLaunchEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RouteAnalyticsEffect
 import com.aicleanerstorage.spaceclean.app.runtime.RuntimeBusyReason
 import com.aicleanerstorage.spaceclean.app.permission.AppPermissionHost
+import com.aicleanerstorage.spaceclean.app.ui.AppUiRequestHost
 import com.aicleanerstorage.spaceclean.app.permission.NotificationPermissionViewModel
 import com.aicleanerstorage.spaceclean.app.runtime.rememberAppRuntimeBindings
 import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
-import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.feature.CleanupHistoryStore
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -35,7 +36,7 @@ fun AppRoot(
     val notificationState by notificationPermissionViewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
+    val currentRoute = currentBackStackEntry?.destination?.route?.substringBefore('?')
     val pendingRequest by launchCoordinator.pendingRequest.collectAsStateWithLifecycle()
 
     val sessionCoordinator = remember { AppSessionCoordinator() }
@@ -50,23 +51,29 @@ fun AppRoot(
     AdLifecycleEffect(lifecycleOwner, runtimeBindings.externalGuard)
     RouteAnalyticsEffect(currentRoute, context, runtimeBindings.ads)
 
-    AppPermissionHost(
-        externalActivityTracker = runtimeBindings.externalActivities,
-        onPermissionFlowActiveChange = { sessionCoordinator.set(RuntimeBusyReason.Permission, it) },
-        notificationViewModel = notificationPermissionViewModel,
-        currentRoute = currentRoute,
-        analyticsReporter = runtimeBindings.analyticsReporter,
-        onNotificationGranted = onNotificationPermissionGranted,
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.aicleanerstorage.spaceclean.core.ui.LocalAnalyticsReporter provides runtimeBindings.analyticsReporter,
     ) {
-        AppView(appViewModel)
-        AppEffectHost(appViewModel)
-        AppNavGraph(
-            navController = navController,
-            launchCoordinator = launchCoordinator,
-            runtime = runtimeBindings,
-            splashPaused = notificationState.splashPaused,
-            notificationPermissionUiActive = notificationState.permissionUiActive,
-        )
-        NotificationLaunchEffect(pendingRequest, currentRoute, navController)
+    AppUiRequestHost(adDriver = runtimeBindings.ads) {
+        AppPermissionHost(
+            externalActivityTracker = runtimeBindings.externalActivities,
+            onPermissionFlowActiveChange = { sessionCoordinator.set(RuntimeBusyReason.Permission, it) },
+            notificationViewModel = notificationPermissionViewModel,
+            currentRoute = currentRoute,
+            analyticsReporter = runtimeBindings.analyticsReporter,
+            onNotificationGranted = onNotificationPermissionGranted,
+        ) {
+            AppView(appViewModel)
+            AppEffectHost(appViewModel)
+            AppNavGraph(
+                navController = navController,
+                launchCoordinator = launchCoordinator,
+                runtime = runtimeBindings,
+                splashPaused = notificationState.splashPaused,
+                notificationPermissionUiActive = notificationState.permissionUiActive,
+            )
+            NotificationLaunchEffect(pendingRequest, currentRoute, navController)
+        }
     }
+}
 }

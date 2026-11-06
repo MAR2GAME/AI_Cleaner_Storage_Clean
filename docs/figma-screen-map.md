@@ -11,7 +11,7 @@ This map records the Figma nodes that define the Storage Clean variant. It is im
 
 ## Rules
 
-- Keep device data, ViewModels, repositories, navigation, and effects from the mother project unless a request explicitly changes behavior.
+- 以当前仓库的设备数据、ViewModel、Repository、导航和 Effect 实现为准；母版仅作为设计参考，除非需求明确要求改变行为。
 - Fetch the Figma root node context and screenshot before changing a screen.
 - Reuse target components and theme tokens before adding new components.
 - Model repeated visual states as one component with style variants.

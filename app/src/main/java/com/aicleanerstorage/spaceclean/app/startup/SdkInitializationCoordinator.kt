@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.startup
 
-import com.aicleanerstorage.spaceclean.common.startup.SdkInitialization
+import com.aicleanerstorage.spaceclean.core.contracts.startup.SdkInitialization
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred

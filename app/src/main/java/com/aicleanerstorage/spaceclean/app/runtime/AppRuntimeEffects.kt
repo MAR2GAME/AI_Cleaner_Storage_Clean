@@ -12,12 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
-import com.aicleanerstorage.spaceclean.common.ads.AdDriver
-import com.aicleanerstorage.spaceclean.common.ads.ExternalAppOpenGuard
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.startup.AppLaunchRequest
-import com.aicleanerstorage.spaceclean.common.ads.AdPreloadStage
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
+import com.aicleanerstorage.spaceclean.core.contracts.ads.ExternalAppOpenGuard
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.core.contracts.startup.AppLaunchRequest
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdPreloadStage
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsTracker
 
 @Composable
 internal fun AdLifecycleEffect(lifecycleOwner: LifecycleOwner, guard: ExternalAppOpenGuard) {
@@ -54,7 +54,7 @@ internal fun NotificationLaunchEffect(
 ) {
     LaunchedEffect(pendingRequest, currentRoute) {
         if (shouldRouteNotificationRequestToSplash(pendingRequest, currentRoute)) {
-            navController.navigate(AppDestination.Splash.route) { launchSingleTop = true }
+            navController.navigate(AppDestination.Splash) { launchSingleTop = true }
         }
     }
 }

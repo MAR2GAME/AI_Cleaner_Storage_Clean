@@ -1,10 +1,17 @@
 package com.aicleanerstorage.spaceclean.app.runtime
 
-import com.aicleanerstorage.spaceclean.common.ads.*
-import com.aicleanerstorage.spaceclean.common.analytics.*
-import com.aicleanerstorage.spaceclean.common.commercial.InterstitialRequest
-import com.aicleanerstorage.spaceclean.common.feature.*
-import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+
+import com.aicleanerstorage.spaceclean.core.contracts.commercial.InterstitialRequest
+import com.aicleanerstorage.spaceclean.core.contracts.feature.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureExitReason
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureKey
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureOperationEvent
+import com.aicleanerstorage.spaceclean.core.contracts.feature.OperationAction
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*

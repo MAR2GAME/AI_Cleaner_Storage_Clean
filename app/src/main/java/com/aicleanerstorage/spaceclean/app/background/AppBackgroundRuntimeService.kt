@@ -9,11 +9,11 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import com.aicleanerstorage.spaceclean.app.AppConfig
-import com.aicleanerstorage.spaceclean.feature.applock.service.AppLockServiceCoordinator
-import com.aicleanerstorage.spaceclean.feature.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatterySamplingCoordinator
-import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.feature.toolbox.battery.data.BackgroundBatterySamplingPreferences
+import com.aicleanerstorage.spaceclean.feature.applock.view.applock.ui.AppLockServiceCoordinator
+import com.aicleanerstorage.spaceclean.core.contracts.applock.AppLockRepository
+import com.aicleanerstorage.spaceclean.feature.toolbox.data.battery.BatterySamplingCoordinator
+import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -1,94 +1,105 @@
 package com.aicleanerstorage.spaceclean.app.navigation.register
 
-import com.aicleanerstorage.spaceclean.app.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.navigation.AppNavigator
+import androidx.compose.runtime.remember
+
+import com.aicleanerstorage.spaceclean.core.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.navigation.NavHostAppNavigator
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.battery.BatteryInfoRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.NetworkScanDevicesRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.NetworkScanRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeedRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerRoute
-import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerRoute
-import com.aicleanerstorage.spaceclean.feature.toolbox.deviceinfo.DeviceInfoViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.battery.BatteryInfoViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.appusage.AppUsageViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkusage.NetworkUsageViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.NetworkScanViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkscan.NetworkScanDevicesViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.networkspeed.NetworkSpeedViewModel
-import com.aicleanerstorage.spaceclean.feature.toolbox.whatsappcleaner.WhatsAppCleanerViewModel
-import com.aicleanerstorage.spaceclean.feature.notificationcleaner.NotificationCleanerViewModel
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.ui.AppUsageRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.ui.BatteryInfoRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.deviceinfo.ui.DeviceInfoRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.ui.NetworkScanDevicesRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.ui.NetworkScanRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkspeed.ui.NetworkSpeedRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.ui.NetworkUsageRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.ui.WhatsAppCleanerRoute
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.ui.NotificationCleanerRoute
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.deviceinfo.presentation.DeviceInfoViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.battery.presentation.BatteryInfoViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.appusage.presentation.AppUsageViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkusage.presentation.NetworkUsageViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.presentation.NetworkScanViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkscan.presentation.NetworkScanDevicesViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.networkspeed.presentation.NetworkSpeedViewModel
+import com.aicleanerstorage.spaceclean.feature.toolbox.view.whatsappcleaner.presentation.WhatsAppCleanerViewModel
+import com.aicleanerstorage.spaceclean.feature.notificationcleaner.view.notificationcleaner.presentation.NotificationCleanerViewModel
 import org.koin.androidx.compose.koinViewModel
 
 internal fun NavGraphBuilder.registerToolboxRoutes(
-    navigator: AppNavigator,
+    navigator: NavHostAppNavigator,
     featureFlow: FeatureFlow,
     externalActivities: ExternalActivityTracker,
 ) {
-    composable(AppDestination.DeviceInfo.route) {
+    composable<AppDestination.DeviceInfo> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         DeviceInfoRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<DeviceInfoViewModel>(),
             featureFlow = featureFlow,
         )
     }
-    composable(AppDestination.BatteryInfo.route) {
+    composable<AppDestination.BatteryInfo> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         BatteryInfoRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<BatteryInfoViewModel>(),
             featureFlow = featureFlow,
         )
     }
-    composable(AppDestination.AppUsage.route) {
+    composable<AppDestination.AppUsage> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         AppUsageRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<AppUsageViewModel>(),
             featureFlow = featureFlow,
             externalActivities = externalActivities,
         )
     }
-    composable(AppDestination.NetworkUsage.route) {
+    composable<AppDestination.NetworkUsage> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         NetworkUsageRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<NetworkUsageViewModel>(),
             featureFlow = featureFlow,
         )
     }
-    composable(AppDestination.NetworkScan.route) {
+    composable<AppDestination.NetworkScan> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         NetworkScanRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<NetworkScanViewModel>(),
             featureFlow = featureFlow,
             externalActivities = externalActivities,
         )
     }
-    composable(AppDestination.NetworkScanDevices.route) {
-        NetworkScanDevicesRoute(navigator, koinViewModel<NetworkScanDevicesViewModel>())
+    composable<AppDestination.NetworkScanDevices> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+        NetworkScanDevicesRoute(pageNavigator, koinViewModel<NetworkScanDevicesViewModel>())
     }
-    composable(AppDestination.NetworkSpeed.route) {
+    composable<AppDestination.NetworkSpeed> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         NetworkSpeedRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<NetworkSpeedViewModel>(),
             featureFlow = featureFlow,
         )
     }
-    composable(AppDestination.WhatsAppCleaner.route) {
+    composable<AppDestination.WhatsAppCleaner> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         WhatsAppCleanerRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<WhatsAppCleanerViewModel>(),
             featureFlow = featureFlow,
         )
     }
-    composable(AppDestination.NotificationCleaner.route) {
+    composable<AppDestination.NotificationCleaner> { entry ->
+        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         NotificationCleanerRoute(
-            navigator = navigator,
+            navigator = pageNavigator,
             viewModel = koinViewModel<NotificationCleanerViewModel>(),
             featureFlow = featureFlow,
         )

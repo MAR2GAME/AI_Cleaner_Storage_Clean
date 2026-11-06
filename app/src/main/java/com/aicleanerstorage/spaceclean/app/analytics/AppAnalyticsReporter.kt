@@ -1,9 +1,9 @@
-﻿package com.aicleanerstorage.spaceclean.app.analytics
+package com.aicleanerstorage.spaceclean.app.analytics
 
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsEvent
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsPayloadMapper
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsEvent
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsPayloadMapper
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsTracker
 
 class AppAnalyticsReporter : AnalyticsReporter {
     override fun report(event: AnalyticsEvent) {

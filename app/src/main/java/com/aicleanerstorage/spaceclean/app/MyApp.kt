@@ -6,14 +6,15 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.aicleanerstorage.spaceclean.BuildConfig
-import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.core.ui.R
 import com.aicleanerstorage.spaceclean.app.di.dataModule
 import com.aicleanerstorage.spaceclean.app.di.presentationModule
+import com.aicleanerstorage.spaceclean.app.intent.appIntentModule
 import com.aicleanerstorage.spaceclean.app.notification.NotificationDefaultsInitializer
 import com.aicleanerstorage.spaceclean.app.startup.SdkInitializationCoordinator
-import com.aicleanerstorage.spaceclean.common.ads.AdvertiseSdkAdapter
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsPreferences
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsTracker
+import com.aicleanerstorage.spaceclean.app.platform.ads.AdvertiseSdkAdapter
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsPreferences
+import com.aicleanerstorage.spaceclean.app.platform.analytics.AnalyticsTracker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,7 +42,7 @@ class MyApp : Application() {
         val koinApplication = startKoin {
             androidLogger()
             androidContext(this@MyApp)
-            modules(dataModule, presentationModule)
+            modules(dataModule, presentationModule, appIntentModule)
         }
         AnalyticsTracker.initialize(koinApplication.koin.get<AnalyticsPreferences>())
         sdkInitialization =

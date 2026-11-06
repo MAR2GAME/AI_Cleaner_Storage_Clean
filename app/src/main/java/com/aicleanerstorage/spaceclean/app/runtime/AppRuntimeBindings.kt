@@ -1,23 +1,28 @@
 package com.aicleanerstorage.spaceclean.app.runtime
 
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdScene
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.ExternalAppOpenGuard
+
+import com.aicleanerstorage.spaceclean.core.contracts.ads.AdDriver
+
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.compose.runtime.*
 import com.aicleanerstorage.spaceclean.app.analytics.AppAnalyticsReporter
-import com.aicleanerstorage.spaceclean.app.commercial.AdInterceptor
+import com.aicleanerstorage.spaceclean.app.commercial.InterstitialController
 import com.aicleanerstorage.spaceclean.app.commercial.AdvertiseAdDriver
-import com.aicleanerstorage.spaceclean.common.ads.*
 import com.aicleanerstorage.spaceclean.app.permission.PermissionInterceptor
 import org.koin.compose.koinInject
-import com.aicleanerstorage.spaceclean.common.analytics.AnalyticsReporter
-import com.aicleanerstorage.spaceclean.common.feature.FeatureFlow
-import com.aicleanerstorage.spaceclean.common.intent.ExternalActivityTracker
-import com.aicleanerstorage.spaceclean.common.storage.preferences.CleanupHistoryStore
+import com.aicleanerstorage.spaceclean.core.contracts.analytics.AnalyticsReporter
+import com.aicleanerstorage.spaceclean.core.contracts.feature.FeatureFlow
+import com.aicleanerstorage.spaceclean.core.contracts.intent.ExternalActivityTracker
+import com.aicleanerstorage.spaceclean.core.contracts.feature.CleanupHistoryStore
 
 internal data class AppRuntimeBindings(
     val ads: AdDriver,
-    val interstitials: AdInterceptor,
+    val interstitials: InterstitialController,
     val featureFlow: FeatureFlow,
     val analyticsReporter: AnalyticsReporter,
     val externalActivities: ExternalActivityTracker,
@@ -38,7 +43,7 @@ internal fun rememberAppRuntimeBindings(
     val driver = remember(activity) { AdvertiseAdDriver(context, activityProvider = { activity }) }
     val externalGuard = remember(driver, scope) { ExternalAppOpenGuard(driver, scope) }
     val ads = remember(driver, sessionCoordinator, externalGuard, permission) {
-        AdInterceptor(
+        InterstitialController(
             driver,
             canShow = { request ->
                 val rejected = request.scene is AdScene.PermissionRejected

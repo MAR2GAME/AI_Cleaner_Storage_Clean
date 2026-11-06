@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.aicleanerstorage.spaceclean.app.background.BackgroundBatterySamplingController
+import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingController
 import com.aicleanerstorage.spaceclean.app.analytics.AppSessionAnalytics
 import com.aicleanerstorage.spaceclean.app.notification.NotificationIntentRouteResolver
 import com.aicleanerstorage.spaceclean.app.startup.AppLaunchCoordinator
-import com.aicleanerstorage.spaceclean.common.ads.AdvertiseSdkAdapter
-import com.aicleanerstorage.spaceclean.common.ui.theme.StorageCleanAppTheme
+import com.aicleanerstorage.spaceclean.app.platform.ads.AdvertiseSdkAdapter
+import com.aicleanerstorage.spaceclean.core.ui.theme.StorageCleanAppTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         backgroundBatterySamplingController.reconcile()
 
         setContent {
-            StorageCleanAppTheme {
+            StorageCleanAppTheme(themeKey = com.aicleanerstorage.spaceclean.BuildConfig.PRODUCT_THEME_KEY) {
                 AppRoot(
                     launchCoordinator = launchCoordinator,
                     onNotificationPermissionGranted = {
