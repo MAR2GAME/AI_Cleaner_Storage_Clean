@@ -2,6 +2,13 @@
 .codex/
 .trae/
 
+# Local caches and extracted AAR files
+/.npm-cache/
+/.tmp_aar/
+
+# Nested reference repository
+/PDFfox/
+
 # Gradle / Android build output
 .gradle/
 .kotlin/
