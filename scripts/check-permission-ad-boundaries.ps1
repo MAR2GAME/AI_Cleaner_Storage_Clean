@@ -24,6 +24,14 @@ foreach ($file in $files) {
 }
 
 foreach ($entry in $main.GetEnumerator()) {
+    if ($entry.Value -match '(?m)^import com\.pdffox\.adv\.' -and
+        $entry.Key -notmatch '^app/platform/|^app/commercial/AdvertiseAdDriver\.kt$|^app/(MyApp|MainActivity)\.kt$') {
+        $failures.Add("Legacy SDK dependency outside adapter/host: $($entry.Key)")
+    }
+    if ($entry.Value -match '\b(Ads\.showInterstitialAd|ShowInterAd\.showIntAd)\(' -and
+        $entry.Key -ne 'app/platform/ads/AdvertiseSdkAdapter.kt') {
+        $failures.Add("Legacy SDK playback bypasses adapter: $($entry.Key)")
+    }
     if ($entry.Value -match '\b(LocalFileManagerPermissionState|LocalPermissionGateway|EntryNavigationRequests)\b') {
         $failures.Add("Retired navigation compatibility state: $($entry.Key)")
     }

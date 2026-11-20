@@ -1,4 +1,4 @@
-package __PACKAGE__.feature.__FEATURE__.domain
+package __PACKAGE__.domain.port.__FEATURE__
 
 interface FeatureRepository {
     suspend fun load()

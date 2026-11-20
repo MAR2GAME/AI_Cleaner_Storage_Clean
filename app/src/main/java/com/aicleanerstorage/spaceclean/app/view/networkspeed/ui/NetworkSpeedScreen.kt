@@ -1,0 +1,63 @@
+package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedContent
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedStopBar
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
+import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
+import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
+import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+
+@Composable
+fun NetworkSpeedScreen(
+    uiState: NetworkSpeedUiState,
+    onBack: () -> Unit,
+    onRunSpeedTest: () -> Unit,
+    onStopSpeedTest: () -> Unit,
+    onNavigateTool: (ToolNavigationTarget) -> Unit,
+) {
+    CleanXScaffoldPage(
+        title = stringResource(R.string.network_speed),
+        onBack = onBack,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+        bottomBar = {
+            if (uiState.phase != NetworkSpeedPhase.Result && uiState.phase != NetworkSpeedPhase.Completing) {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .stableNavigationBarsPadding()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                ) {
+                    if (uiState.phase == NetworkSpeedPhase.Testing) {
+                        NetworkSpeedStopBar(
+                            text = stringResource(R.string.stop),
+                            onClick = onStopSpeedTest,
+                        )
+                    } else {
+                        CleanXPrimaryButton(
+                            text = stringResource(R.string.run_speed_test),
+                            onClick = onRunSpeedTest,
+                            enabled = uiState.hasNetwork,
+                        )
+                    }
+                }
+            }
+        },
+    ) {
+        NetworkSpeedContent(
+            uiState = uiState,
+            onNavigateTool = onNavigateTool,
+        )
+    }
+}

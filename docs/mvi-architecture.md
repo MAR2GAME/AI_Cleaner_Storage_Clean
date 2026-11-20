@@ -24,24 +24,26 @@
 `CleanSessionStore` 保存业务结果，不提供第二套页面状态。`SharedScanState` 属于 data.session。
 不增加无使用者的 shared 包、转发式 UseCase、通用业务 Job 管理器或 Coordinator。
 
+领域层顶层业务数据类统一使用 `Model` 后缀，每个公开类型放在同名 Kotlin 文件中。枚举、值类及密封类型的嵌套分支保留业务名称。
+
 ## 数据流
 
 ```text
 页面进入 / 用户操作 / 平台回调
-    → dispatch(Intent)
+    → dispatch(Action)
     → ViewModel 执行业务任务
-    → 内部 Intent → 纯 Reducer → State
-    → Effect → Route / EffectHandler → 平台回调 Intent
+    → 内部 Action → 纯 Reducer → State
+    → Event → Route / EffectHandler → 平台回调 Action
 ```
 
-- ViewModel 保留 `MviViewModel<State, Intent, Effect>` 三个类型参数。基类提供 State 和 Effect，不管理扫描/清理任务。
+- ViewModel 保留 `MviViewModel<State, Action, Event>` 三个类型参数。基类提供 State 和 Event，不管理扫描/清理任务。
 - junkclean 的所有页面状态修改经过 Reducer；`updateState` 内只有纯函数，不能调用仓库、埋点或发送 Effect。
-- 页面输入和任务结果使用同一个 Intent 类型；内部结果通过 dispatchInternal 进入。内部结果类型可标为 internal，不再保留 Action 双通道。
+- 页面输入与异步结果使用同一个 `XxxAction`，通过 `dispatch` 上报。Action 按已发生的事实命名，例如 `TermsClicked`、`DeleteConfirmed`、`ScanCompleted`。ViewModel 下发的 `XxxEvent` 使用祈使式，例如 `OpenTerms`、`NavigateBack`。
 - `phase` 是唯一业务阶段；扫描/清理 Job、删除结果暂存、退出去重属于任务管理，不作为 UI 阶段来源。
-- Screen 只接收 State、Intent 回调和展示插槽，不持有 ViewModel、仓库或导航器。
-- Route 订阅一份 State 和一个 Effect 流。平台副作用执行后派发 Intent，不能直接写 State。
+- 页面入口放在 `app/view/<page>/ui/XxxScreen.kt`，按状态组装展示组件，通过回调上报交互。单页专用组件放在同页 `ui/part/`，文件名与主 Composable 一致，用 `Header`、`Row`、`Card`、`Dialog`、`Content` 等后缀表达组件职责。跨页业务组件放在 `app/view/common/`，预览放在 `ui/preview/`。
+- Route 订阅一份 State 和一个 Event 流。平台副作用执行后派发 Action，不能直接写 State。
 - junkclean presentation 禁止依赖 `android.*`；允许资源 ID、AndroidX 生命周期和注解。ViewModel 不接收 Context，不创建 PendingIntent，也不解析文案。
-- 删除授权 Effect 只携带去重后的 URI 字符串快照；状态保存 `pendingAuthorizationCount`，UI 使用 stringResource 解析等待文案。UI 在页面未退出且处于 AwaitingAuthorization 时创建并启动系统授权，通过 DeleteAuthorizationResult 回传结果。
+- 删除授权 Effect 只携带去重后的 URI 字符串快照；状态保存 `pendingAuthorizationCount`，UI 使用 stringResource 解析等待文案。UI 在页面未退出且处于 AwaitingAuthorization 时创建并启动系统授权，通过 DeleteAuthorizationResultReceived 回传结果。
 - 不支持平台、空 URI、授权创建或启动失败均回传 false，沿用用户拒绝的部分失败汇总：保留直接删除成功和内存结果，直接失败与全部待授权文件计入失败，不调用 finalizeAuthorizedDeletes，继续历史记录和完成广告。CancellationException 继续传播。接受回调时同步离开 AwaitingAuthorization 并清零数量，重复或退出后的回调无效。
 
 ## 类型化导航与共享流程
@@ -115,6 +117,5 @@ ViewModel 清理时取消队列、丢弃未消费事件；之后发送不再入�
 
 `./scripts/check-mvi-boundaries.ps1` 扫描全部 core/feature/app 模块的源码和测试目录，检查模块方向、domain/presentation/data 边界、Screen 限制、旧 common 引用和 package/目录一致性。
 `./scripts/check-permission-ad-boundaries.ps1` 扫描所有模块，检查唯一权限 Host、唯一 AdDriver、Gateway 绑定和旧框架残留。
-
 各模块执行受影响的定向 JVM 测试；权限、广告及跨模块 junkclean 集成测试仍由 app 测试源集持有，避免 feature 测试反向依赖 app。不执行全量测试或 Release 构建。
 本轮命令、结果、文件迁移说明和未覆盖项见 [多模块迁移记录](multi-module-migration.md)。此前权限/广告设备验收保留在 [历史验收记录](permission-ad-acceptance.md)，不作为本轮多模块变更的设备验收结果。

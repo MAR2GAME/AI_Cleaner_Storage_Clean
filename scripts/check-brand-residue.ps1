@@ -3,7 +3,8 @@ param(
     [string]$ExpectedApplicationId,
     [string[]]$ForbiddenApplicationIds = @(),
     [string[]]$ForbiddenBrandTerms = @(),
-    [switch]$Strict
+    [switch]$Strict,
+    [switch]$WhitePackage
 )
 
 $ErrorActionPreference = 'Stop'
@@ -54,6 +55,7 @@ function Search-ForbiddenTerm([string]$Term, [string]$Label) {
 
     $roots = @(
         (Join-Path $RepositoryRoot 'app/src'),
+        (Join-Path $RepositoryRoot 'advertise/src'),
         (Join-Path $RepositoryRoot 'config'),
         (Join-Path $RepositoryRoot 'gradle')
     ) | Where-Object { Test-Path -LiteralPath $_ -PathType Container }
@@ -90,11 +92,11 @@ try {
         throw 'Expected applicationId could not be determined. Pass -ExpectedApplicationId explicitly.'
     }
 
-    if (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'app/google-services.json') -PathType Leaf) {
+    if ($WhitePackage -and (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'app/google-services.json') -PathType Leaf)) {
         Add-Failure 'app/google-services.json must not exist in the white package'
     }
 
-    if (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'config/ad_policy.json') -PathType Leaf) {
+    if ($WhitePackage -and (Test-Path -LiteralPath (Join-Path $RepositoryRoot 'config/ad_policy.json') -PathType Leaf)) {
         Add-Failure 'config/ad_policy.json must not exist'
     }
 

@@ -1,8 +1,8 @@
-package __PACKAGE__.feature.__FEATURE__.presentation
+package __PACKAGE__.app.view.__FEATURE__.interaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import __PACKAGE__.feature.__FEATURE__.domain.FeatureRepository
+import __PACKAGE__.domain.port.__FEATURE__.FeatureRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,14 +16,14 @@ class FeatureViewModel(
 ) : ViewModel() {
     private val mutableUiState = MutableStateFlow(FeatureUiState())
     val uiState: StateFlow<FeatureUiState> = mutableUiState.asStateFlow()
-    private val effectChannel = Channel<FeatureEffect>(Channel.BUFFERED)
+    private val effectChannel = Channel<FeatureEvent>(Channel.BUFFERED)
     val effects = effectChannel.receiveAsFlow()
 
     fun dispatch(action: FeatureAction) {
         mutableUiState.value = FeatureReducer.reduce(mutableUiState.value, action)
         when (action) {
             FeatureAction.LoadRequested -> load()
-            FeatureAction.BackClicked -> effectChannel.trySend(FeatureEffect.NavigateBack)
+            FeatureAction.BackClicked -> effectChannel.trySend(FeatureEvent.NavigateBack)
             else -> Unit
         }
     }

@@ -16,9 +16,21 @@ foreach ($module in $modules) {
         foreach ($file in Get-ChildItem -LiteralPath $source -Recurse -File -Filter '*.kt') {
             $relative = [IO.Path]::GetRelativePath($repositoryRoot, $file.FullName).Replace('\', '/')
             $code = [IO.File]::ReadAllText($file.FullName)
-            if ($code -match $sdkPattern -and $relative -notmatch '/app/platform/|/feature/antivirus/data/') {
+            $legacyHosts = $relative -match '/app/(MyApp|MainActivity)\.kt$|/app/commercial/AdvertiseAdDriver\.kt$'
+            if ($code -match $sdkPattern -and -not $legacyHosts -and $relative -notmatch '/app/platform/|/feature/antivirus/data/') {
                 $failures.Add("SDK imported outside an adapter: $relative")
             }
+        }
+    }
+}
+$sdkBuild = Join-Path $repositoryRoot 'advertise/build.gradle.kts'
+if (Test-Path $sdkBuild) {
+    if ([IO.File]::ReadAllText($sdkBuild) -match 'project\("\:(app|core|feature)') {
+        $failures.Add('advertise must not depend on app/core/feature modules')
+    }
+    Get-ChildItem (Join-Path $repositoryRoot 'advertise/src/main') -Recurse -File -Include '*.kt','*.java' | ForEach-Object {
+        if ([IO.File]::ReadAllText($_.FullName) -match '(?m)^import com\.aicleanerstorage\.') {
+            $failures.Add("advertise imports host code: $($_.FullName)")
         }
     }
 }

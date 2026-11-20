@@ -1,0 +1,28 @@
+package com.aicleanerstorage.spaceclean.app.view.permissions.interaction
+
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
+
+data class ManagePermissionRowState(
+    val labelRes: Int,
+    val item: AppPermission,
+    val checked: Boolean,
+)
+
+data class ManagePermissionsUiState(
+    val rows: List<ManagePermissionRowState> = emptyList(),
+)
+
+sealed interface ManagePermissionsAction {
+    data class NavigationRequested(val destination: AppDestination) : ManagePermissionsAction
+    data object BackClicked : ManagePermissionsAction
+    data object RefreshRequested : ManagePermissionsAction
+    data class PermissionClicked(val item: AppPermission) : ManagePermissionsAction
+    data class StatusesChanged(val statuses: Map<AppPermission, Boolean>) : ManagePermissionsAction
+}
+
+sealed interface ManagePermissionsEvent {
+    data class Navigate(val destination: AppDestination) : ManagePermissionsEvent
+    data object NavigateBack : ManagePermissionsEvent
+    data class OpenSettings(val permission: AppPermission) : ManagePermissionsEvent
+}

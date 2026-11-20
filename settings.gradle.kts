@@ -1,34 +1,23 @@
+// 国内镜像优先：AGP / Kotlin 插件与依赖都先走阿里云，原生仓库留作兜底。
 pluginManagement {
     repositories {
+        maven(url = "https://maven.aliyun.com/repository/gradle-plugin")
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/public")
         google()
         mavenCentral()
         gradlePluginPortal()
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/public")
         google()
         mavenCentral()
-        maven {
-            url = uri("http://192.168.10.128:8081/repository/maven-public/")
-            isAllowInsecureProtocol = true
-            content {
-                includeGroup("com.pdffox")
-            }
-        }
-        maven { url = uri("https://www.jitpack.io") }
-        maven { url = uri("https://repository.liferay.com/nexus/content/repositories/public/") }
-        maven { url = uri("https://maven.singular.net/") }
-        maven { url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/") }
-        maven { url = uri("https://artifact.bytedance.com/repository/pangle") }
-        maven { url = uri("https://android-sdk.is.com/") }
-        maven { url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea") }
-        maven { url = uri("https://jfrog.anythinktech.com/artifactory/overseas_sdk") }
-
+        maven(url = "https://jitpack.io")
         flatDir {
             dirs("app/libs")
         }
@@ -38,18 +27,3 @@ dependencyResolutionManagement {
 rootProject.name = "AICleanerStorageClean"
 include(":app")
 include(":junkcc")
-
-include(":core:contracts")
-include(":core:navigation")
-include(":core:presentation")
-include(":core:ui")
-include(":feature:startup")
-include(":feature:onboarding")
-include(":feature:home")
-include(":feature:settings")
-include(":feature:junkclean")
-include(":feature:antivirus")
-include(":feature:files")
-include(":feature:applock")
-include(":feature:notificationcleaner")
-include(":feature:toolbox")

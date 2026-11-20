@@ -1,12 +1,34 @@
 package com.aicleanerstorage.spaceclean.app.background
 
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BatteryHistorySample
-import com.aicleanerstorage.spaceclean.feature.applock.view.applock.ui.AppLockServiceActions
-import com.aicleanerstorage.spaceclean.feature.toolbox.data.battery.BatterySamplingCoordinator
-import com.aicleanerstorage.spaceclean.feature.toolbox.data.battery.BatterySamplingServiceActions
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingPreferences
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BatteryHistorySampler
+import kotlinx.coroutines.test.advanceTimeBy
+
+import kotlinx.coroutines.test.runCurrent
+
+import kotlinx.coroutines.test.runTest
+
+import kotlinx.coroutines.test.TestCoroutineScheduler
+
+import kotlinx.coroutines.test.StandardTestDispatcher
+
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+import org.junit.rules.TemporaryFolder
+
+import org.junit.Rule
+
+import java.lang.reflect.Proxy
+
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+
+import com.aicleanerstorage.spaceclean.domain.model.BatteryInfoModel
+
+import com.aicleanerstorage.spaceclean.data.repository.BatteryHistoryRepositoryImpl
+
+import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
+
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockServiceActions
+import com.aicleanerstorage.spaceclean.domain.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -59,33 +81,55 @@ class PersistentServiceCommandDispatcherTest {
         assertEquals(1, stopCalls)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `battery coordinator uses only the service owner`() {
-        val sampler = RecordingBatterySampler()
-        val preferences = RecordingBackgroundBatterySamplingPreferences(enabled = true)
-        val coordinator = BatterySamplingCoordinator(sampler, preferences) { true }
+    fun `service and page share sampling until the last owner stops`() = runTest {
+        val history = BatteryHistoryRepositoryImpl(folder.newFile())
+        val sampler = sampler(history, testScheduler)
+        val settings = InMemorySettingsRepository(backgroundSampling = true)
+        val coordinator = BatterySamplingCoordinator(sampler, settings) { true }
 
         coordinator.syncSamplingState()
+        runCurrent()
+        assertEquals(1, history.samples.value.size)
+        sampler.start(BatteryHistoryOwner.BatteryPage)
         coordinator.disableSampling()
-
-        assertEquals(listOf(BatteryHistoryOwner.Service), sampler.started)
-        assertEquals(listOf(BatteryHistoryOwner.Service), sampler.stopped)
+        advanceTimeBy(100)
+        runCurrent()
+        assertEquals(2, history.samples.value.size)
+        sampler.stop(BatteryHistoryOwner.BatteryPage)
+        advanceTimeBy(100)
+        runCurrent()
+        assertEquals(2, history.samples.value.size)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `battery coordinator does not sample without preference or notification permission`() {
-        val sampler = RecordingBatterySampler()
-        val disabledPreferences = RecordingBackgroundBatterySamplingPreferences(enabled = false)
-        BatterySamplingCoordinator(sampler, disabledPreferences) { true }.syncSamplingState()
+    fun `battery coordinator does not sample without preference or notification permission`() = runTest {
+        val history = BatteryHistoryRepositoryImpl(folder.newFile())
+        val sampler = sampler(history, testScheduler)
+        BatterySamplingCoordinator(sampler, InMemorySettingsRepository()) { true }.syncSamplingState()
+        runCurrent()
+        assertEquals(0, history.samples.value.size)
+        BatterySamplingCoordinator(sampler, InMemorySettingsRepository(backgroundSampling = true)) { false }.syncSamplingState()
+        runCurrent()
+        assertEquals(0, history.samples.value.size)
+    }
 
-        val enabledPreferences = RecordingBackgroundBatterySamplingPreferences(enabled = true)
-        BatterySamplingCoordinator(sampler, enabledPreferences) { false }.syncSamplingState()
+    @get:Rule val folder = TemporaryFolder()
 
-        assertEquals(emptyList<BatteryHistoryOwner>(), sampler.started)
-        assertEquals(
-            listOf(BatteryHistoryOwner.Service, BatteryHistoryOwner.Service),
-            sampler.stopped,
-        )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun sampler(history: BatteryHistoryRepositoryImpl, scheduler: TestCoroutineScheduler): SampleBatteryHistoryUseCase {
+        val device = Proxy.newProxyInstance(
+            DeviceInfoRepository::class.java.classLoader, arrayOf(DeviceInfoRepository::class.java),
+        ) { _, method, _ ->
+            when (method.name) {
+                "batteryInfo" -> BatteryInfoModel(80, "Good", 29f, 4000, "Li-ion", 4000)
+                "batteryCurrentNowMa" -> 200f
+                else -> error("Unexpected device call: ${method.name}")
+            }
+        } as DeviceInfoRepository
+        return SampleBatteryHistoryUseCase(device, history, StandardTestDispatcher(scheduler), { 1000L + scheduler.currentTime }, 100L)
     }
 }
 
@@ -131,29 +175,4 @@ private class RecordingBatterySamplingActions : BatterySamplingServiceActions {
     override fun disableSampling() {
         calls += "disable"
     }
-}
-
-private class RecordingBackgroundBatterySamplingPreferences(
-    private var enabled: Boolean,
-) : BackgroundBatterySamplingPreferences {
-    override fun isBackgroundSamplingEnabled(): Boolean = enabled
-
-    override fun enableBackgroundSampling() {
-        enabled = true
-    }
-}
-
-private class RecordingBatterySampler : BatteryHistorySampler {
-    val started = mutableListOf<BatteryHistoryOwner>()
-    val stopped = mutableListOf<BatteryHistoryOwner>()
-
-    override fun start(owner: BatteryHistoryOwner) {
-        started += owner
-    }
-
-    override fun stop(owner: BatteryHistoryOwner) {
-        stopped += owner
-    }
-
-    override fun sampleOnce(force: Boolean): BatteryHistorySample? = null
 }

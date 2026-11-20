@@ -1,4 +1,4 @@
-package __PACKAGE__.feature.__FEATURE__.presentation
+package __PACKAGE__.app.view.__FEATURE__.interaction
 
 object FeatureReducer {
     fun reduce(state: FeatureUiState, action: FeatureAction): FeatureUiState =

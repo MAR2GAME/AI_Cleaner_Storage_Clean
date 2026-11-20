@@ -12,10 +12,10 @@ class AppViewModelTest {
     fun `message is shown and cleared`() {
         val viewModel = AppViewModel()
 
-        viewModel.dispatch(AppIntent.ShowMessage("message"))
+        viewModel.dispatch(AppAction.ShowMessage("message"))
         assertEquals("message", viewModel.state.value.message)
 
-        viewModel.dispatch(AppIntent.ClearMessage)
+        viewModel.dispatch(AppAction.ClearMessage)
         assertEquals(null, viewModel.state.value.message)
     }
 
@@ -24,9 +24,9 @@ class AppViewModelTest {
         val viewModel = AppViewModel()
         val intent = Intent("test.action")
 
-        viewModel.dispatch(AppIntent.OpenExternalIntent(intent))
+        viewModel.dispatch(AppAction.OpenExternalIntent(intent))
 
-        val effect = viewModel.effects.first()
-        assertSame(intent, (effect as AppEffect.OpenExternalIntent).intent)
+        val effect = viewModel.event.first()
+        assertSame(intent, (effect as AppEvent.OpenExternalIntent).intent)
     }
 }

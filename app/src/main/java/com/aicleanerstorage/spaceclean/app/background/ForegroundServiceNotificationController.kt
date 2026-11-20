@@ -10,7 +10,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
-import com.aicleanerstorage.spaceclean.core.ui.R
+import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.notification.NotificationChannelManager
 import kotlinx.coroutines.CoroutineScope

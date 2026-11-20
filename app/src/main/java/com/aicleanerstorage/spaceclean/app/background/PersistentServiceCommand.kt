@@ -1,8 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.background
 
-import com.aicleanerstorage.spaceclean.feature.applock.view.applock.ui.AppLockBroadcastActions
-import com.aicleanerstorage.spaceclean.feature.applock.view.applock.ui.AppLockServiceActions
-import com.aicleanerstorage.spaceclean.feature.toolbox.data.battery.BatterySamplingServiceActions
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockBroadcastActions
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockServiceActions
 
 internal object PersistentServiceActions {
     const val START = "com.aicleanerstorage.spaceclean.notification.START"

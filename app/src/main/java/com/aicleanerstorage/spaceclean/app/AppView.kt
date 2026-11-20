@@ -15,19 +15,19 @@ fun AppView(viewModel: AppViewModel) {
     LaunchedEffect(state.message) {
         state.message?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            viewModel.dispatch(AppIntent.ClearMessage)
+            viewModel.dispatch(AppAction.ClearMessage)
         }
     }
 }
 
 @Composable
-fun AppEffectHost(viewModel: AppViewModel) {
+fun AppEventHost(viewModel: AppViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
-        viewModel.effects.collect { effect ->
+        viewModel.event.collect { effect ->
             when (effect) {
-                is AppEffect.OpenExternalIntent -> {
+                is AppEvent.OpenExternalIntent -> {
                     context.startActivity(effect.intent)
                 }
             }

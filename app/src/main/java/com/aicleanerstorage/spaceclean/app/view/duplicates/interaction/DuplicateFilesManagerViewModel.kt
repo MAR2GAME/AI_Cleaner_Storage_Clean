@@ -1,0 +1,274 @@
+package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
+
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.appString
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.duplicateScanFailedMessage
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+
+class DuplicateFilesManagerViewModel(
+    private val repository: FileRepository,
+    private val settingsRepository: SettingsRepository,
+    ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val scanDelayMillis: Long = 900L,
+    private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
+    private val completeDelayMillis: Long = 800L,
+) : MviViewModel<DuplicateFilesManagerUiState, FileManagerAction, FileManagerEvent>(DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted())) {
+    private val operations = FileOperations(viewModelScope, ioDispatcher) {
+        val groups = mapDuplicateGroups(repository.loadDuplicateFiles())
+        DuplicateFilesManagerUiState(
+            phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+            groups = groups,
+        )
+    }
+
+    private var exitRequested = false
+    private fun exit(home: Boolean) {
+        if (exitRequested) return
+        exitRequested = true
+        operations.cancel()
+        sendEvent(FileManagerEvent.Exit(home))
+    }
+
+    override fun onAction(intent: FileManagerAction) {
+        if (exitRequested) return
+        when (intent) {
+            is FileManagerAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
+            FileManagerAction.PermissionRejected -> exit(home = false)
+            FileManagerAction.BackClicked -> handleBack()
+
+            is FileManagerAction.StopClicked -> showStopDialog(intent.blockedPhase)
+            FileManagerAction.StopDismissed -> dismissStopDialog()
+            FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
+            FileManagerAction.DeleteCancellationRequested -> cancelDeletingAndReturnToBrowsing()
+            FileManagerAction.InitialLoadRequested -> startIfNeeded()
+            FileManagerAction.RefreshRequested -> refresh()
+            is FileManagerAction.GroupClicked -> openGroup(intent.group)
+            FileManagerAction.GroupDismissed -> closeGroup()
+            FileManagerAction.SelectAllClicked -> toggleAll()
+            FileManagerAction.WarningConfirmed -> acceptDuplicateFilesWarning()
+            is FileManagerAction.FileToggled -> toggleFile(intent.file)
+            FileManagerAction.AutoSelectClicked -> autoSelectCurrentGroup()
+            is FileManagerAction.GroupSelectionToggled -> toggleGroupSelection(intent.group)
+            FileManagerAction.CurrentGroupSelectionToggled -> toggleCurrentGroupSelection()
+            FileManagerAction.DeleteClicked -> requestDelete()
+            FileManagerAction.GroupDeleteClicked -> requestDeleteCurrentGroup()
+            FileManagerAction.DeleteDismissed -> cancelDelete()
+            FileManagerAction.SystemDeleteRejected -> rejectSystemDelete()
+            FileManagerAction.ErrorDismissed -> clearError()
+            FileManagerAction.SkippedDeleteCountConsumed -> clearSkippedDeleteCount()
+            FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
+            FileManagerAction.ContinueManagingClicked -> continueManaging()
+            FileManagerAction.DeletePrepared -> deleteSelectedFiles()
+            else -> Unit
+        }
+    }
+
+    private fun handleBack() {
+        when {
+            currentState.selectedGroup != null -> closeGroup()
+            currentState.phase == FileOperationPhase.Deleting -> showStopDialog()
+            currentState.phase == FileOperationPhase.Scanning -> showStopDialog(currentState.phase)
+            currentState.phase == FileOperationPhase.ConfirmDelete -> cancelDelete()
+            else -> exit(home = currentState.phase == FileOperationPhase.Result)
+        }
+    }
+
+    private fun showStopDialog(blockedPhase: FileOperationPhase? = null) {
+        changeState { it.copy(showStopDialog = true, blockedPhase = blockedPhase) }
+    }
+    private fun dismissStopDialog() { changeState { it.copy(showStopDialog = false, blockedPhase = null) } }
+    private fun cancelActiveOperation() {
+        operations.cancel()
+        dismissStopDialog()
+    }
+    private fun cancelDeletingAndReturnToBrowsing() { cancelActiveOperation(); onCancelDeletingPhase() }
+    private fun startIfNeeded() {
+        if (hasStartedForCurrentState()) return
+        refresh()
+    }
+
+    private fun refresh() {
+        operations.scan(
+            delayMillis = scanDelayMillis,
+            onStart = { setState { DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
+            onLoaded = { loaded -> setState { loaded.copy(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
+            onFailure = { error ->
+                setState { copy(phase = FileOperationPhase.NoResults, errorMessage = error.message ?: duplicateScanFailedMessage()) }
+            },
+        )
+    }
+
+    private fun openGroup(group: DuplicateGroupItem) {
+        changeState { it.copy(selectedGroupId = group.id) }
+    }
+
+    private fun closeGroup() {
+        changeState { it.copy(selectedGroupId = null) }
+    }
+
+    private fun toggleAll() {
+        changeState {
+            it.copy(selectedFileKeys = toggleIds(it.selectedFileKeys, it.allDeleteFileKeys))
+        }
+    }
+
+    private fun acceptDuplicateFilesWarning() {
+        settingsRepository.acceptDuplicateFilesWarning()
+        changeState { it.copy(showWarning = false) }
+    }
+
+    private fun toggleFile(file: DuplicateFileEntry) {
+        val key = duplicateFileKey(file)
+        changeState {
+            it.copy(selectedFileKeys = toggleId(it.selectedFileKeys, key))
+        }
+    }
+
+    private fun autoSelectCurrentGroup() {
+        val group = currentState.selectedGroup ?: return
+        val groupKeys = group.files.map(::duplicateFileKey).toSet()
+        val deletableGroupKeys = group.files.drop(1).map(::duplicateFileKey).toSet()
+        changeState {
+            it.copy(selectedFileKeys = (it.selectedFileKeys - groupKeys) + deletableGroupKeys)
+        }
+    }
+
+    private fun toggleGroupSelection(group: DuplicateGroupItem) {
+        val groupKeys = group.files.map(::duplicateFileKey).toSet()
+        val deletableGroupKeys = group.files.drop(1).map(::duplicateFileKey).toSet()
+        changeState {
+            val selectedGroupKeys = it.selectedFileKeys.intersect(groupKeys)
+            it.copy(
+                selectedFileKeys = if (selectedGroupKeys == deletableGroupKeys) {
+                    it.selectedFileKeys - groupKeys
+                } else {
+                    (it.selectedFileKeys - groupKeys) + deletableGroupKeys
+                }
+            )
+        }
+    }
+
+    private fun toggleCurrentGroupSelection() {
+        val group = currentState.selectedGroup ?: return
+        toggleGroupSelection(group)
+    }
+
+    private fun requestDelete() {
+        if (currentState.globalFilesToDelete.isNotEmpty()) {
+            changeState { it.copy(phase = FileOperationPhase.ConfirmDelete, pendingDeleteFileKeys = null) }
+        }
+    }
+
+    private fun requestDeleteCurrentGroup() {
+        val state = currentState
+        val selectedGroupKeys = state.selectedGroupFileKeys
+        if (state.selectedGroupFilesToDelete.isNotEmpty()) {
+            changeState {
+                it.copy(
+                    phase = FileOperationPhase.ConfirmDelete,
+                    pendingDeleteFileKeys = selectedGroupKeys
+                )
+            }
+        }
+    }
+
+    private fun cancelDelete() {
+        changeState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
+    }
+
+    private fun rejectSystemDelete() {
+        cancelDelete()
+    }
+
+    private fun clearError() {
+        changeState { it.copy(errorMessage = null) }
+    }
+
+    private fun clearSkippedDeleteCount() {
+        changeState { it.copy(skippedDeleteCount = 0) }
+    }
+
+    private fun onCancelDeletingPhase() {
+        changeState { current ->
+            if (current.phase == FileOperationPhase.Deleting) {
+                current.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null)
+            } else {
+                current
+            }
+        }
+    }
+
+    private fun deleteSelectedFiles() {
+        val selectedFiles = currentState.filesToDelete
+        operations.changeFiles(
+            hasSelection = selectedFiles.isNotEmpty(),
+            onEmptySelection = {
+                changeState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
+            },
+            onStart = { changeState { it.copy(phase = FileOperationPhase.Deleting, selectedGroupId = null) } },
+            operationDelayMillis = deleteDelayMillis,
+            completeDelayMillis = completeDelayMillis,
+            operation = {
+                val verifiedFiles = selectedFiles.filter { !it.duplicateHash.isNullOrBlank() && it.duplicatePeers.isNotEmpty() }
+                val result = repository.deleteFiles(verifiedFiles)
+                val skipped = selectedFiles.size - verifiedFiles.size + result.skippedCount
+                result.copy(skippedCount = skipped)
+            },
+            isSuccessful = { result ->
+                setState { copy(skippedDeleteCount = result.skippedCount) }
+                result.deletedCount > 0
+            },
+            onCompleteAnimation = { outcome, loaded ->
+                changeState {
+                    it.copy(
+                        phase = FileOperationPhase.CompleteAnimation,
+                        groups = loaded.groups,
+                        selectedGroupId = null,
+                        selectedFileKeys = emptySet(),
+                        pendingDeleteFileKeys = null,
+                        deletedBytes = outcome.freedBytes,
+                    )
+                }
+            },
+            onResult = { changeState { it.copy(phase = FileOperationPhase.Result) } },
+            onFailure = { error ->
+                changeState {
+                    it.copy(
+                        phase = FileOperationPhase.Browsing,
+                        pendingDeleteFileKeys = null,
+                        errorMessage = error.message ?: appString(R.string.deletion_failed)
+                    )
+                }
+            },
+        )
+    }
+
+    private fun continueManaging() {
+        changeState {
+            it.copy(
+                phase = FileOperationPhase.Browsing,
+                selectedFileKeys = emptySet(),
+                pendingDeleteFileKeys = null,
+                selectedGroupId = null
+            )
+        }
+    }
+
+    private fun hasStartedForCurrentState(): Boolean {
+        val state = currentState
+        if (state.phase != FileOperationPhase.Scanning) return true
+        return state.groups.isNotEmpty() || state.errorMessage != null
+    }
+}

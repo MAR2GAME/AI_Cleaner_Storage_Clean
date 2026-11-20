@@ -1,4 +1,4 @@
-package __PACKAGE__.feature.__FEATURE__.presentation
+package __PACKAGE__.app.view.__FEATURE__.interaction
 
 data class FeatureUiState(
     val phase: FeaturePhase = FeaturePhase.Idle,
@@ -19,6 +19,6 @@ sealed interface FeatureAction {
     data object BackClicked : FeatureAction
 }
 
-sealed interface FeatureEffect {
-    data object NavigateBack : FeatureEffect
+sealed interface FeatureEvent {
+    data object NavigateBack : FeatureEvent
 }

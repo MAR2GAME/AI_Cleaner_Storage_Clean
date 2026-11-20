@@ -1,6 +1,6 @@
 # 广告 SDK 降级计划（v2 评审稿）
 
-> 状态：**评审中，未改动任何代码**
+> 状态：**已按后续批准方案落地源码迁移，待 APK 构建与真机验收**。实际目录、改动边界及验证结果见 [实施记录](ad-sdk-downgrade-implementation.md)。以下保留原评审背景。
 > 分支：`codex/refactor-v3`
 > 背景：当前 `com.pdffox:advertise:1.0.10`（aar，新代）存在未修复问题，用户判定暂不可修；内部 nexus 无旧版 aar。因此回退到 DataRestoreFileRecovery 的 `:advertise` 旧源码模块（`D:\pros\my\DataRestoreFileRecovery\advertise`）。
 > 约束：单 app、无变体 → 不做多产品注入；单人 + AI 协作 → 验证收敛到本地构建 + 单 app 冒烟。

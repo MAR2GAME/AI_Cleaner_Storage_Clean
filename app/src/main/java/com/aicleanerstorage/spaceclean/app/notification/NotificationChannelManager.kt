@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.aicleanerstorage.spaceclean.core.ui.R
+import com.aicleanerstorage.spaceclean.R
 
 object NotificationChannelManager {
     const val PERSISTENT_CHANNEL_ID = "storage_clean_persistent"

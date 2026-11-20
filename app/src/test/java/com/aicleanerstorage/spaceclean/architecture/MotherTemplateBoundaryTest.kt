@@ -7,8 +7,7 @@ import org.junit.Test
 class MotherTemplateBoundaryTest {
     private val root = sequenceOf(File("."), File("..")).map(File::getCanonicalFile)
         .first { File(it, "settings.gradle.kts").exists() }
-    private val modules = listOf(File(root, "app")) + listOf("core", "feature")
-        .flatMap { File(root, it).listFiles().orEmpty().filter(File::isDirectory) }
+    private val modules = listOf(File(root, "app"))
     private fun sources() = modules.asSequence().flatMap { module ->
         sequenceOf("java", "kotlin").flatMap { language ->
             File(module, "src/main/$language").walkTopDown().filter { it.extension == "kt" }
@@ -53,7 +52,7 @@ class MotherTemplateBoundaryTest {
     }
 
     @Test fun `every feature view model uses the single MVI state owner`() {
-        val viewModels = sources().filter { "/feature/" in it.invariantSeparatorsPath && it.name.endsWith("ViewModel.kt") }.toList()
+        val viewModels = sources().filter { "/app/view/" in it.invariantSeparatorsPath && it.name.endsWith("ViewModel.kt") }.toList()
         assertTrue(viewModels.isNotEmpty())
         viewModels.forEach {
             val code = it.readText()

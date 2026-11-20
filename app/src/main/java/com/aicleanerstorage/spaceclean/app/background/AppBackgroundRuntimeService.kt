@@ -9,11 +9,10 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import com.aicleanerstorage.spaceclean.app.AppConfig
-import com.aicleanerstorage.spaceclean.feature.applock.view.applock.ui.AppLockServiceCoordinator
-import com.aicleanerstorage.spaceclean.core.contracts.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.feature.toolbox.data.battery.BatterySamplingCoordinator
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.feature.toolbox.domain.battery.BackgroundBatterySamplingPreferences
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockServiceCoordinator
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,8 +21,8 @@ import org.koin.android.ext.android.inject
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AppBackgroundRuntimeService : Service() {
-    private val batteryHistorySampler: BatteryHistorySampler by inject()
-    private val backgroundBatterySamplingPreferences: BackgroundBatterySamplingPreferences by inject()
+    private val sampleBatteryHistory: SampleBatteryHistoryUseCase by inject()
+    private val settingsRepository: SettingsRepository by inject()
     private val appLockRepository: AppLockRepository by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -37,8 +36,8 @@ class AppBackgroundRuntimeService : Service() {
         super.onCreate()
         batterySampling =
             BatterySamplingCoordinator(
-                sampler = batteryHistorySampler,
-                preferences = backgroundBatterySamplingPreferences,
+                sampler = sampleBatteryHistory,
+                settingsRepository = settingsRepository,
                 hasNotificationPermission = { AppConfig.hasPostNotificationsPermission(this) },
             )
         appLock = AppLockServiceCoordinator(this, appLockRepository, serviceScope)
