@@ -36,7 +36,7 @@ internal fun NetworkScanResultCard(uiState: NetworkScanUiState) {
     NetworkScanSectionCard(title = stringResource(R.string.wifi_scan_result)) {
         NetworkScanInfoRow(
             label = stringResource(R.string.wifi_ssid_label),
-            value = uiState.scan?.ssid?.displayUnknownSsid() ?: uiState.networkInfo.ssid.displayBlank(),
+            value = uiState.scan?.ssid ?: uiState.networkInfo.ssid ?: stringResource(R.string.unknown_ssid),
         )
         NetworkScanDivider()
         NetworkScanInfoRow(
@@ -121,8 +121,3 @@ internal fun NetworkScanDivider() {
         thickness = 1.dp,
     )
 }
-
-private fun String.displayUnknownSsid(): String =
-    takeUnless { it == "<unknown ssid>" || it.isBlank() } ?: "<unknown ssid>"
-
-private fun String.displayBlank(): String = ifBlank { "--" }

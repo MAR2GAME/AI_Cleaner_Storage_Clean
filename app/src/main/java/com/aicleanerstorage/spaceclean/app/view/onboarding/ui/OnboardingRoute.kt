@@ -31,7 +31,7 @@ fun OnboardingRoute(
         viewModel.event.collect { effect ->
             when (effect) {
                 OnboardingEvent.NotifyScanFinished -> Unit
-                is OnboardingEvent.FinishOnboarding -> {
+                OnboardingEvent.FinishOnboarding -> {
                     if (!exiting) {
                         exiting = true
                         navigator.replace(AppDestination.Main())

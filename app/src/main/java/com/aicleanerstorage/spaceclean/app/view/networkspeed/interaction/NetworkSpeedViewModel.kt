@@ -2,7 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.networkkit.NetworkRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

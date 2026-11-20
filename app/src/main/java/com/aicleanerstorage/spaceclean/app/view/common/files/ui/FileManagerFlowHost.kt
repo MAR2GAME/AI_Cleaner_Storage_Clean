@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.currentStateAsState
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
@@ -19,7 +18,7 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 
 internal class FileManagerOwnerState(initialGranted: Boolean) : ViewModel() {
-    val permissionState = FileManagerPermissionState(initialGranted, viewModelScope)
+    val permissionState = FileManagerPermissionState(initialGranted)
 
     override fun onCleared() {
         permissionState.markLeaving()

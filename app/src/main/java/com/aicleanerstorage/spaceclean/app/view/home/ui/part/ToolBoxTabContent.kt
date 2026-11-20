@@ -36,24 +36,22 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.app.view.home.ui.ToolboxTargets
-import com.aicleanerstorage.spaceclean.app.view.home.ui.iconRes
-import com.aicleanerstorage.spaceclean.app.view.home.ui.titleRes
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressable
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.CleanXSingleActionDialog
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
 internal fun ToolBoxTabContent(
     summaryState: HomeSummaryUiState,
-    onFeatureClick: (ToolNavigationTarget) -> Unit = {},
+    onFeatureClick: (AppDestination) -> Unit = {},
 ) {
     val context = LocalContext.current
     var showWhatsAppMissingDialog by remember { mutableStateOf(false) }
     val tools = remember { ToolboxTargets }
 
-    fun openTool(feature: ToolNavigationTarget) {
-        if (feature == ToolNavigationTarget.WhatsAppCleaner && !context.hasWhatsAppInstalled()) {
+    fun openTool(feature: AppDestination) {
+        if (feature == AppDestination.WhatsAppCleaner && !context.hasWhatsAppInstalled()) {
             showWhatsAppMissingDialog = true
         } else {
             onFeatureClick(feature)
@@ -68,13 +66,6 @@ internal fun ToolBoxTabContent(
                 title = stringResource(R.string.home_toolbox_title),
                 features = tools,
                 iconSize = { it.toolboxIconSize() },
-                titleRes = { feature ->
-                    if (feature == ToolNavigationTarget.NotificationCleaner) {
-                        R.string.home_notification_bar
-                    } else {
-                        feature.titleRes()
-                    }
-                },
                 onFeatureClick = ::openTool,
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -93,7 +84,7 @@ internal fun ToolBoxTabContent(
 }
 
 @Composable
-private fun ToolboxShortcutPanel(onFeatureClick: (ToolNavigationTarget) -> Unit) {
+private fun ToolboxShortcutPanel(onFeatureClick: (AppDestination) -> Unit) {
     Surface(
         modifier =
             Modifier
@@ -111,9 +102,9 @@ private fun ToolboxShortcutPanel(onFeatureClick: (ToolNavigationTarget) -> Unit)
             verticalAlignment = Alignment.Top,
         ) {
             ToolboxShortcut(
-                feature = ToolNavigationTarget.DeviceInfo,
+                iconRes = R.drawable.ic_device_phone,
                 title = stringResource(R.string.home_device_information),
-                onClick = { onFeatureClick(ToolNavigationTarget.DeviceInfo) },
+                onClick = { onFeatureClick(AppDestination.DeviceInfo) },
             )
             Spacer(
                 modifier =
@@ -123,9 +114,9 @@ private fun ToolboxShortcutPanel(onFeatureClick: (ToolNavigationTarget) -> Unit)
                         .background(Color(0xFFE5E5E5)),
             )
             ToolboxShortcut(
-                feature = ToolNavigationTarget.BatteryInfo,
+                iconRes = R.drawable.ic_battery,
                 title = stringResource(R.string.home_battery_usage),
-                onClick = { onFeatureClick(ToolNavigationTarget.BatteryInfo) },
+                onClick = { onFeatureClick(AppDestination.BatteryInfo) },
             )
         }
     }
@@ -133,7 +124,7 @@ private fun ToolboxShortcutPanel(onFeatureClick: (ToolNavigationTarget) -> Unit)
 
 @Composable
 private fun ToolboxShortcut(
-    feature: ToolNavigationTarget,
+    @androidx.annotation.DrawableRes iconRes: Int,
     title: String,
     onClick: () -> Unit,
 ) {
@@ -150,7 +141,7 @@ private fun ToolboxShortcut(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(feature.iconRes()),
+            painter = painterResource(iconRes),
             contentDescription = title,
             modifier = Modifier.size(44.dp),
         )
@@ -173,14 +164,14 @@ private fun ToolboxShortcut(
     }
 }
 
-private fun ToolNavigationTarget.toolboxIconSize(): DpSize =
+private fun AppDestination.toolboxIconSize(): DpSize =
     when (this) {
-        ToolNavigationTarget.AppUsage -> DpSize(39.dp, 41.dp)
-        ToolNavigationTarget.NotificationCleaner -> DpSize(39.dp, 44.dp)
-        ToolNavigationTarget.WhatsAppCleaner -> DpSize(44.dp, 44.dp)
-        ToolNavigationTarget.NetworkUsage -> DpSize(41.dp, 41.dp)
-        ToolNavigationTarget.NetworkScan -> DpSize(45.dp, 41.dp)
-        ToolNavigationTarget.NetworkSpeed -> DpSize(40.dp, 23.dp)
+        AppDestination.AppUsage -> DpSize(39.dp, 41.dp)
+        AppDestination.NotificationCleaner -> DpSize(39.dp, 44.dp)
+        AppDestination.WhatsAppCleaner -> DpSize(44.dp, 44.dp)
+        AppDestination.NetworkUsage -> DpSize(41.dp, 41.dp)
+        AppDestination.NetworkScan -> DpSize(45.dp, 41.dp)
+        AppDestination.NetworkSpeed -> DpSize(40.dp, 23.dp)
         else -> DpSize(40.dp, 40.dp)
     }
 

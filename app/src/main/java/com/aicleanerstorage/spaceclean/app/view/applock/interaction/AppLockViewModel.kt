@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
+import com.aicleanerstorage.spaceclean.data.applock.AppLockPinRule
 
-import com.aicleanerstorage.spaceclean.domain.model.AppLockAppModel
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
@@ -31,19 +31,6 @@ class AppLockViewModel(
             isPinSet = repository.isPinSet(),
             overlayPermissionRequired = false
         )) {
-    override fun onAction(intent: AppLockAction) {
-        when (intent) {
-            is AppLockAction.NavigationRequested -> sendEvent(AppLockEvent.Navigate(intent.destination))
-            is AppLockAction.SearchInputChanged -> updateSearchQuery(intent.query)
-            AppLockAction.ManagePageRequested -> returnToManage()
-            AppLockAction.PinPageExitRequested -> leavePinPage()
-            is AppLockAction.MonitoringSettingRequested -> guard(listOf(AppPermission.UsageAccess, AppPermission.Overlay)) { setMonitoringEnabled(intent.enabled) }
-            is AppLockAction.AutoLockSettingRequested -> setAutoLockEnabled(intent.enabled)
-            is AppLockAction.VibrationSettingRequested -> setVibrationEnabled(intent.enabled)
-            else -> handleIntent(intent)
-        }
-    }
-
     private var completePinJob: Job? = null
 
     init {
@@ -51,8 +38,9 @@ class AppLockViewModel(
         syncMonitoringService()
     }
 
-    private fun handleIntent(action: AppLockAction) {
+    override fun onAction(action: AppLockAction) {
         when (action) {
+            is AppLockAction.NavigationRequested -> sendEvent(AppLockEvent.Navigate(action.destination))
             AppLockAction.BackClicked -> if (!handleBack()) sendEvent(AppLockEvent.Exit)
             AppLockAction.Resumed -> refreshAfterResume()
             AppLockAction.ToastShown -> consumeToast()
@@ -71,7 +59,6 @@ class AppLockViewModel(
             } else setMonitoringEnabled(false)
             is AppLockAction.AutoLockChanged -> setAutoLockEnabled(action.enabled)
             is AppLockAction.VibrationChanged -> setVibrationEnabled(action.enabled)
-            else -> Unit
         }
     }
 
@@ -273,7 +260,7 @@ class AppLockViewModel(
         completePinJob = null
     }
 
-    private fun processCompletePin(pin: String) {
+    private suspend fun processCompletePin(pin: String) {
         when (currentState.pinStep) {
             AppLockPinStep.Create -> {
                 changeState { AppLockReducer.firstPinEntered(it, pin) }
@@ -285,7 +272,7 @@ class AppLockViewModel(
                         .filter { it.isLocked }
                         .map { it.packageName }
                         .toSet()
-                    repository.savePin(pin)
+                    withContext(ioDispatcher) { repository.savePin(pin) }
                     repository.setLockedPackages(lockedPackages)
                     repository.setMonitoringEnabled(true)
                     changeState { AppLockReducer.pinCreated(it, !repository.hasOverlayPermission()) }
@@ -297,7 +284,7 @@ class AppLockViewModel(
             }
 
             AppLockPinStep.Verify -> {
-                if (repository.verifyPin(pin)) {
+                if (withContext(ioDispatcher) { repository.verifyPin(pin) }) {
                     changeState { AppLockReducer.pinVerified(it, !repository.hasOverlayPermission()) }
                     loadApps()
                 } else {
@@ -306,7 +293,7 @@ class AppLockViewModel(
             }
 
             AppLockPinStep.ChangeVerify -> {
-                if (repository.verifyPin(pin)) {
+                if (withContext(ioDispatcher) { repository.verifyPin(pin) }) {
                     changeState { AppLockReducer.oldPinVerified(it) }
                 } else {
                     showPinError()
@@ -319,7 +306,7 @@ class AppLockViewModel(
 
             AppLockPinStep.ChangeConfirm -> {
                 if (pin == currentState.firstPin) {
-                    repository.savePin(pin)
+                    withContext(ioDispatcher) { repository.savePin(pin) }
                     changeState { AppLockReducer.pinChanged(it) }
                 } else {
                     showPinError()

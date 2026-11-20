@@ -12,10 +12,10 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.ui.FileManagerTargets
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
-internal fun FilesManagerTabContent(onFeatureClick: (ToolNavigationTarget) -> Unit = {}) {
+internal fun FilesManagerTabContent(onFeatureClick: (AppDestination) -> Unit = {}) {
     val categories = remember { FileManagerTargets }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -31,16 +31,16 @@ internal fun FilesManagerTabContent(onFeatureClick: (ToolNavigationTarget) -> Un
     }
 }
 
-private fun ToolNavigationTarget.homeManagerIconSize(): DpSize =
+private fun AppDestination.homeManagerIconSize(): DpSize =
     when (this) {
-        ToolNavigationTarget.Photos -> DpSize(39.dp, 41.dp)
-        ToolNavigationTarget.SimilarPhotos -> DpSize(39.dp, 44.dp)
-        ToolNavigationTarget.PhotoPrivacy -> DpSize(44.dp, 44.dp)
-        ToolNavigationTarget.Screenshots -> DpSize(35.dp, 35.dp)
-        ToolNavigationTarget.Videos -> DpSize(40.dp, 30.dp)
-        ToolNavigationTarget.Audios -> DpSize(40.dp, 39.dp)
-        ToolNavigationTarget.LargeFiles -> DpSize(40.dp, 41.dp)
-        ToolNavigationTarget.DuplicateFiles -> DpSize(44.dp, 44.dp)
-        ToolNavigationTarget.Documents -> DpSize(44.dp, 38.dp)
+        AppDestination.PhotosManager -> DpSize(39.dp, 41.dp)
+        AppDestination.SimilarPhotosManager -> DpSize(39.dp, 44.dp)
+        AppDestination.PhotoPrivacyManager -> DpSize(44.dp, 44.dp)
+        AppDestination.ScreenshotsManager -> DpSize(35.dp, 35.dp)
+        AppDestination.VideosManager -> DpSize(40.dp, 30.dp)
+        AppDestination.AudiosManager -> DpSize(40.dp, 39.dp)
+        AppDestination.LargeFilesManager -> DpSize(40.dp, 41.dp)
+        AppDestination.DuplicateFilesManager -> DpSize(44.dp, 44.dp)
+        AppDestination.DocumentsManager -> DpSize(44.dp, 38.dp)
         else -> DpSize(40.dp, 40.dp)
     }

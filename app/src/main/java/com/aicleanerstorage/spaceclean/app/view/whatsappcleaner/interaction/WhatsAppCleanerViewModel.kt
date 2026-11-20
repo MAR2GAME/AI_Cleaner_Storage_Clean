@@ -1,14 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
+import com.aicleanerstorage.spaceclean.data.whatsapp.loadWhatsAppFileGroups
+
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileType
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppFileBucket
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,21 +26,13 @@ class WhatsAppCleanerViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val permissionChecker: PermissionChecker? = null,
 ) : MviViewModel<WhatsAppCleanerUiState, WhatsAppCleanerAction, WhatsAppCleanerEvent>(WhatsAppCleanerUiState()) {
-    override fun onAction(intent: WhatsAppCleanerAction) {
-        when (intent) {
-            is WhatsAppCleanerAction.NavigationRequested -> sendEvent(WhatsAppCleanerEvent.Navigate(intent.destination))
-            WhatsAppCleanerAction.InitialScanRequested -> startScanIfNeeded()
-            WhatsAppCleanerAction.SelectedFilesCleanRequested -> cleanSelectedFiles()
-            else -> handleIntent(intent)
-        }
-    }
-
     private var hasStarted = false
     private var scanJob: Job? = null
     private var cleanJob: Job? = null
 
-    private fun handleIntent(action: WhatsAppCleanerAction) {
+    override fun onAction(action: WhatsAppCleanerAction) {
         when (action) {
+            is WhatsAppCleanerAction.NavigationRequested -> sendEvent(WhatsAppCleanerEvent.Navigate(action.destination))
             WhatsAppCleanerAction.BackClicked -> { cancelActiveOperation(); sendEvent(WhatsAppCleanerEvent.Exit(false)) }
             WhatsAppCleanerAction.CompletionExitClicked -> sendEvent(WhatsAppCleanerEvent.Exit(true))
             WhatsAppCleanerAction.ScanStartRequested -> startScanIfNeeded()
@@ -49,7 +45,6 @@ class WhatsAppCleanerViewModel(
             is WhatsAppCleanerAction.GroupToggled -> toggleGroup(action.group)
             is WhatsAppCleanerAction.CategoryToggled -> toggleCategory(action.group, action.category)
             is WhatsAppCleanerAction.GroupExpansionToggled -> toggleExpanded(action.group)
-            else -> Unit
         }
     }
 
@@ -66,9 +61,9 @@ class WhatsAppCleanerViewModel(
                         changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = "permission_denied") }
                         return@launch
                     }
-                    val files = repository.loadWhatsAppFiles()
+                    val buckets = repository.loadWhatsAppFileGroups()
                     delay(SCAN_DELAY_MILLIS)
-                    val nextState = buildScanResultState(files)
+                    val nextState = buildScanResultState(buckets)
                     setState { nextState }
                 } catch (error: CancellationException) {
                     throw error
@@ -227,16 +222,14 @@ class WhatsAppCleanerViewModel(
         super.onCleared()
     }
 
-    private fun buildScanResultState(files: List<ManagedFileItemModel>): WhatsAppCleanerUiState {
-        val cleanableFiles = files.filter { it.sizeBytes > 0L }
+    private fun buildScanResultState(buckets: Map<WhatsAppFileBucket, List<ManagedFileItem>>): WhatsAppCleanerUiState {
         val groups =
             WhatsAppCleanerGroup.values().map { group ->
-                val groupFiles = cleanableFiles.filter { item -> item.toCleanerGroup() == group }
                 WhatsAppCleanerGroupItem(
                     group = group,
                     children =
                         WhatsAppCleanerCategory.values().map { category ->
-                            val categoryFiles = groupFiles.filter { item -> item.toCleanerCategory() == category }
+                            val categoryFiles = buckets[WhatsAppFileBucket(group, category)].orEmpty()
                             WhatsAppCleanerSubItem(
                                 group = group,
                                 category = category,
@@ -262,35 +255,6 @@ class WhatsAppCleanerViewModel(
             selectedCount = newGroups.flatMap { it.children }.filter { it.selected }.sumOf { it.files.size },
         )
 
-    private fun ManagedFileItemModel.toCleanerGroup(): WhatsAppCleanerGroup {
-        val source = listOfNotNull(path, bucketName, name).joinToString("/").lowercase()
-        return if (
-            "cache" in source ||
-            "tmp" in source ||
-            "temp" in source ||
-            ".trash" in source ||
-            ".statuses" in source ||
-            "thumb" in source
-        ) {
-            WhatsAppCleanerGroup.Cache
-        } else {
-            WhatsAppCleanerGroup.File
-        }
-    }
-
-    private fun ManagedFileItemModel.toCleanerCategory(): WhatsAppCleanerCategory {
-        val source = listOfNotNull(path, bucketName, name).joinToString("/").lowercase()
-        val extension = name.substringAfterLast('.', missingDelimiterValue = "").lowercase()
-        return when {
-            "database" in source || extension in DATABASE_EXTENSIONS -> WhatsAppCleanerCategory.Databases
-            "document" in source || (type == ManagedFileType.Document && extension in DOCUMENT_EXTENSIONS) -> WhatsAppCleanerCategory.Documents
-            type == ManagedFileType.Image -> WhatsAppCleanerCategory.Images
-            type == ManagedFileType.Video -> WhatsAppCleanerCategory.Videos
-            type == ManagedFileType.Audio -> WhatsAppCleanerCategory.Audios
-            else -> WhatsAppCleanerCategory.Other
-        }
-    }
-
     private fun WhatsAppCleanerCategory.shouldSelectByDefault(group: WhatsAppCleanerGroup): Boolean =
         group == WhatsAppCleanerGroup.Cache || this == WhatsAppCleanerCategory.Other
 
@@ -298,25 +262,6 @@ class WhatsAppCleanerViewModel(
         private const val SCAN_DELAY_MILLIS = 650L
         private const val CLEANING_ANIMATION_MIN_MILLIS = 1600L
         private const val COMPLETE_ANIMATION_MILLIS = 800L
-        val DATABASE_EXTENSIONS = setOf("db", "crypt", "crypt5", "crypt7", "crypt8", "crypt12", "crypt14", "crypt15")
-        val DOCUMENT_EXTENSIONS = setOf(
-            "pdf",
-            "doc",
-            "docx",
-            "xls",
-            "xlsx",
-            "ppt",
-            "pptx",
-            "txt",
-            "csv",
-            "rtf",
-            "zip",
-            "rar",
-            "7z",
-            "apk",
-            "json",
-            "xml",
-        )
     }
 
     private fun appString(resId: Int): String = message(resId)

@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.documents.ui
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerUiState
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -19,16 +21,15 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerNoRes
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
-import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsListStyle
-import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayStyle
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun DocumentsManagerScreen(
-    state: DocumentsManagerUiState,
+    state: FileListManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
@@ -66,20 +67,20 @@ fun DocumentsManagerScreen(
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(
-                        tabs = state.displayTabs,
+                        tabs = state.tabs,
                         selectedTabIndex = state.selectedTabIndex,
                         onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
                     )
                 },
             ) {
                 FileManagerListView(
-                    tabs = state.displayTabs,
+                    tabs = state.tabs,
                     items = visibleItems,
                     selectedTabIndex = state.selectedTabIndex,
                     selectedIds = state.selectedIds,
                     allSelected = state.allSelected,
                     scrollState = scrollState,
-                    style = DocumentsListStyle,
+                    style = FileListDisplayStyle.Documents,
                     onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
                     onToggleAll = { onAction(FileManagerAction.VisibleItemsToggled) },
                     onSelect = { onAction(FileManagerAction.SelectionToggled(it)) },

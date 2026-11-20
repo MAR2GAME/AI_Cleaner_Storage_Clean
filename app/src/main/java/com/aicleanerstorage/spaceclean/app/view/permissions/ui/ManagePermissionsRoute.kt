@@ -44,7 +44,6 @@ fun ManagePermissionsRoute(navigator: AppNavigator, viewModel: ManagePermissions
         viewModel.event.collect { effect ->
             when (effect) {
                 ManagePermissionsEvent.NavigateBack -> navigator.back()
-                is ManagePermissionsEvent.Navigate -> navigator.navigate(effect.destination)
                 is ManagePermissionsEvent.OpenSettings -> {
                     permissionGate.request(effect.permission) { refreshStatuses() }
                 }

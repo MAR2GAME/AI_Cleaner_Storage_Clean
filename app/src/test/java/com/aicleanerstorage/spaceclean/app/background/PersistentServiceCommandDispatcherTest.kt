@@ -12,23 +12,21 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-import org.junit.rules.TemporaryFolder
-
-import org.junit.Rule
-
 import java.lang.reflect.Proxy
 
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 
-import com.aicleanerstorage.spaceclean.domain.model.BatteryInfoModel
+import com.aicleanerstorage.devicekit.model.BatteryInfo
 
-import com.aicleanerstorage.spaceclean.data.repository.BatteryHistoryRepositoryImpl
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import kotlinx.coroutines.flow.MutableStateFlow
 
 import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockServiceActions
-import com.aicleanerstorage.spaceclean.domain.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -84,7 +82,7 @@ class PersistentServiceCommandDispatcherTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `service and page share sampling until the last owner stops`() = runTest {
-        val history = BatteryHistoryRepositoryImpl(folder.newFile())
+        val history = TestBatteryHistory()
         val sampler = sampler(history, testScheduler)
         val settings = InMemorySettingsRepository(backgroundSampling = true)
         val coordinator = BatterySamplingCoordinator(sampler, settings) { true }
@@ -106,7 +104,7 @@ class PersistentServiceCommandDispatcherTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `battery coordinator does not sample without preference or notification permission`() = runTest {
-        val history = BatteryHistoryRepositoryImpl(folder.newFile())
+        val history = TestBatteryHistory()
         val sampler = sampler(history, testScheduler)
         BatterySamplingCoordinator(sampler, InMemorySettingsRepository()) { true }.syncSamplingState()
         runCurrent()
@@ -116,20 +114,29 @@ class PersistentServiceCommandDispatcherTest {
         assertEquals(0, history.samples.value.size)
     }
 
-    @get:Rule val folder = TemporaryFolder()
+    private class TestBatteryHistory : BatteryHistoryRepository {
+        override val samples = MutableStateFlow<List<BatteryHistorySampleModel>>(emptyList())
+
+        override fun loadRecent(nowMillis: Long) = samples.value
+
+        override fun append(sample: BatteryHistorySampleModel, nowMillis: Long): List<BatteryHistorySampleModel> {
+            samples.value = samples.value + sample
+            return samples.value
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun sampler(history: BatteryHistoryRepositoryImpl, scheduler: TestCoroutineScheduler): SampleBatteryHistoryUseCase {
+    private fun sampler(history: BatteryHistoryRepository, scheduler: TestCoroutineScheduler): BatteryHistorySampler {
         val device = Proxy.newProxyInstance(
             DeviceInfoRepository::class.java.classLoader, arrayOf(DeviceInfoRepository::class.java),
         ) { _, method, _ ->
             when (method.name) {
-                "batteryInfo" -> BatteryInfoModel(80, "Good", 29f, 4000, "Li-ion", 4000)
+                "batteryInfo" -> BatteryInfo(80, "Good", 29f, 4000, "Li-ion", 4000)
                 "batteryCurrentNowMa" -> 200f
                 else -> error("Unexpected device call: ${method.name}")
             }
         } as DeviceInfoRepository
-        return SampleBatteryHistoryUseCase(device, history, StandardTestDispatcher(scheduler), { 1000L + scheduler.currentTime }, 100L)
+        return BatteryHistorySampler(device, history, StandardTestDispatcher(scheduler), { 1000L + scheduler.currentTime }, 100L)
     }
 }
 

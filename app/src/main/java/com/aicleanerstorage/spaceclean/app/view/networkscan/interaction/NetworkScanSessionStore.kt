@@ -1,16 +1,16 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.NetworkScanResultModel
+import com.aicleanerstorage.networkkit.model.NetworkScanResult
 import java.util.concurrent.atomic.AtomicReference
 
 object NetworkScanSessionStore {
-    private val latestScan = AtomicReference<NetworkScanResultModel?>(null)
+    private val latestScan = AtomicReference<NetworkScanResult?>(null)
 
-    fun save(scan: NetworkScanResultModel) {
+    fun save(scan: NetworkScanResult) {
         latestScan.set(scan)
     }
 
-    fun get(): NetworkScanResultModel? = latestScan.get()
+    fun get(): NetworkScanResult? = latestScan.get()
 
     fun clear() {
         latestScan.set(null)

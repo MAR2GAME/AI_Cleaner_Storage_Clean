@@ -18,14 +18,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPhoto
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun PhotoPrivacyManagerScreen(
     state: PhotoPrivacyManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BackHandler { onAction(FileManagerAction.BackClicked) }

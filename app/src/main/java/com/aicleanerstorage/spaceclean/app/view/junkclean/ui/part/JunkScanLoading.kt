@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanSpiralAnimation
-import com.aicleanerstorage.spaceclean.domain.model.JunkCategory
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 
 @Composable
 internal fun JunkScanLoading(uiState: JunkCleanUiState) {

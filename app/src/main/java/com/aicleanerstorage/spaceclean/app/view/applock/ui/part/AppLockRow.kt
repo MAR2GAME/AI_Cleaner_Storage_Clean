@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
-import com.aicleanerstorage.spaceclean.domain.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
 
 @Composable
 internal fun AppLockRow(

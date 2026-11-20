@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.root
 
+import org.koin.core.qualifier.named
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -8,10 +10,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigatorImpl
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.VirusEffectHandler
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
@@ -42,26 +43,23 @@ import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewM
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.AppUsageRoute
-import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.audios.ui.AudiosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryInfoRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.AudiosFileDetailRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.DocumentsFileDetailRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.LargeFilesFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.MediaFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileListDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.PhotosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.ScreenshotsFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.SimilarPhotosFileDetailRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.VideosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoRoute
-import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.documents.ui.DocumentsManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.duplicates.ui.DuplicateFilesManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
 import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeRoute
-import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.largefiles.ui.LargeFilesManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanDevicesViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
@@ -91,7 +89,6 @@ import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashEvent
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
 import com.aicleanerstorage.spaceclean.app.view.splash.ui.SplashLegalDocument
 import com.aicleanerstorage.spaceclean.app.view.splash.ui.SplashScreen
-import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.videos.ui.VideosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerRoute
@@ -177,64 +174,59 @@ internal fun AppNavHost(
 
 internal fun NavGraphBuilder.registerAntiVirusRoutes(
     navController: NavHostController,
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
     composable<AppDestination.AntiVirus> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AntiVirus>() }
         val viewModel: VirusScanViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
-        VirusEffectHandler(pageNavigator, viewModel)
+        VirusEffectHandler(navigator, viewModel)
         AntiVirusRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
         )
     }
 
     composable<AppDestination.VirusQuickScan> { backStackEntry ->
-        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry) {
             navController.getBackStackEntry<AppDestination.AntiVirus>()
         }
         val viewModel: VirusScanViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VirusEffectHandler(pageNavigator, viewModel)
+        VirusEffectHandler(navigator, viewModel)
         QuickScanVirusRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
         )
     }
 
     composable<AppDestination.VirusDeepScan> { backStackEntry ->
-        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry, navController) {
             navController.getBackStackEntry<AppDestination.AntiVirus>()
         }
         val viewModel: VirusScanViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VirusEffectHandler(pageNavigator, viewModel)
+        VirusEffectHandler(navigator, viewModel)
         DeepScanVirusRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
         )
     }
 
     composable<AppDestination.VirusResult> { backStackEntry ->
-        val pageNavigator = remember(navigator, backStackEntry) { navigator.forEntry(backStackEntry) }
         val parentEntry = remember(backStackEntry) {
             navController.getBackStackEntry<AppDestination.AntiVirus>()
         }
         val viewModel: VirusScanViewModel = koinViewModel(viewModelStoreOwner = parentEntry)
-        VirusEffectHandler(pageNavigator, viewModel)
+        VirusEffectHandler(navigator, viewModel)
         ScanVirusResultRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
         )
     }
 
     composable<AppDestination.NoVirusResult> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AntiVirus>() }
         val viewModel: VirusScanViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
-        VirusEffectHandler(pageNavigator, viewModel)
-        NoVirusResultRoute(pageNavigator, viewModel)
+        VirusEffectHandler(navigator, viewModel)
+        NoVirusResultRoute(navigator, viewModel)
     }
 }
 
@@ -242,34 +234,32 @@ internal fun NavGraphBuilder.registerAntiVirusRoutes(
 
 
 internal fun NavGraphBuilder.registerAppLockRoutes(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
-    composable<AppDestination.AppLock> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.AppLock> {
         val viewModel: AppLockViewModel = koinViewModel()
-        AppLockRoute(navigator = pageNavigator, viewModel = viewModel)
+        AppLockRoute(navigator = navigator, viewModel = viewModel)
     }
 }
 
 
 
 internal fun NavGraphBuilder.registerCleanRoutes(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
     composable<AppDestination.JunkClean> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val viewModel: JunkCleanViewModel = koinViewModel(viewModelStoreOwner = entry)
         JunkCleanRoute(
             viewModel = viewModel,
-            onNavigateBack = { pageNavigator.back() },
-            onNavigateHome = { pageNavigator.resetToRoot(AppDestination.Main()) },
-            onNavigateHomeAfterComplete = { pageNavigator.resetToRoot(AppDestination.Main()) },
+            onNavigateBack = { navigator.back() },
+            onNavigateHome = { navigator.resetToRoot(AppDestination.Main()) },
+            onNavigateHomeAfterComplete = { navigator.resetToRoot(AppDestination.Main()) },
             resultTools = { modifier, enabled ->
                 ToolFeatureBanners(
                     modifier = modifier,
-                    excludedDestinations = setOf(ToolNavigationTarget.JunkClean),
+                    excludedDestinations = setOf(AppDestination.JunkClean),
                     onNavigateTool = { target ->
-                        if (enabled) pageNavigator.resetToRoot(target.toAppDestination())
+                        if (enabled) navigator.resetToRoot(target)
                     },
                 )
             },
@@ -288,39 +278,37 @@ internal fun NavGraphBuilder.registerCleanRoutes(
  */
 internal fun NavGraphBuilder.registerFileManagerRoutes(
     navController: NavHostController,
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
     composable<AppDestination.PhotosManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.PhotosManager>() }
         val viewModel: PhotosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             PhotosManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.PhotosDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.PhotosManager>() }
         val viewModel: PhotosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             PhotosFileDetailRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.PhotosDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -329,36 +317,34 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.SimilarPhotosManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.SimilarPhotosManager>() }
         val viewModel: SimilarPhotosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             SimilarPhotosManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.SimilarPhotosDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.SimilarPhotosManager>() }
         val viewModel: SimilarPhotosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             SimilarPhotosFileDetailRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.SimilarPhotosDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -368,17 +354,16 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
 
     // 鐓х墖闅愮�?閲嶅鏂囦欢鏄嫭绔嬪崟椤碉紝entry 鑷韩鍗虫祦绋嬫牴锛屽悓鏍风敤瀹夸富鎵樼娴佺▼绾?effect�?
     composable<AppDestination.PhotoPrivacyManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val viewModel: PhotoPrivacyManagerViewModel = koinViewModel(viewModelStoreOwner = entry)
         FileManagerFlowHost(
             rootEntry = entry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             PhotoPrivacyManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
@@ -386,36 +371,34 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.ScreenshotsManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.ScreenshotsManager>() }
         val viewModel: ScreenshotsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             ScreenshotsManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.ScreenshotsDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.ScreenshotsManager>() }
         val viewModel: ScreenshotsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             ScreenshotsFileDetailRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.ScreenshotsDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -424,36 +407,40 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.VideosManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.VideosManager>() }
-        val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: MediaManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.VideosManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             VideosManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.VideosDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.VideosManager>() }
-        val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: MediaManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.VideosManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
-            VideosFileDetailRoute(
-                navigator = pageNavigator,
+            MediaFileDetailRoute(
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.VideosDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -462,36 +449,40 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.AudiosManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AudiosManager>() }
-        val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: MediaManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.AudiosManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             AudiosManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.AudiosDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AudiosManager>() }
-        val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: MediaManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.AudiosManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
-            AudiosFileDetailRoute(
-                navigator = pageNavigator,
+            MediaFileDetailRoute(
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.AudiosDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -500,36 +491,40 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.LargeFilesManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.LargeFilesManager>() }
-        val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: FileListManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.LargeFilesManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             LargeFilesManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.LargeFilesDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.LargeFilesManager>() }
-        val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: FileListManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.LargeFilesManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
-            LargeFilesFileDetailRoute(
-                navigator = pageNavigator,
+            FileListDetailRoute(
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.LargeFilesDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -538,17 +533,16 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.DuplicateFilesManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val viewModel: DuplicateFilesManagerViewModel = koinViewModel(viewModelStoreOwner = entry)
         FileManagerFlowHost(
             rootEntry = entry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             DuplicateFilesManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
@@ -556,36 +550,40 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
     }
 
     composable<AppDestination.DocumentsManager> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.DocumentsManager>() }
-        val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: FileListManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.DocumentsManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
             DocumentsManagerRoute(
-                navigator = pageNavigator,
+                navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
             )
         }
     }
     composable<AppDestination.DocumentsDetail> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.DocumentsManager>() }
-        val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
+        val viewModel: FileListManagerViewModel = koinViewModel(
+            qualifier = named<AppDestination.DocumentsManager>(),
+            viewModelStoreOwner = rootEntry,
+        )
         FileManagerFlowHost(
             rootEntry = rootEntry,
             currentEntry = entry,
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             errorMessage = { it.errorMessage },
         ) { permissionState ->
-            DocumentsFileDetailRoute(
-                navigator = pageNavigator,
+            FileListDetailRoute(
+                navigator = navigator,
                 viewModel = viewModel,
                 initialIndex = entry.toRoute<AppDestination.DocumentsDetail>().initialIndex.coerceAtLeast(0),
                 permissionState = permissionState,
@@ -601,11 +599,10 @@ internal fun NavGraphBuilder.registerFileManagerRoutes(
 
 
 internal fun NavGraphBuilder.registerHomeRoutes(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
     externalBlockingPromptActive: Boolean,
 ) {
     composable<AppDestination.Main> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
         val viewModel: HomeViewModel = koinViewModel()
         val initialTab = remember(entry) { entry.toRoute<AppDestination.Main>().initialTab }
         val requestedTab by entry.savedStateHandle.getStateFlow<String?>(MAIN_TAB_REQUEST, null)
@@ -617,7 +614,7 @@ internal fun NavGraphBuilder.registerHomeRoutes(
             }
         }
         HomeRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
             externalBlockingPromptActive = externalBlockingPromptActive,
             initialTabIndex = initialTab.ordinal,
@@ -628,13 +625,12 @@ internal fun NavGraphBuilder.registerHomeRoutes(
 
 
 internal fun NavGraphBuilder.registerOnboardingRoute(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
-    composable<AppDestination.OnboardingScan> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.OnboardingScan> {
         val viewModel: OnboardingScanViewModel = koinViewModel()
         OnboardingRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = viewModel,
         )
     }
@@ -645,21 +641,19 @@ internal fun NavGraphBuilder.registerOnboardingRoute(
 
 
 internal fun NavGraphBuilder.registerSettingsRoutes(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
-    composable<AppDestination.Settings> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.Settings> {
         SettingsRoute(
             viewModel = koinViewModel(),
             termsUrl = com.aicleanerstorage.spaceclean.app.AppConfig.TERMS_OF_SERVICE_URL,
             privacyUrl = com.aicleanerstorage.spaceclean.app.AppConfig.PRIVACY_POLICY_URL,
-            navigator = pageNavigator,
+            navigator = navigator,
         )
     }
-    composable<AppDestination.ManagePermissions> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.ManagePermissions> {
         ManagePermissionsRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<ManagePermissionsViewModel>(),
         )
     }
@@ -668,11 +662,10 @@ internal fun NavGraphBuilder.registerSettingsRoutes(
 
 
 internal fun NavGraphBuilder.registerSplashRoute(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
     splashPermissionPaused: Boolean,
 ) {
-    composable<AppDestination.Splash> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.Splash> {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val viewModel: SplashViewModel = koinViewModel()
@@ -685,7 +678,7 @@ internal fun NavGraphBuilder.registerSplashRoute(
         LaunchedEffect(viewModel, navigator) {
             viewModel.event.collect { effect ->
                 when (effect) {
-                    is SplashEvent.Navigate -> pageNavigator.replace(effect.destination)
+                    is SplashEvent.Navigate -> navigator.replace(effect.destination)
                 }
             }
         }
@@ -720,65 +713,56 @@ internal fun NavGraphBuilder.registerSplashRoute(
 
 
 internal fun NavGraphBuilder.registerToolboxRoutes(
-    navigator: AppNavigatorImpl,
+    navigator: AppNavigator,
 ) {
-    composable<AppDestination.DeviceInfo> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.DeviceInfo> {
         DeviceInfoRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<DeviceInfoViewModel>(),
         )
     }
-    composable<AppDestination.BatteryInfo> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.BatteryInfo> {
         BatteryInfoRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<BatteryInfoViewModel>(),
         )
     }
-    composable<AppDestination.AppUsage> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.AppUsage> {
         AppUsageRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<AppUsageViewModel>(),
         )
     }
-    composable<AppDestination.NetworkUsage> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.NetworkUsage> {
         NetworkUsageRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<NetworkUsageViewModel>(),
         )
     }
-    composable<AppDestination.NetworkScan> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.NetworkScan> {
         NetworkScanRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<NetworkScanViewModel>(),
         )
     }
-    composable<AppDestination.NetworkScanDevices> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
-        NetworkScanDevicesRoute(pageNavigator, koinViewModel<NetworkScanDevicesViewModel>())
+    composable<AppDestination.NetworkScanDevices> {
+        NetworkScanDevicesRoute(navigator, koinViewModel<NetworkScanDevicesViewModel>())
     }
-    composable<AppDestination.NetworkSpeed> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.NetworkSpeed> {
         NetworkSpeedRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<NetworkSpeedViewModel>(),
         )
     }
-    composable<AppDestination.WhatsAppCleaner> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.WhatsAppCleaner> {
         WhatsAppCleanerRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<WhatsAppCleanerViewModel>(),
         )
     }
-    composable<AppDestination.NotificationCleaner> { entry ->
-        val pageNavigator = remember(navigator, entry) { navigator.forEntry(entry) }
+    composable<AppDestination.NotificationCleaner> {
         NotificationCleanerRoute(
-            navigator = pageNavigator,
+            navigator = navigator,
             viewModel = koinViewModel<NotificationCleanerViewModel>(),
         )
     }

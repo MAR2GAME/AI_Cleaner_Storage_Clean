@@ -1,7 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
 
 enum class WhatsAppCleanerPhase {
     Scanning,
@@ -12,24 +14,10 @@ enum class WhatsAppCleanerPhase {
     Error,
 }
 
-enum class WhatsAppCleanerGroup {
-    Cache,
-    File,
-}
-
-enum class WhatsAppCleanerCategory {
-    Images,
-    Videos,
-    Audios,
-    Documents,
-    Databases,
-    Other,
-}
-
 data class WhatsAppCleanerSubItem(
     val group: WhatsAppCleanerGroup,
     val category: WhatsAppCleanerCategory,
-    val files: List<ManagedFileItemModel>,
+    val files: List<ManagedFileItem>,
     val selected: Boolean,
 ) {
     val totalBytes: Long = files.sumOf { it.sizeBytes }
@@ -76,8 +64,6 @@ sealed interface WhatsAppCleanerAction {
     ) : WhatsAppCleanerAction
     data class GroupExpansionToggled(val group: WhatsAppCleanerGroup) : WhatsAppCleanerAction
 
-    data object InitialScanRequested : WhatsAppCleanerAction
-    data object SelectedFilesCleanRequested : WhatsAppCleanerAction
 }
 
 

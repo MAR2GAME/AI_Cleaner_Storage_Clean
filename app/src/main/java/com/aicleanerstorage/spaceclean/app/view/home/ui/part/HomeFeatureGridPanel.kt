@@ -29,19 +29,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.home.ui.iconRes
-import com.aicleanerstorage.spaceclean.app.view.home.ui.titleRes
+import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeFeatureUiSpec
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressable
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 internal fun HomeFeatureGridPanel(
     title: String,
-    features: List<ToolNavigationTarget>,
-    iconSize: (ToolNavigationTarget) -> DpSize,
-    onFeatureClick: (ToolNavigationTarget) -> Unit,
+    features: List<HomeFeatureUiSpec>,
+    iconSize: (AppDestination) -> DpSize,
+    onFeatureClick: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
-    titleRes: (ToolNavigationTarget) -> Int = { it.titleRes() },
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -75,11 +73,11 @@ internal fun HomeFeatureGridPanel(
                             rowFeatures.forEach { feature ->
                                 HomeFeatureGridItem(
                                     feature = feature,
-                                    title = stringResource(titleRes(feature)),
-                                    iconSize = iconSize(feature),
+                                    title = stringResource(feature.titleRes),
+                                    iconSize = iconSize(feature.destination),
                                     textWidth = itemWidth,
                                     modifier = Modifier.width(itemWidth),
-                                    onClick = { onFeatureClick(feature) },
+                                    onClick = { onFeatureClick(feature.destination) },
                                 )
                             }
                         }
@@ -109,7 +107,7 @@ private val HomeFeatureLabelStyle =
 
 @Composable
 private fun HomeFeatureGridItem(
-    feature: ToolNavigationTarget,
+    feature: HomeFeatureUiSpec,
     title: String,
     iconSize: DpSize,
     textWidth: androidx.compose.ui.unit.Dp,
@@ -133,7 +131,7 @@ private fun HomeFeatureGridItem(
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(feature.iconRes()),
+                painter = painterResource(feature.iconRes),
                 contentDescription = title,
                 modifier = Modifier.size(width = iconSize.width, height = iconSize.height),
             )

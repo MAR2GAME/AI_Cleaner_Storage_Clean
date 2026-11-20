@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.home.interaction
 import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 
 import androidx.lifecycle.ViewModelStore
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import java.lang.reflect.Proxy
 import kotlinx.coroutines.flow.MutableStateFlow

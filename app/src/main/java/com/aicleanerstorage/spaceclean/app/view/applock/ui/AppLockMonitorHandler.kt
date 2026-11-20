@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.applock.ui
 
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.data.applock.AppLockMonitoringRule
 
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStats

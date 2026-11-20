@@ -455,4 +455,9 @@
     <string name="device_progress_ram_label">RAM:</string>
     <string name="device_progress_storage_label">Storage:</string>
     <string name="wifi_ssid_label">SSID</string>
+    <string name="similar_photo_grouping_hint">Grouped by album, modification date and similar file size. Review photos before deleting.</string>
+    <string name="junk_review_hint">Review suggested files before selecting them. Only this app’s cache is selected by default.</string>
+    <string name="cleanup_stopped_summary">Stopped. Removed %1$d files (%2$s).</string>
+    <string name="available_memory_increase">Available memory increased by %1$s during cleanup.</string>
+    <string name="network_speed_estimated">Estimated speed</string>
 </resources>

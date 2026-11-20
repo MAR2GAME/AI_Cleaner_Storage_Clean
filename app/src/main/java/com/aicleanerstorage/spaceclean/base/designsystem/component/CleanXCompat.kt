@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 
@@ -227,9 +227,9 @@ fun CleanXBottomActionBar(
 
 @Composable
 fun CommonResultContent(
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
-    excludedToolDestinations: Set<ToolNavigationTarget> = emptySet(),
+    excludedToolDestinations: Set<AppDestination> = emptySet(),
     completionContent: @Composable () -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {

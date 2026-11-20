@@ -2,22 +2,19 @@ package com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction
 
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.model.BatteryStatusInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceCpuInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceHardwareInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceSensorInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.BatteryInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.MemoryInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.StorageInfoModel
+import com.aicleanerstorage.devicekit.model.DeviceCpuInfo
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
+import com.aicleanerstorage.devicekit.model.DeviceSensorInfo
+import com.aicleanerstorage.devicekit.model.BatteryInfo
+import com.aicleanerstorage.devicekit.model.MemoryInfo
+import com.aicleanerstorage.devicekit.model.StorageInfo
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.rule.BatteryHistoryRule
-import com.aicleanerstorage.spaceclean.domain.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.domain.model.BatteryHistorySampleModel
-import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,11 +51,10 @@ data class BatteryTemperatureSample(
 
 data class DeviceInfoUiState(
     val mode: DeviceInfoMode = DeviceInfoMode.Device,
-    val battery: BatteryInfoModel = EMPTY_BATTERY_INFO,
-    val batteryStatus: BatteryStatusInfoModel = EMPTY_BATTERY_STATUS,
-    val memory: MemoryInfoModel = EMPTY_MEMORY_INFO,
-    val storage: StorageInfoModel = EMPTY_STORAGE_INFO,
-    val hardware: DeviceHardwareInfoModel = EMPTY_HARDWARE_INFO,
+    val battery: BatteryInfo = EMPTY_BATTERY_INFO,
+    val memory: MemoryInfo = EMPTY_MEMORY_INFO,
+    val storage: StorageInfo = EMPTY_STORAGE_INFO,
+    val hardware: DeviceHardwareInfo = EMPTY_HARDWARE_INFO,
     val cpuUsagePercent: Int? = null,
     val cpuTemperatureC: Float? = null,
     val currentNow: Float? = null,
@@ -156,19 +152,18 @@ internal fun averageTemperature(
 
 internal const val UNKNOWN = "Unknown"
 internal const val TEMPERATURE_UNIT_CELSIUS = "C"
-internal val EMPTY_BATTERY_INFO = BatteryInfoModel(-1, UNKNOWN, 0f, -1, UNKNOWN, 0, UNKNOWN)
-internal val EMPTY_BATTERY_STATUS = BatteryStatusInfoModel(statusText = UNKNOWN, isCharging = false)
-internal val EMPTY_MEMORY_INFO = MemoryInfoModel(0L, 0L, 0L, 0, false)
-internal val EMPTY_STORAGE_INFO = StorageInfoModel(0L, 0L, 0L)
+internal val EMPTY_BATTERY_INFO = BatteryInfo(-1, UNKNOWN, 0f, -1, UNKNOWN, 0, UNKNOWN)
+internal val EMPTY_MEMORY_INFO = MemoryInfo(0L, 0L)
+internal val EMPTY_STORAGE_INFO = StorageInfo(0L, 0L)
 internal val EMPTY_HARDWARE_INFO =
-    DeviceHardwareInfoModel(
+    DeviceHardwareInfo(
         model = UNKNOWN,
         androidVersion = "Android --",
         screenSize = "--",
         screenDensity = "--",
         multiTouchSupported = false,
         sensors =
-            DeviceSensorInfoModel(
+            DeviceSensorInfo(
                 accelerometer = false,
                 magneticField = false,
                 orientation = false,
@@ -178,7 +173,7 @@ internal val EMPTY_HARDWARE_INFO =
                 ambientTemperature = false,
             ),
         cpu =
-            DeviceCpuInfoModel(
+            DeviceCpuInfo(
                 hardware = UNKNOWN,
                 model = UNKNOWN,
                 cores = 0,
@@ -236,25 +231,18 @@ fun formatBatteryCapacityMah(capacityMah: Int?): String =
         ?.let { "$it mAh" }
         ?: "--"
 
-fun currentBatteryCapacityMah(battery: BatteryInfoModel): Int? {
+fun currentBatteryCapacityMah(battery: BatteryInfo): Int? {
     val totalCapacity = battery.capacity.takeIf { it > 0 } ?: return null
     val level = battery.levelPercent.takeIf { it >= 0 } ?: return null
     return (totalCapacity * level / 100f).roundToInt()
 }
-
-fun formatBytesOrPlaceholder(bytes: Long): String =
-    if (bytes > 0L) {
-        FormatUtil.formatSize(bytes)
-    } else {
-        "--"
-    }
 
 fun String.orPlaceholder(): String = takeIf { isNotBlank() && this != UNKNOWN } ?: "--"
 
 class DeviceInfoStateController(
     private val repository: DeviceInfoRepository,
     private val batteryHistoryRepository: BatteryHistoryRepository,
-    private val sampleBatteryHistory: SampleBatteryHistoryUseCase,
+    private val batteryHistorySampler: BatteryHistorySampler,
     private val settingsRepository: SettingsRepository,
     private val scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,
@@ -262,7 +250,7 @@ class DeviceInfoStateController(
     private val currentState: () -> DeviceInfoUiState,
     private val changeState: ((DeviceInfoUiState) -> DeviceInfoUiState) -> Unit,
     private val nowMillis: () -> Long = System::currentTimeMillis,
-    private val maxSampleCount: Int = BatteryHistoryRule.MAX_SAMPLES,
+    private val maxSampleCount: Int = BatteryHistoryRepository.MAX_SAMPLES,
 ) {
     private var historyCollectionJob: Job? = null
     private var scanJob: Job? = null
@@ -339,12 +327,12 @@ class DeviceInfoStateController(
             applyHistorySamples(batteryHistoryRepository.loadRecent(timestamp), timestamp)
             val forceSample = shouldForceBatterySample(timestamp)
             sampleBatterySnapshot(forceSample = forceSample)
-            sampleBatteryHistory.start(BatteryHistoryOwner.BatteryPage)
+            batteryHistorySampler.start(BatteryHistoryOwner.BatteryPage)
         }
     }
 
     fun stopBatterySampling() {
-        sampleBatteryHistory.stop(BatteryHistoryOwner.BatteryPage)
+        batteryHistorySampler.stop(BatteryHistoryOwner.BatteryPage)
         historyCollectionJob?.cancel()
         historyCollectionJob = null
     }
@@ -382,7 +370,6 @@ class DeviceInfoStateController(
         timestampMillis: Long,
     ): DeviceInfoUiState {
         val battery = repository.batteryInfo()
-        val batteryStatus = repository.batteryStatusInfo()
         val memory = repository.memoryInfo()
         val storage = repository.internalStorageInfo()
         val hardware = repository.hardwareInfo()
@@ -399,7 +386,6 @@ class DeviceInfoStateController(
         return DeviceInfoUiState(
             mode = mode,
             battery = battery,
-            batteryStatus = batteryStatus,
             memory = memory,
             storage = storage,
             hardware = hardware,
@@ -419,11 +405,10 @@ class DeviceInfoStateController(
 
     private suspend fun sampleBatterySnapshot(forceSample: Boolean) {
         if (forceSample) {
-            sampleBatteryHistory.sampleOnce(force = true)
+            batteryHistorySampler.sampleOnce(force = true)
         }
         val timestamp = nowMillis()
         val battery = runSuspendCatching { repository.batteryInfo() }.getOrNull()
-        val batteryStatus = runSuspendCatching { repository.batteryStatusInfo() }.getOrNull()
         val currentNow = runSuspendCatching { repository.batteryCurrentNowMa().normalizedBatteryCurrent() }.getOrNull()
         val currentAverage = runSuspendCatching { repository.batteryCurrentAverageMa().normalizedBatteryCurrent() }.getOrNull()
         val samples = batteryHistoryRepository.loadRecent(timestamp)
@@ -432,7 +417,6 @@ class DeviceInfoStateController(
             state
                 .copy(
                     battery = battery ?: state.battery,
-                    batteryStatus = batteryStatus ?: state.batteryStatus,
                     currentNow = currentNow ?: state.currentNow,
                     currentAverage = currentAverage ?: state.currentAverage,
                     temperatureUnit = readTemperatureUnit(),
@@ -522,7 +506,7 @@ private fun List<BatteryHistorySampleModel>.toTemperatureSamples(timestampMillis
 
 private fun List<BatteryHistorySampleModel>.recentBatteryHistory(timestampMillis: Long): List<BatteryHistorySampleModel> {
     val cutoff = timestampMillis - BatteryCurrentRange.TwentyFourHours.durationMillis
-    val latestAllowed = timestampMillis + BatteryHistoryRule.FUTURE_TOLERANCE_MILLIS
+    val latestAllowed = timestampMillis + BatteryHistoryRepository.FUTURE_TOLERANCE_MILLIS
     return asSequence()
         .filter { it.timestampMillis in cutoff..latestAllowed }
         .sortedBy { it.timestampMillis }
@@ -540,4 +524,4 @@ private fun celsiusToFahrenheit(value: Float): Float = value * 9f / 5f + 32f
 
 private const val TEMPERATURE_UNIT_FAHRENHEIT = "F"
 private const val INFO_SCAN_DURATION_MILLIS = 1_500L
-private const val BATTERY_HISTORY_FRESH_SAMPLE_MILLIS = BatteryHistoryRule.SAMPLE_INTERVAL_MILLIS + 5_000L
+private const val BATTERY_HISTORY_FRESH_SAMPLE_MILLIS = BatteryHistoryRepository.SAMPLE_INTERVAL_MILLIS + 5_000L

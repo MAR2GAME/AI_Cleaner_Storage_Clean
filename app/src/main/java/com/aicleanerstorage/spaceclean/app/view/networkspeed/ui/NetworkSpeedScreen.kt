@@ -16,7 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpee
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun NetworkSpeedScreen(
@@ -24,7 +24,7 @@ fun NetworkSpeedScreen(
     onBack: () -> Unit,
     onRunSpeedTest: () -> Unit,
     onStopSpeedTest: () -> Unit,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
 ) {
     CleanXScaffoldPage(
         title = stringResource(R.string.network_speed),

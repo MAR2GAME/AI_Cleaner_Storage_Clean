@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
 
 @Composable
 internal fun VirusScanProgressBar(

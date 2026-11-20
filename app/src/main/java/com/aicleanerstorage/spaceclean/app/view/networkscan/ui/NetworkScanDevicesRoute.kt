@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 
 
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDevicesScreen
@@ -36,7 +35,7 @@ fun NetworkScanDevicesRoute(
         onAction = { action ->
             viewModel.dispatch(action)
         },
-        onNavigate = { viewModel.dispatch(NetworkScanDevicesAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { viewModel.dispatch(NetworkScanDevicesAction.NavigationRequested(it)) },
     )
 }
 

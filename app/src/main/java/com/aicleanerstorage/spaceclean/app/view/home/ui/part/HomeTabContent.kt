@@ -49,13 +49,13 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
-import com.aicleanerstorage.spaceclean.domain.model.StorageInfoModel
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 internal fun HomeTabContent(
     summaryState: HomeSummaryUiState,
-    onFeatureClick: (ToolNavigationTarget) -> Unit = {},
+    onFeatureClick: (AppDestination) -> Unit = {},
 ) {
     Column(
         modifier =
@@ -66,7 +66,7 @@ internal fun HomeTabContent(
     ) {
         StorageCard(
             storageInfo = summaryState.storageInfo,
-            onClick = { onFeatureClick(ToolNavigationTarget.JunkClean) },
+            onClick = { onFeatureClick(AppDestination.JunkClean) },
         )
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -76,7 +76,7 @@ internal fun HomeTabContent(
             gradient = Brush.horizontalGradient(listOf(Color(0xFF1793FF), Color(0xFF84DEFE))),
             artworkRes = R.drawable.home_virus_figma_cropped,
             artworkOnStart = true,
-            onClick = { onFeatureClick(ToolNavigationTarget.Antivirus) },
+            onClick = { onFeatureClick(AppDestination.AntiVirus) },
         )
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -91,7 +91,7 @@ internal fun HomeTabContent(
             gradient = Brush.horizontalGradient(listOf(Color(0xFF535FFE), Color(0xFF9EA9FE))),
             artworkRes = R.drawable.home_app_lock_figma,
             artworkOnStart = false,
-            onClick = { onFeatureClick(ToolNavigationTarget.AppLock) },
+            onClick = { onFeatureClick(AppDestination.AppLock) },
         )
     }
 }
@@ -118,7 +118,7 @@ private val StorageHighStyle = StorageCardStyle(Color(0xFFF9582B))
 
 @Composable
 private fun StorageCard(
-    storageInfo: StorageInfoModel,
+    storageInfo: StorageInfo,
     onClick: () -> Unit,
 ) {
     val style = storageCardStyle(storageInfo.usagePercent)
@@ -146,7 +146,7 @@ private fun StorageCard(
 
 @Composable
 private fun StorageCardBody(
-    storageInfo: StorageInfoModel,
+    storageInfo: StorageInfo,
     style: StorageCardStyle,
     onClick: () -> Unit,
 ) {
@@ -179,7 +179,7 @@ private fun StorageCardBody(
 }
 
 @Composable
-private fun StorageMeta(storageInfo: StorageInfoModel) {
+private fun StorageMeta(storageInfo: StorageInfo) {
     val usedText = FormatUtil.formatSize(storageInfo.usedBytes).withoutSpaces()
     val totalText = "/ ${FormatUtil.formatSize(storageInfo.totalBytes).withoutSpaces()}"
     val textMeasurer = rememberTextMeasurer()

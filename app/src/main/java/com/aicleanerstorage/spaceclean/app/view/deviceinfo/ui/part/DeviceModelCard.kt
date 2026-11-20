@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXMutedText
-import com.aicleanerstorage.spaceclean.domain.model.DeviceHardwareInfoModel
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 
 @Composable
-internal fun DeviceModelCard(hardware: DeviceHardwareInfoModel) {
+internal fun DeviceModelCard(hardware: DeviceHardwareInfo) {
     Surface(
         modifier =
             Modifier

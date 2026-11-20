@@ -22,9 +22,6 @@ class ManagePermissionsViewModel :
     override fun onAction(intent: ManagePermissionsAction) {
         if (exiting) return
         when (intent) {
-            is ManagePermissionsAction.NavigationRequested ->
-                sendEvent(ManagePermissionsEvent.Navigate(intent.destination))
-            ManagePermissionsAction.RefreshRequested -> Unit
             ManagePermissionsAction.BackClicked -> {
                 exiting = true
                 sendEvent(ManagePermissionsEvent.NavigateBack)

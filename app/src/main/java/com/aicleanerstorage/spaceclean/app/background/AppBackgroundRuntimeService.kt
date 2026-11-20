@@ -10,8 +10,8 @@ import android.os.Looper
 import androidx.core.content.ContextCompat
 import com.aicleanerstorage.spaceclean.app.AppConfig
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockServiceCoordinator
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ import org.koin.android.ext.android.inject
 import java.util.concurrent.atomic.AtomicBoolean
 
 class AppBackgroundRuntimeService : Service() {
-    private val sampleBatteryHistory: SampleBatteryHistoryUseCase by inject()
+    private val batteryHistorySampler: BatteryHistorySampler by inject()
     private val settingsRepository: SettingsRepository by inject()
     private val appLockRepository: AppLockRepository by inject()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -36,7 +36,7 @@ class AppBackgroundRuntimeService : Service() {
         super.onCreate()
         batterySampling =
             BatterySamplingCoordinator(
-                sampler = sampleBatteryHistory,
+                sampler = batteryHistorySampler,
                 settingsRepository = settingsRepository,
                 hasNotificationPermission = { AppConfig.hasPostNotificationsPermission(this) },
             )
@@ -125,8 +125,6 @@ class AppBackgroundRuntimeService : Service() {
         private const val ACTION_ENABLE_BATTERY_SAMPLING = PersistentServiceActions.ENABLE_BATTERY_SAMPLING
         private const val ACTION_DISABLE_BATTERY_SAMPLING = PersistentServiceActions.DISABLE_BATTERY_SAMPLING
         private const val ACTION_STOP_SERVICE = PersistentServiceActions.STOP_SERVICE
-        const val ACTION_PASSWORD_SUCCESS = PersistentServiceActions.PASSWORD_SUCCESS
-        const val ACTION_LOCK_SCREEN_CANCELLED = PersistentServiceActions.LOCK_SCREEN_CANCELLED
 
         const val FOREGROUND_NOTIFICATION_ID = 17
         private const val START_IN_FLIGHT_RESET_MS = 8_000L

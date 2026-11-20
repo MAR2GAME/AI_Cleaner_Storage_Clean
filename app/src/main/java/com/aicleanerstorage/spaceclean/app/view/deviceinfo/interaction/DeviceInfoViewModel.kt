@@ -4,17 +4,17 @@ import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.*
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class DeviceInfoViewModel(
     repository: DeviceInfoRepository,
     batteryHistoryRepository: BatteryHistoryRepository,
-    sampleBatteryHistory: SampleBatteryHistoryUseCase,
+    batteryHistorySampler: BatteryHistorySampler,
     settingsRepository: SettingsRepository,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MviViewModel<DeviceInfoUiState, DeviceInfoAction, DeviceInfoEvent>(DeviceInfoUiState(mode = DeviceInfoMode.Device)) {
@@ -22,7 +22,7 @@ class DeviceInfoViewModel(
         DeviceInfoStateController(
             repository = repository,
             batteryHistoryRepository = batteryHistoryRepository,
-            sampleBatteryHistory = sampleBatteryHistory,
+            batteryHistorySampler = batteryHistorySampler,
             settingsRepository = settingsRepository,
             scope = viewModelScope,
             ioDispatcher = ioDispatcher,

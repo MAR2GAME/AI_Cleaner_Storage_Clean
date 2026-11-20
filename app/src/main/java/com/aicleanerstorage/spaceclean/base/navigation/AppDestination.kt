@@ -3,7 +3,6 @@ package com.aicleanerstorage.spaceclean.base.navigation
 import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
 
-const val DETAIL_INITIAL_INDEX_ARG = "initialIndex"
 
 /** 类型化导航目的地；只表达“去哪里”，不携带路由字符串、广告或通知元数据。 */
 @Keep

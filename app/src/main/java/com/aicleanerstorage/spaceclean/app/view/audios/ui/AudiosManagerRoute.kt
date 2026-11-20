@@ -1,50 +1,28 @@
 package com.aicleanerstorage.spaceclean.app.view.audios.ui
 
-import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveHome
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-
-
-import com.aicleanerstorage.spaceclean.app.view.audios.ui.AudiosManagerScreen
-
 
 @Composable
 fun AudiosManagerRoute(
     navigator: AppNavigator,
-    viewModel: AudiosManagerViewModel,
+    viewModel: MediaManagerViewModel,
     permissionState: FileManagerPermissionState,
 ) {
-    AudiosManagerRouteContent(navigator = navigator, viewModel = viewModel,  permissionState = permissionState)
-}
-
-@Composable
-private fun AudiosManagerRouteContent(
-    navigator: AppNavigator,
-    viewModel: AudiosManagerViewModel,
-    permissionState: FileManagerPermissionState,
-) {
-    val router = navigator
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null
-    val visibleItems = displayState.visibleDisplayItems
-
-
 
     AudiosManagerScreen(
         state = displayState,
@@ -54,33 +32,27 @@ private fun AudiosManagerRouteContent(
                 FileManagerAction.BackClicked -> viewModel.dispatch(
                     if (permissionState.granted) action else FileManagerAction.PermissionRejected,
                 )
-                FileManagerAction.DeleteClicked -> viewModel.dispatch(FileManagerAction.DeleteClicked)
-                FileManagerAction.ContinueManagingClicked -> viewModel.dispatch(FileManagerAction.ContinueManagingClicked)
-                is FileManagerAction.TabChangeRequested -> viewModel.dispatch(FileManagerAction.TabChangeRequested(action.index))
-                is FileManagerAction.SelectionToggled -> viewModel.dispatch(FileManagerAction.SelectionToggled(action.id))
-                is FileManagerAction.VisibleSelectionToggled -> viewModel.dispatch(FileManagerAction.VisibleSelectionToggled(action.ids))
-                is FileManagerAction.DetailClicked -> {
-                    viewModel.dispatch(FileManagerAction.DetailClicked(action.index))
-
-                }
+                FileManagerAction.DeleteClicked,
+                FileManagerAction.ContinueManagingClicked,
+                is FileManagerAction.TabChangeRequested,
+                is FileManagerAction.SelectionToggled,
+                is FileManagerAction.VisibleSelectionToggled,
+                is FileManagerAction.DetailClicked -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
-        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it)) },
     )
 
     FileManagerFlowDialogs(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
         permissionState = permissionState,
-        router = router,
+        router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        selectedUris = displayState.selectedUris,
         onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
         onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
         onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
-        onDeleteRejected = { viewModel.dispatch(FileManagerAction.SystemDeleteRejected) },
     )
 }
-

@@ -52,8 +52,8 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.SelectionS
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CategoryCleanGroup
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CleanItem
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
-import com.aicleanerstorage.spaceclean.domain.model.JunkCategory
-import com.aicleanerstorage.spaceclean.domain.model.JunkFileModel
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
+import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -64,6 +64,7 @@ internal fun JunkScanResultContent(
     onToggleCategorySelection: (List<JunkCategory>) -> Unit,
     onToggleItem: (CleanItem) -> Unit,
     interactionsEnabled: Boolean = true,
+    stoppedSummary: String? = null,
 ) {
     val rows = displayGroups(groups)
     var expandedIndex by remember { mutableStateOf(-1) }
@@ -77,7 +78,11 @@ internal fun JunkScanResultContent(
                 .padding(bottom = 24.dp),
     ) {
         Spacer(modifier = Modifier.height(121.dp))
+        stoppedSummary?.let { Text(it) }
         SummaryCard(totalSize = selectedSummary.checkedSize)
+        if (groups.any { it.category != JunkCategory.CACHE && it.items.isNotEmpty() }) {
+            Text(stringResource(R.string.junk_review_hint))
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Surface(
             modifier = Modifier.fillMaxWidth(),

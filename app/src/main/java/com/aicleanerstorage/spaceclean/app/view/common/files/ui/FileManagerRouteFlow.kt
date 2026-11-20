@@ -5,7 +5,6 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowEffects
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowDialogs
@@ -45,11 +44,9 @@ fun FileManagerFlowDialogs(
     router: AppNavigator,
     phase: FileOperationPhase,
     deleteDialogVisible: Boolean,
-    selectedUris: List<FileUri>,
     onCancelActiveOperation: () -> Unit,
     onCancelDelete: () -> Unit,
     onDeleteReady: () -> Unit,
-    onDeleteRejected: () -> Unit,
 ) {
     FileManagerStopOperationDialog(
         visible = flowState.showStopDialog,
@@ -67,11 +64,9 @@ fun FileManagerFlowDialogs(
     FileManagerDeleteConfirmDialog(
         visible = deleteDialogVisible,
         permissionGranted = permissionState.granted,
-        selectedUris = selectedUris,
         ownerState = permissionState,
         onCancel = onCancelDelete,
         onDeleteReady = onDeleteReady,
-        onRejected = onDeleteRejected,
     )
 
     FileManagerNoResultsDialog(

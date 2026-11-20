@@ -1,12 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.base.coroutines.AppDispatchers
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.domain.model.VirusThreatModel
-import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.data.security.VirusScanner
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -37,7 +36,8 @@ class VirusScanViewModelTest {
         Dispatchers.setMain(dispatcher)
         viewModel = VirusScanViewModel(
             engine, FakeSecurityRepository(),
-            dispatchers = AppDispatchers(io = StandardTestDispatcher(io), default = dispatcher, main = dispatcher),
+            ioDispatcher = StandardTestDispatcher(io),
+            defaultDispatcher = dispatcher,
         )
         viewModel.viewModelScope.launch { viewModel.event.collect { events.add(it) } }
     }

@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 
@@ -16,7 +16,7 @@ fun FileOperationPhaseContent(
     resultAmount: String,
     resultUnit: String,
     resultCaption: String,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
     onContinue: () -> Unit,
     noResultsContent: @Composable () -> Unit = { FileManagerNoResultsContent() },
     browsingContent: @Composable () -> Unit,

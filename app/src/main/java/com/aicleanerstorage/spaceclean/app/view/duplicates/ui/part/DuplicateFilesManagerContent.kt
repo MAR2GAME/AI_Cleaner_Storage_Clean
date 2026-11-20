@@ -17,7 +17,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPha
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
@@ -31,7 +31,7 @@ internal fun DuplicateFilesManagerContent(
     onAutoSelect: () -> Unit,
     onToggleGroupSelection: (DuplicateGroupItem) -> Unit,
     onAcceptWarning: () -> Unit,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
 
     onContinue: () -> Unit,
 ) {

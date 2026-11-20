@@ -1,21 +1,16 @@
 package com.aicleanerstorage.spaceclean.app.view.photos.interaction
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.IndexedFileItem
+
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileToImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.totalSizeLabel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 
 
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-
-data class PhotosManagerItem(
-    val id: Int,
-    val file: ManagedFileItemModel,
-)
 
 data class PhotosManagerTab(
     val title: String,
@@ -27,7 +22,7 @@ data class PhotosManagerUiState(
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
     val phase: FileOperationPhase = FileOperationPhase.Scanning,
-    val items: List<PhotosManagerItem> = emptyList(),
+    val items: List<IndexedFileItem> = emptyList(),
     val tabs: List<PhotosManagerTab> = emptyList(),
     val selectedTabIndex: Int = 0,
     val selectedIds: Set<Int> = emptySet(),
@@ -35,7 +30,7 @@ data class PhotosManagerUiState(
     val deletedBytes: Long = 0L,
     val errorMessage: String? = null,
 ) {
-    val displayItems: List<FileImageDisplayItem> get() = items.map { it.toDisplayItem() }
+    val displayItems: List<FileImageDisplayItem> get() = items.map { it.toImageDisplayItem() }
 
     val displayTabs: List<FileManagerTabDisplayItem>
         get() = tabs.map { FileManagerTabDisplayItem(it.title, it.sizeLabel.orEmpty()) }
@@ -50,21 +45,17 @@ data class PhotosManagerUiState(
 
     val allSelected: Boolean get() = visibleIds.isNotEmpty() && selectedIds.containsAll(visibleIds)
 
-    val selectedFiles: List<ManagedFileItemModel>
+    val selectedFiles: List<ManagedFileItem>
         get() = items.filter { it.id in selectedIds }.map { it.file }
 
     val selectedSizeBytes: Long get() = selectedFiles.sumOf { it.sizeBytes }
 
-    val selectedUris: List<FileUri> get() = selectedFiles.map { it.uri }
 
     val resultSize: Pair<String, String> get() = FormatUtil.formatSize(deletedBytes).splitFileSizeLabel()
 }
 
-fun mapPhotos(files: List<ManagedFileItemModel>, limit: Int = 60): List<PhotosManagerItem> =
-    files.take(limit).mapIndexed { index, file -> PhotosManagerItem(id = index + 1, file = file) }
-
-fun buildPhotoTabs(items: List<PhotosManagerItem>): List<PhotosManagerTab> {
-    fun PhotosManagerItem.matchesFolder(folder: String): Boolean =
+fun buildPhotoTabs(items: List<IndexedFileItem>): List<PhotosManagerTab> {
+    fun IndexedFileItem.matchesFolder(folder: String): Boolean =
         file.bucketName?.contains(folder, ignoreCase = true) == true ||
             file.path?.contains("/$folder/", ignoreCase = true) == true
 
@@ -73,7 +64,7 @@ fun buildPhotoTabs(items: List<PhotosManagerItem>): List<PhotosManagerTab> {
     val used = (pictures + dcim).map { it.id }.toSet()
     val other = items.filter { it.id !in used }
 
-    fun tab(title: String, tabItems: List<PhotosManagerItem>) =
+    fun tab(title: String, tabItems: List<IndexedFileItem>) =
         PhotosManagerTab(
             title = title,
             sizeLabel = totalSizeLabel(tabItems.map { it.file }).takeIf { it.isNotBlank() },
@@ -87,6 +78,3 @@ fun buildPhotoTabs(items: List<PhotosManagerItem>): List<PhotosManagerTab> {
         tab("Other", other),
     )
 }
-
-fun PhotosManagerItem.toDisplayItem(): FileImageDisplayItem =
-    managedFileToImageDisplayItem(id = id, file = file)

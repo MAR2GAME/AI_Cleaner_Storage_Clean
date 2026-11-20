@@ -20,14 +20,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageB
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun PhotosManagerScreen(
     state: PhotosManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }

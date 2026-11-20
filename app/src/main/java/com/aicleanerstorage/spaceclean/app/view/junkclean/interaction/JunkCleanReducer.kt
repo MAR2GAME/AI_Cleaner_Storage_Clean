@@ -1,12 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.ScanResultModel
+import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CategoryCleanGroup
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CleanItem
-import com.aicleanerstorage.spaceclean.domain.model.JunkCategory
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
 
 val DefaultResultDisplayCategories =
@@ -24,23 +24,23 @@ object JunkCleanReducer {
             is JunkPermissionCheckStarted ->
                 state.copy(
                     phase = JunkCleanPhase.CheckingPermission(action.request),
-                    progress = if (action.request == JunkPermissionRequest.Scan) 0f else state.progress,
-                    currentCategory = if (action.request == JunkPermissionRequest.Scan) null else state.currentCategory,
-                    foundItemCount = if (action.request == JunkPermissionRequest.Scan) 0 else state.foundItemCount,
-                    foundTotalSize = if (action.request == JunkPermissionRequest.Scan) 0L else state.foundTotalSize,
-                    formattedFoundSize = if (action.request == JunkPermissionRequest.Scan) "0 B" else state.formattedFoundSize,
+                    progress = if (action.request == JunkOperation.Scan) 0f else state.progress,
+                    currentCategory = if (action.request == JunkOperation.Scan) null else state.currentCategory,
+                    foundItemCount = if (action.request == JunkOperation.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (action.request == JunkOperation.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (action.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
                     errorMessageRes = null,
                     errorMessage = null,
                 )
 
             is JunkPermissionDenied ->
                 state.copy(
-                    phase = if (action.request == JunkPermissionRequest.Scan) JunkCleanPhase.Idle else JunkCleanPhase.Preview,
-                    progress = if (action.request == JunkPermissionRequest.Scan) 0f else state.progress,
-                    currentCategory = if (action.request == JunkPermissionRequest.Scan) null else state.currentCategory,
-                    foundItemCount = if (action.request == JunkPermissionRequest.Scan) 0 else state.foundItemCount,
-                    foundTotalSize = if (action.request == JunkPermissionRequest.Scan) 0L else state.foundTotalSize,
-                    formattedFoundSize = if (action.request == JunkPermissionRequest.Scan) "0 B" else state.formattedFoundSize,
+                    phase = if (action.request == JunkOperation.Scan) JunkCleanPhase.Idle else JunkCleanPhase.Preview,
+                    progress = if (action.request == JunkOperation.Scan) 0f else state.progress,
+                    currentCategory = if (action.request == JunkOperation.Scan) null else state.currentCategory,
+                    foundItemCount = if (action.request == JunkOperation.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (action.request == JunkOperation.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (action.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
                     errorMessageRes = null,
                     errorMessage = null,
                     showStopDialog = false,
@@ -111,7 +111,9 @@ object JunkCleanReducer {
             is JunkCleaningCompleted ->
                 state.copy(
                     phase = JunkCleanPhase.CompleteAnimation,
-                    cleanResult = action.summary.toUiState(),
+                    cleanResult = action.summary,
+                    showStopDialog = false,
+                    stopDialogPhase = null,
                     pendingAuthorizationCount = 0,
                     errorMessageRes = null,
                     errorMessage = null,
@@ -127,7 +129,7 @@ object JunkCleanReducer {
             JunkResultCleared ->
                 state.copy(
                     phase = JunkCleanPhase.Idle,
-                    cleanResult = JunkCleanResultUiState(),
+                    cleanResult = CleanupSummaryModel(),
                 )
 
             JunkResultAnimationCompleted ->
@@ -138,6 +140,15 @@ object JunkCleanReducer {
                 }
 
             JunkActiveOperationCancelled -> state.copy(phase = JunkCleanPhase.Idle)
+
+            is JunkCleaningStopped -> {
+                val groups = buildPreviewGroups(action.remaining).map { group ->
+                    group.copy(items = group.items.map { it.copy(isChecked = it.junkFile in action.selected) })
+                }
+                publishPreview(state, groups).copy(
+                    stoppedSummary = action.summary, showStopDialog = false, stopDialogPhase = null,
+                )
+            }
 
             JunkCleaningCancelled ->
                 if (state.phase == JunkCleanPhase.Cleaning || state.phase == JunkCleanPhase.AwaitingAuthorization) {
@@ -228,6 +239,7 @@ object JunkCleanReducer {
             }.toSet()
         return state.copy(
             phase = JunkCleanPhase.Preview,
+            stoppedSummary = null,
             groups = groups,
             checkedEmptyCategories = checkedEmptyCategories,
             selectedSummary =
@@ -242,9 +254,9 @@ object JunkCleanReducer {
         )
     }
 
-    private fun buildPreviewGroups(result: com.aicleanerstorage.spaceclean.domain.model.ScanResultModel) =
+    private fun buildPreviewGroups(result: com.aicleanerstorage.cleanerkit.clean.model.ScanResult) =
         result.categoryBreakdown.map { (category, files) ->
-            CategoryCleanGroup(category, files.map { CleanItem(junkFile = it, isChecked = true) })
+            CategoryCleanGroup(category, files.map { CleanItem(junkFile = it, isChecked = it.category == JunkCategory.CACHE) })
         }
 
     private fun defaultEmptyCheckedCategories(groups: List<CategoryCleanGroup>): Set<JunkCategory> {
@@ -260,15 +272,4 @@ object JunkCleanReducer {
         }.toSet()
     }
 
-    private fun CleanupSummaryModel.toUiState() =
-        JunkCleanResultUiState(
-            freedSpace = freedSpace,
-            cleanedCount = cleanedCount,
-            failedCount = failedCount,
-            memoryFreedBytes = memoryFreedBytes,
-            memoryProcessesKilled = memoryProcessesKilled,
-            totalFreedBytes = totalFreedBytes,
-            formattedFreedSpace = totalFreedBytes.takeIf { it > 0L }?.let(FormatUtil::formatSize).orEmpty(),
-            hasVisibleResult = hasVisibleResult,
-        )
 }

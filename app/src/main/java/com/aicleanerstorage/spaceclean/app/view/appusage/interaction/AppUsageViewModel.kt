@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.appusage.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,14 +18,6 @@ class AppUsageViewModel(
 ) : MviViewModel<AppUsageUiState, AppUsageAction, AppUsageEvent>(AppUsageUiState(
                 hasAccess = repository.hasAppUsageAccess(),
             )) {
-    override fun onAction(intent: AppUsageAction) {
-        when (intent) {
-            is AppUsageAction.RangeChangeRequested -> selectRange(intent.range)
-            is AppUsageAction.TabChangeRequested -> selectTab(intent.tab)
-            else -> handleIntent(intent)
-        }
-    }
-
     private var scanDelayFinished = false
     private var scanJob: Job? = null
     private var loadJob: Job? = null
@@ -35,7 +27,7 @@ class AppUsageViewModel(
         refreshUsage(startScan = true)
     }
 
-    private fun handleIntent(action: AppUsageAction) {
+    override fun onAction(action: AppUsageAction) {
         when (action) {
             AppUsageAction.Resumed, AppUsageAction.PermissionGranted -> refreshUsage(startScan = true, refreshPermission = true)
             AppUsageAction.PermissionRequestConsumed -> {

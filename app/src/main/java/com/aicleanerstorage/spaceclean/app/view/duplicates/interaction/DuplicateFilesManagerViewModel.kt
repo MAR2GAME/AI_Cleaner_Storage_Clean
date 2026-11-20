@@ -8,7 +8,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
@@ -48,29 +48,23 @@ class DuplicateFilesManagerViewModel(
             FileManagerAction.PermissionRejected -> exit(home = false)
             FileManagerAction.BackClicked -> handleBack()
 
-            is FileManagerAction.StopClicked -> showStopDialog(intent.blockedPhase)
             FileManagerAction.StopDismissed -> dismissStopDialog()
             FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.DeleteCancellationRequested -> cancelDeletingAndReturnToBrowsing()
             FileManagerAction.InitialLoadRequested -> startIfNeeded()
             FileManagerAction.RefreshRequested -> refresh()
             is FileManagerAction.GroupClicked -> openGroup(intent.group)
-            FileManagerAction.GroupDismissed -> closeGroup()
             FileManagerAction.SelectAllClicked -> toggleAll()
             FileManagerAction.WarningConfirmed -> acceptDuplicateFilesWarning()
             is FileManagerAction.FileToggled -> toggleFile(intent.file)
             FileManagerAction.AutoSelectClicked -> autoSelectCurrentGroup()
             is FileManagerAction.GroupSelectionToggled -> toggleGroupSelection(intent.group)
-            FileManagerAction.CurrentGroupSelectionToggled -> toggleCurrentGroupSelection()
             FileManagerAction.DeleteClicked -> requestDelete()
             FileManagerAction.GroupDeleteClicked -> requestDeleteCurrentGroup()
             FileManagerAction.DeleteDismissed -> cancelDelete()
-            FileManagerAction.SystemDeleteRejected -> rejectSystemDelete()
             FileManagerAction.ErrorDismissed -> clearError()
             FileManagerAction.SkippedDeleteCountConsumed -> clearSkippedDeleteCount()
             FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
             FileManagerAction.ContinueManagingClicked -> continueManaging()
-            FileManagerAction.DeletePrepared -> deleteSelectedFiles()
             else -> Unit
         }
     }
@@ -93,7 +87,6 @@ class DuplicateFilesManagerViewModel(
         operations.cancel()
         dismissStopDialog()
     }
-    private fun cancelDeletingAndReturnToBrowsing() { cancelActiveOperation(); onCancelDeletingPhase() }
     private fun startIfNeeded() {
         if (hasStartedForCurrentState()) return
         refresh()
@@ -160,11 +153,6 @@ class DuplicateFilesManagerViewModel(
         }
     }
 
-    private fun toggleCurrentGroupSelection() {
-        val group = currentState.selectedGroup ?: return
-        toggleGroupSelection(group)
-    }
-
     private fun requestDelete() {
         if (currentState.globalFilesToDelete.isNotEmpty()) {
             changeState { it.copy(phase = FileOperationPhase.ConfirmDelete, pendingDeleteFileKeys = null) }
@@ -188,26 +176,12 @@ class DuplicateFilesManagerViewModel(
         changeState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
     }
 
-    private fun rejectSystemDelete() {
-        cancelDelete()
-    }
-
     private fun clearError() {
         changeState { it.copy(errorMessage = null) }
     }
 
     private fun clearSkippedDeleteCount() {
         changeState { it.copy(skippedDeleteCount = 0) }
-    }
-
-    private fun onCancelDeletingPhase() {
-        changeState { current ->
-            if (current.phase == FileOperationPhase.Deleting) {
-                current.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null)
-            } else {
-                current
-            }
-        }
     }
 
     private fun deleteSelectedFiles() {

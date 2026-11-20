@@ -95,6 +95,4 @@ object StorageCleanThemeTokens : AppThemeTokens {
     override val dimens = AppDimens()
 
     override val shapes = AppShapes()
-
-    override val typography = AppTypographyTokens()
 }

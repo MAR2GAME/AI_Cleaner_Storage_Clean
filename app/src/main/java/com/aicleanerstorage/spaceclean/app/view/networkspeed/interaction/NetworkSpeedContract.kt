@@ -1,9 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
+import java.util.Locale
+
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.NetworkSpeedProgressModel
-import com.aicleanerstorage.spaceclean.domain.model.NetworkSpeedResultModel
-import com.aicleanerstorage.spaceclean.domain.model.NetworkInfoModel
+import com.aicleanerstorage.networkkit.model.NetworkSpeed
+import com.aicleanerstorage.networkkit.model.NetworkInfo
 
 enum class NetworkSpeedPhase {
     Idle,
@@ -14,31 +15,17 @@ enum class NetworkSpeedPhase {
 }
 
 data class NetworkSpeedUiState(
-    val networkInfo: NetworkInfoModel = NetworkInfoModel(),
+    val networkInfo: NetworkInfo = NetworkInfo(),
     val hasNetwork: Boolean = false,
     val phase: NetworkSpeedPhase = NetworkSpeedPhase.Idle,
-    val speed: NetworkSpeedResultModel? = null,
-    val progress: NetworkSpeedProgressModel = NetworkSpeedProgressModel(),
+    val speed: NetworkSpeed = NetworkSpeed(),
     val errorMessage: String? = null,
 ) {
     val downloadLabel: String
-        get() =
-            when {
-                progress.downloadMbps != null -> progress.downloadMbps
-                speed != null -> speed.downloadMbps
-                else -> "--"
-            }
+        get() = speed.downloadMbps.formatMbps()
 
     val uploadLabel: String
-        get() =
-            when {
-                progress.uploadMbps != null -> progress.uploadMbps
-                speed != null -> speed.uploadMbps
-                else -> "--"
-            }
-
-    val latencyLabel: String
-        get() = progress.latencyMs?.toString() ?: speed?.latencyMs?.toString() ?: "--"
+        get() = speed.uploadMbps.formatMbps()
 }
 
 sealed interface NetworkSpeedAction {
@@ -50,9 +37,10 @@ sealed interface NetworkSpeedAction {
     data object StopClicked : NetworkSpeedAction
 }
 
-
 sealed interface NetworkSpeedEvent {
 
     data class Exit(val home: Boolean) : NetworkSpeedEvent
     data class Navigate(val destination: AppDestination) : NetworkSpeedEvent
 }
+
+internal fun Double?.formatMbps(): String = this?.let { String.format(Locale.getDefault(), "%.1f", it) } ?: "--"

@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.app
 
 import android.os.Bundle
+import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionHost
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MediaDeletionHost.attach(activityResultRegistry)
         enableEdgeToEdge()
         syncBackgroundBatterySampling.reconcile()
 
@@ -27,6 +29,11 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        MediaDeletionHost.detach(activityResultRegistry)
+        super.onDestroy()
     }
 
     override fun onResume() {

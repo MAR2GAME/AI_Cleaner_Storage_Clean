@@ -48,7 +48,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.ui.ToolNotificationSpec
-import com.aicleanerstorage.spaceclean.app.view.home.ui.iconRes
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.LocalAppThemeTokens
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination

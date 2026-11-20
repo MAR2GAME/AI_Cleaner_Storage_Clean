@@ -1,14 +1,17 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
+import com.aicleanerstorage.cleanerkit.files.model.DeleteStatus
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteOutcome
+
 import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
-import com.aicleanerstorage.spaceclean.domain.model.FileDeleteResultModel
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileType
+import com.aicleanerstorage.cleanerkit.files.model.FileUri
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -46,18 +49,23 @@ class DuplicateFilesWarningStateTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         try {
-            fun file(id: Long) = ManagedFileItemModel(
+            fun file(id: Long) = ManagedFileItem(
                 id, FileUri("content://media/$id"), null, "copy.pdf", 10L, 0L,
                 "application/pdf", null, ManagedFileType.Document,
             )
             val original = file(1)
             val valid = listOf(2L, 3L).map { file(it).copy(duplicateHash = "hash", duplicatePeers = listOf(original)) }
-            var submitted = emptyList<ManagedFileItemModel>()
+            var submitted = emptyList<ManagedFileItem>()
             val repository = object : FileRepository by UnusedFileRepository {
                 override suspend fun loadDuplicateFiles() = listOf(listOf(original) + valid + file(4))
-                override suspend fun deleteFiles(items: List<ManagedFileItemModel>): FileDeleteResultModel {
+                override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult {
                     submitted = items
-                    return FileDeleteResultModel(freedBytes = 10L, deletedCount = 1, skippedCount = 1)
+                    return FileDeleteResult(
+                        listOf(
+                            FileDeleteOutcome(items[0], DeleteStatus.Deleted),
+                            FileDeleteOutcome(items[1], DeleteStatus.Failed),
+                        ),
+                    )
                 }
             }
             val model = DuplicateFilesManagerViewModel(repository, InMemorySettingsRepository(), dispatcher)
@@ -77,16 +85,19 @@ class DuplicateFilesWarningStateTest {
     }
 
     private object UnusedFileRepository : FileRepository {
-        override suspend fun loadImages(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadVideos(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadAudios(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadScreenshots(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadPrivacyImages(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadDocuments(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItemModel>> = emptyList()
-        override suspend fun loadWhatsAppFiles(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun deleteFiles(items: List<ManagedFileItemModel>): FileDeleteResultModel = FileDeleteResultModel(0L, 0)
-        override suspend fun removeLocationData(items: List<ManagedFileItemModel>): Int = 0
+        override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
+        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
+        override suspend fun loadFilesInDirectories(
+            relativeDirectories: List<String>,
+            matchesMedia: (ManagedFileItem) -> Boolean,
+        ): List<ManagedFileItem> = emptyList()
+        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult = FileDeleteResult(emptyList())
+        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int = 0
     }
 }

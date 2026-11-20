@@ -19,14 +19,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaff
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerSimilarPhotosView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun SimilarPhotosManagerScreen(
     state: SimilarPhotosManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = remember { ScrollState(0) }
@@ -52,6 +52,9 @@ fun SimilarPhotosManagerScreen(
     ) {
         val result = state.resultSize
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
+            if (state.phase == FileOperationPhase.Browsing) {
+                androidx.compose.material3.Text(stringResource(R.string.similar_photo_grouping_hint))
+            }
             FileOperationPhaseContent(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_similar_photos),

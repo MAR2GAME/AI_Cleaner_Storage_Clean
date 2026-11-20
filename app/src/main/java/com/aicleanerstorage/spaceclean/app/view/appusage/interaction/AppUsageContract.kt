@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.appusage.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
 import java.util.Calendar
@@ -90,6 +90,4 @@ sealed interface AppUsageAction {
     data class TabSelected(val tab: AppUsageMetricTab) : AppUsageAction
     data class StopAppClicked(val packageName: String) : AppUsageAction
 
-    data class RangeChangeRequested(val range: AppUsageDateRange) : AppUsageAction
-    data class TabChangeRequested(val tab: AppUsageMetricTab) : AppUsageAction
 }

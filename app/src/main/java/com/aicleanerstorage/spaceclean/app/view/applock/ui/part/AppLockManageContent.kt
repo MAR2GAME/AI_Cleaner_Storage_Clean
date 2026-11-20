@@ -33,7 +33,7 @@ import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockPlaceholderText
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockSecondaryText
-import com.aicleanerstorage.spaceclean.domain.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
 
 @Composable
 internal fun AppLockManageContent(

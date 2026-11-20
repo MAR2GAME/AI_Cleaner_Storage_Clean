@@ -1,34 +1,19 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageGroupDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDateGroupDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayStyle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailDisplayPreview
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileToImageDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileToListDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildMediaTabs
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildListTabs
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.formatManagedFileDate
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileMeta
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.totalSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterMediaGridItems
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterFileManagerListItems
-
+import com.aicleanerstorage.cleanerkit.files.model.FileUri
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+data class IndexedFileItem(val id: Int, val file: ManagedFileItem) {
+    fun toImageDisplayItem(): FileImageDisplayItem = managedFileToImageDisplayItem(id, file)
+}
+
+fun List<ManagedFileItem>.withSelectionIds(): List<IndexedFileItem> =
+    mapIndexed { index, file -> IndexedFileItem(index + 1, file) }
 
 data class FileManagerTabDisplayItem(
     val title: String,
@@ -115,7 +100,7 @@ fun FileListDisplayItem.toFileDetailDisplayItem(): FileDetailDisplayItem =
 
 fun managedFileToImageDisplayItem(
     id: Int,
-    file: ManagedFileItemModel,
+    file: ManagedFileItem,
     bestPhoto: Boolean = false,
 ): FileImageDisplayItem =
     FileImageDisplayItem(
@@ -132,7 +117,7 @@ fun managedFileToImageDisplayItem(
 
 fun managedFileToListDisplayItem(
     id: Int,
-    file: ManagedFileItemModel,
+    file: ManagedFileItem,
     iconKind: FileListIconKind,
 ): FileListDisplayItem =
     FileListDisplayItem(
@@ -145,35 +130,33 @@ fun managedFileToListDisplayItem(
         path = file.path,
     )
 
-fun buildMediaTabs(
-    titles: List<String>,
-    items: List<FileImageDisplayItem>,
-    fileForId: (Int) -> ManagedFileItemModel?,
-): List<FileManagerTabDisplayItem> =
-    titles.map { title ->
-        val files = filterMediaGridItems(title, items).mapNotNull { fileForId(it.id) }
-        FileManagerTabDisplayItem(title = title, sizeLabel = totalSizeLabel(files))
+fun buildMediaTabs(titles: List<String>, items: List<IndexedFileItem>): List<FileManagerTabDisplayItem> {
+    val displayItems = items.map { it.toImageDisplayItem() }
+    val filesById = items.associate { it.id to it.file }
+    return titles.map { title ->
+        val files = filterMediaGridItems(title, displayItems).mapNotNull { filesById[it.id] }
+        FileManagerTabDisplayItem(title, totalSizeLabel(files))
     }
+}
 
-fun buildListTabs(
-    titles: List<String>,
-    items: List<FileListDisplayItem>,
-    fileForId: (Int) -> ManagedFileItemModel?,
-): List<FileManagerTabDisplayItem> =
-    titles.map { title ->
-        val files = filterFileManagerListItems(title, items).mapNotNull { fileForId(it.id) }
-        FileManagerTabDisplayItem(title = title, sizeLabel = totalSizeLabel(files))
+fun buildListTabs(items: List<IndexedFileItem>, iconKind: FileListIconKind): List<FileManagerTabDisplayItem> {
+    val displayItems = items.map { managedFileToListDisplayItem(it.id, it.file, iconKind) }
+    val filesById = items.associate { it.id to it.file }
+    return listOf("All", "Download", "Other").map { title ->
+        val files = filterFileManagerListItems(title, displayItems).mapNotNull { filesById[it.id] }
+        FileManagerTabDisplayItem(title, totalSizeLabel(files))
     }
+}
 
 fun formatManagedFileDate(modifiedSeconds: Long): String {
     val millis = if (modifiedSeconds > 9_999_999_999L) modifiedSeconds else modifiedSeconds * 1000L
     return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US).format(Date(millis))
 }
 
-fun managedFileMeta(file: ManagedFileItemModel): String =
+fun managedFileMeta(file: ManagedFileItem): String =
     "${formatManagedFileDate(file.modifiedSeconds)} ${FormatUtil.formatSize(file.sizeBytes)}"
 
-fun totalSizeLabel(files: List<ManagedFileItemModel>): String =
+fun totalSizeLabel(files: List<ManagedFileItem>): String =
     FormatUtil.formatSize(files.sumOf { it.sizeBytes })
 
 fun String.splitFileSizeLabel(): Pair<String, String> =

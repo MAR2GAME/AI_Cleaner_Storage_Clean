@@ -4,7 +4,7 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.AllToolFeatur
 import com.aicleanerstorage.spaceclean.base.designsystem.component.handleToolFeatureBannerClick
 import com.aicleanerstorage.spaceclean.base.designsystem.component.selectRecommendedToolFeatures
 
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -38,12 +38,12 @@ class ToolFeatureRecommendationTest {
         val selected =
             selectRecommendedToolFeatures(
                 features = duplicatePool,
-                excludedDestinations = setOf(ToolNavigationTarget.JunkClean),
+                excludedDestinations = setOf(AppDestination.JunkClean),
                 seed = 9L,
                 limit = 20,
             )
 
-        assertFalse(selected.any { it.destination == ToolNavigationTarget.JunkClean })
+        assertFalse(selected.any { it.destination == AppDestination.JunkClean })
         assertEquals(selected.size, selected.map { it.destination }.distinct().size)
         assertTrue(selected.size <= AllToolFeatures.size - 1)
     }
@@ -60,10 +60,10 @@ class ToolFeatureRecommendationTest {
         val calls = mutableListOf<String>()
 
         handleToolFeatureBannerClick(
-            destination = ToolNavigationTarget.DeviceInfo,
+            destination = AppDestination.DeviceInfo,
             onNavigateTool = { calls += "navigate:$it" },
         )
 
-        assertEquals(listOf("navigate:${ToolNavigationTarget.DeviceInfo}"), calls)
+        assertEquals(listOf("navigate:${AppDestination.DeviceInfo}"), calls)
     }
 }

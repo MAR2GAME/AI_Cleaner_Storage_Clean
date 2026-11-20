@@ -23,7 +23,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedScreen
 
 @Composable
@@ -74,6 +73,6 @@ fun NetworkSpeedRoute(
         onBack = { viewModel.dispatch(NetworkSpeedAction.BackClicked) },
         onRunSpeedTest = { viewModel.dispatch(NetworkSpeedAction.SpeedTestRequested) },
         onStopSpeedTest = { viewModel.dispatch(NetworkSpeedAction.StopClicked) },
-        onNavigateTool = { if (!exiting) viewModel.dispatch(NetworkSpeedAction.NavigationRequested(it.toAppDestination())) },
+        onNavigateTool = { if (!exiting) viewModel.dispatch(NetworkSpeedAction.NavigationRequested(it)) },
     )
 }

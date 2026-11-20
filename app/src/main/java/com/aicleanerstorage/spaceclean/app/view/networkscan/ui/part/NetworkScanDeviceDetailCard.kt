@@ -13,10 +13,10 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
-import com.aicleanerstorage.spaceclean.domain.model.NetworkDeviceInfoModel
+import com.aicleanerstorage.networkkit.model.NetworkDeviceInfo
 
 @Composable
-internal fun NetworkScanDeviceDetailCard(device: NetworkDeviceInfoModel) {
+internal fun NetworkScanDeviceDetailCard(device: NetworkDeviceInfo) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = NetworkScanCardBg,

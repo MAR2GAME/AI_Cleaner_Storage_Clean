@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
 
-import com.aicleanerstorage.spaceclean.domain.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.domain.port.NotificationRepository
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
@@ -18,18 +18,10 @@ import kotlinx.coroutines.launch
 
 class NotificationCleanerViewModel(
     private val message: (Int) -> String,
-    private val repository: NotificationRepository,
+    private val repository: NotificationCleanerRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val permissionChecker: PermissionChecker? = null,
 ) : MviViewModel<NotificationCleanerUiState, NotificationCleanerAction, NotificationCleanerEvent>(NotificationCleanerUiState()) {
-    override fun onAction(intent: NotificationCleanerAction) {
-        when (intent) {
-            is NotificationCleanerAction.NavigationRequested -> sendEvent(NotificationCleanerEvent.Navigate(intent.destination))
-            NotificationCleanerAction.StateRefreshRequested -> refreshState()
-            else -> handleIntent(intent)
-        }
-    }
-
     private var scanJob: Job? = null
     private var activeScanGeneration = 0L
     private var pendingScanCompletionGeneration: Long? = null
@@ -41,8 +33,9 @@ class NotificationCleanerViewModel(
         refreshState()
     }
 
-    private fun handleIntent(action: NotificationCleanerAction) {
+    override fun onAction(action: NotificationCleanerAction) {
         when (action) {
+            is NotificationCleanerAction.NavigationRequested -> sendEvent(NotificationCleanerEvent.Navigate(action.destination))
             NotificationCleanerAction.BackClicked -> {
                 when (currentState.page) {
                     NotificationCleanerPage.Settings -> leaveSettings()
@@ -50,21 +43,17 @@ class NotificationCleanerViewModel(
                     else -> sendEvent(NotificationCleanerEvent.Exit)
                 }
             }
-            NotificationCleanerAction.StopClicked -> requestStopDialog()
             NotificationCleanerAction.StopConfirmed -> { confirmStoppedOperationExit(); sendEvent(NotificationCleanerEvent.Exit) }
             NotificationCleanerAction.StopDismissed -> resumeStoppedOperation()
             NotificationCleanerAction.RefreshRequested -> refreshState()
             NotificationCleanerAction.SettingsClicked -> showSettings()
-            NotificationCleanerAction.SettingsBackClicked -> leaveSettings()
             NotificationCleanerAction.BlockingEnableRequested -> guardEnableBlocking()
             NotificationCleanerAction.BlockingDisableRequested -> setBlockingEnabled(false)
             NotificationCleanerAction.TidyUpClicked -> tidyUp()
-            NotificationCleanerAction.ScanAnimationFinished -> finishScanning()
             NotificationCleanerAction.CleaningAnimationFinished -> finishCleaning()
             NotificationCleanerAction.CompletionAnimationFinished -> finishCompleteAnimation()
             is NotificationCleanerAction.StatusRequested -> showStatus(action.scanGeneration)
             is NotificationCleanerAction.PackageToggled -> togglePackage(action.packageName)
-            else -> Unit
         }
     }
 
@@ -127,10 +116,6 @@ class NotificationCleanerViewModel(
 
     private fun leaveSettings() {
         changeState { it.copy(page = NotificationCleanerPage.Status) }
-    }
-
-    private fun finishScanning() {
-        finishScanIfReady(activeScanGeneration)
     }
 
     private fun showStatus(scanGeneration: Long) {

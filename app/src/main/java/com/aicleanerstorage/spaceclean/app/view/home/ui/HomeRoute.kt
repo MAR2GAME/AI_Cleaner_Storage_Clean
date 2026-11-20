@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.base.designsystem.component.openGooglePlayRatePage
 
 
@@ -70,7 +69,7 @@ fun HomeRoute(
     HomeScreen(
         state = state,
         onAction = viewModel::dispatch,
-        onNavigate = { viewModel.dispatch(HomeAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { viewModel.dispatch(HomeAction.NavigationRequested(it)) },
         onSettingsClick = { viewModel.dispatch(HomeAction.NavigationRequested(AppDestination.Settings)) },
         onExitPromptView = {
             viewModel.consumeExitPromptForNavigation()

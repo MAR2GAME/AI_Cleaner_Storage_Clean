@@ -22,20 +22,20 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedTe
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultCheckIcon
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultContent
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 internal fun WhatsAppResultContent(
     uiState: WhatsAppCleanerUiState,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
 ) {
     val sizeLabel = splitSizeLabel(uiState.deletedBytes)
 
     CommonResultContent(
         onNavigateTool = onNavigateTool,
         modifier = Modifier.fillMaxWidth(),
-        excludedToolDestinations = setOf(ToolNavigationTarget.WhatsAppCleaner),
+        excludedToolDestinations = setOf(AppDestination.WhatsAppCleaner),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),

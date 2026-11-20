@@ -480,4 +480,5 @@
     <string name="onboarding_device_info_disclaimer">La información del dispositivo mostrada se basa en los datos proporcionados por el sistema y puede diferir de las especificaciones oficiales. Por ejemplo, la capacidad de almacenamiento o la memoria pueden variar ligeramente debido a reservas del sistema o diferencias en la configuración del hardware.</string>
     <string name="notification_status_empty_title">Interceptación de notificaciones activada</string>
     <string name="notification_status_empty_message">Las notificaciones interceptadas aparecen aquí</string>
+    <string name="network_speed_estimated">Velocidad estimada</string>
 </resources>

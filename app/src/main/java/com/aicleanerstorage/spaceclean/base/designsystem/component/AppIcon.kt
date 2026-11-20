@@ -166,10 +166,3 @@ fun PackageAppIcon(
         }
     }
 }
-
-/**
- * 濞撳懐鎮婇崶鐐垼缂傛挸鐡ㄩ敍鍫濆讲闁绱濋崷銊ョ安閻劌宓忔潪鑺ュ灗闂団偓鐟曚礁鍩涢弬鐗堟鐠嬪啰鏁ら敓?
- */
-fun clearPackageIconCache() {
-    packageIconBitmapCache.clear()
-}

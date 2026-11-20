@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.domain.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
 
 internal sealed interface VirusScanUpdate : VirusScanAction {
     data object ScanNoticeShown : VirusScanUpdate

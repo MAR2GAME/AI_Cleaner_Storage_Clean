@@ -7,13 +7,12 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFi
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 
 
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 data class SimilarPhotoItem(
     val id: Int,
-    val file: ManagedFileItemModel,
+    val file: ManagedFileItem,
     val bestPhoto: Boolean = false,
 )
 
@@ -41,38 +40,23 @@ data class SimilarPhotosManagerUiState(
     val visibleIds: Set<Int> get() = items.map { it.id }.toSet()
     val bulkSelectableIds: Set<Int> get() = items.filterNot { it.bestPhoto }.map { it.id }.toSet()
     val allSelected: Boolean get() = bulkSelectableIds.isNotEmpty() && selectedIds.containsAll(bulkSelectableIds)
-    val selectedFiles: List<ManagedFileItemModel> get() = items.filter { it.id in selectedIds }.map { it.file }
+    val selectedFiles: List<ManagedFileItem> get() = items.filter { it.id in selectedIds }.map { it.file }
     val selectedSizeBytes: Long get() = selectedFiles.sumOf { it.sizeBytes }
-    val selectedUris: List<FileUri> get() = selectedFiles.map { it.uri }
     val resultSize: Pair<String, String> get() = FormatUtil.formatSize(deletedBytes).splitFileSizeLabel()
 }
 
-fun buildSimilarPhotoGroups(files: List<ManagedFileItemModel>, limit: Int = 60): List<SimilarPhotoGroup> {
-    val source = files.take(limit)
-    fun key(file: ManagedFileItemModel): String {
-        val day = file.modifiedSeconds / 86_400L
-        val sizeBucket = (file.sizeBytes / (512L * 1024L)).coerceAtLeast(0L)
-        val bucket = file.bucketName.orEmpty().lowercase()
-        return "$bucket#$day#$sizeBucket"
-    }
-
+internal fun mapSimilarPhotoGroups(groups: List<List<ManagedFileItem>>): List<SimilarPhotoGroup> {
     var nextId = 1
-    return source
-        .groupBy(::key)
-        .values
-        .filter { it.size > 1 }
-        .take(12)
-        .map { group ->
-            val sorted = group.sortedByDescending { it.sizeBytes }
-            val items = sorted.mapIndexed { index, file ->
-                SimilarPhotoItem(
-                    id = nextId++,
-                    file = file,
-                    bestPhoto = index == 0,
-                )
-            }
-            SimilarPhotoGroup(count = items.size, items = items)
+    return groups.map { group ->
+        val items = group.mapIndexed { index, file ->
+            SimilarPhotoItem(
+                id = nextId++,
+                file = file,
+                bestPhoto = index == 0,
+            )
         }
+        SimilarPhotoGroup(count = items.size, items = items)
+    }
 }
 
 fun SimilarPhotoItem.toDisplayItem(): FileImageDisplayItem =

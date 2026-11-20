@@ -23,13 +23,13 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.part.WhatsApp
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun WhatsAppCleanerScreen(
     state: WhatsAppCleanerUiState,
     onAction: (WhatsAppCleanerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showStopDialog by remember { mutableStateOf(false) }

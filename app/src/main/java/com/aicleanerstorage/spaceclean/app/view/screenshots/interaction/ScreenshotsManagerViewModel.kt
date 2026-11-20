@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.screenshots.interaction
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
+
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
@@ -10,7 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleI
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleAllVisible
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
@@ -26,7 +28,7 @@ class ScreenshotsManagerViewModel(
     private val completeDelayMillis: Long = 800L,
 ) : MviViewModel<ScreenshotsManagerUiState, FileManagerAction, FileManagerEvent>(ScreenshotsManagerUiState()) {
     private val operations = FileOperations(viewModelScope, ioDispatcher) {
-        val items = mapScreenshots(repository.loadScreenshots())
+        val items = repository.loadScreenshots().take(60).withSelectionIds()
         ScreenshotsManagerUiState(
             phase = if (items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
             items = items,
@@ -49,10 +51,8 @@ class ScreenshotsManagerViewModel(
             FileManagerAction.BackClicked -> handleBack()
             FileManagerAction.DetailBackClicked -> { closeDetail(); sendEvent(FileManagerEvent.NavigateBack) }
 
-            is FileManagerAction.StopClicked -> showStopDialog(intent.blockedPhase)
             FileManagerAction.StopDismissed -> dismissStopDialog()
             FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.DeleteCancellationRequested -> cancelDeletingAndReturnToBrowsing()
             FileManagerAction.InitialLoadRequested -> startIfNeeded()
             FileManagerAction.RefreshRequested -> refresh()
             is FileManagerAction.SelectionToggled -> toggleSelection(intent.id)
@@ -61,14 +61,11 @@ class ScreenshotsManagerViewModel(
                 openDetail(intent.index)
                 sendEvent(FileManagerEvent.Navigate(AppDestination.ScreenshotsDetail(intent.index), reset = false))
             }
-            FileManagerAction.DetailDismissed -> closeDetail()
             FileManagerAction.DeleteClicked -> requestDelete()
             FileManagerAction.DeleteDismissed -> cancelDelete()
-            FileManagerAction.SystemDeleteRejected -> rejectSystemDelete()
             FileManagerAction.ErrorDismissed -> clearError()
             FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
             FileManagerAction.ContinueManagingClicked -> continueManaging()
-            FileManagerAction.DeletePrepared -> deleteSelectedFiles()
             else -> Unit
         }
     }
@@ -90,7 +87,6 @@ class ScreenshotsManagerViewModel(
         operations.cancel()
         dismissStopDialog()
     }
-    private fun cancelDeletingAndReturnToBrowsing() { cancelActiveOperation(); onCancelDeletingPhase() }
     private fun startIfNeeded() {
         if (currentState.phase != FileOperationPhase.Scanning || currentState.items.isNotEmpty()) return
         refresh()
@@ -139,22 +135,8 @@ class ScreenshotsManagerViewModel(
         changeState { it.copy(phase = FileOperationPhase.Browsing) }
     }
 
-    private fun rejectSystemDelete() {
-        cancelDelete()
-    }
-
     private fun clearError() {
         changeState { it.copy(errorMessage = null) }
-    }
-
-    private fun onCancelDeletingPhase() {
-        changeState { current ->
-            if (current.phase == FileOperationPhase.Deleting) {
-                current.copy(phase = FileOperationPhase.Browsing)
-            } else {
-                current
-            }
-        }
     }
 
     private fun deleteSelectedFiles() {

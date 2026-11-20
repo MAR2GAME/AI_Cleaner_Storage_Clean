@@ -3,12 +3,12 @@ package com.aicleanerstorage.spaceclean.data.repository.notificationcleaner
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.aicleanerstorage.spaceclean.domain.model.PostedNotificationModel
-import com.aicleanerstorage.spaceclean.domain.port.NotificationRepository
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
 import org.koin.android.ext.android.inject
 
 class StorageCleanNotificationListener : NotificationListenerService() {
-    private val repository: NotificationRepository by inject()
+    private val repository: NotificationCleanerRepository by inject()
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (!repository.shouldBlock(sbn.packageName)) return

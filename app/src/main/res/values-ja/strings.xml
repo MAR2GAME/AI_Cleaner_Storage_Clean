@@ -468,4 +468,5 @@
     <string name="onboarding_device_info_disclaimer">表示されるデバイス情報はシステムが提供するデータに基づいており、公式仕様と異なる場合があります。例えば、システムの予約領域やハードウェア構成の違いにより、ストレージ容量やメモリがわずかに異なることがあります。</string>
     <string name="notification_status_empty_title">通知のブロックが有効です</string>
     <string name="notification_status_empty_message">ブロックした通知はここに表示されます</string>
+    <string name="network_speed_estimated">推定速度</string>
 </resources>

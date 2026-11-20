@@ -21,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.NotificationCleanerScreen
 
 @Composable
@@ -83,6 +82,6 @@ fun NotificationCleanerRoute(
                 else -> viewModel.dispatch(action)
             }
         },
-        onNavigate = { if (!exiting) viewModel.dispatch(NotificationCleanerAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { if (!exiting) viewModel.dispatch(NotificationCleanerAction.NavigationRequested(it)) },
     )
 }

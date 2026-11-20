@@ -22,7 +22,7 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultC
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteAnimation
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlinx.coroutines.delay
 
 @Composable
@@ -30,7 +30,7 @@ internal fun NotificationCompleteContent(
     cleanedCount: Int,
     showResult: Boolean,
     onCelebrationFinished: () -> Unit,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
 ) {
     LaunchedEffect(showResult) {
         if (showResult) return@LaunchedEffect
@@ -50,7 +50,7 @@ internal fun NotificationCompleteContent(
         CommonResultContent(
             onNavigateTool = onNavigateTool,
             modifier = Modifier.fillMaxSize(),
-            excludedToolDestinations = setOf(ToolNavigationTarget.NotificationCleaner),
+            excludedToolDestinations = setOf(AppDestination.NotificationCleaner),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
