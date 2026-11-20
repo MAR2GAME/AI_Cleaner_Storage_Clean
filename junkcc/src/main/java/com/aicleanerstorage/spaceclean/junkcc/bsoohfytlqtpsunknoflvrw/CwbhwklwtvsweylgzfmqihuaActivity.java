@@ -46,7 +46,8 @@ public class CwbhwklwtvsweylgzfmqihuaActivity extends Activity {
                  }
              });
              ivjtstsjtljrucb.shutdown();
-             File file2 = new File(getFilesDir(), "znacpvzbrqvhyviutkxldh.txt");
+             File file2 = new File(getFilesDir(), "znacpvzbrqvhyviutkxld" +
+                     "h.txt");
          }
      });
      final View zhuqrggoycblfin = findViewById(R.id.ntwphqeypkdpvogfdtsfewmaa);
