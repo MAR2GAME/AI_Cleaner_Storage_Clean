@@ -10,22 +10,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/core/contracts" />
-            <option value="$PROJECT_DIR$/core/navigation" />
-            <option value="$PROJECT_DIR$/core/presentation" />
-            <option value="$PROJECT_DIR$/core/ui" />
-            <option value="$PROJECT_DIR$/feature" />
-            <option value="$PROJECT_DIR$/feature/antivirus" />
-            <option value="$PROJECT_DIR$/feature/applock" />
-            <option value="$PROJECT_DIR$/feature/files" />
-            <option value="$PROJECT_DIR$/feature/home" />
-            <option value="$PROJECT_DIR$/feature/junkclean" />
-            <option value="$PROJECT_DIR$/feature/notificationcleaner" />
-            <option value="$PROJECT_DIR$/feature/onboarding" />
-            <option value="$PROJECT_DIR$/feature/settings" />
-            <option value="$PROJECT_DIR$/feature/startup" />
-            <option value="$PROJECT_DIR$/feature/toolbox" />
             <option value="$PROJECT_DIR$/junkcc" />
           </set>
         </option>
