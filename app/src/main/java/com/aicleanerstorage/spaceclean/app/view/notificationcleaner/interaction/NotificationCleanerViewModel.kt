@@ -5,8 +5,8 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.port.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

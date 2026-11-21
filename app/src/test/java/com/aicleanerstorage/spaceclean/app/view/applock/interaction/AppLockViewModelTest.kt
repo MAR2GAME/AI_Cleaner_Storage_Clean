@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

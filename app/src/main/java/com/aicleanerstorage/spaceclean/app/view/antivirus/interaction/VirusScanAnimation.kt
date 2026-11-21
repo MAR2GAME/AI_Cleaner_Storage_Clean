@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 
 internal val VirusScanMode.minDurationMillis get() = if (this == VirusScanMode.Quick) 7_000L else 15_000L
 internal val VirusScanMode.stepCount get() = if (this == VirusScanMode.Quick) 3 else 4

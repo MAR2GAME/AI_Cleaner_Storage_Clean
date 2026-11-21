@@ -2,7 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
 
 internal fun JunkError.toUiText(): UiText =
     when (this) {

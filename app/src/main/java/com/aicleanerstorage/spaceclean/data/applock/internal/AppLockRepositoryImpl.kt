@@ -3,9 +3,9 @@ package com.aicleanerstorage.spaceclean.data.applock.internal
 import android.content.Context
 import androidx.core.content.edit
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.data.applock.AppLockPinRule
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockPinRule
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

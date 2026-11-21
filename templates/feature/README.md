@@ -2,7 +2,7 @@
 
 Replace `__PACKAGE__`, `__FEATURE__`, and `Feature`. Place each Kotlin file in the directory matching its generated package. The UI files go in `app/view/<page>/ui/`, the presentation templates in `app/view/<page>/interaction/`, and reducer tests in the matching test package. Register the ViewModel in DI and the Route in the app navigation graph.
 
-Place the page repository contract in `domain/port/<feature>/` when needed. Remove unused template actions and events.
+Place the page repository contract in `domain/<feature>/port/` when needed, with its implementation in `data/<feature>/internal/` and a single Koin binding in `app/di/`. Remove unused template actions and events.
 
 Acceptance checklist:
 

@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import com.aicleanerstorage.spaceclean.data.applock.AppLockMonitoringRule
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,7 +26,7 @@ import org.koin.android.ext.android.inject
 class AppRuntimeService : Service() {
     private val appLockRepository: AppLockRepository by inject()
     private val appUsageRepository: AppUsageRepository by inject()
-    private val batteryHistorySampler: BatteryHistorySampler by inject()
+    private val batteryHistorySampler: BatteryHistoryRecorder by inject()
     private val settingsRepository: SettingsRepository by inject()
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)

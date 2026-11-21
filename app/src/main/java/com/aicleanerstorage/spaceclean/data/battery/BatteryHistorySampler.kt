@@ -1,8 +1,10 @@
 package com.aicleanerstorage.spaceclean.data.battery
 
 import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,13 +14,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class BatteryHistorySampler(
+internal class BatteryHistorySampler(
     private val deviceInfoRepository: DeviceInfoRepository,
     private val historyRepository: BatteryHistoryRepository,
     private val ioDispatcher: CoroutineDispatcher,
     private val nowMillis: () -> Long = System::currentTimeMillis,
     val sampleIntervalMillis: Long = BatteryHistoryRepository.SAMPLE_INTERVAL_MILLIS,
-) {
+) : BatteryHistoryRecorder {
     init {
         require(sampleIntervalMillis > 0L)
     }
@@ -28,7 +30,7 @@ class BatteryHistorySampler(
     private var samplingJob: Job? = null
     private var samplingScope: CoroutineScope? = null
 
-    fun start(owner: BatteryHistoryOwner) {
+    override fun start(owner: BatteryHistoryOwner) {
         synchronized(lock) {
             owners += owner
             if (samplingJob?.isActive == true) return
@@ -38,14 +40,14 @@ class BatteryHistorySampler(
             samplingJob =
                 scope.launch(ioDispatcher) {
                     while (isActive) {
-                        sampleOnce()
+                        sampleOnce(force = false)
                         delay(sampleIntervalMillis)
                     }
                 }
         }
     }
 
-    fun stop(owner: BatteryHistoryOwner) {
+    override fun stop(owner: BatteryHistoryOwner) {
         synchronized(lock) {
             owners -= owner
             if (owners.isNotEmpty()) return
@@ -56,7 +58,7 @@ class BatteryHistorySampler(
         }
     }
 
-    fun sampleOnce(force: Boolean = false): BatteryHistorySampleModel? =
+    override fun sampleOnce(force: Boolean): BatteryHistorySampleModel? =
         synchronized(lock) {
             val now = nowMillis()
             val latestSample =

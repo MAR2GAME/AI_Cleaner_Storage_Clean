@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 
 data class VirusHomeUiState(
     val pendingScanMode: VirusScanMode? = null,

@@ -5,8 +5,8 @@ import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.domain.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
 
 val DefaultResultDisplayCategories =
     listOf(

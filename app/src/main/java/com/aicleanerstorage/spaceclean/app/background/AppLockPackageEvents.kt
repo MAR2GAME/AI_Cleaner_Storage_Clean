@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
 
 /**
  * Keeps the locked package set in sync with installs and uninstalls and asks the

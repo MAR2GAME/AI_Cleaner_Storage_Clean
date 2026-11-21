@@ -25,8 +25,8 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkResult
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkStopDialogDismissed
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkStopDialogShown
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

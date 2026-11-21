@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
@@ -14,12 +13,12 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleI
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.data.similarphotos.groupSimilarPhotos
+import com.aicleanerstorage.spaceclean.domain.similarphotos.port.SimilarPhotoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class SimilarPhotosManagerViewModel(
-    private val repository: FileRepository,
+    private val repository: SimilarPhotoRepository,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
@@ -27,7 +26,7 @@ class SimilarPhotosManagerViewModel(
 ) : MviViewModel<SimilarPhotosManagerUiState, FileManagerAction, FileManagerEvent>(SimilarPhotosManagerUiState()) {
     private val operations =
         FileOperations(viewModelScope, ioDispatcher) {
-            val groups = mapSimilarPhotoGroups(groupSimilarPhotos(repository.loadImages()))
+            val groups = mapSimilarPhotoGroups(repository.loadGroups())
             SimilarPhotosManagerUiState(
                 phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
                 groups = groups,
@@ -160,7 +159,7 @@ class SimilarPhotosManagerViewModel(
             onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, detailStartIndex = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = { repository.deleteFiles(selectedFiles) },
+            operation = { repository.delete(selectedFiles) },
             isSuccessful = { it.deletedCount > 0 },
             onCompleteAnimation = { outcome, loaded ->
                 setState {

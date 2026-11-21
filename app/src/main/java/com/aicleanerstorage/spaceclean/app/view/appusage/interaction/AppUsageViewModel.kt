@@ -5,8 +5,8 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.appusage.model.AppUsageInfoModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

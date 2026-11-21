@@ -27,8 +27,8 @@ import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.Simila
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel

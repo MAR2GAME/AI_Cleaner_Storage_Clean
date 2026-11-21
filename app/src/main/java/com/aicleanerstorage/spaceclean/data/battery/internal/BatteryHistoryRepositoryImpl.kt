@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.data.battery.internal
 
 import android.content.Context
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistorySampleModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.ViewModelStore
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

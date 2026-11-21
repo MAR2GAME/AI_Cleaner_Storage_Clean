@@ -1,17 +1,17 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageGroupDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileToImageDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileModelToImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
 
 data class SimilarPhotoItem(
     val id: Int,
-    val file: ManagedFileItem,
+    val file: ManagedFileModel,
     val bestPhoto: Boolean = false,
 )
 
@@ -40,12 +40,12 @@ data class SimilarPhotosManagerUiState(
     val visibleIds: Set<Int> get() = items.map { it.id }.toSet()
     val bulkSelectableIds: Set<Int> get() = items.filterNot { it.bestPhoto }.map { it.id }.toSet()
     val allSelected: Boolean get() = bulkSelectableIds.isNotEmpty() && selectedIds.containsAll(bulkSelectableIds)
-    val selectedFiles: List<ManagedFileItem> get() = items.filter { it.id in selectedIds }.map { it.file }
+    val selectedFiles: List<ManagedFileModel> get() = items.filter { it.id in selectedIds }.map { it.file }
     val selectedSizeBytes: Long get() = selectedFiles.sumOf { it.sizeBytes }
     val resultSize: Pair<String, String> get() = FormatUtil.formatSize(deletedBytes).splitFileSizeLabel()
 }
 
-internal fun mapSimilarPhotoGroups(groups: List<List<ManagedFileItem>>): List<SimilarPhotoGroup> {
+internal fun mapSimilarPhotoGroups(groups: List<List<ManagedFileModel>>): List<SimilarPhotoGroup> {
     var nextId = 1
     return groups.map { group ->
         val items =
@@ -61,7 +61,7 @@ internal fun mapSimilarPhotoGroups(groups: List<List<ManagedFileItem>>): List<Si
 }
 
 fun SimilarPhotoItem.toDisplayItem(): FileImageDisplayItem =
-    managedFileToImageDisplayItem(
+    managedFileModelToImageDisplayItem(
         id = id,
         file = file,
         bestPhoto = bestPhoto,

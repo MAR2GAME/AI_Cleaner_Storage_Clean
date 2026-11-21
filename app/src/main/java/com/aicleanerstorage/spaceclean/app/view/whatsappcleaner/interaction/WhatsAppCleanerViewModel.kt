@@ -1,15 +1,14 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppFileBucket
-import com.aicleanerstorage.spaceclean.data.whatsapp.loadWhatsAppFileGroups
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
+import com.aicleanerstorage.spaceclean.domain.whatsapp.port.WhatsAppCleanerRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class WhatsAppCleanerViewModel(
-    private val repository: FileRepository,
+    private val repository: WhatsAppCleanerRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MviViewModel<WhatsAppCleanerUiState, WhatsAppCleanerAction, WhatsAppCleanerEvent>(WhatsAppCleanerUiState()) {
     private var hasStarted = false
@@ -61,7 +60,7 @@ class WhatsAppCleanerViewModel(
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
-                    val buckets = repository.loadWhatsAppFileGroups()
+                    val buckets = repository.loadGroups()
                     delay(SCAN_DELAY_MILLIS)
                     val nextState = buildScanResultState(buckets)
                     setState { nextState }
@@ -152,7 +151,7 @@ class WhatsAppCleanerViewModel(
                 .flatMap { it.children }
                 .filter { it.selected }
                 .flatMap { it.files }
-                .distinctBy { it.path ?: it.uri.toString() }
+                .distinctBy { it.path ?: it.uri }
         val expectedBytes = selectedFiles.sumOf { it.sizeBytes }
         val cleaningStartedAt = System.currentTimeMillis()
 
@@ -161,7 +160,7 @@ class WhatsAppCleanerViewModel(
         cleanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
-                    val result = repository.deleteFiles(selectedFiles)
+                    val result = repository.delete(selectedFiles)
                     if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
                     delayRemainingCleaningAnimation(cleaningStartedAt)
                     setState {
@@ -226,7 +225,7 @@ class WhatsAppCleanerViewModel(
         super.onCleared()
     }
 
-    private fun buildScanResultState(buckets: Map<WhatsAppFileBucket, List<ManagedFileItem>>): WhatsAppCleanerUiState {
+    private fun buildScanResultState(buckets: Map<WhatsAppFileBucket, List<ManagedFileModel>>): WhatsAppCleanerUiState {
         val groups =
             WhatsAppCleanerGroup.values().map { group ->
                 WhatsAppCleanerGroupItem(

@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.data.appusage.internal
 
 import android.content.Context
-import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.appusage.model.AppUsageInfoModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

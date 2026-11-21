@@ -1,8 +1,12 @@
 # domain / data 分层对齐方案
 
-> 状态：待评审，未执行。
+> 状态：**已执行完成**（2026-11-21，阶段 0–7）。
 > 参考实现：`D:\pros\my\PDFScanRead`（domain 46 个文件 / data 13 个 / `app/view → data` 0 处）。
 > 目标：把本项目从「data 同时承担模型 + 接口 + 规则 + 实现」对齐到「domain 定义业务规则与出站契约，data 只做实现」。
+>
+> 结果：`domain` 4 → **34** 个文件，`data` 39 → **20** 个，`app/view|root → data` 56 → **0**，`data` 内 public interface 6 → **0**。
+> 业务优先目录（`domain/<feature>/{model,port,rule,usecase,error}`）与 `data/<feature>`、`app/view/<feature>` 对齐。
+> `dataImplementationIsolation`、`dataVisibility`、`domainKitIsolation` 已进入 `scripts/check-rules.ps1` 常驻门禁，baseline 已删除。
 
 ## 1. 目标与非目标
 
@@ -56,32 +60,33 @@ app/     组合根与页面：view 只依赖 base + domain；DI 是唯一装配 
 
 ```text
 domain/
-├─ error/
-│  ├─ JunkError.kt
-│  └─ ScanEngineConfigurationException.kt          ← 从 data/security 迁入
-├─ model/
-│  ├─ CleanupSummaryModel.kt
-│  ├─ applock/AppLockAppModel.kt
-│  ├─ appusage/AppUsageInfoModel.kt
-│  ├─ battery/{BatteryHistoryOwner,BatteryHistorySampleModel}.kt
-│  ├─ notificationcleaner/{BlockableNotificationAppModel,BlockedNotificationModel,
-│  │                       NotificationCleanerSnapshotModel,PostedNotificationModel}.kt
-│  └─ security/{VirusScanErrorKind,VirusScanItemModel,VirusScanMode,VirusThreatModel}.kt
-├─ port/
-│  ├─ AppLockRepository.kt
-│  ├─ AppUsageRepository.kt
-│  ├─ BatteryHistoryRecorder.kt                    ← 新增，屏蔽 BatteryHistorySampler
-│  ├─ BatteryHistoryRepository.kt
-│  ├─ NotificationCleanerRepository.kt
-│  ├─ SettingsRepository.kt                        ← 已在
-│  ├─ VirusScanner.kt
-│  └─ VirusSecurityRepository.kt
-├─ rule/
-│  ├─ AppLockMonitoringRule.kt
-│  └─ AppLockPinRule.kt
-└─ usecase/
-   └─ SyncBackgroundBatterySamplingUseCase.kt      ← 已在
+├─ applock/
+│  ├─ model/AppLockAppModel.kt
+│  ├─ port/AppLockRepository.kt
+│  └─ rule/{AppLockPinRule,AppLockMonitoringRule}.kt
+├─ appusage/
+│  ├─ model/AppUsageInfoModel.kt
+│  └─ port/AppUsageRepository.kt
+├─ battery/
+│  ├─ model/{BatteryHistoryOwner,BatteryHistorySampleModel}.kt
+│  ├─ port/{BatteryHistoryRepository,BatteryHistoryRecorder}.kt
+│  └─ usecase/SyncBackgroundBatterySamplingUseCase.kt
+├─ notificationcleaner/
+│  ├─ model/{BlockableNotificationAppModel,BlockedNotificationModel,
+│  │          NotificationCleanerSnapshotModel,PostedNotificationModel}.kt
+│  └─ port/NotificationCleanerRepository.kt
+├─ security/
+│  ├─ error/ScanEngineConfigurationException.kt
+│  ├─ model/{VirusScanErrorKind,VirusScanItemModel,VirusScanMode,VirusThreatModel}.kt
+│  └─ port/{VirusScanner,VirusSecurityRepository}.kt
+├─ junkclean/
+│  ├─ error/JunkError.kt
+│  └─ model/CleanupSummaryModel.kt
+└─ settings/
+   └─ port/SettingsRepository.kt
 ```
+
+**结构约定：业务优先。** `domain/<feature>` 与 `data/<feature>`、`app/view/<feature>` 同名，一个业务能力在四层里都叫同一个名字（applock 在 `domain/applock`、`data/applock`、`app/view/applock`）。不在 domain 顶层按 `model/port/rule` 铺平——那样不同业务的规则会混在同一目录。跨 feature 的契约放在其归属 feature 下（`SettingsRepository` 归 `settings`），不新建 `shared` 包。
 
 `data/` 只保留：`*RepositoryImpl`、`*DataSource`、`*FileStore`、`BatteryHistorySampler`（实现 `BatteryHistoryRecorder`）、`SettingsRepositoryImpl`、`WhatsApp`/`SimilarPhoto` 的介质适配。
 
@@ -105,9 +110,11 @@ domain/
 
 `domainPurity`、`layerDirection` 保持，迁移完成后它们才有实际覆盖面（4 → 26 个文件）。
 
-### 4.1 baseline 机制
+### 4.1 baseline 机制（迁移期使用，已完成使命）
 
-直接打开 `dataImplementationIsolation` 会让 CI 立刻变红（56 处存量）。采用只减不增的 baseline：
+迁移完成后 `profiles/data-import-baseline.txt` 与 `-UpdateBaseline` 参数已删除，`dataImplementationIsolation` 现在是普通零容忍检查。下面保留迁移期的做法作为记录：
+
+直接打开 `dataImplementationIsolation` 会让 CI 立刻变红（56 处存量）。迁移期采用只减不增的 baseline：
 
 - 新增 `profiles/data-import-baseline.txt`，每行一条 `相对路径|完整 import 符号`。
 - 脚本新增 `-UpdateBaseline` 参数：迁移一批后重新生成 baseline；普通运行只校验"不新增"。
@@ -143,12 +150,12 @@ if (Test-CheckEnabled 'dataImplementationIsolation') {
 |---|---|---|---|---|
 | B0 | 门禁 | 无 | 0 | 0.5 人日 |
 | B1 | applock | `AppLockAppModel`、`AppLockRepository`、`AppLockPinRule`、`AppLockMonitoringRule` | 9 / 6 文件 | 0.5 |
-| B2 | battery | `BatteryHistoryOwner`、`BatteryHistorySampleModel`、`BatteryHistoryRepository`、新增 `BatteryHistoryRecorder`；`BatteryHistorySampler` 改实现端口并 `internal` | 8 / 3 | 0.5 |
+| B2 | battery | `BatteryHistoryOwner`、`BatteryHistorySampleModel`、`BatteryHistoryRepository`、新增 `BatteryHistoryRecorder`、`SyncBackgroundBatterySamplingUseCase` 归入 `domain/battery/usecase`；`BatteryHistorySampler` 改实现端口并 `internal` | 8 / 3 | 0.5 |
 | B3 | appusage | `AppUsageInfoModel`、`AppUsageRepository` | 4 / 3 | 0.25 |
 | B4 | notificationcleaner | 4 个 model、`NotificationCleanerRepository` | 7 / 4 | 0.5 |
-| B5 | security | 4 个 model、`VirusScanner`、`VirusSecurityRepository`、`ScanEngineConfigurationException` | 19 / 13 | 0.75 |
+| B5 | security | 4 个 model、`VirusScanner`、`VirusSecurityRepository`、`ScanEngineConfigurationException` 归入 `domain/security/error` | 19 / 13 | 0.75 |
 | B6 | whatsapp + similarphotos | 3 个 model 拆成单类型文件、新增 `WhatsAppCleanerRepository`、`SimilarPhotoRepository`；`loadWhatsAppFileGroups`/`groupSimilarPhotos` 改为 data 内部适配 | 9 / 4 | 1.0 |
-| B7 | 收尾 | 删 baseline、全局门禁、文档与模板同步 | 0 | 0.5 |
+| B7 | 收尾 | `SettingsRepository` 归入 `domain/settings/port`、`JunkError`/`CleanupSummaryModel` 归入 `domain/junkclean/{error,model}`；删 baseline、全局门禁、文档与模板同步 | 0 | 0.5 |
 
 合计约 4.5 人日，7 个 PR。
 
@@ -222,7 +229,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-rules.ps1
 - 不为了填满 domain 搬 kit 模型或造 DTO。
 - 不新增 `feature/*`、`core/*` 模块。
 - 不同时改 ViewModel 行为、Reducer、UI。
-- 不碰 `junkclean` 的 `JunkError` / `CleanupSummaryModel` 归属：它们在 domain 与 PDFScanRead 的 `Feedback*` 同构（单 feature 的业务词汇也归 domain），保持不动。
+- 不把 `JunkError` / `CleanupSummaryModel` 移出 domain：它们在 domain 与 PDFScanRead 的 `Feedback*` 同构（单 feature 的业务词汇也归 domain），B7 只把它们归到 `domain/junkclean/` 子包。
 
 ## 11. 待确认
 

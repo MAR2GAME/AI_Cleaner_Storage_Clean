@@ -12,7 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiTex
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

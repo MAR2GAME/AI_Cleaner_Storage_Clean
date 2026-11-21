@@ -42,8 +42,8 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedTe
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
 
 @Composable
 internal fun WhatsAppScanResultContent(

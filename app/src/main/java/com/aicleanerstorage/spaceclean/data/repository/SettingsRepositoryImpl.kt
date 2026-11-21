@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.base.storage.PreferencesUtil
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 
 internal class SettingsRepositoryImpl(
     private val preferences: PreferencesUtil,

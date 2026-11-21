@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusThreatModel
 
 data class VirusScanUiState(
     val home: VirusHomeUiState = VirusHomeUiState(),

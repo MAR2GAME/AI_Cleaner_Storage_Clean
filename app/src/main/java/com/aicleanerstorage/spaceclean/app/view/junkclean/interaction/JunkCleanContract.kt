@@ -4,8 +4,8 @@ import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
 import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
 
 sealed interface JunkCleanPhase {
     data object Idle : JunkCleanPhase

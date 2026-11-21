@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
 
 enum class WhatsAppCleanerPhase {
     Scanning,
@@ -18,7 +18,7 @@ enum class WhatsAppCleanerPhase {
 data class WhatsAppCleanerSubItem(
     val group: WhatsAppCleanerGroup,
     val category: WhatsAppCleanerCategory,
-    val files: List<ManagedFileItem>,
+    val files: List<ManagedFileModel>,
     val selected: Boolean,
 ) {
     val totalBytes: Long = files.sumOf { it.sizeBytes }

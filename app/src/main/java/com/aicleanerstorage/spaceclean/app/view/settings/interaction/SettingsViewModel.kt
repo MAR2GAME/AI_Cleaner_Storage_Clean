@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.settings.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 
 class SettingsViewModel(
     private val repository: SettingsRepository,

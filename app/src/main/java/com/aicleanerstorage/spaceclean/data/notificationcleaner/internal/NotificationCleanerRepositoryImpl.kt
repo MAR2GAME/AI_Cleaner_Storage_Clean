@@ -2,10 +2,10 @@ package com.aicleanerstorage.spaceclean.data.notificationcleaner.internal
 
 import android.content.ComponentName
 import android.content.Context
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.NotificationCleanerSnapshotModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.port.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.NotificationCleanerSnapshotModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.PostedNotificationModel
 
 internal class NotificationCleanerRepositoryImpl(
     context: Context,

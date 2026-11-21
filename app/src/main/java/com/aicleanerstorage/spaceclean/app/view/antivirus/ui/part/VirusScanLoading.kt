@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanUiState
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.resolveVirusIcon
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 
 @Composable
 internal fun VirusScanLoading(

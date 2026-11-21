@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.data.whatsapp
 
 import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
 import java.util.Locale
 
 internal suspend fun FileRepository.loadWhatsAppFileGroups(): Map<WhatsAppFileBucket, List<ManagedFileItem>> =

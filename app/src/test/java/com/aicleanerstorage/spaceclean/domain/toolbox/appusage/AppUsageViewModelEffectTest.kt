@@ -4,8 +4,8 @@ import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageAct
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageEvent
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageExitReason
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
-import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.appusage.model.AppUsageInfoModel
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first

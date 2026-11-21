@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.data.battery.internal
 
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistorySampleModel
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

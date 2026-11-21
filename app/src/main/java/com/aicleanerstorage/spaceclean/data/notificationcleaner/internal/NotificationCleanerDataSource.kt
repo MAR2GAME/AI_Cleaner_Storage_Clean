@@ -7,9 +7,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import androidx.core.content.edit
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockedNotificationModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.PostedNotificationModel
 import java.util.Base64
 import java.util.UUID
 

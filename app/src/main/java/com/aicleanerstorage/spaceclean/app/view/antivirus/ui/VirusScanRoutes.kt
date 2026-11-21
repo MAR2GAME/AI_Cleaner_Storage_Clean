@@ -10,7 +10,7 @@ import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanA
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusScanLoading
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 
 @Composable
 fun QuickScanVirusRoute(

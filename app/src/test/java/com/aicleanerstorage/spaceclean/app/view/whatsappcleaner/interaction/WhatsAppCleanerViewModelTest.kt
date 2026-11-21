@@ -1,14 +1,14 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.cleanerkit.files.model.DeleteStatus
-import com.aicleanerstorage.cleanerkit.files.model.FileDeleteOutcome
-import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
-import com.aicleanerstorage.cleanerkit.files.model.FileUri
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.files.model.FileDeleteSummaryModel
+import com.aicleanerstorage.spaceclean.domain.files.model.FileKind
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
+import com.aicleanerstorage.spaceclean.domain.whatsapp.port.WhatsAppCleanerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -103,54 +103,36 @@ class WhatsAppCleanerViewModelTest {
             assertTrue(events.any { it is WhatsAppCleanerEvent.Exit })
         }
 
-    private fun viewModel(files: List<ManagedFileItem> = emptyList()): WhatsAppCleanerViewModel =
+    private fun viewModel(files: List<ManagedFileModel> = emptyList()): WhatsAppCleanerViewModel =
         WhatsAppCleanerViewModel(
-            repository = FakeFileRepository(files),
+            repository = FakeWhatsAppCleanerRepository(files),
             ioDispatcher = dispatcher,
         )
 
-    private fun cacheItem(name: String): ManagedFileItem =
-        ManagedFileItem(
+    private fun cacheItem(name: String): ManagedFileModel =
+        ManagedFileModel(
             id = name.hashCode().toLong(),
-            uri = FileUri("content://whatsapp/$name"),
+            uri = "content://whatsapp/$name",
             path = "/storage/emulated/0/WhatsApp/cache/$name",
             name = name,
             sizeBytes = 100L,
             modifiedSeconds = 0L,
             mimeType = "image/jpeg",
             bucketName = "WhatsApp cache",
-            type = ManagedFileType.Image,
+            kind = FileKind.Image,
         )
 
-    private class FakeFileRepository(
-        private val files: List<ManagedFileItem>,
-    ) : FileRepository {
-        override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
+    private class FakeWhatsAppCleanerRepository(
+        private val files: List<ManagedFileModel>,
+    ) : WhatsAppCleanerRepository {
+        override suspend fun loadGroups(): Map<WhatsAppFileBucket, List<ManagedFileModel>> =
+            if (files.isEmpty()) {
+                emptyMap()
+            } else {
+                mapOf(WhatsAppFileBucket(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images) to files)
+            }
 
-        override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
-
-        override suspend fun loadFilesInDirectories(
-            relativeDirectories: List<String>,
-            matchesMedia: (ManagedFileItem) -> Boolean,
-        ): List<ManagedFileItem> = files
-
-        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult =
-            FileDeleteResult(
-                outcomes = items.map { FileDeleteOutcome(it, DeleteStatus.Deleted) },
-            )
-
-        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int = 0
+        override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
+            FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes })
     }
 }

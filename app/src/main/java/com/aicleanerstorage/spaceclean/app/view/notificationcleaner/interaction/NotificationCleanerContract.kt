@@ -2,8 +2,8 @@ package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockedNotificationModel
 
 enum class NotificationCleanerPage {
     Onboarding,

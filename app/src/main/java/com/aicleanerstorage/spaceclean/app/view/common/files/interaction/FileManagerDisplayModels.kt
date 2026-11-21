@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 import com.aicleanerstorage.cleanerkit.files.model.FileUri
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -111,6 +112,23 @@ fun managedFileToImageDisplayItem(
         sizeLabel = FormatUtil.formatSize(file.sizeBytes),
         paletteIndex = id - 1,
         uri = file.uri,
+        bucketName = file.bucketName,
+        path = file.path,
+        bestPhoto = bestPhoto,
+    )
+
+fun managedFileModelToImageDisplayItem(
+    id: Int,
+    file: ManagedFileModel,
+    bestPhoto: Boolean = false,
+): FileImageDisplayItem =
+    FileImageDisplayItem(
+        id = id,
+        name = file.name,
+        meta = "${formatManagedFileDate(file.modifiedSeconds)} ${FormatUtil.formatSize(file.sizeBytes)}",
+        sizeLabel = FormatUtil.formatSize(file.sizeBytes),
+        paletteIndex = id - 1,
+        uri = FileUri(file.uri),
         bucketName = file.bucketName,
         path = file.path,
         bestPhoto = bestPhoto,

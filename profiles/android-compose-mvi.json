@@ -6,6 +6,9 @@
   "checks": {
     "domainPurity": true,
     "layerDirection": true,
+    "dataImplementationIsolation": true,
+    "dataVisibility": true,
+    "domainKitIsolation": true,
     "viewDoesNotImportRoot": true,
     "uiPartStateless": true,
     "errorText": true,

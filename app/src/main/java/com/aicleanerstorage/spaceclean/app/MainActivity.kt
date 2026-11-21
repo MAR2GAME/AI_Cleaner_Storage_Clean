@@ -8,7 +8,7 @@ import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.root.AppRootView
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.StorageCleanAppTheme
 import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionHost
-import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.spaceclean.domain.battery.usecase.SyncBackgroundBatterySamplingUseCase
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {

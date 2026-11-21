@@ -14,7 +14,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.PostNotific
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import org.koin.compose.koinInject
 import java.util.Calendar
 

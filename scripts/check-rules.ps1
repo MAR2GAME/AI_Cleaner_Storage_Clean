@@ -77,6 +77,35 @@ Run-FilePatternCheck 'domainPurity' $domainDir @('^import (android|androidx)\.')
 Run-FilePatternCheck 'layerDirection' $domainDir @('^import com\.aicleanerstorage\.spaceclean\.(app|data|base)\.') 'domain must not import app/data/base'
 Run-FilePatternCheck 'layerDirection' $dataDir @('^import com\.aicleanerstorage\.spaceclean\.app\.(view|root)\.') 'data must not import view/root'
 
+# 2b. UI/root never import data implementations.
+if (Test-CheckEnabled 'dataImplementationIsolation') {
+    $importPattern = '^import ' + [regex]::Escape($data.packageRoot) + '\.data\.'
+    $hits = @()
+    foreach ($dir in @((Join-Path $src "$pkgPath/app/view"), (Join-Path $src "$pkgPath/app/root"))) {
+        if (-not (Test-Path -LiteralPath $dir)) { continue }
+        $hits += Get-KotlinFiles $dir | Select-String -Pattern $importPattern
+    }
+    if ($hits.Count -eq 0) {
+        Add-Pass 'dataImplementationIsolation'
+    } else {
+        $hits | Select-Object -First 20 | ForEach-Object { Add-Failure 'dataImplementationIsolation' ("{0}:{1} view/root must not import data" -f (RelativePath $_.Path), $_.LineNumber) }
+    }
+}
+
+# 2c. repository implementations stay internal; DI is the only entry point.
+if (Test-CheckEnabled 'dataVisibility' -and (Test-Path -LiteralPath $dataDir)) {
+    $bad = Get-KotlinFiles $dataDir | Where-Object { $_.Name -like '*RepositoryImpl.kt' } |
+        Select-String -Pattern '^(?:public )?(?:abstract |open )?class \w+'
+    if ($bad) {
+        $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'dataVisibility' ("{0}:{1} implementation must be internal" -f (RelativePath $_.Path), $_.LineNumber) }
+    } else {
+        Add-Pass 'dataVisibility'
+    }
+}
+
+# 2d. domain never depends on the first-party kit modules.
+Run-FilePatternCheck 'domainKitIsolation' $domainDir @('^import com\.aicleanerstorage\.(cleanerkit|devicekit|networkkit)\.') 'domain must not import kit modules'
+
 # 3. pages never import the composition root.
 Run-FilePatternCheck 'viewDoesNotImportRoot' $viewDir @('^import com\.aicleanerstorage\.spaceclean\.app\.root\.') 'view must not import root'
 

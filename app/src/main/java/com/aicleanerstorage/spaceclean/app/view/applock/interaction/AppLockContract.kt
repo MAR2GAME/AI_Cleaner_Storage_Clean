@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
 
 enum class AppLockPage {
     SelectApps,

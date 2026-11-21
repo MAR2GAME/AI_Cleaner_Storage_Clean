@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusThreatModel
 
 internal object VirusScanReducer {
     fun reduce(

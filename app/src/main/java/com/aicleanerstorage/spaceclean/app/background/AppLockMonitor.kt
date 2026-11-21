@@ -3,9 +3,9 @@ package com.aicleanerstorage.spaceclean.app.background
 import android.content.Context
 import android.content.Intent
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.LockOverlayView
-import com.aicleanerstorage.spaceclean.data.applock.AppLockMonitoringRule
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

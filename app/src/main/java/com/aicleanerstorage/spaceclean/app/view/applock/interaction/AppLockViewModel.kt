@@ -2,9 +2,9 @@ package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.data.applock.AppLockPinRule
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockPinRule
+import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

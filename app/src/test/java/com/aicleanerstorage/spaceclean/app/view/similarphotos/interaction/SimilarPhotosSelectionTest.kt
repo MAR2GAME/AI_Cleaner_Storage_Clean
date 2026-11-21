@@ -1,11 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
-import com.aicleanerstorage.cleanerkit.files.model.FileUri
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.domain.files.model.FileDeleteSummaryModel
+import com.aicleanerstorage.spaceclean.domain.files.model.FileKind
+import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.similarphotos.port.SimilarPhotoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -95,52 +94,32 @@ class SimilarPhotosSelectionTest {
 
     private fun viewModel(): SimilarPhotosManagerViewModel =
         SimilarPhotosManagerViewModel(
-            repository = FakeFileRepository(),
+            repository = FakeSimilarPhotoRepository(),
             ioDispatcher = dispatcher,
             scanDelayMillis = 0L,
             deleteDelayMillis = 0L,
             completeDelayMillis = 0L,
         )
 
-    private class FakeFileRepository : FileRepository {
-        override suspend fun loadImages(): List<ManagedFileItem> = listOf(image(1), image(2), image(3))
+    private class FakeSimilarPhotoRepository : SimilarPhotoRepository {
+        override suspend fun loadGroups(): List<List<ManagedFileModel>> = listOf(listOf(image(1), image(2), image(3)))
 
-        override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
-
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
-
-        override suspend fun loadFilesInDirectories(
-            relativeDirectories: List<String>,
-            matchesMedia: (ManagedFileItem) -> Boolean,
-        ): List<ManagedFileItem> = emptyList()
-
-        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult = FileDeleteResult(emptyList())
-
-        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int = 0
+        override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
+            FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes })
     }
 
     private companion object {
-        fun image(id: Long): ManagedFileItem =
-            ManagedFileItem(
+        fun image(id: Long): ManagedFileModel =
+            ManagedFileModel(
                 id = id,
-                uri = FileUri("content://media/external/images/media/$id"),
+                uri = "content://media/external/images/media/$id",
                 path = null,
                 name = "image-$id.jpg",
                 sizeBytes = id * 1024L,
                 modifiedSeconds = 1L,
                 mimeType = "image/jpeg",
                 bucketName = "Camera",
-                type = ManagedFileType.Image,
+                kind = FileKind.Image,
             )
     }
 }

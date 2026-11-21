@@ -2,11 +2,11 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.data.security.VirusScanner
-import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanErrorKind
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.port.VirusScanner
+import com.aicleanerstorage.spaceclean.domain.security.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanErrorKind
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

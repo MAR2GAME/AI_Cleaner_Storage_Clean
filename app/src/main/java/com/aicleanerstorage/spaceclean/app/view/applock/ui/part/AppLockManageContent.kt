@@ -38,7 +38,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.labelRes
 import com.aicleanerstorage.spaceclean.app.view.common.settings.SettingsDividerContent
 import com.aicleanerstorage.spaceclean.app.view.common.settings.SettingsToggleRow
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
 
 @Composable
 internal fun AppLockManageContent(

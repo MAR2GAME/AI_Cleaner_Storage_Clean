@@ -17,7 +17,7 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 import kotlinx.coroutines.*
 
 @Composable

@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.appusage.interaction
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.appusage.model.AppUsageInfoModel
 import java.util.Calendar
 
 enum class AppUsageDateRange(

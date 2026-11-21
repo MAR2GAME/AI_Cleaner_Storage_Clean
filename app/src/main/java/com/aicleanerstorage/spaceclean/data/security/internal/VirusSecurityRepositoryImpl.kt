@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.core.content.edit
-import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.domain.security.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusThreatModel
 import java.io.File
 
 internal class VirusSecurityRepositoryImpl(

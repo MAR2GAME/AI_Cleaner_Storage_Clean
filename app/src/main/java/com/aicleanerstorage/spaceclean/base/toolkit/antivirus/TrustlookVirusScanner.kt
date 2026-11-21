@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.base.toolkit.antivirus
 
 import android.content.Context
-import com.aicleanerstorage.spaceclean.data.security.ScanEngineConfigurationException
-import com.aicleanerstorage.spaceclean.data.security.VirusScanner
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanErrorKind
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.security.error.ScanEngineConfigurationException
+import com.aicleanerstorage.spaceclean.domain.security.port.VirusScanner
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanErrorKind
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
 import com.trustlook.sdk.cloudscan.CloudScanClient
 import com.trustlook.sdk.cloudscan.CloudScanListener
 import com.trustlook.sdk.data.AppInfo

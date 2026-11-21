@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.testsupport
 
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 
 internal class InMemorySettingsRepository(
     private var backgroundSampling: Boolean = false,

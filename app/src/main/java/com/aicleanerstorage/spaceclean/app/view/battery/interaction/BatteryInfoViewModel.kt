@@ -6,17 +6,17 @@ import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.Devic
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoStateController
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.battery.usecase.SyncBackgroundBatterySamplingUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class BatteryInfoViewModel(
     repository: DeviceInfoRepository,
     batteryHistoryRepository: BatteryHistoryRepository,
-    batteryHistorySampler: BatteryHistorySampler,
+    batteryHistorySampler: BatteryHistoryRecorder,
     settingsRepository: SettingsRepository,
     private val syncBackgroundBatterySampling: SyncBackgroundBatterySamplingUseCase,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,

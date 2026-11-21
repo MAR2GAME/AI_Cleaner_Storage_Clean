@@ -11,11 +11,11 @@ import com.aicleanerstorage.devicekit.model.StorageInfo
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -245,7 +245,7 @@ fun String.orPlaceholder(): String = takeIf { isNotBlank() && this != UNKNOWN } 
 class DeviceInfoStateController(
     private val repository: DeviceInfoRepository,
     private val batteryHistoryRepository: BatteryHistoryRepository,
-    private val batteryHistorySampler: BatteryHistorySampler,
+    private val batteryHistorySampler: BatteryHistoryRecorder,
     private val settingsRepository: SettingsRepository,
     private val scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,

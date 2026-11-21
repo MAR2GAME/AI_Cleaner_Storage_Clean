@@ -1,23 +1,29 @@
-# 多模块 MVI 架构规范
+# MVI 与分层架构规范
 
 本文是当前 MVI 规范。权限和广告采用 `refactor-sample.md` 第 3、4 节的职责划分；与示例不同的业务和生命周期规则以本文为准。
-当前采用 4 个 core 模块与 10 个 feature 模块。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost、权限 Coordinator 与广告实现。旧 common 生产源码已迁入对应模块，不保留兼容别名。
+当前为单 `:app` 模块 + 包分层，另有 `:cleaner-kit`、`:device-kit`、`:network-kit`、`:junkcc` 四个独立 Gradle 模块。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost、权限 Gate 与广告实现。旧 feature 模块已合并回 `:app`，不保留兼容别名。
 
 ## 包职责
 
 源码根包为 `com.aicleanerstorage.spaceclean`。
 
-| 模块 | 内容 | 依赖约束 |
+| 包 | 内容 | 依赖约束 |
 | --- | --- | --- |
-| core:contracts | IntentPolicy、权限、广告、业务事件和共享业务数据接口 | Kotlin/JVM，不依赖 Android、app 或 feature |
-| core:navigation | AppDestination、MainTab、AppNavigator | Kotlin/JVM，只依赖 core:contracts |
-| core:presentation | MviViewModel、IntentInterceptor、InterceptResult | AndroidX 生命周期与协程；不依赖 app 或 feature |
-| core:ui | Theme、共享资源、通用 Compose 组件、权限观察 | 只依赖 core 契约 |
-| feature:* | domain、data、view/<page>/presentation、view/<page>/ui | 只依赖 core，不依赖 app 或其他 feature |
-| app | Application、Koin、NavHost、PermissionInterceptor/Host、AdInterceptor/Driver、FeatureFlow 实现和平台服务 | 连接接口与实现；保留原有 junkcc 装配 |
+| app | Application、MainActivity、root/、di/、view/<page>/{interaction,ui}、background/ | 唯一装配 data 实现与 kit 端口实现的包 |
+| base | designsystem/、mvi/、navigation/、permission/、storage/、toolkit/、util/ | 技术支撑；不得依赖 data 或 app |
+| data | <feature>/internal 实现、repository 实现、介质适配与 mapper | 允许 domain、base、kit；不得依赖 app |
+| domain | <feature>/{model,port,rule,usecase,error} | 纯 Kotlin；只依赖自身与 Kotlin/JDK |
+| cleanerkit / devicekit / networkkit | 独立能力模块（文件、清理、设备、网络） | 不依赖 app、domain、base |
 
-模块清单：startup、onboarding、home、settings、junkclean、antivirus、files、applock、notificationcleaner、toolbox。
-业务接口和跨功能复用的数据放入 core:contracts；单功能仓库接口仍留在自身 domain。不得为了减少依赖报错让 feature 依赖另一个 feature。
+**业务优先**：`domain/<feature>`、`data/<feature>`、`app/view/<feature>` 同名，一个业务能力在四层里使用同一个包名。跨 feature 的契约归其归属 feature（例如 `SettingsRepository` 在 `domain/settings/port`），不建 `shared` 包。
+
+依赖方向（允许列表，由 `scripts/check-rules.ps1` 逐条检查）：
+
+- `domain` 只依赖自身与 Kotlin/JDK；不得 import `base`、`data`、`app` 或三个 kit。
+- `data` 允许 `domain`、`base`、kit；不得 import `app`。
+- `app/view` 允许 `base`、`domain`；不得 import `data`。
+- `app/di` 是唯一装配 data 实现与 base/toolkit 端口实现的包。
+- `base` 不得依赖 `data` 或 `app`；`base/toolkit` 可以实现 `domain` 端口。
 
 `CleanItem`、`CategoryCleanGroup` 属于 presentation 模型，平铺在 `junkclean/interaction/`。`CleanItem.isChecked` 不可变，修改选择时复制数据。
 仓库接收 `List<JunkFile>`，由 ViewModel 筛选选中项，仓库不认识 UI 选择模型。

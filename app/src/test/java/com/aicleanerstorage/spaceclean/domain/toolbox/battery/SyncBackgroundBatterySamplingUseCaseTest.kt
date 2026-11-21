@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.domain.toolbox.battery
 
-import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.spaceclean.domain.battery.usecase.SyncBackgroundBatterySamplingUseCase
 import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

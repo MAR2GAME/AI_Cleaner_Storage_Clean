@@ -7,8 +7,8 @@ import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
 import com.aicleanerstorage.cleanerkit.clean.model.MemoryCleanResult
 import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job

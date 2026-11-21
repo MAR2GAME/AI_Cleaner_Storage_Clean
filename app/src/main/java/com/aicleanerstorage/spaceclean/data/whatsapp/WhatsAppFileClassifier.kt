@@ -2,6 +2,9 @@ package com.aicleanerstorage.spaceclean.data.whatsapp
 
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
 
 internal fun classifyWhatsAppFile(file: ManagedFileItem): WhatsAppFileBucket {
     val source = listOfNotNull(file.path, file.bucketName, file.name).joinToString("/").lowercase()
