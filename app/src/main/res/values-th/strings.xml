@@ -468,4 +468,5 @@
     <string name="onboarding_device_info_disclaimer">ข้อมูลอุปกรณ์ที่แสดงอาศัยข้อมูลจากระบบและอาจแตกต่างจากข้อมูลจำเพาะที่เป็นทางการ ตัวอย่างเช่น ความจุพื้นที่จัดเก็บหรือหน่วยความจำอาจแตกต่างเล็กน้อยเนื่องจากการสำรองของระบบหรือความแตกต่างของการกำหนดค่าฮาร์ดแวร์</string>
     <string name="notification_status_empty_title">เปิดการบล็อกการแจ้งเตือนแล้ว</string>
     <string name="notification_status_empty_message">การแจ้งเตือนที่ถูกบล็อกจะแสดงที่นี่</string>
+    <string name="network_speed_estimated">ความเร็วโดยประมาณ</string>
 </resources>

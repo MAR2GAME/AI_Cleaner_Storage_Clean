@@ -19,14 +19,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaff
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScreenshotGridView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun ScreenshotsManagerScreen(
     state: ScreenshotsManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = remember { ScrollState(0) }

@@ -23,9 +23,9 @@ internal fun BatteryCard(uiState: DeviceInfoUiState) {
                 stringResource(R.string.battery_voltage) to formatBatteryVoltage(uiState.battery.voltage),
                 stringResource(R.string.battery_temperature) to
                     formatBatteryTemperature(uiState.battery.temperature, uiState.temperatureUnit),
-                stringResource(R.string.battery_status) to localizedBatteryStatus(uiState.batteryStatus.statusText),
+                stringResource(R.string.battery_status) to localizedBatteryStatus(uiState.battery.statusText),
                 stringResource(R.string.battery_charging_status) to
-                    if (uiState.batteryStatus.isCharging) {
+                    if (uiState.battery.isCharging) {
                         stringResource(R.string.battery_charging)
                     } else {
                         stringResource(R.string.battery_not_charging)

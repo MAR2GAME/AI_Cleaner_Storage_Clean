@@ -48,7 +48,7 @@
 
 ## 类型化导航与共享流程
 
-纯 Screen 和 UI 组件只接收 `ToolNavigationTarget` 或无参数语义回调。它们不导入 `AppDestination`、`AppNavigator`、`NavHostController`、ViewModel 或 Repository；Route/EffectHandler 才把业务目标映射为 typed `AppDestination` 并执行导航。
+Screen 和 UI 组件通过回调传递 `AppDestination` 或发出无参数语义事件。Route/EffectHandler 持有导航器并执行跳转。
 
 AppNavigator 是纯 Kotlin 接口。NavHostAppNavigator 位于 app，合并入口广告、进行中请求去重、来源页面校验与迟到回调取消。功能页面通过 typed AppDestination 输出目标；只有应用层持有 NavHostController。
 Main(initialTab) 表示三个首页标签；切换现有 Main 时通过 SavedStateHandle 请求更新 Home Intent。序列化参数只包含业务参数，广告场景、feature 标识和历史路由别名使用计算属性，避免反序列化时回退为默认元数据。

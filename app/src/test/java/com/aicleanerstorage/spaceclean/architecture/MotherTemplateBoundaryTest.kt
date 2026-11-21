@@ -7,7 +7,7 @@ import org.junit.Test
 class MotherTemplateBoundaryTest {
     private val root = sequenceOf(File("."), File("..")).map(File::getCanonicalFile)
         .first { File(it, "settings.gradle.kts").exists() }
-    private val modules = listOf(File(root, "app"))
+    private val modules = listOf("app", "cleaner-kit", "network-kit", "device-kit").map { File(root, it) }
     private fun sources() = modules.asSequence().flatMap { module ->
         sequenceOf("java", "kotlin").flatMap { language ->
             File(module, "src/main/$language").walkTopDown().filter { it.extension == "kt" }

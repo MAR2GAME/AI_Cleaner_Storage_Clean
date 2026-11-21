@@ -9,7 +9,6 @@ interface AppThemeTokens {
     val colors: AppColors
     val dimens: AppDimens
     val shapes: AppShapes
-    val typography: AppTypographyTokens
 }
 
 data class AppColors(
@@ -78,43 +77,29 @@ data class AppDimens(
     val pagePadding: androidx.compose.ui.unit.Dp = 16.dp,
     val contentPadding: androidx.compose.ui.unit.Dp = 13.dp,
     val compactPadding: androidx.compose.ui.unit.Dp = 8.dp,
-    val smallPadding: androidx.compose.ui.unit.Dp = 10.dp,
-    val mediumPadding: androidx.compose.ui.unit.Dp = 12.dp,
-    val largePadding: androidx.compose.ui.unit.Dp = 20.dp,
-    val gridSpacing: androidx.compose.ui.unit.Dp = 10.dp,
-    val itemSpacing: androidx.compose.ui.unit.Dp = 12.dp,
-    val sectionSpacing: androidx.compose.ui.unit.Dp = 20.dp,
     val headerTopPadding: androidx.compose.ui.unit.Dp = 12.dp,
     val headerBottomPadding: androidx.compose.ui.unit.Dp = 14.dp,
-    val panelPadding: androidx.compose.ui.unit.Dp = 14.dp,
     val buttonHorizontalPadding: androidx.compose.ui.unit.Dp = 18.dp,
     val buttonVerticalPadding: androidx.compose.ui.unit.Dp = 14.dp,
     val buttonHeight: androidx.compose.ui.unit.Dp = 50.dp,
     val compactButtonHeight: androidx.compose.ui.unit.Dp = 36.dp,
-    val rowHeight: androidx.compose.ui.unit.Dp = 52.dp,
     val iconButtonSize: androidx.compose.ui.unit.Dp = 40.dp,
-    val actionIconSize: androidx.compose.ui.unit.Dp = 24.dp,
     val headerIconSize: androidx.compose.ui.unit.Dp = 28.dp,
 )
 
 data class AppShapes(
     val card: RoundedCornerShape = RoundedCornerShape(14.dp),
     val tile: RoundedCornerShape = RoundedCornerShape(12.dp),
-    val small: RoundedCornerShape = RoundedCornerShape(10.dp),
     val pill: RoundedCornerShape = RoundedCornerShape(50),
     val button: RoundedCornerShape = RoundedCornerShape(50),
-    val fileTileAspectRatio: Float = 1.7f,
     val virusPanel: RoundedCornerShape = RoundedCornerShape(12.dp),
     val virusButton: RoundedCornerShape = RoundedCornerShape(50.dp),
 )
-
-class AppTypographyTokens
 
 object DefaultAppThemeTokens : AppThemeTokens {
     override val colors = AppColors()
     override val dimens = AppDimens()
     override val shapes = AppShapes()
-    override val typography = AppTypographyTokens()
 }
 
 val LocalAppThemeTokens =

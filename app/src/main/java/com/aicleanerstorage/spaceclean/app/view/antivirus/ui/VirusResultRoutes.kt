@@ -13,15 +13,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.NoVirusResultScreen
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.ScanVirusResultScreen
 import java.io.File
@@ -36,7 +33,6 @@ fun ScanVirusResultRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val deletionFailedText = stringResource(R.string.deletion_failed)
 
 
 
@@ -81,6 +77,6 @@ fun NoVirusResultRoute(
 ) {
     NoVirusResultScreen(
         onAction = viewModel::dispatch,
-        onNavigate = { viewModel.dispatch(VirusScanAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { viewModel.dispatch(VirusScanAction.NavigationRequested(it)) },
     )
 }

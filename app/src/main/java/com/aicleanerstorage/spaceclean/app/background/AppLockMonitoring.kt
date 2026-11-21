@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.background
 
 import android.content.Context
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockMonitoringRule
 
 internal fun syncAppLockMonitoring(context: Context, repository: AppLockRepository) {
     if (AppLockMonitoringRule.shouldMonitorApps(repository)) {

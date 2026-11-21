@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.ui
 
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanAction
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanEvent
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 
 

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlin.random.Random
 
 private val CardBg = Color.White
@@ -42,7 +42,7 @@ private val CardRadius = 12.dp
 data class ToolFeature(
     @param:StringRes val titleRes: Int,
     @param:StringRes val subtitleRes: Int,
-    val destination: ToolNavigationTarget,
+    val destination: AppDestination,
     val iconRes: Int,
     val gradient: Brush,
     @param:StringRes val actionLabelRes: Int,
@@ -54,7 +54,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.junk_removal,
                 R.string.file_suggestion_junk_desc,
-                ToolNavigationTarget.JunkClean,
+                AppDestination.JunkClean,
                 R.drawable.junk_cleaning_trash_figma,
                 Brush.linearGradient(listOf(Color(0xFFFF6B4A), Color(0xFFFF3D2E))),
                 R.string.scan_now,
@@ -62,7 +62,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_device_info,
                 R.string.common_tool_device_desc,
-                ToolNavigationTarget.DeviceInfo,
+                AppDestination.DeviceInfo,
                 R.drawable.ic_device_phone,
                 Brush.linearGradient(listOf(Color(0xFF7F6CFF), Color(0xFF462BF9))),
                 R.string.view_now,
@@ -70,7 +70,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_battery_info,
                 R.string.common_tool_battery_desc,
-                ToolNavigationTarget.BatteryInfo,
+                AppDestination.BatteryInfo,
                 R.drawable.ic_battery,
                 Brush.linearGradient(listOf(Color(0xFF90FB9C), Color(0xFF8AFB88))),
                 R.string.view_now,
@@ -79,7 +79,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_app_usage,
                 R.string.common_tool_app_usage_desc,
-                ToolNavigationTarget.AppUsage,
+                AppDestination.AppUsage,
                 R.drawable.ic_app_usage,
                 Brush.linearGradient(listOf(Color(0xFF6EC6FF), Color(0xFF2196F3))),
                 R.string.view_now,
@@ -88,7 +88,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_notification_cleaner,
                 R.string.common_tool_notification_cleaner_desc,
-                ToolNavigationTarget.NotificationCleaner,
+                AppDestination.NotificationCleaner,
                 R.drawable.ic_notification_cleaner,
                 Brush.linearGradient(listOf(Color(0xFFFF9A80), Color(0xFFFF6E40))),
                 R.string.view_now,
@@ -96,7 +96,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_whatsapp_cleaner,
                 R.string.common_tool_whatsapp_desc,
-                ToolNavigationTarget.WhatsAppCleaner,
+                AppDestination.WhatsAppCleaner,
                 R.drawable.ic_whats_app_cleaner,
                 Brush.linearGradient(listOf(Color(0xFF81C784), Color(0xFF4CAF50))),
                 R.string.view_now,
@@ -104,7 +104,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_network_usage,
                 R.string.common_tool_network_usage_desc,
-                ToolNavigationTarget.NetworkUsage,
+                AppDestination.NetworkUsage,
                 R.drawable.ic_network_usage,
                 Brush.linearGradient(listOf(Color(0xFF64B5F6), Color(0xFF1976D2))),
                 R.string.view_now,
@@ -112,7 +112,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_network_scan,
                 R.string.common_tool_network_scan_desc,
-                ToolNavigationTarget.NetworkScan,
+                AppDestination.NetworkScan,
                 R.drawable.ic_network_scan,
                 Brush.linearGradient(listOf(Color(0xFFD0FD91), Color(0xFF5DD595))),
                 R.string.scan_now,
@@ -121,7 +121,7 @@ val AllToolFeatures
             ToolFeature(
                 R.string.nav_network_speed,
                 R.string.common_tool_network_speed_desc,
-                ToolNavigationTarget.NetworkSpeed,
+                AppDestination.NetworkSpeed,
                 R.drawable.ic_network_speed,
                 Brush.linearGradient(listOf(Color(0xFFCE93D8), Color(0xFF9C27B0))),
                 R.string.test_now,
@@ -131,9 +131,9 @@ val AllToolFeatures
 
 @Composable
 fun ToolFeatureBanners(
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
-    excludedDestinations: Set<ToolNavigationTarget> = emptySet(),
+    excludedDestinations: Set<AppDestination> = emptySet(),
     seed: Long? = null,
 ) {
     val generatedSeed = remember { Random.nextLong() }
@@ -161,7 +161,7 @@ fun ToolFeatureBanners(
 @Composable
 fun ToolFeatureBanners(
     features: List<ToolFeature>,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -176,8 +176,8 @@ fun ToolFeatureBanners(
 }
 
 fun handleToolFeatureBannerClick(
-    destination: ToolNavigationTarget,
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    destination: AppDestination,
+    onNavigateTool: (AppDestination) -> Unit,
 ) {
     onNavigateTool(destination)
 }
@@ -259,7 +259,7 @@ private fun ToolFeatureBanner(
 
 fun selectRecommendedToolFeatures(
     features: List<ToolFeature>,
-    excludedDestinations: Set<ToolNavigationTarget> = emptySet(),
+    excludedDestinations: Set<AppDestination> = emptySet(),
     seed: Long,
     limit: Int = 2,
 ): List<ToolFeature> =

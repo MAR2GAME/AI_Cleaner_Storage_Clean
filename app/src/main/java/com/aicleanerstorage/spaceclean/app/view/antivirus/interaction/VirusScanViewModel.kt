@@ -3,14 +3,15 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
 
-import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanErrorKind
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.data.security.VirusScanner
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanErrorKind
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.base.coroutines.AppDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -32,7 +33,8 @@ class VirusScanViewModel(
     private val scanEngine: VirusScanner,
     private val securityRepository: VirusSecurityRepository,
     private val permissionChecker: PermissionChecker? = null,
-    private val dispatchers: AppDispatchers = AppDispatchers(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : MviViewModel<VirusScanUiState, VirusScanAction, VirusScanEvent>(VirusScanUiState()) {
 
     private var resultVisible = false
@@ -68,7 +70,6 @@ class VirusScanViewModel(
             is VirusScanAction.AppThreatResolutionClicked -> sendEvent(VirusScanEvent.OpenAppSettings(action.packageName))
             is VirusScanAction.FileThreatDeleteClicked -> sendEvent(VirusScanEvent.DeleteFile(action.path))
             is VirusScanAction.NavigationRequested -> sendEvent(VirusScanEvent.Navigate(action.destination))
-            VirusScanAction.ScanResetRequested -> resetScanState()
             VirusScanAction.AdbRiskRefreshRequested -> refreshAdbRisk()
             is VirusScanAction.PackageThreatRemovalRequested -> {
                 threatIds.removeAll { it == action.packageName || it.endsWith(":" + action.packageName) }
@@ -110,7 +111,7 @@ class VirusScanViewModel(
                     sendEvent(VirusScanEvent.NavigateToScan(mode))
                 }
             }
-            is VirusScanUpdate, VirusScanAction.ErrorDismissed, VirusScanAction.InstalledAppsDialogDismissed,
+            is VirusScanUpdate, VirusScanAction.InstalledAppsDialogDismissed,
             VirusScanAction.SettingsLaunchFailed -> Unit
         }
     }
@@ -133,7 +134,7 @@ class VirusScanViewModel(
         viewModelScope.launch {
             val hadPreviousFailure = securityRepository.hasInstalledAppsAccessFailedBefore()
             val startedAt = System.currentTimeMillis()
-            val hasAccess = withContext(dispatchers.io) { securityRepository.hasInstalledAppsAccess() }
+            val hasAccess = withContext(ioDispatcher) { securityRepository.hasInstalledAppsAccess() }
             val elapsed = System.currentTimeMillis() - startedAt
             securityRepository.setInstalledAppsAccessFailed(!hasAccess)
             val showDialog = !hasAccess && !returningFromSettings && hadPreviousFailure &&
@@ -146,8 +147,6 @@ class VirusScanViewModel(
     }
 
     fun isScanNoticeAccepted(): Boolean = securityRepository.isScanNoticeAccepted()
-
-    fun acceptScanNotice() = securityRepository.setScanNoticeAccepted()
 
     fun hasInstalledAppsAccessFailedBefore(): Boolean = securityRepository.hasInstalledAppsAccessFailedBefore()
 
@@ -191,7 +190,7 @@ class VirusScanViewModel(
         val generation = scanGeneration
         adbRiskJob?.cancel()
         adbRiskJob = viewModelScope.launch {
-            val hasRisk = withContext(dispatchers.default) {
+            val hasRisk = withContext(defaultDispatcher) {
                 securityRepository.hasAdbRisk()
             }
             if (generation == scanGeneration) dispatch(VirusScanUpdate.AdbRiskChecked(hasRisk))
@@ -281,7 +280,7 @@ class VirusScanViewModel(
             display = VirusScanDisplay(
                 scope = viewModelScope,
                 mode = mode,
-                loadAppLabel = { withContext(dispatchers.io) { securityRepository.appLabel(it) } },
+                loadAppLabel = { withContext(ioDispatcher) { securityRepository.appLabel(it) } },
                 onUpdate = { if (generation == scanGeneration) dispatch(it) },
             ).also { it.start(scanStartedAt) }
         }
@@ -304,7 +303,7 @@ class VirusScanViewModel(
 
     private fun addThreat(item: VirusScanItemModel, isFile: Boolean, generation: Int) {
         val job = viewModelScope.launch {
-            val threat = withContext(dispatchers.io) {
+            val threat = withContext(ioDispatcher) {
                 securityRepository.threatFor(item, isFile)
             }
             if (generation != scanGeneration) return@launch

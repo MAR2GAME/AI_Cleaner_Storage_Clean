@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.applock.ui
 
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
+import com.aicleanerstorage.spaceclean.data.applock.AppLockPinRule
 
 import org.koin.android.ext.android.inject
 
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import android.animation.ObjectAnimator
 import android.app.Service
 import android.content.Context
@@ -39,6 +39,7 @@ class LockScreenOverlayService : Service() {
     private var overlayView: View? = null
     private var currentPin = ""
     private var targetPackage = ""
+    private var verificationJob: kotlinx.coroutines.Job? = null
     private var failedAttempts = 0
     private var lockedUntilMillis = 0L
 
@@ -140,6 +141,7 @@ class LockScreenOverlayService : Service() {
             view.findViewById<View>(id).setOnClickListener { onDigit(digit) }
         }
         view.findViewById<View>(R.id.btn_delete).setOnClickListener {
+            verificationJob?.cancel()
             currentPin = currentPin.dropLast(1)
             updatePinDots()
         }
@@ -166,7 +168,18 @@ class LockScreenOverlayService : Service() {
     }
 
     private fun verifyPin() {
-        if (repository.verifyPin(currentPin.toString())) {
+        val pin = currentPin
+        val target = targetPackage
+        verificationJob?.cancel()
+        verificationJob = serviceScope.launch {
+            val matches = withContext(Dispatchers.Default) { repository.verifyPin(pin) }
+            if (pin != currentPin || target != targetPackage) return@launch
+            onPinVerified(matches)
+        }
+    }
+
+    private fun onPinVerified(matches: Boolean) {
+        if (matches) {
             sendLockBroadcast(AppLockBroadcastActions.PASSWORD_SUCCESS)
             stopSelf()
         } else {

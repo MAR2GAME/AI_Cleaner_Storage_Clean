@@ -17,7 +17,6 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerScreen
 
 @Composable
@@ -72,6 +71,6 @@ fun WhatsAppCleanerRoute(
                 else -> viewModel.dispatch(action)
             }
         },
-        onNavigate = { if (!exiting) viewModel.dispatch(WhatsAppCleanerAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { if (!exiting) viewModel.dispatch(WhatsAppCleanerAction.NavigationRequested(it)) },
     )
 }

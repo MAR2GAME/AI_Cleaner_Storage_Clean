@@ -33,7 +33,7 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPagePad
 import com.aicleanerstorage.spaceclean.base.designsystem.component.SettingsRateDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableStatusBarsPadding
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     state: HomeUiState,
     onAction: (HomeAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     onSettingsClick: () -> Unit,
     onExitPromptView: () -> Unit,
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ fun HomeScreen(
     val exitPromptSpec = state.exitPromptDestination?.let(::toolNotificationSpec)
     val showAutoRateDialog = state.showAutoRateDialog
 
-    fun openFeature(feature: ToolNavigationTarget) {
+    fun openFeature(feature: AppDestination) {
         onNavigate(feature)
     }
 

@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.base.navigation
 
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -12,12 +11,6 @@ internal const val MAIN_TAB_REQUEST = "main_tab_request"
 class AppNavigatorImpl(
     private val navController: NavHostController,
 ) : AppNavigator {
-    fun forEntry(@Suppress("UNUSED_PARAMETER") source: NavBackStackEntry): AppNavigator = this
-
-    fun sourceChanged(@Suppress("UNUSED_PARAMETER") entryId: String?) = Unit
-
-    fun close() = Unit
-
     override fun navigate(destination: AppDestination) {
         navController.navigate(destination) { launchSingleTop = true }
     }

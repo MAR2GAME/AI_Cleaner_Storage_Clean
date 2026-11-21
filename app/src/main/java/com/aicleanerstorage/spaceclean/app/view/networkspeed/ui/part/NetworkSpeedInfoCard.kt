@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part
 
+import com.aicleanerstorage.networkkit.model.NetworkTransport
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,17 +47,22 @@ internal fun NetworkSpeedInfoCard(uiState: NetworkSpeedUiState) {
         ) {
             NetworkSpeedInfoLine(
                 label = stringResource(R.string.network_type),
-                value = if (showNetworkInfo) uiState.networkInfo.type else "--",
+                value = when (uiState.networkInfo.transport.takeIf { showNetworkInfo }) {
+                    NetworkTransport.Wifi -> stringResource(R.string.wifi)
+                    NetworkTransport.Cellular -> stringResource(R.string.network_type_cellular)
+                    NetworkTransport.Ethernet -> stringResource(R.string.network_type_ethernet)
+                    NetworkTransport.Unknown, null -> "--"
+                },
             )
             NetworkSpeedInfoDivider()
             NetworkSpeedInfoLine(
                 label = stringResource(R.string.wifi_name),
-                value = if (showNetworkInfo) uiState.networkInfo.ssid else "--",
+                value = if (showNetworkInfo) uiState.networkInfo.ssid ?: stringResource(R.string.unknown_ssid) else "--",
             )
             NetworkSpeedInfoDivider()
             NetworkSpeedInfoLine(
                 label = stringResource(R.string.ip),
-                value = if (showNetworkInfo) uiState.networkInfo.ip else "--",
+                value = if (showNetworkInfo) uiState.networkInfo.ip ?: "--" else "--",
             )
         }
     }

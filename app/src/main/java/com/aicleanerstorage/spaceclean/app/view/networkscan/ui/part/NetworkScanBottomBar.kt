@@ -1,21 +1,17 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,12 +21,8 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanPhase
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanButtonOutline
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavy
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
-import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXButtonHorizontalPadding
-import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXButtonShape
-import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXButtonVerticalPadding
 
 @Composable
 internal fun NetworkScanBottomBar(
@@ -89,48 +81,5 @@ internal fun NetworkScanBottomBar(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun NetworkScanPrimaryButton(
-    text: String,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = onClick,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .background(
-                    brush =
-                        Brush.horizontalGradient(
-                            colors =
-                                listOf(
-                                    Color(0xFFD0FD91),
-                                    Color(0xFF5DD595),
-                                ),
-                        ),
-                    shape = CleanXButtonShape,
-                ),
-        shape = CleanXButtonShape,
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = NetworkScanNavy,
-            ),
-        contentPadding =
-            PaddingValues(
-                horizontal = CleanXButtonHorizontalPadding,
-                vertical = CleanXButtonVerticalPadding,
-            ),
-    ) {
-        Text(
-            text = text,
-            fontSize = 20.sp,
-            lineHeight = 24.sp,
-            fontWeight = FontWeight.Medium,
-        )
     }
 }

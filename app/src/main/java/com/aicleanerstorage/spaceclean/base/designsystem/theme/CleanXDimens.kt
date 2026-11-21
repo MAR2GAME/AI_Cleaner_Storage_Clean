@@ -28,7 +28,6 @@ val CleanXButtonVerticalPadding: Dp @Composable @ReadOnlyComposable get() = Dime
 // ---------- Sizes ----------
 val CleanXButtonHeight: Dp @Composable @ReadOnlyComposable get() = Dimens.buttonHeight
 val CleanXCompactButtonHeight: Dp @Composable @ReadOnlyComposable get() = Dimens.compactButtonHeight
-val CleanXRowHeight: Dp @Composable @ReadOnlyComposable get() = Dimens.rowHeight
 val CleanXIconButtonSize: Dp @Composable @ReadOnlyComposable get() = Dimens.iconButtonSize
 val CleanXHeaderIconSize: Dp @Composable @ReadOnlyComposable get() = Dimens.headerIconSize
 

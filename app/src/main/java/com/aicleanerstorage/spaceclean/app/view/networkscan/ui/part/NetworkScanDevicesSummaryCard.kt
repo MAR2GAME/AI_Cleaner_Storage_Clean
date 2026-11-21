@@ -32,12 +32,12 @@ import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavy
-import com.aicleanerstorage.spaceclean.domain.model.NetworkDeviceInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.NetworkScanResultModel
+import com.aicleanerstorage.networkkit.model.NetworkDeviceInfo
+import com.aicleanerstorage.networkkit.model.NetworkScanResult
 
 @Composable
 internal fun NetworkScanDevicesSummaryCard(
-    scan: NetworkScanResultModel,
+    scan: NetworkScanResult,
     onDevicesClick: () -> Unit,
 ) {
     val devices = scan.devices
@@ -83,7 +83,7 @@ internal fun NetworkScanDevicesSummaryCard(
 }
 
 @Composable
-internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceInfoModel) {
+internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceInfo) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,5 +128,5 @@ internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceInfoModel) {
     }
 }
 
-internal fun String.displayUnknown(): String =
-    takeUnless { it.equals("unknown", ignoreCase = true) || it.isBlank() } ?: "unknown"
+@Composable
+internal fun String?.displayUnknown(): String = this?.takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown)

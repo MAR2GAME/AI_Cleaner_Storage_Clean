@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.VirusThreatModel
+import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
 
 internal object VirusScanReducer {
     fun reduce(state: VirusScanUiState, action: VirusScanAction): VirusScanUiState =
@@ -18,7 +18,6 @@ internal object VirusScanReducer {
                 state.copy(home = state.home.copy(waitingForSettingsReturn = false, scanRequestPending = false, showInstalledAppsPermissionDialog = true))
             is VirusScanAction.DeepScanPermissionResultReceived ->
                 state.copy(home = state.home.copy(scanRequestPending = false))
-            VirusScanAction.ErrorDismissed -> state.copy(errorMessage = null)
             VirusScanAction.ScanCancellationRequested -> state.copy(isScanning = false, scanCompleted = false)
             is VirusScanAction.PackageThreatRemovalRequested ->
                 state.withThreats(state.threats.filterNot { it.packageName == action.packageName })

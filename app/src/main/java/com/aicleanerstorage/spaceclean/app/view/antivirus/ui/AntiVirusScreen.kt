@@ -7,7 +7,7 @@ import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanA
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.AntiVirusHomeContent
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusInstalledAppsAccessDialog
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusScanNoticeDialog
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
 
 @Composable
 fun AntiVirusScreen(

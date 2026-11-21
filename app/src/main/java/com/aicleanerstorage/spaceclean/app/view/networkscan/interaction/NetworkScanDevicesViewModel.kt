@@ -2,7 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.networkkit.NetworkRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,23 +11,15 @@ class NetworkScanDevicesViewModel(
     private val repository: NetworkRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MviViewModel<NetworkScanDevicesUiState, NetworkScanDevicesAction, NetworkScanDevicesEvent>(NetworkScanDevicesUiState()) {
-    override fun onAction(intent: NetworkScanDevicesAction) {
-        when (intent) {
-            is NetworkScanDevicesAction.NavigationRequested -> sendEvent(NetworkScanDevicesEvent.Navigate(intent.destination))
-            NetworkScanDevicesAction.DevicesLoadRequested -> loadDevices()
-            else -> handleIntent(intent)
-        }
-    }
-
     init {
         loadDevices()
     }
 
-    private fun handleIntent(action: NetworkScanDevicesAction) {
+    override fun onAction(action: NetworkScanDevicesAction) {
         when (action) {
+            is NetworkScanDevicesAction.NavigationRequested -> sendEvent(NetworkScanDevicesEvent.Navigate(action.destination))
             NetworkScanDevicesAction.BackClicked -> sendEvent(NetworkScanDevicesEvent.NavigateBack)
             NetworkScanDevicesAction.RetryClicked -> loadDevices()
-            else -> Unit
         }
     }
 

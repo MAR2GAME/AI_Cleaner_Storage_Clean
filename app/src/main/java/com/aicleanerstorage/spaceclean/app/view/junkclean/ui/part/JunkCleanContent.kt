@@ -12,11 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkPermissionRequest
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperation
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CleanItem
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBackground
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
-import com.aicleanerstorage.spaceclean.domain.model.JunkCategory
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 
 @Composable
 internal fun JunkCleanContent(
@@ -32,8 +32,8 @@ internal fun JunkCleanContent(
         JunkCleanPhase.Scanning -> JunkScanLoading(uiState = uiState)
         is JunkCleanPhase.CheckingPermission -> {
             when (phase.request) {
-                JunkPermissionRequest.Scan -> JunkScanLoading(uiState = uiState)
-                JunkPermissionRequest.Clean -> JunkScanResultContent(
+                JunkOperation.Scan -> JunkScanLoading(uiState = uiState)
+                JunkOperation.Clean -> JunkScanResultContent(
                     groups = uiState.groups,
                     checkedEmptyCategories = uiState.checkedEmptyCategories,
                     selectedSummary = uiState.selectedSummary,
@@ -45,6 +45,9 @@ internal fun JunkCleanContent(
         }
         JunkCleanPhase.Preview ->
                 JunkScanResultContent(
+                    stoppedSummary = uiState.stoppedSummary?.let {
+                        stringResource(com.aicleanerstorage.spaceclean.R.string.cleanup_stopped_summary, it.cleanedCount, com.aicleanerstorage.spaceclean.base.util.FormatUtil.formatSize(it.freedSpace))
+                    },
                     groups = uiState.groups,
                     checkedEmptyCategories = uiState.checkedEmptyCategories,
                     selectedSummary = uiState.selectedSummary,

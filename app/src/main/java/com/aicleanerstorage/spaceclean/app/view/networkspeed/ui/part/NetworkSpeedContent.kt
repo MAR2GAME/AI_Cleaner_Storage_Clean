@@ -7,7 +7,7 @@ import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.Network
 @Composable
 internal fun NetworkSpeedContent(
     uiState: NetworkSpeedUiState,
-    onNavigateTool: (com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget) -> Unit,
+    onNavigateTool: (com.aicleanerstorage.spaceclean.base.navigation.AppDestination) -> Unit,
 ) {
     when (uiState.phase) {
         NetworkSpeedPhase.Idle -> NetworkSpeedIdleContent(uiState = uiState)

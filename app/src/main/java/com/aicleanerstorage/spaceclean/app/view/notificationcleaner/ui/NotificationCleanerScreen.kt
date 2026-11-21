@@ -33,13 +33,13 @@ import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part.Noti
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBottomActionBar
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun NotificationCleanerScreen(
     state: NotificationCleanerUiState,
     onAction: (NotificationCleanerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showBlockingTurnedOffDialog by remember { mutableStateOf(false) }

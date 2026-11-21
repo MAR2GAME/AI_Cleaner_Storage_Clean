@@ -18,7 +18,4 @@ val AppLockSecondaryText: Color @Composable @ReadOnlyComposable get() = c.textMu
 val AppLockPlaceholderText: Color @Composable @ReadOnlyComposable get() = c.textMuted
 val AppLockDividerColor: Color @Composable @ReadOnlyComposable get() = c.divider
 val AppLockCardRadius: Dp @Composable @ReadOnlyComposable get() = c.let { 10.dp }
-val PinSelectedColor: Color @Composable @ReadOnlyComposable get() = c.textPrimary
-val PinUnselectedBorderColor: Color @Composable @ReadOnlyComposable get() = Color(0xA68190A5)
-val PinKeyBackground: Color @Composable @ReadOnlyComposable get() = Color(0x408190A5)
 val PinErrorColor: Color @Composable @ReadOnlyComposable get() = c.pinError

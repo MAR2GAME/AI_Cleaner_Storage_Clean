@@ -1,13 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.BatteryInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.StorageInfoModel
+import com.aicleanerstorage.devicekit.model.BatteryInfo
+import com.aicleanerstorage.devicekit.model.StorageInfo
 
 data class HomeSummaryUiState(
-    val storageInfo: StorageInfoModel = StorageInfoModel(0, 0, 0),
-    val batteryInfo: BatteryInfoModel = BatteryInfoModel(-1, "Unknown", 0f, -1, "Unknown", 0, "Unknown"),
-    val batteryStatusText: String = "Unknown",
+    val storageInfo: StorageInfo = StorageInfo(0, 0),
+    val batteryInfo: BatteryInfo = BatteryInfo(-1, "Unknown", 0f, -1, "Unknown", 0, "Unknown"),
     val deviceModel: String = "Unknown",
     val androidVersion: String = "Android --",
     val lockedAppCount: Int = 0,

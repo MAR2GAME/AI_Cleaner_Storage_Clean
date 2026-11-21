@@ -4,13 +4,12 @@ import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.*
 
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.model.BatteryStatusInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceCpuInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceHardwareInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.DeviceSensorInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.BatteryInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.MemoryInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.StorageInfoModel
+import com.aicleanerstorage.devicekit.model.DeviceCpuInfo
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
+import com.aicleanerstorage.devicekit.model.DeviceSensorInfo
+import com.aicleanerstorage.devicekit.model.BatteryInfo
+import com.aicleanerstorage.devicekit.model.MemoryInfo
+import com.aicleanerstorage.devicekit.model.StorageInfo
 import kotlin.math.abs
 
 sealed interface DeviceInfoAction {

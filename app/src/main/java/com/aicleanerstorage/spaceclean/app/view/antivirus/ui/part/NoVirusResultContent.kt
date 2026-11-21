@@ -11,11 +11,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolFeatureBanners
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 internal fun NoVirusResultContent(
-    onNavigateTool: (ToolNavigationTarget) -> Unit,
+    onNavigateTool: (AppDestination) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

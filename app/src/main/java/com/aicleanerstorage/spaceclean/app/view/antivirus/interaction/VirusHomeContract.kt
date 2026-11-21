@@ -2,7 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
-import com.aicleanerstorage.spaceclean.domain.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
 
 data class VirusHomeUiState(
     val pendingScanMode: VirusScanMode? = null,
@@ -34,9 +34,7 @@ sealed interface VirusScanAction {
     data object SettingsLaunchFailed : VirusScanAction
     data class DeepScanPermissionResultReceived(val granted: Boolean) : VirusScanAction
 
-    data object ScanResetRequested : VirusScanAction
     data object AdbRiskRefreshRequested : VirusScanAction
-    data object ErrorDismissed : VirusScanAction
     data class PackageThreatRemovalRequested(val packageName: String) : VirusScanAction
     data class FileThreatRemovalRequested(val path: String) : VirusScanAction
 

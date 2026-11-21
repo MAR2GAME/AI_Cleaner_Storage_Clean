@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
+import com.aicleanerstorage.spaceclean.data.similarphotos.groupSimilarPhotos
+
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
@@ -10,7 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleI
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
@@ -26,7 +28,7 @@ class SimilarPhotosManagerViewModel(
     private val completeDelayMillis: Long = 800L,
 ) : MviViewModel<SimilarPhotosManagerUiState, FileManagerAction, FileManagerEvent>(SimilarPhotosManagerUiState()) {
     private val operations = FileOperations(viewModelScope, ioDispatcher) {
-        val groups = buildSimilarPhotoGroups(repository.loadImages())
+        val groups = mapSimilarPhotoGroups(groupSimilarPhotos(repository.loadImages()))
         SimilarPhotosManagerUiState(
             phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
             groups = groups,
@@ -49,10 +51,8 @@ class SimilarPhotosManagerViewModel(
             FileManagerAction.BackClicked -> handleBack()
             FileManagerAction.DetailBackClicked -> { closeDetail(); sendEvent(FileManagerEvent.NavigateBack) }
 
-            is FileManagerAction.StopClicked -> showStopDialog(intent.blockedPhase)
             FileManagerAction.StopDismissed -> dismissStopDialog()
             FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.DeleteCancellationRequested -> cancelDeletingAndReturnToBrowsing()
             FileManagerAction.InitialLoadRequested -> startIfNeeded()
             FileManagerAction.RefreshRequested -> refresh()
             is FileManagerAction.SelectionToggled -> toggleSelection(intent.id)
@@ -62,14 +62,11 @@ class SimilarPhotosManagerViewModel(
                 openDetail(intent.index)
                 sendEvent(FileManagerEvent.Navigate(AppDestination.SimilarPhotosDetail(intent.index), reset = false))
             }
-            FileManagerAction.DetailDismissed -> closeDetail()
             FileManagerAction.DeleteClicked -> requestDelete()
             FileManagerAction.DeleteDismissed -> cancelDelete()
-            FileManagerAction.SystemDeleteRejected -> rejectSystemDelete()
             FileManagerAction.ErrorDismissed -> clearError()
             FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
             FileManagerAction.ContinueManagingClicked -> continueManaging()
-            FileManagerAction.DeletePrepared -> deleteSelectedFiles()
             else -> Unit
         }
     }
@@ -91,7 +88,6 @@ class SimilarPhotosManagerViewModel(
         operations.cancel()
         dismissStopDialog()
     }
-    private fun cancelDeletingAndReturnToBrowsing() { cancelActiveOperation(); onCancelDeletingPhase() }
     private fun startIfNeeded() {
         if (currentState.phase != FileOperationPhase.Scanning || currentState.groups.isNotEmpty()) return
         refresh()
@@ -144,22 +140,8 @@ class SimilarPhotosManagerViewModel(
         changeState { it.copy(phase = FileOperationPhase.Browsing) }
     }
 
-    private fun rejectSystemDelete() {
-        cancelDelete()
-    }
-
     private fun clearError() {
         changeState { it.copy(errorMessage = null) }
-    }
-
-    private fun onCancelDeletingPhase() {
-        changeState { current ->
-            if (current.phase == FileOperationPhase.Deleting) {
-                current.copy(phase = FileOperationPhase.Browsing)
-            } else {
-                current
-            }
-        }
     }
 
     private fun deleteSelectedFiles() {

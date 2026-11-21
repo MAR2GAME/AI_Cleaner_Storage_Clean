@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.NetworkScanResultModel
+import com.aicleanerstorage.networkkit.model.NetworkScanResult
 
 data class NetworkScanDevicesUiState(
-    val scan: NetworkScanResultModel? = null,
+    val scan: NetworkScanResult? = null,
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
 ) {
@@ -16,7 +16,6 @@ sealed interface NetworkScanDevicesAction {
     data object BackClicked : NetworkScanDevicesAction
     data object RetryClicked : NetworkScanDevicesAction
 
-    data object DevicesLoadRequested : NetworkScanDevicesAction
 }
 
 sealed interface NetworkScanDevicesEvent {

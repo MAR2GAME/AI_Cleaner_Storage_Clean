@@ -469,4 +469,5 @@
     <string name="onboarding_device_info_disclaimer">Informasi perangkat yang ditampilkan didasarkan pada data yang disediakan sistem dan mungkin berbeda dari spesifikasi resmi. Misalnya, kapasitas penyimpanan atau memori mungkin sedikit berbeda karena pencadangan sistem atau variasi konfigurasi perangkat keras.</string>
     <string name="notification_status_empty_title">Pemblokiran notifikasi diaktifkan</string>
     <string name="notification_status_empty_message">Notifikasi yang diblokir akan muncul di sini</string>
+    <string name="network_speed_estimated">Perkiraan kecepatan</string>
 </resources>

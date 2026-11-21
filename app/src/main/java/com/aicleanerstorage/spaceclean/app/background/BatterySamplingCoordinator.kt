@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.background
 
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.usecase.SampleBatteryHistoryUseCase
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
 
 
 interface BatterySamplingServiceActions {
@@ -14,7 +14,7 @@ interface BatterySamplingServiceActions {
 }
 
 class BatterySamplingCoordinator(
-    private val sampler: SampleBatteryHistoryUseCase,
+    private val sampler: BatteryHistorySampler,
     private val settingsRepository: SettingsRepository,
     private val hasNotificationPermission: () -> Boolean,
 ) : BatterySamplingServiceActions {

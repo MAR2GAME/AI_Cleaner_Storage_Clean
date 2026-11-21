@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.domain.model.BlockedNotificationModel
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockedNotificationModel
 
 enum class NotificationCleanerPage {
     Onboarding,
@@ -38,22 +38,18 @@ data class NotificationCleanerUiState(
 sealed interface NotificationCleanerAction {
     data class NavigationRequested(val destination: AppDestination) : NotificationCleanerAction
     data object BackClicked : NotificationCleanerAction
-    data object StopClicked : NotificationCleanerAction
     data object StopConfirmed : NotificationCleanerAction
     data object StopDismissed : NotificationCleanerAction
     data object RefreshRequested : NotificationCleanerAction
     data object SettingsClicked : NotificationCleanerAction
-    data object SettingsBackClicked : NotificationCleanerAction
     data object BlockingEnableRequested : NotificationCleanerAction
     data object BlockingDisableRequested : NotificationCleanerAction
     data object TidyUpClicked : NotificationCleanerAction
-    data object ScanAnimationFinished : NotificationCleanerAction
     data object CleaningAnimationFinished : NotificationCleanerAction
     data object CompletionAnimationFinished : NotificationCleanerAction
     data class StatusRequested(val scanGeneration: Long) : NotificationCleanerAction
     data class PackageToggled(val packageName: String) : NotificationCleanerAction
 
-    data object StateRefreshRequested : NotificationCleanerAction
 }
 
 

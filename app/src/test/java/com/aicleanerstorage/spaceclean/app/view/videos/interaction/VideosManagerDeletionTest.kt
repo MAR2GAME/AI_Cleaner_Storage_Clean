@@ -1,5 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.videos.interaction
 
+import com.aicleanerstorage.cleanerkit.files.model.DeleteStatus
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteOutcome
+
+import com.aicleanerstorage.cleanerkit.files.FileRepository
+
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
+
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -7,11 +14,10 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileType
-import com.aicleanerstorage.spaceclean.domain.model.FileDeleteResultModel
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.FileUri
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -43,7 +49,7 @@ class VideosManagerDeletionTest {
 
     @Test
     fun `detail input emits typed navigation and keeps list selection in the same state`() = runTest {
-        val viewModel = viewModel(FakeFileRepository(FileDeleteResultModel(0L, 0)))
+        val viewModel = viewModel(FakeFileRepository(DeleteStatus.Failed))
         viewModel.dispatch(FileManagerAction.RefreshRequested)
         advanceUntilIdle()
         viewModel.dispatch(FileManagerAction.SelectionToggled(1))
@@ -59,7 +65,7 @@ class VideosManagerDeletionTest {
 
     @Test
     fun `permission exit is emitted once and subsequent operations are ignored`() = runTest {
-        val viewModel = viewModel(FakeFileRepository(FileDeleteResultModel(0L, 0)))
+        val viewModel = viewModel(FakeFileRepository(DeleteStatus.Failed))
         val effects = mutableListOf<FileManagerEvent>()
         val collector = backgroundScope.launch(kotlinx.coroutines.test.UnconfinedTestDispatcher(testScheduler)) {
             viewModel.event.collect { effects += it }
@@ -75,7 +81,7 @@ class VideosManagerDeletionTest {
 
     @Test
     fun `zero byte file deletion succeeds when one file was deleted`() = runTest {
-        val repository = FakeFileRepository(FileDeleteResultModel(freedBytes = 0L, deletedCount = 1))
+        val repository = FakeFileRepository(DeleteStatus.Deleted)
         val viewModel = viewModel(repository)
 
         viewModel.dispatch(FileManagerAction.RefreshRequested)
@@ -91,7 +97,7 @@ class VideosManagerDeletionTest {
 
     @Test
     fun `deletion fails when no selected file was deleted`() = runTest {
-        val repository = FakeFileRepository(FileDeleteResultModel(freedBytes = 0L, deletedCount = 0))
+        val repository = FakeFileRepository(DeleteStatus.Failed)
         val viewModel = viewModel(repository)
 
         viewModel.dispatch(FileManagerAction.RefreshRequested)
@@ -108,10 +114,10 @@ class VideosManagerDeletionTest {
     fun `refresh ignores duplicate starts and a cancelled scan cannot replace the retry`() = runTest {
         val releaseFirst = CompletableDeferred<Unit>()
         val releaseSecond = CompletableDeferred<Unit>()
-        val fallback = FakeFileRepository(FileDeleteResultModel(0L, 0))
+        val fallback = FakeFileRepository(DeleteStatus.Failed)
         var loads = 0
         val repository = object : FileRepository by fallback {
-            override suspend fun loadVideos(): List<ManagedFileItemModel> {
+            override suspend fun loadVideos(): List<ManagedFileItem> {
                 loads++
                 if (loads == 1) {
                     withContext(NonCancellable) { releaseFirst.await() }
@@ -144,9 +150,12 @@ class VideosManagerDeletionTest {
 
     private fun viewModel(
         repository: FileRepository,
-    ): VideosManagerViewModel =
-        VideosManagerViewModel(
+    ): MediaManagerViewModel =
+        MediaManagerViewModel(
             repository = repository,
+            loadFiles = FileRepository::loadVideos,
+            defaultTabs = listOf("All", "DCIM", "Download"),
+            detailDestination = { AppDestination.VideosDetail(it) },
             ioDispatcher = dispatcher,
             scanDelayMillis = 0L,
             deleteDelayMillis = 0L,
@@ -154,39 +163,42 @@ class VideosManagerDeletionTest {
         )
 
     private class FakeFileRepository(
-        private val deleteResult: FileDeleteResultModel,
+        private val deleteStatus: DeleteStatus,
     ) : FileRepository {
         private var videos = listOf(zeroByteVideo())
 
-        override suspend fun loadImages(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadVideos(): List<ManagedFileItemModel> = videos
+        override suspend fun loadVideos(): List<ManagedFileItem> = videos
 
-        override suspend fun loadAudios(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadScreenshots(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadPrivacyImages(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadDocuments(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
 
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItemModel>> = emptyList()
+        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
 
-        override suspend fun loadWhatsAppFiles(): List<ManagedFileItemModel> = emptyList()
+        override suspend fun loadFilesInDirectories(
+            relativeDirectories: List<String>,
+            matchesMedia: (ManagedFileItem) -> Boolean,
+        ): List<ManagedFileItem> = emptyList()
 
-        override suspend fun deleteFiles(items: List<ManagedFileItemModel>): FileDeleteResultModel {
-            if (deleteResult.deletedCount > 0) videos = emptyList()
-            return deleteResult
+        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult {
+            if (deleteStatus == DeleteStatus.Deleted) videos = emptyList()
+            return FileDeleteResult(items.map { FileDeleteOutcome(it, deleteStatus) })
         }
 
-        override suspend fun removeLocationData(items: List<ManagedFileItemModel>): Int = 0
+        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int = 0
 
 
         private companion object {
-            fun zeroByteVideo(): ManagedFileItemModel =
-                ManagedFileItemModel(
+            fun zeroByteVideo(): ManagedFileItem =
+                ManagedFileItem(
                     id = 1L,
                     uri = FileUri("content://media/external/video/media/1"),
                     path = null,

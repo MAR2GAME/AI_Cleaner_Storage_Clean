@@ -13,7 +13,6 @@ import kotlinx.coroutines.*
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -65,7 +64,7 @@ fun AppLockRoute(
     LaunchedEffect(uiState.overlayPermissionRequired) {
         if (uiState.overlayPermissionRequired) {
             viewModel.dispatch(AppLockAction.OverlayPermissionRequestHandled)
-            // 授权结果�?ON_RESUME �?RefreshAfterResume 统一复检
+            // 授权结果�?ON_RESUME �?RefreshAfterResume 统一复检
             permissionGate.allow(AppPermission.Overlay)
         }
     }
@@ -104,6 +103,6 @@ fun AppLockRoute(
     AppLockScreen(
         state = uiState,
         onAction = ::handleAction,
-        onNavigate = { if (!exiting) viewModel.dispatch(AppLockAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { if (!exiting) viewModel.dispatch(AppLockAction.NavigationRequested(it)) },
     )
 }

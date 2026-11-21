@@ -550,4 +550,9 @@
     <string name="virus_data_privacy">数据隐私</string>
     <string name="device_battery">电池</string>
     <string name="device_cpu">处理器</string>
+    <string name="similar_photo_grouping_hint">同相册、同日修改且大小接近的照片会编为一组，请预览后选择。</string>
+    <string name="junk_review_hint">建议检查后再选中，默认仅勾选本应用缓存。</string>
+    <string name="cleanup_stopped_summary">已停止，移除了 %1$d 个文件（%2$s）。</string>
+    <string name="available_memory_increase">清理期间系统可用内存增加了 %1$s。</string>
+    <string name="network_speed_estimated">估算网速</string>
 </resources>

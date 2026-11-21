@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import kotlinx.coroutines.CoroutineScope
 
 interface AppLockServiceActions {

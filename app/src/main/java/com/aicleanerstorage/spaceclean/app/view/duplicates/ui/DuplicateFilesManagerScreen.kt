@@ -13,14 +13,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaff
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
 import com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part.DuplicateFilesDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part.DuplicateFilesManagerContent
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun DuplicateFilesManagerScreen(
     state: DuplicateFilesManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val groupListScrollState = remember { ScrollState(0) }

@@ -2,8 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model
 
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
-import com.aicleanerstorage.spaceclean.domain.model.JunkCategory
-import com.aicleanerstorage.spaceclean.domain.model.JunkFileModel
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 
 data class CategoryCleanGroup(
     val category: JunkCategory,
@@ -23,7 +22,4 @@ data class CategoryCleanGroup(
 
     val formattedTotalSize: String
         get() = FormatUtil.formatSize(totalSize)
-
-    val formattedCheckedSize: String
-        get() = FormatUtil.formatSize(checkedSize)
 }

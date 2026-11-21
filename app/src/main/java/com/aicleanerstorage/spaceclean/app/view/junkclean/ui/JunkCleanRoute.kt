@@ -17,7 +17,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.ensureActive
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.rememberMediaStoreDeleteRequest
+import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionHost
+import com.aicleanerstorage.cleanerkit.CleanerKit
+import com.aicleanerstorage.cleanerkit.files.model.DeleteStatus
+import org.koin.compose.koinInject
 import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
 
 @Composable
@@ -29,7 +32,7 @@ fun JunkCleanRoute(
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val deleteRequest = rememberMediaStoreDeleteRequest()
+    val authorization = koinInject<CleanerKit>().mediaDeletion
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
     val permissionGate = rememberPermissionGate()
 
@@ -58,7 +61,7 @@ fun JunkCleanRoute(
         viewModel.dispatch(JunkCleanAction.Entered)
     }
 
-    LaunchedEffect(viewModel, deleteRequest) {
+    LaunchedEffect(viewModel, authorization) {
         collectJunkCleanEvents(
             effects = viewModel.event,
             currentPhase = { viewModel.state.value.phase },
@@ -74,10 +77,21 @@ fun JunkCleanRoute(
             onDeleteAuthorization = { effect ->
                 if (authorizationJob?.isActive == true) return@collectJunkCleanEvents
                 authorizationJob = routeScope.launch {
-                    val confirmed = deleteRequest(effect.uris)
+                    val deletedIds = mutableSetOf<String>()
+                    try {
+                        for (batch in effect.ids.chunked(authorization.maxBatchSize)) {
+                            val request = authorization.prepare(batch) ?: continue
+                            val approved = MediaDeletionHost.authorize(request.sender)
+                            val statuses = authorization.complete(request.requestId, approved)
+                            deletedIds += statuses.filterValues { it == DeleteStatus.Deleted }.keys
+                            if (!approved) break
+                        }
+                    } finally {
+                        authorization.discard(effect.ids)
+                    }
                     ensureActive()
                     if (exitStarted) return@launch
-                    viewModel.dispatch(JunkCleanAction.DeleteAuthorizationResultReceived(confirmed))
+                    viewModel.dispatch(JunkCleanAction.DeleteAuthorizationResultReceived(deletedIds))
                 }
             },
         )

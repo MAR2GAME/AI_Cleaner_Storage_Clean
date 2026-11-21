@@ -14,13 +14,13 @@ import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanD
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun NetworkScanDevicesScreen(
     state: NetworkScanDevicesUiState,
     onAction: (NetworkScanDevicesAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 

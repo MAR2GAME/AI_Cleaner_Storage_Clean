@@ -5,7 +5,7 @@ import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.formatManagedFileDate
 
 
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 
 data class DuplicateFileEntry(
     val id: Int,
@@ -14,7 +14,7 @@ data class DuplicateFileEntry(
     val sizeLabel: String,
     val selected: Boolean,
     val note: String? = null,
-    val realFile: ManagedFileItemModel? = null
+    val realFile: ManagedFileItem? = null
 )
 
 data class DuplicateGroupItem(
@@ -28,7 +28,7 @@ data class DuplicateGroupItem(
 fun duplicateFileKey(file: DuplicateFileEntry): String =
     file.realFile?.uri?.toString() ?: "${file.path}#${file.date}#${file.sizeLabel}"
 
-fun mapDuplicateGroups(groups: List<List<ManagedFileItemModel>>): List<DuplicateGroupItem> =
+fun mapDuplicateGroups(groups: List<List<ManagedFileItem>>): List<DuplicateGroupItem> =
     groups.filter { it.isNotEmpty() }
         .mapIndexed { groupIndex, files ->
             val first = files.first()

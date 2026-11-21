@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryTemperature
 import kotlin.math.roundToInt
 
 @Composable
@@ -43,7 +42,6 @@ internal fun StateInfoCard(uiState: DeviceInfoUiState) {
         label = "storageProgress",
     )
     val cpuUsageText = uiState.cpuUsagePercent?.let { "$it%" } ?: "--"
-    val cpuTemperatureText = formatBatteryTemperature(uiState.cpuTemperatureC, uiState.temperatureUnit, includeSpace = false)
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,

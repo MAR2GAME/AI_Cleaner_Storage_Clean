@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.domain.model.NetworkUsageAppModel
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.networkkit.model.NetworkUsageApp
+import com.aicleanerstorage.networkkit.NetworkRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,13 +17,6 @@ class NetworkUsageViewModel(
 ) : MviViewModel<NetworkUsageUiState, NetworkUsageAction, NetworkUsageEvent>(NetworkUsageUiState(
                 hasAccess = repository.hasNetworkUsageAccess(),
             )) {
-    override fun onAction(intent: NetworkUsageAction) {
-        when (intent) {
-            is NetworkUsageAction.TabChangeRequested -> selectTab(intent.index)
-            else -> handleIntent(intent)
-        }
-    }
-
     private var scanDelayFinished = false
     private var scanJob: Job? = null
     private var permissionRequestAttempted = false
@@ -32,10 +25,9 @@ class NetworkUsageViewModel(
         refreshUsage(startScan = true)
     }
 
-    private fun handleIntent(action: NetworkUsageAction) {
+    override fun onAction(action: NetworkUsageAction) {
         when (action) {
             NetworkUsageAction.Resumed -> refreshUsage(startScan = true)
-            NetworkUsageAction.LoadRequested -> refreshUsage(startScan = true)
             NetworkUsageAction.PermissionRequestConsumed -> {
                 permissionRequestAttempted = true
                 changeState { it.copy(permissionRequestPending = false) }
@@ -145,7 +137,7 @@ class NetworkUsageViewModel(
 }
 
 fun buildNetworkUsageDisplayItems(
-    apps: List<NetworkUsageAppModel>,
+    apps: List<NetworkUsageApp>,
     selectedTotalBytes: Long,
 ): List<NetworkUsageDisplayItem> {
     if (selectedTotalBytes <= 0L) return emptyList()

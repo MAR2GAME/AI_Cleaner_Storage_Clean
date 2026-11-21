@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.videos.ui
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerUiState
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -19,15 +21,14 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerNoRes
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
-import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun VideosManagerScreen(
-    state: VideosManagerUiState,
+    state: MediaManagerUiState,
     permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
@@ -65,14 +66,14 @@ fun VideosManagerScreen(
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(
-                        tabs = state.displayTabs,
+                        tabs = state.tabs,
                         selectedTabIndex = state.selectedTabIndex,
                         onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
                     )
                 },
             ) {
                 FileManagerMediaGridView(
-                    tabs = state.displayTabs,
+                    tabs = state.tabs,
                     items = state.displayItems,
                     selectedTabIndex = state.selectedTabIndex,
                     onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },

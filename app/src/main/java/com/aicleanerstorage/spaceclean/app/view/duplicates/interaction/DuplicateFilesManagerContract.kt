@@ -1,8 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 
 data class DuplicateFilesManagerUiState(
     val showStopDialog: Boolean = false,
@@ -26,10 +25,10 @@ data class DuplicateFilesManagerUiState(
     val activeDeleteFileKeys: Set<String>
         get() = pendingDeleteFileKeys ?: selectedFileKeys
 
-    val filesToDelete: List<ManagedFileItemModel>
+    val filesToDelete: List<ManagedFileItem>
         get() = filesMatchingKeys(activeDeleteFileKeys)
 
-    val globalFilesToDelete: List<ManagedFileItemModel>
+    val globalFilesToDelete: List<ManagedFileItem>
         get() = filesMatchingKeys(selectedFileKeys)
 
     val selectedGroupFileKeys: Set<String>
@@ -39,12 +38,12 @@ data class DuplicateFilesManagerUiState(
             return selectedFileKeys.intersect(groupKeys)
         }
 
-    val selectedGroupFilesToDelete: List<ManagedFileItemModel>
+    val selectedGroupFilesToDelete: List<ManagedFileItem>
         get() = filesMatchingKeys(selectedGroupFileKeys)
 
     val selectedGroupDeleteSize: Long get() = selectedGroupFilesToDelete.sumOf { it.sizeBytes }
 
-    private fun filesMatchingKeys(keys: Set<String>): List<ManagedFileItemModel> =
+    private fun filesMatchingKeys(keys: Set<String>): List<ManagedFileItem> =
         groups.flatMap { group ->
             group.files
                 .filter { duplicateFileKey(it) in keys }
@@ -56,5 +55,4 @@ data class DuplicateFilesManagerUiState(
     val allSelected: Boolean
         get() = allDeleteFileKeys.isNotEmpty() && selectedFileKeys.containsAll(allDeleteFileKeys)
 
-    val selectedUris: List<FileUri> get() = filesToDelete.map { it.uri }
 }

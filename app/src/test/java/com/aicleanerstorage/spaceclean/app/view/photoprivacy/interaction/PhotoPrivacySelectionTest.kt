@@ -1,13 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
+
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.domain.model.FileUri
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileItemModel
-import com.aicleanerstorage.spaceclean.domain.model.ManagedFileType
-import com.aicleanerstorage.spaceclean.domain.model.FileDeleteResultModel
-import com.aicleanerstorage.spaceclean.domain.port.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.FileUri
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import java.util.Calendar
 import java.util.TimeZone
 import kotlinx.coroutines.Dispatchers
@@ -39,13 +41,11 @@ class PhotoPrivacySelectionTest {
         withDefaultTimeZone(TimeZone.getTimeZone("UTC")) {
             val mayFirst = timestampMillis(2026, Calendar.MAY, 1)
             val aprilFirst = timestampMillis(2026, Calendar.APRIL, 1)
-            val items = mapPrivacyPhotos(
-                listOf(
-                    image(1, aprilFirst / 1000L),
-                    image(2, mayFirst),
-                    image(3, mayFirst / 1000L),
-                )
-            )
+            val items = listOf(
+                image(1, aprilFirst / 1000L),
+                image(2, mayFirst),
+                image(3, mayFirst / 1000L),
+            ).withSelectionIds()
 
             val groups = buildPrivacyPhotoGroups(items)
 
@@ -118,17 +118,20 @@ class PhotoPrivacySelectionTest {
         var removedIds: List<Long> = emptyList()
             private set
 
-        override suspend fun loadImages(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadVideos(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadAudios(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadScreenshots(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadPrivacyImages(): List<ManagedFileItemModel> = privacyImages
-        override suspend fun loadDocuments(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItemModel> = emptyList()
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItemModel>> = emptyList()
-        override suspend fun loadWhatsAppFiles(): List<ManagedFileItemModel> = emptyList()
-        override suspend fun deleteFiles(items: List<ManagedFileItemModel>): FileDeleteResultModel = FileDeleteResultModel(0L, 0)
-        override suspend fun removeLocationData(items: List<ManagedFileItemModel>): Int {
+        override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = privacyImages
+        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
+        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
+        override suspend fun loadFilesInDirectories(
+            relativeDirectories: List<String>,
+            matchesMedia: (ManagedFileItem) -> Boolean,
+        ): List<ManagedFileItem> = emptyList()
+        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult = FileDeleteResult(emptyList())
+        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int {
             removedIds = items.map { it.id }
             privacyImages = privacyImages.filterNot { candidate -> items.any { it.id == candidate.id } }
             return items.size
@@ -136,8 +139,8 @@ class PhotoPrivacySelectionTest {
     }
 
     private companion object {
-        fun image(id: Long, modifiedSeconds: Long): ManagedFileItemModel =
-            ManagedFileItemModel(
+        fun image(id: Long, modifiedSeconds: Long): ManagedFileItem =
+            ManagedFileItem(
                 id = id,
                 uri = FileUri("content://media/external/images/media/$id"),
                 path = null,

@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
 
@@ -66,12 +66,6 @@ sealed interface AppLockAction {
     data class AutoLockChanged(val enabled: Boolean) : AppLockAction
     data class VibrationChanged(val enabled: Boolean) : AppLockAction
 
-    data class SearchInputChanged(val query: String) : AppLockAction
-    data object ManagePageRequested : AppLockAction
-    data object PinPageExitRequested : AppLockAction
-    data class MonitoringSettingRequested(val enabled: Boolean) : AppLockAction
-    data class AutoLockSettingRequested(val enabled: Boolean) : AppLockAction
-    data class VibrationSettingRequested(val enabled: Boolean) : AppLockAction
 }
 
 sealed interface AppLockEvent {

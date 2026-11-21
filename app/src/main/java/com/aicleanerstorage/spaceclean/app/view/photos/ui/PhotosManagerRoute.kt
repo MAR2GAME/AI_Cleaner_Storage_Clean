@@ -5,22 +5,13 @@ import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveHome
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.base.navigation.toAppDestination
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-
-
-import com.aicleanerstorage.spaceclean.app.view.photos.ui.PhotosManagerScreen
-
 
 @Composable
 fun PhotosManagerRoute(
@@ -28,23 +19,10 @@ fun PhotosManagerRoute(
     viewModel: PhotosManagerViewModel,
     permissionState: FileManagerPermissionState,
 ) {
-    PhotosManagerRouteContent(navigator = navigator, viewModel = viewModel,  permissionState = permissionState)
-}
-
-@Composable
-private fun PhotosManagerRouteContent(
-    navigator: AppNavigator,
-    viewModel: PhotosManagerViewModel,
-    permissionState: FileManagerPermissionState,
-) {
-    val router = navigator
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null
-    val currentItems = displayState.currentDisplayItems
-
-
 
     PhotosManagerScreen(
         state = displayState,
@@ -54,33 +32,27 @@ private fun PhotosManagerRouteContent(
                 FileManagerAction.BackClicked -> viewModel.dispatch(
                     if (permissionState.granted) action else FileManagerAction.PermissionRejected,
                 )
-                FileManagerAction.VisibleItemsToggled -> viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
-                FileManagerAction.DeleteClicked -> viewModel.dispatch(FileManagerAction.DeleteClicked)
-                FileManagerAction.ContinueManagingClicked -> viewModel.dispatch(FileManagerAction.ContinueManagingClicked)
-                is FileManagerAction.TabChangeRequested -> viewModel.dispatch(FileManagerAction.TabChangeRequested(action.index))
-                is FileManagerAction.SelectionToggled -> viewModel.dispatch(FileManagerAction.SelectionToggled(action.id))
-                is FileManagerAction.DetailClicked -> {
-                    viewModel.dispatch(FileManagerAction.DetailClicked(action.index))
-
-                }
+                FileManagerAction.VisibleItemsToggled,
+                FileManagerAction.DeleteClicked,
+                FileManagerAction.ContinueManagingClicked,
+                is FileManagerAction.TabChangeRequested,
+                is FileManagerAction.SelectionToggled,
+                is FileManagerAction.DetailClicked -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
-        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it.toAppDestination())) },
+        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it)) },
     )
 
     FileManagerFlowDialogs(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
         permissionState = permissionState,
-        router = router,
+        router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        selectedUris = displayState.selectedUris,
         onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
         onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
         onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
-        onDeleteRejected = { viewModel.dispatch(FileManagerAction.SystemDeleteRejected) },
     )
 }
-

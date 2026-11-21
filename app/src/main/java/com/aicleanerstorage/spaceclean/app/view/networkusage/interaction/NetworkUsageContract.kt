@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.NetworkUsageAppModel
-import com.aicleanerstorage.spaceclean.domain.model.NetworkUsageInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.UNKNOWN_NETWORK_TRAFFIC_PACKAGE
+import com.aicleanerstorage.networkkit.model.NetworkUsageApp
+import com.aicleanerstorage.networkkit.model.NetworkUsageInfo
+import com.aicleanerstorage.networkkit.model.TrafficSource
 
 enum class NetworkUsageTab {
     Cellular,
@@ -18,20 +18,21 @@ data class NetworkUsageDisplayItem(
     val isAggregate: Boolean = false,
 ) {
     companion object {
-        fun fromApp(app: NetworkUsageAppModel): NetworkUsageDisplayItem =
-            NetworkUsageDisplayItem(
-                appName = app.appName,
-                packageName = app.packageName,
+        fun fromApp(app: NetworkUsageApp): NetworkUsageDisplayItem {
+            val source = app.source as? TrafficSource.App ?: return systemTraffic(app.totalBytes)
+            return NetworkUsageDisplayItem(
+                appName = source.appName,
+                packageName = source.packageName,
                 rxBytes = app.rxBytes,
                 txBytes = app.txBytes,
                 totalBytes = app.totalBytes,
-                isAggregate = app.packageName == UNKNOWN_NETWORK_TRAFFIC_PACKAGE,
             )
+        }
 
         fun systemTraffic(totalBytes: Long): NetworkUsageDisplayItem =
             NetworkUsageDisplayItem(
-                appName = "System & unknown traffic",
-                packageName = UNKNOWN_NETWORK_TRAFFIC_PACKAGE,
+                appName = "",
+                packageName = "",
                 rxBytes = totalBytes,
                 txBytes = 0L,
                 totalBytes = totalBytes,
@@ -43,7 +44,7 @@ data class NetworkUsageDisplayItem(
 data class NetworkUsageUiState(
     val selectedTab: NetworkUsageTab = NetworkUsageTab.Wifi,
     val hasAccess: Boolean = false,
-    val usage: NetworkUsageInfoModel? = null,
+    val usage: NetworkUsageInfo? = null,
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val isScanning: Boolean = false,
@@ -74,7 +75,7 @@ data class NetworkUsageUiState(
 
     fun totalBytes(tab: NetworkUsageTab): Long = rxBytes(tab) + txBytes(tab)
 
-    fun apps(tab: NetworkUsageTab): List<NetworkUsageAppModel> =
+    fun apps(tab: NetworkUsageTab): List<NetworkUsageApp> =
         usage?.let {
             when {
                 tab == NetworkUsageTab.Cellular && it.cellularApps.isNotEmpty() -> it.cellularApps
@@ -90,16 +91,7 @@ data class NetworkUsageUiState(
             selectedTotalBytes = totalBytes(tab),
         )
 
-    val selectedRxBytes: Long
-        get() = rxBytes(selectedTab)
-
-    val selectedTxBytes: Long
-        get() = txBytes(selectedTab)
-
     val selectedTotalBytes: Long get() = totalBytes(selectedTab)
-
-    val selectedApps: List<NetworkUsageAppModel>
-        get() = apps(selectedTab)
 
     val displayItems: List<NetworkUsageDisplayItem>
         get() = displayItems(selectedTab)
@@ -115,7 +107,6 @@ sealed interface NetworkUsageEvent {
 }
 
 sealed interface NetworkUsageAction {
-    data object LoadRequested : NetworkUsageAction
     data object Resumed : NetworkUsageAction
     data object PermissionRequestConsumed : NetworkUsageAction
     data object PermissionGranted : NetworkUsageAction
@@ -124,6 +115,4 @@ sealed interface NetworkUsageAction {
     data object QuitScanConfirmed : NetworkUsageAction
     data object ResumeScanClicked : NetworkUsageAction
     data class TabSelected(val index: Int) : NetworkUsageAction
-
-    data class TabChangeRequested(val index: Int) : NetworkUsageAction
 }

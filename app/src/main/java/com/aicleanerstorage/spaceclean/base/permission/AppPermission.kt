@@ -1,25 +1,23 @@
 package com.aicleanerstorage.spaceclean.base.permission
 
 import android.Manifest
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 
 /** 应用需要的系统权限；检查、运行时权限与设置页入口集中在这里。 */
-enum class AppPermission(val key: String) {
-    StorageFiles("storage_files"),
-    Location("location"),
-    UsageAccess("usage_access"),
-    NotificationListener("notification_listener"),
-    Overlay("overlay"),
-    PostNotifications("post_notifications"),
+enum class AppPermission {
+    StorageFiles,
+    Location,
+    UsageAccess,
+    NotificationListener,
+    Overlay,
+    PostNotifications,
     ;
 
     fun isGranted(context: Context): Boolean =
@@ -31,20 +29,14 @@ enum class AppPermission(val key: String) {
                     runtimePermissions(context).all(context::hasPermission)
                 }
             Location -> context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-            UsageAccess ->
-                (context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager)
-                    .checkOpNoThrow(
-                        AppOpsManager.OPSTR_GET_USAGE_STATS,
-                        Process.myUid(),
-                        context.packageName,
-                    ) == AppOpsManager.MODE_ALLOWED
+            UsageAccess -> hasUsageAccess(context)
             NotificationListener ->
                 Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
                     ?.split(':')
                     ?.any { listener ->
                         android.content.ComponentName.unflattenFromString(listener)?.packageName == context.packageName
                     } == true
-            Overlay -> Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
+            Overlay -> hasOverlayPermission(context)
             PostNotifications ->
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     context.hasPermission(Manifest.permission.POST_NOTIFICATIONS)
@@ -106,9 +98,6 @@ enum class AppPermission(val key: String) {
             PostNotifications -> listOf(appSettingsAction(context))
         }
 
-    companion object {
-        fun fromKey(key: String): AppPermission? = entries.firstOrNull { it.key == key }
-    }
 }
 
 internal fun Context.hasPermission(value: String): Boolean =

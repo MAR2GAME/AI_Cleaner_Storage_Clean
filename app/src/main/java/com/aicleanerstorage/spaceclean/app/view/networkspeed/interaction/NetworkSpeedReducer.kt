@@ -1,36 +1,29 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.NetworkSpeedResultModel
-import com.aicleanerstorage.spaceclean.domain.model.NetworkSpeedProgressModel
+import com.aicleanerstorage.networkkit.model.SpeedTestPhase
+
+import com.aicleanerstorage.networkkit.model.NetworkSpeed
 
 internal object NetworkSpeedReducer {
     fun testStarted(state: NetworkSpeedUiState): NetworkSpeedUiState =
         state.copy(
             phase = NetworkSpeedPhase.Testing,
-            speed = null,
-            progress = NetworkSpeedProgressModel(phase = "latency"),
+            speed = NetworkSpeed(phase = SpeedTestPhase.Latency),
             errorMessage = null,
         )
 
-    fun progressUpdated(state: NetworkSpeedUiState, progress: NetworkSpeedProgressModel): NetworkSpeedUiState =
+    fun progressUpdated(state: NetworkSpeedUiState, progress: NetworkSpeed): NetworkSpeedUiState =
         if (state.phase == NetworkSpeedPhase.Testing) {
-            state.copy(progress = progress)
+            state.copy(speed = progress)
         } else {
             state
         }
 
-    fun testCompleted(state: NetworkSpeedUiState, result: NetworkSpeedResultModel): NetworkSpeedUiState =
+    fun testCompleted(state: NetworkSpeedUiState, result: NetworkSpeed): NetworkSpeedUiState =
         if (state.phase != NetworkSpeedPhase.Testing) state
         else state.copy(
             phase = NetworkSpeedPhase.Completing,
             speed = result,
-            progress =
-                state.progress.copy(
-                    downloadMbps = result.downloadMbps,
-                    uploadMbps = result.uploadMbps,
-                    latencyMs = result.latencyMs,
-                    phase = "done",
-                ),
             errorMessage = null,
         )
 
@@ -51,8 +44,7 @@ internal object NetworkSpeedReducer {
     fun testStopped(state: NetworkSpeedUiState): NetworkSpeedUiState =
         state.copy(
             phase = NetworkSpeedPhase.Idle,
-            speed = null,
-            progress = NetworkSpeedProgressModel(),
+            speed = NetworkSpeed(),
             errorMessage = null,
         )
 }

@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.domain.toolbox.appusage
 
-import com.aicleanerstorage.spaceclean.domain.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageEvent
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageExitReason
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageAction
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
-import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first

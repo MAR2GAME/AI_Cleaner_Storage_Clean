@@ -468,4 +468,5 @@
     <string name="onboarding_device_info_disclaimer">Thông tin thiết bị hiển thị dựa trên dữ liệu do hệ thống cung cấp và có thể khác với thông số chính thức. Ví dụ: dung lượng lưu trữ hoặc bộ nhớ có thể chênh lệch nhẹ do phần dành riêng cho hệ thống hoặc khác biệt về cấu hình phần cứng.</string>
     <string name="notification_status_empty_title">Đã bật chặn thông báo</string>
     <string name="notification_status_empty_message">Thông báo bị chặn sẽ xuất hiện tại đây</string>
+    <string name="network_speed_estimated">Tốc độ ước tính</string>
 </resources>

@@ -23,13 +23,13 @@ import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockPinPanel
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun AppLockScreen(
     state: AppLockUiState,
     onAction: (AppLockAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BackHandler { onAction(AppLockAction.BackClicked) }

@@ -4,12 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanAction
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.NoVirusResultContent
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun NoVirusResultScreen(
     onAction: (VirusScanAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
 ) {
     BackHandler { onAction(VirusScanAction.ResultBackClicked) }
     NoVirusResultContent(

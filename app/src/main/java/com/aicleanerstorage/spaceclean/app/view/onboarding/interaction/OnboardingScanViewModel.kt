@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
@@ -22,8 +22,7 @@ class OnboardingScanViewModel(
         when (action) {
             OnboardingAction.Entered -> startScanProgress()
             OnboardingAction.RefreshRequested -> refresh()
-            OnboardingAction.SkipClicked -> completeOnboarding(skipped = true)
-            OnboardingAction.GetStartedClicked -> completeOnboarding(skipped = false)
+            OnboardingAction.GetStartedClicked -> completeOnboarding()
             is OnboardingLoaded, is OnboardingProgressUpdated -> setState { OnboardingReducer.reduce(this, action) }
         }
     }
@@ -32,12 +31,11 @@ class OnboardingScanViewModel(
         viewModelScope.launch {
             val hardware = repository.hardwareInfo()
             val battery = repository.batteryInfo()
-            val batteryStatus = repository.batteryStatusInfo()
             val storage = repository.internalStorageInfo()
             dispatch(OnboardingLoaded(currentState.copy(
                 deviceModel = hardware.model, androidVersion = hardware.androidVersion,
                 screenSize = hardware.screenSize, batteryHealth = battery.health,
-                batteryStatusText = batteryStatus.statusText, storageInfo = storage,
+                batteryStatusText = battery.statusText, storageInfo = storage,
             )))
         }
     }
@@ -56,11 +54,11 @@ class OnboardingScanViewModel(
         }
     }
 
-    private fun completeOnboarding(skipped: Boolean) {
+    private fun completeOnboarding() {
         if (completionSubmitted || !currentState.complete) return
         completionSubmitted = true
         settingsRepository.markOnboardingScanCompleted()
-        sendEvent(OnboardingEvent.FinishOnboarding(skipped))
+        sendEvent(OnboardingEvent.FinishOnboarding)
     }
 }
 

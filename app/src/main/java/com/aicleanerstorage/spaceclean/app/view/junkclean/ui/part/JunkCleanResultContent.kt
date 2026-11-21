@@ -25,15 +25,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanResultUiState
+import com.aicleanerstorage.spaceclean.domain.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 internal fun JunkCleanResultContent(
-    uiState: JunkCleanResultUiState,
+    uiState: CleanupSummaryModel,
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
     interactionsEnabled: Boolean,
 ) {
-    val formatted = uiState.formattedFreedSpace
+    val formatted = uiState.freedSpace.takeIf { it > 0L }?.let(FormatUtil::formatSize).orEmpty()
     val showResult = uiState.hasVisibleResult && formatted.isNotBlank()
     val numberPart = if (showResult) formatted.substringBeforeLast(" ", formatted) else "0"
     val unitPart = if (showResult) formatted.substringAfterLast(" ", "MB") else "MB"
@@ -103,11 +104,20 @@ internal fun JunkCleanResultContent(
                     .padding(top = 231.dp),
         )
 
+        if (uiState.memoryFreedBytes > 0L) {
+            Text(
+                text = stringResource(R.string.available_memory_increase,
+                    FormatUtil.formatSize(uiState.memoryFreedBytes)),
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 260.dp),
+                color = ResultSubtext,
+            )
+        }
+
         resultTools(
             Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 284.dp),
+                    .padding(top = if (uiState.memoryFreedBytes > 0L) 304.dp else 284.dp),
             interactionsEnabled,
         )
     }

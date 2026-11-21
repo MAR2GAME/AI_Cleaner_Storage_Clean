@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.app.view.home.interaction
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -113,7 +113,6 @@ class HomeViewModel(
                     HomeSummaryUiState(
                         storageInfo = repository.internalStorageInfo(),
                         batteryInfo = repository.batteryInfo(),
-                        batteryStatusText = repository.batteryStatusInfo().statusText,
                         deviceModel = hardware.model,
                         androidVersion = hardware.androidVersion,
                         lockedAppCount = runCatching { appLockRepository.lockedAppCountFlow.value }.getOrDefault(0),

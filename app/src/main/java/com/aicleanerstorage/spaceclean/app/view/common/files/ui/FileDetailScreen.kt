@@ -11,7 +11,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileDetailUiStat
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDetailView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerTopAction
-import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 
 
@@ -19,7 +19,7 @@ import com.aicleanerstorage.spaceclean.base.navigation.ToolNavigationTarget
 fun FileDetailScreen(
     state: FileDetailUiState,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (ToolNavigationTarget) -> Unit,
+    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(state.totalCount) {
