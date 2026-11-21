@@ -20,13 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryChartAxisBounds
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryChartPoint
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentAxisBounds
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentAxisLabels
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentChartMaxPoints
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentChartPoints
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentChartWindowEndMillis
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartAxisBounds
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartPoint
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentAxisBounds
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentAxisLabels
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartMaxPoints
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartPoints
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartWindowEndMillis
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentSample
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
@@ -136,11 +136,9 @@ private fun BatteryTimeTabs(
     }
 }
 
-private fun currentAxisLabels(range: BatteryCurrentRange): List<String> =
-    batteryCurrentAxisLabels(range)
+private fun currentAxisLabels(range: BatteryCurrentRange): List<String> = batteryCurrentAxisLabels(range)
 
-private fun currentChartMaxPoints(range: BatteryCurrentRange): Int? =
-    batteryCurrentChartMaxPoints(range)
+private fun currentChartMaxPoints(range: BatteryCurrentRange): Int? = batteryCurrentChartMaxPoints(range)
 
 private fun currentChartPoints(
     samples: List<BatteryCurrentSample>,
@@ -154,5 +152,4 @@ private fun currentChartWindowEndMillis(
     latestSampleTimestampMillis: Long,
 ): Long = batteryCurrentChartWindowEndMillis(samples, selectedRange, latestSampleTimestampMillis)
 
-private fun currentAxisBounds(values: List<Float>): BatteryChartAxisBounds =
-    batteryCurrentAxisBounds(values)
+private fun currentAxisBounds(values: List<Float>): BatteryChartAxisBounds = batteryCurrentAxisBounds(values)

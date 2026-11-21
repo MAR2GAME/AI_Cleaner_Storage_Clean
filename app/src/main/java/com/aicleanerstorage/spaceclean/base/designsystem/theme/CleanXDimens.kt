@@ -12,33 +12,67 @@ import com.aicleanerstorage.spaceclean.base.designsystem.theme.LocalAppThemeToke
 // ============================================================================
 
 private val Dimens: com.aicleanerstorage.spaceclean.base.designsystem.theme.AppDimens
-    @Composable @ReadOnlyComposable get() = LocalAppThemeTokens.current.dimens
+    @Composable @ReadOnlyComposable
+    get() = LocalAppThemeTokens.current.dimens
 
 private val Shapes: com.aicleanerstorage.spaceclean.base.designsystem.theme.AppShapes
-    @Composable @ReadOnlyComposable get() = LocalAppThemeTokens.current.shapes
+    @Composable @ReadOnlyComposable
+    get() = LocalAppThemeTokens.current.shapes
 
 // ---------- Spacing ----------
-val CleanXPagePadding: Dp @Composable @ReadOnlyComposable get() = Dimens.pagePadding
-val CleanXCompactPadding: Dp @Composable @ReadOnlyComposable get() = Dimens.compactPadding
-val CleanXHeaderTopPadding: Dp @Composable @ReadOnlyComposable get() = Dimens.headerTopPadding
-val CleanXHeaderBottomPadding: Dp @Composable @ReadOnlyComposable get() = Dimens.headerBottomPadding
-val CleanXButtonHorizontalPadding: Dp @Composable @ReadOnlyComposable get() = Dimens.buttonHorizontalPadding
-val CleanXButtonVerticalPadding: Dp @Composable @ReadOnlyComposable get() = Dimens.buttonVerticalPadding
+val CleanXPagePadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.pagePadding
+val CleanXCompactPadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.compactPadding
+val CleanXHeaderTopPadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.headerTopPadding
+val CleanXHeaderBottomPadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.headerBottomPadding
+val CleanXButtonHorizontalPadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.buttonHorizontalPadding
+val CleanXButtonVerticalPadding: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.buttonVerticalPadding
 
 // ---------- Sizes ----------
-val CleanXButtonHeight: Dp @Composable @ReadOnlyComposable get() = Dimens.buttonHeight
-val CleanXCompactButtonHeight: Dp @Composable @ReadOnlyComposable get() = Dimens.compactButtonHeight
-val CleanXIconButtonSize: Dp @Composable @ReadOnlyComposable get() = Dimens.iconButtonSize
-val CleanXHeaderIconSize: Dp @Composable @ReadOnlyComposable get() = Dimens.headerIconSize
+val CleanXButtonHeight: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.buttonHeight
+val CleanXCompactButtonHeight: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.compactButtonHeight
+val CleanXIconButtonSize: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.iconButtonSize
+val CleanXHeaderIconSize: Dp
+    @Composable @ReadOnlyComposable
+    get() = Dimens.headerIconSize
 
 // ---------- Shapes ----------
-val CleanXCardShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.card
-val CleanXTileShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.tile
-val CleanXPillShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.pill
-val CleanXButtonShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.button
+val CleanXCardShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.card
+val CleanXTileShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.tile
+val CleanXPillShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.pill
+val CleanXButtonShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.button
 
-val VirusPanelShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.virusPanel
-val VirusButtonShape: RoundedCornerShape @Composable @ReadOnlyComposable get() = Shapes.virusButton
+val VirusPanelShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.virusPanel
+val VirusButtonShape: RoundedCornerShape
+    @Composable @ReadOnlyComposable
+    get() = Shapes.virusButton
 
 val CleanXTextTitle = 20.sp
 val CleanXTextBody = 16.sp

@@ -27,12 +27,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockPermissions
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiState
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardColor
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockPlaceholderText
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockSecondaryText
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardRadius
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockNavy
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockPlaceholderText
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockSecondaryText
+import com.aicleanerstorage.spaceclean.app.view.common.permission.labelRes
+import com.aicleanerstorage.spaceclean.app.view.common.settings.SettingsDividerContent
+import com.aicleanerstorage.spaceclean.app.view.common.settings.SettingsToggleRow
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
 
 @Composable
@@ -41,28 +46,46 @@ internal fun AppLockManageContent(
     onOpenSearch: () -> Unit,
     onTogglePackage: (String) -> Unit,
     onToggleAll: () -> Unit,
-    onAutoLockChange: (Boolean) -> Unit
+    onAutoLockChange: (Boolean) -> Unit,
+    onPermissionClick: (AppPermission) -> Unit,
 ) {
     val noAppsText = stringResource(R.string.app_lock_no_apps)
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
         contentPadding = PaddingValues(bottom = 50.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
+        if (uiState.missingPermissions.isNotEmpty()) {
+            item {
+                Column {
+                    AppLockPermissions.forEachIndexed { index, permission ->
+                        SettingsToggleRow(
+                            label = stringResource(permission.labelRes()),
+                            checked = uiState.statuses[permission] == true,
+                            onClick = { onPermissionClick(permission) },
+                        )
+                        if (index < AppLockPermissions.lastIndex) {
+                            SettingsDividerContent()
+                        }
+                    }
+                }
+            }
+        }
         item { SearchEntryCard(onClick = onOpenSearch) }
         item {
             AutoLockCard(
                 checked = uiState.autoLockEnabled,
-                onClick = { onAutoLockChange(!uiState.autoLockEnabled) }
+                onClick = { onAutoLockChange(!uiState.autoLockEnabled) },
             )
         }
         item {
             CheckActionCard(
                 title = stringResource(R.string.lock_all_apps),
                 checked = uiState.allAppsLocked,
-                onClick = onToggleAll
+                onClick = onToggleAll,
             )
         }
         if (uiState.isLoading && uiState.apps.isEmpty()) {
@@ -71,7 +94,7 @@ internal fun AppLockManageContent(
             appSections(
                 apps = uiState.apps,
                 emptyText = noAppsText,
-                onTogglePackage = onTogglePackage
+                onTogglePackage = onTogglePackage,
             )
         }
     }
@@ -80,7 +103,7 @@ internal fun AppLockManageContent(
 fun LazyListScope.appSections(
     apps: List<AppLockAppModel>,
     emptyText: String,
-    onTogglePackage: (String) -> Unit
+    onTogglePackage: (String) -> Unit,
 ) {
     if (apps.isEmpty()) {
         item { EmptyCard(text = emptyText) }
@@ -95,7 +118,7 @@ fun LazyListScope.appSections(
                 color = AppLockNavy,
                 fontSize = 20.sp,
                 lineHeight = 24.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
         }
         lockedApps.forEachIndexed { index, app ->
@@ -111,7 +134,7 @@ fun LazyListScope.appSections(
                 color = AppLockNavy,
                 fontSize = 20.sp,
                 lineHeight = 24.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
         }
         unlockedApps.forEachIndexed { index, app ->
@@ -125,27 +148,28 @@ fun LazyListScope.appSections(
 @Composable
 internal fun SearchEntryCard(onClick: () -> Unit) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clickable { onClick() },
         color = AppLockCardColor,
-        shape = RoundedCornerShape(AppLockCardRadius)
+        shape = RoundedCornerShape(AppLockCardRadius),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 painter = painterResource(R.mipmap.ic_ser),
                 contentDescription = null,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = stringResource(R.string.search_app),
                 color = AppLockPlaceholderText,
-                fontSize = 14.sp
+                fontSize = 14.sp,
             )
         }
     }
@@ -154,28 +178,30 @@ internal fun SearchEntryCard(onClick: () -> Unit) {
 @Composable
 internal fun AutoLockCard(
     checked: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(130.dp)
+                .clickable { onClick() },
         color = AppLockCardColor,
-        shape = RoundedCornerShape(AppLockCardRadius)
+        shape = RoundedCornerShape(AppLockCardRadius),
     ) {
         Column(modifier = Modifier.padding(horizontal = 15.dp)) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = stringResource(R.string.turn_on_auto_lock),
                     color = AppLockNavy,
                     fontSize = 16.sp,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 AppLockCheckContent(checked = checked)
             }
@@ -185,10 +211,11 @@ internal fun AutoLockCard(
                 color = AppLockSecondaryText,
                 fontSize = 14.sp,
                 lineHeight = 18.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(69.dp)
-                    .padding(top = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(69.dp)
+                        .padding(top = 16.dp),
             )
         }
     }
@@ -197,18 +224,19 @@ internal fun AutoLockCard(
 @Composable
 private fun AppLockRowCard(
     app: AppLockAppModel,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp)
-            .clickable { onToggle() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(65.dp)
+                .clickable { onToggle() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         PackageIconContent(
             packageName = app.packageName,
-            fallbackText = app.appName.take(1).ifBlank { "A" }
+            fallbackText = app.appName.take(1).ifBlank { "A" },
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
@@ -216,7 +244,7 @@ private fun AppLockRowCard(
             color = AppLockNavy,
             fontSize = 16.sp,
             maxLines = 1,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         Spacer(modifier = Modifier.width(10.dp))
         AppLockCheckContent(checked = app.isLocked)

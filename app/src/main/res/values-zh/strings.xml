@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?><resources>
-    <string name="app_name">Storage Clean</string>
     <!-- Common -->
     <string name="back">返回</string>
     <string name="cancel">取消</string>
@@ -31,6 +30,9 @@
     <string name="scan_loading_fallback">扫描中...</string>
     <string name="delete_loading_fallback">删除中...</string>
     <string name="device_info_load_failed">无法加载设备信息。</string>
+    <string name="load_failed">加载失败，请重试。</string>
+    <string name="speed_test_failed">测速失败，请重试。</string>
+    <string name="permission_denied">权限被拒绝，请在设置中授予访问权限。</string>
     <string name="file_scan_failed">文件扫描失败。</string>
     <string name="duplicate_scan_failed">重复文件扫描失败。</string>
     <string name="notification_status_load_failed">无法加载通知状态。</string>
@@ -555,4 +557,5 @@
     <string name="cleanup_stopped_summary">已停止，移除了 %1$d 个文件（%2$s）。</string>
     <string name="available_memory_increase">清理期间系统可用内存增加了 %1$s。</string>
     <string name="network_speed_estimated">估算网速</string>
+    <string name="settings_post_notifications">通知</string>
 </resources>

@@ -11,11 +11,11 @@ import com.aicleanerstorage.spaceclean.R
 @Composable
 internal fun AppLockCheckContent(
     checked: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Image(
         painter = painterResource(if (checked) R.drawable.ic_switch_open else R.drawable.ic_switch_close),
         contentDescription = null,
-        modifier = modifier.size(24.dp)
+        modifier = modifier.size(24.dp),
     )
 }

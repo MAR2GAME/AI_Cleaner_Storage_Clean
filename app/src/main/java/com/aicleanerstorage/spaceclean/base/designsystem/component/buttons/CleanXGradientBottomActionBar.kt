@@ -39,32 +39,33 @@ fun CleanXGradientBottomActionBar(
     contentColor: Color = FileManagerTextColor,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .stableNavigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .stableNavigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
         val interactionSource = remember { MutableInteractionSource() }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height)
-                .clip(RoundedCornerShape(cornerRadius))
-                .background(FileManagerPrimaryGradient)
-                .graphicsLayer(alpha = if (enabled) 1f else 0.45f)
-                .cleanXPressFeedback(
-                    interactionSource = interactionSource,
-                    enabled = enabled,
-                    pressedAlpha = 0.88f,
-                    pressedScale = 0.98f,
-                )
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    enabled = enabled,
-                    onClick = onClick,
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(height)
+                    .clip(RoundedCornerShape(cornerRadius))
+                    .background(FileManagerPrimaryGradient)
+                    .graphicsLayer(alpha = if (enabled) 1f else 0.45f)
+                    .cleanXPressFeedback(
+                        interactionSource = interactionSource,
+                        enabled = enabled,
+                        pressedAlpha = 0.88f,
+                        pressedScale = 0.98f,
+                    ).clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        enabled = enabled,
+                        onClick = onClick,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             Text(

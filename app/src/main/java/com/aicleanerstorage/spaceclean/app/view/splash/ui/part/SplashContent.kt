@@ -28,16 +28,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashProgressStage
-import com.aicleanerstorage.spaceclean.app.view.splash.ui.SplashLegalDocument
+import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashAction
 import com.aicleanerstorage.spaceclean.app.view.splash.ui.part.SplashStageProgressBar
 
 @Composable
 internal fun SplashContent(
     progress: Float,
-    activeStage: SplashProgressStage,
-    paused: Boolean,
-    onOpenLegalDocument: (SplashLegalDocument) -> Unit,
+    onAction: (SplashAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(
@@ -69,8 +66,6 @@ internal fun SplashContent(
 
         SplashStageProgressBar(
             progress = progress,
-            activeStage = activeStage,
-            paused = paused,
             modifier =
                 Modifier
                     .align(Alignment.TopCenter)
@@ -120,9 +115,9 @@ internal fun SplashContent(
             onClick = { offset ->
                 when {
                     legalText.getStringAnnotations(termsTag, offset, offset).isNotEmpty() ->
-                        onOpenLegalDocument(SplashLegalDocument.Terms)
+                        onAction(SplashAction.TermsClicked)
                     legalText.getStringAnnotations(privacyTag, offset, offset).isNotEmpty() ->
-                        onOpenLegalDocument(SplashLegalDocument.Privacy)
+                        onAction(SplashAction.PrivacyClicked)
                 }
             },
         )

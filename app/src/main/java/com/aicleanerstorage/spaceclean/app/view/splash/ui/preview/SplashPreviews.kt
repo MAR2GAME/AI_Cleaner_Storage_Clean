@@ -13,7 +13,6 @@ private fun PreviewSplashScreen() {
         SplashScreen(
             state = SplashUiState(),
             onAction = {},
-            onOpenLegalDocument = {},
         )
     }
 }

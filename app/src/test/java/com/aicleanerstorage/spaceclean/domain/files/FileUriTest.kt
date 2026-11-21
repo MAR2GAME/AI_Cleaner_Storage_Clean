@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.domain.files
 
 import com.aicleanerstorage.cleanerkit.files.model.FileUri
-
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

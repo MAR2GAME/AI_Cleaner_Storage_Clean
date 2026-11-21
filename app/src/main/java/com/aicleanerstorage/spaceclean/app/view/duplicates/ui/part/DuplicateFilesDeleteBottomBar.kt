@@ -5,7 +5,7 @@ import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerBottomActionBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBottomActionBar
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
@@ -15,20 +15,29 @@ internal fun DuplicateFilesDeleteBottomBar(
     onAction: (FileManagerAction) -> Unit,
 ) {
     val selectedGroup = state.selectedGroup
-    val cleanupEnabled = if (selectedGroup == null) {
-        state.globalFilesToDelete.isNotEmpty()
-    } else state.selectedGroupFilesToDelete.isNotEmpty()
-    val cleanupSize = if (selectedGroup == null) {
-        state.selectedDeleteSize
-    } else state.selectedGroupDeleteSize
+    val cleanupEnabled =
+        if (selectedGroup == null) {
+            state.globalFilesToDelete.isNotEmpty()
+        } else {
+            state.selectedGroupFilesToDelete.isNotEmpty()
+        }
+    val cleanupSize =
+        if (selectedGroup == null) {
+            state.selectedDeleteSize
+        } else {
+            state.selectedGroupDeleteSize
+        }
     FileManagerBottomActionBar(
         enabled = cleanupEnabled,
         keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
         text = duplicateCleanupButtonText(cleanupSize),
         onClick = {
             onAction(
-                if (selectedGroup == null) FileManagerAction.DeleteClicked
-                else FileManagerAction.GroupDeleteClicked,
+                if (selectedGroup == null) {
+                    FileManagerAction.DeleteClicked
+                } else {
+                    FileManagerAction.GroupDeleteClicked
+                },
             )
         },
     )

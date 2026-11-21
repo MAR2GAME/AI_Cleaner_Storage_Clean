@@ -12,10 +12,11 @@ internal fun NetworkScanContent(
     when (uiState.phase) {
         NetworkScanPhase.Idle -> NetworkScanIdleContent(uiState = uiState)
         NetworkScanPhase.Scanning -> NetworkScanLoading(uiState = uiState)
-        NetworkScanPhase.Result -> NetworkScanResultContent(
-            uiState = uiState,
-            onDevicesClick = onDevicesClick,
-        )
+        NetworkScanPhase.Result ->
+            NetworkScanResultContent(
+                uiState = uiState,
+                onDevicesClick = onDevicesClick,
+            )
         NetworkScanPhase.Error -> NetworkScanError(uiState = uiState)
     }
 }

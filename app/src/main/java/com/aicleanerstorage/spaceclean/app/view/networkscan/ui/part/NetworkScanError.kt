@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
 internal fun NetworkScanError(uiState: NetworkScanUiState) {
@@ -22,6 +23,6 @@ internal fun NetworkScanError(uiState: NetworkScanUiState) {
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
-    NetworkScanStatusError(message = uiState.errorMessage)
+    NetworkScanStatusError(message = uiState.error?.asString())
     Spacer(modifier = Modifier.height(96.dp))
 }

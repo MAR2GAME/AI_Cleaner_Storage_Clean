@@ -48,8 +48,9 @@ internal fun BatteryTopCard(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(10.dp, 0.dp, 0.dp, 0.dp),
+                modifier =
+                    Modifier
+                        .padding(10.dp, 0.dp, 0.dp, 0.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.Start,
             ) {
@@ -64,14 +65,15 @@ internal fun BatteryTopCard(
             }
             Spacer(Modifier.weight(1.0f))
             Box(
-                Modifier.padding(0.dp)
-                .width(103.63672.dp)
-                .height(60.dp)
+                Modifier
+                    .padding(0.dp)
+                    .width(103.63672.dp)
+                    .height(60.dp),
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.battery_info),
                     contentDescription = null,
-                    contentScale = ContentScale.None
+                    contentScale = ContentScale.None,
                 )
             }
         }
@@ -88,7 +90,7 @@ private fun BatterySummaryLine(
     value: String,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = label,

@@ -1,12 +1,11 @@
 package com.aicleanerstorage.spaceclean.data.applock.internal
 
 import android.content.Context
+import androidx.core.content.edit
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.data.applock.AppLockPinRule
 import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
-import com.aicleanerstorage.spaceclean.base.permission.hasUsageAccess as hasSystemUsageAccess
-import com.aicleanerstorage.spaceclean.base.permission.hasOverlayPermission as hasSystemOverlayPermission
-import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,8 +48,7 @@ internal class AppLockRepositoryImpl(
 
     override fun lockedPackages(): Set<String> = decodePackages(preferences.getString(KEY_LOCKED_PACKAGES, "").orEmpty())
 
-    private fun lockedAppCount(): Int =
-        if (isPinSet() && isMonitoringEnabled()) lockedPackages().size else 0
+    private fun lockedAppCount(): Int = if (isPinSet() && isMonitoringEnabled()) lockedPackages().size else 0
 
     override fun isPackageLocked(packageName: String): Boolean = packageName in lockedPackages()
 
@@ -65,12 +63,13 @@ internal class AppLockRepositoryImpl(
     }
 
     override fun setLockedPackages(packageNames: Set<String>) {
-        val encodedPackages = packageNames
-            .asSequence()
-            .map { it.trim() }
-            .filter { it.isNotBlank() && it != appContext.packageName }
-            .distinct()
-            .joinToString(",")
+        val encodedPackages =
+            packageNames
+                .asSequence()
+                .map { it.trim() }
+                .filter { it.isNotBlank() && it != appContext.packageName }
+                .distinct()
+                .joinToString(",")
         preferences.edit(commit = true) { putString(KEY_LOCKED_PACKAGES, encodedPackages) }
         _lockedAppCountFlow.value = lockedAppCount()
     }
@@ -106,9 +105,9 @@ internal class AppLockRepositoryImpl(
         preferences.edit(commit = true) { putBoolean(KEY_VIBRATE_ON_KEYPAD, enabled) }
     }
 
-    override fun hasUsageAccess(): Boolean = hasSystemUsageAccess(appContext)
+    override fun hasUsageAccess(): Boolean = AppPermission.UsageAccess.isGranted(appContext)
 
-    override fun hasOverlayPermission(): Boolean = hasSystemOverlayPermission(appContext)
+    override fun hasOverlayPermission(): Boolean = AppPermission.Overlay.isGranted(appContext)
 
     override fun handlePackageAdded(packageName: String) {
         if (isPinSet() && isAutoLockEnabled() && isLaunchable(packageName)) {

@@ -55,7 +55,7 @@ internal class FileOperations<T>(
         start(onStart, onFailure) {
             val result = withContext(ioDispatcher) { operation() }
             currentCoroutineContext().ensureActive()
-            check(isSuccessful(result)) { deletionFailedMessage() }
+            check(isSuccessful(result)) { "Deletion failed" }
             delay(operationDelayMillis)
             val items = withContext(ioDispatcher) { load() }
             currentCoroutineContext().ensureActive()
@@ -65,18 +65,23 @@ internal class FileOperations<T>(
         }
     }
 
-    private fun start(onStart: () -> Unit, onFailure: (Exception) -> Unit, block: suspend () -> Unit) {
+    private fun start(
+        onStart: () -> Unit,
+        onFailure: (Exception) -> Unit,
+        block: suspend () -> Unit,
+    ) {
         if (activeJob?.isCompleted == false) return
-        val job = scope.launch(start = CoroutineStart.LAZY) {
-            try {
-                block()
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (error: Exception) {
-                currentCoroutineContext().ensureActive()
-                onFailure(error)
+        val job =
+            scope.launch(start = CoroutineStart.LAZY) {
+                try {
+                    block()
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (error: Exception) {
+                    currentCoroutineContext().ensureActive()
+                    onFailure(error)
+                }
             }
-        }
         activeJob = job
         onStart()
         job.start()

@@ -1,12 +1,16 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 internal object WhatsAppCleanerReducer {
-    fun cleaningStarted(state: WhatsAppCleanerUiState, expectedBytes: Long, count: Int): WhatsAppCleanerUiState =
+    fun cleaningStarted(
+        state: WhatsAppCleanerUiState,
+        expectedBytes: Long,
+        count: Int,
+    ): WhatsAppCleanerUiState =
         state.copy(
             phase = WhatsAppCleanerPhase.Cleaning,
             selectedBytes = expectedBytes,
             selectedCount = count,
-            errorMessage = null,
+            error = null,
         )
 
     fun resultRequested(state: WhatsAppCleanerUiState): WhatsAppCleanerUiState =

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressFeedback
@@ -20,14 +21,13 @@ import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXButtonShape
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXButtonVerticalPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXLineSubtitle
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXTextTitle
-import androidx.compose.ui.graphics.Brush
 
 @Composable
 fun CleanXPrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -35,40 +35,44 @@ fun CleanXPrimaryButton(
         onClick = onClick,
         enabled = enabled,
         interactionSource = interactionSource,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(CleanXButtonHeight)
-            .cleanXPressFeedback(
-                interactionSource = interactionSource,
-                enabled = enabled,
-                pressedAlpha = 0.88f,
-                pressedScale = 0.98f,
-            )
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFFD0FD91).copy(alpha = if (enabled) 1f else 0.45f),
-                        Color(0xFF5DD595).copy(alpha = if (enabled) 1f else 0.45f)
-                    )
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(CleanXButtonHeight)
+                .cleanXPressFeedback(
+                    interactionSource = interactionSource,
+                    enabled = enabled,
+                    pressedAlpha = 0.88f,
+                    pressedScale = 0.98f,
+                ).background(
+                    brush =
+                        Brush.linearGradient(
+                            colors =
+                                listOf(
+                                    Color(0xFFD0FD91).copy(alpha = if (enabled) 1f else 0.45f),
+                                    Color(0xFF5DD595).copy(alpha = if (enabled) 1f else 0.45f),
+                                ),
+                        ),
+                    shape = CleanXButtonShape,
                 ),
-                shape = CleanXButtonShape,
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = Color.White,
             ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.White,
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = Color.White
-        ),
-        contentPadding = PaddingValues(
-            horizontal = CleanXButtonHorizontalPadding,
-            vertical = CleanXButtonVerticalPadding
-        )
+        contentPadding =
+            PaddingValues(
+                horizontal = CleanXButtonHorizontalPadding,
+                vertical = CleanXButtonVerticalPadding,
+            ),
     ) {
         Text(
             text = text,
             fontSize = CleanXTextTitle,
             lineHeight = CleanXLineSubtitle,
-            fontWeight = FontWeight.W500
+            fontWeight = FontWeight.W500,
         )
     }
 }

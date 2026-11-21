@@ -1,13 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.*
-
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
 import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.*
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -28,14 +27,17 @@ class DeviceInfoViewModel(
             ioDispatcher = ioDispatcher,
             initialMode = DeviceInfoMode.Device,
             currentState = { currentState },
-            changeState = ::changeState,
+            setState = ::setState,
         )
 
     override fun onAction(action: DeviceInfoAction) {
         when (action) {
             DeviceInfoAction.Resumed -> controller.load(DeviceInfoMode.Device)
             DeviceInfoAction.BackClicked -> if (currentState.isScanning) controller.showStopDialog() else exit()
-            DeviceInfoAction.QuitScanConfirmed -> { controller.dismissStopDialog(); exit() }
+            DeviceInfoAction.QuitScanConfirmed -> {
+                controller.dismissStopDialog()
+                exit()
+            }
             DeviceInfoAction.ResumeScanClicked -> controller.resumeScan()
             else -> Unit
         }

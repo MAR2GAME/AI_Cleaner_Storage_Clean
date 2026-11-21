@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedDivider
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedGreen
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedGreenLight
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavy
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedDivider
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedGreen
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedGreenLight
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavy
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavyMuted
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.RotatingRingAnimation
 
 @Composable
@@ -42,9 +42,10 @@ internal fun NetworkSpeedMetricCard(
     isUploadTesting: Boolean = false,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(104.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(104.dp),
         color = NetworkSpeedCardBg,
         shape = RoundedCornerShape(NetworkSpeedCardRadius),
     ) {

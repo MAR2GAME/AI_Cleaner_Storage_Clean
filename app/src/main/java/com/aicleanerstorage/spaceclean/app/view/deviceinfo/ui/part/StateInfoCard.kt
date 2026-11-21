@@ -60,14 +60,18 @@ internal fun StateInfoCard(uiState: DeviceInfoUiState) {
             )
             Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
-                label = "${stringResource(R.string.device_progress_ram_label)}${formatCompactBytes(uiState.memory.usedBytes)}/${formatCompactBytes(uiState.memory.totalBytes)}",
+                label = "${stringResource(
+                    R.string.device_progress_ram_label,
+                )}${formatCompactBytes(uiState.memory.usedBytes)}/${formatCompactBytes(uiState.memory.totalBytes)}",
                 progress = animatedRamProgress,
                 color = DeviceRamProgressColor,
                 trackColor = DeviceRamProgressTrackColor,
             )
             Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
-                label = "${stringResource(R.string.device_progress_storage_label)}${formatCompactBytes(uiState.storage.usedBytes)}/${formatCompactBytes(uiState.storage.totalBytes)}",
+                label = "${stringResource(
+                    R.string.device_progress_storage_label,
+                )}${formatCompactBytes(uiState.storage.usedBytes)}/${formatCompactBytes(uiState.storage.totalBytes)}",
                 progress = animatedStorageProgress,
                 color = DeviceStorageProgressColor,
                 trackColor = DeviceStorageProgressTrackColor,

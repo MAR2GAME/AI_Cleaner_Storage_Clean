@@ -1,10 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
-
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
-
-import androidx.lifecycle.ViewModel
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
@@ -16,4 +13,3 @@ class DeviceViewModelCompositionTest {
         assertEquals(com.aicleanerstorage.spaceclean.base.mvi.MviViewModel::class.java, BatteryInfoViewModel::class.java.superclass)
     }
 }
-

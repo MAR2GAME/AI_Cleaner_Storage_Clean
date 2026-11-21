@@ -127,8 +127,6 @@
     <string name="home_app_lock_title">Verrouillage des apps</string>
     <string name="file_unselect">D?s?lectionner</string>
     <string name="file_music">Musique</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">Pour afficher les détails d’utilisation des apps, autorisez Storage Clean dans Accès aux usages.</string>
     <string name="permission_network_usage_desc">Pour afficher les détails d’utilisation du réseau, autorisez Storage Clean dans Accès aux usages.</string>
     <string name="permission_notification_desc">Pour organiser automatiquement les notifications, autorisez Storage Clean dans l’accès aux notifications.</string>
@@ -181,6 +179,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">Échec du chargement. Veuillez réessayer.</string>
+    <string name="speed_test_failed">Échec du test de vitesse. Veuillez réessayer.</string>
+    <string name="permission_denied">Autorisation refusée. Veuillez autoriser l\'accès dans les paramètres.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -469,4 +470,9 @@
     <string name="notification_status_empty_title">Interception des notifications activée</string>
     <string name="notification_status_empty_message">Les notifications interceptées apparaissent ici</string>
     <string name="network_speed_estimated">Débit estimé</string>
+    <string name="similar_photo_grouping_hint">Regroupés par album, date de modification et taille de fichier similaire. Vérifiez les photos avant de les supprimer.</string>
+    <string name="junk_review_hint">Vérifiez les fichiers suggérés avant de les sélectionner. Par défaut, seul le cache de cette application est sélectionné.</string>
+    <string name="cleanup_stopped_summary">Arrêté. %1$d fichiers supprimés (%2$s).</string>
+    <string name="available_memory_increase">La mémoire disponible a augmenté de %1$s pendant le nettoyage.</string>
+    <string name="settings_post_notifications">Notifications</string>
 </resources>

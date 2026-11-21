@@ -19,7 +19,8 @@ internal class AppUsageRepositoryImpl(
     ): List<AppUsageInfoModel> =
         withContext(Dispatchers.IO) {
             if (!hasAppUsageAccess() || endMillis <= startMillis) return@withContext emptyList()
-            AppUsageDataSource.readUsage(appContext, startMillis, endMillis)
+            AppUsageDataSource
+                .readUsage(appContext, startMillis, endMillis)
                 .map { usage ->
                     AppUsageInfoModel(
                         packageName = usage.packageName,
@@ -37,5 +38,6 @@ internal class AppUsageRepositoryImpl(
 
     override suspend fun runningPackages(packageNames: Set<String>): Set<String> =
         AppUsageDataSource.runningPackages(appContext, packageNames)
-}
 
+    override suspend fun foregroundPackage(): String? = withContext(Dispatchers.IO) { AppUsageDataSource.foregroundPackage(appContext) }
+}

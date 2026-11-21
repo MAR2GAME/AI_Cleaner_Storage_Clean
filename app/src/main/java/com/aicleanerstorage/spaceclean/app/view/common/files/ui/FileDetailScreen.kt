@@ -6,20 +6,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileDetailUiState
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDetailView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerTopAction
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-
-
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDetailView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTopAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.fileDetailTitle
 
 @Composable
 fun FileDetailScreen(
     state: FileDetailUiState,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(state.totalCount) {

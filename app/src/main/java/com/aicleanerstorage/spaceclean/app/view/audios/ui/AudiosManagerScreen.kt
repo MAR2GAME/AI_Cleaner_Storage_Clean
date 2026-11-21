@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.audios.ui
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerUiState
-
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -15,20 +13,18 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerAudioListView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDeleteBottomBar
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerNoResultsContent
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerUiState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerAudioListView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 
 @Composable
 fun AudiosManagerScreen(
     state: MediaManagerUiState,
-    permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
@@ -40,7 +36,7 @@ fun AudiosManagerScreen(
         title = stringResource(R.string.nav_audios),
         onBack = { onAction(FileManagerAction.BackClicked) },
         bottomBar = {
-            if (permissionGranted &&
+            if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
                 !isDetailMode
             ) {
@@ -62,7 +58,7 @@ fun AudiosManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = onNavigate,
+                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(

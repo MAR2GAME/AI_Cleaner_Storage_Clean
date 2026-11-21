@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.data.battery.internal
 
 import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
-import java.io.DataOutputStream
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.DataOutputStream
 
 class BatteryHistoryRepositoryTest {
     @get:Rule val folder = TemporaryFolder()

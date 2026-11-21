@@ -10,10 +10,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-fun Modifier.stableStatusBarsPadding(): Modifier =
-    windowInsetsPadding(WindowInsets.statusBarsIgnoringVisibility)
+fun Modifier.stableStatusBarsPadding(): Modifier = windowInsetsPadding(WindowInsets.statusBarsIgnoringVisibility)
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-fun Modifier.stableNavigationBarsPadding(): Modifier =
-    windowInsetsPadding(WindowInsets.navigationBarsIgnoringVisibility)
+fun Modifier.stableNavigationBarsPadding(): Modifier = windowInsetsPadding(WindowInsets.navigationBarsIgnoringVisibility)

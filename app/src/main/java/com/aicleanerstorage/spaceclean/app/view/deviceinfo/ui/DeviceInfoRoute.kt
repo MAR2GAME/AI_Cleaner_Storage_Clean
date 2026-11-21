@@ -1,26 +1,22 @@
 package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui
 
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoAction
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoEvent
-
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoRoute
-
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoScreen
-
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoAction
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoEvent
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoRoute
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoScreen
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import kotlinx.coroutines.*
 
 @Composable
 fun DeviceInfoRoute(
@@ -32,20 +28,18 @@ fun DeviceInfoRoute(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                DeviceInfoEvent.Exit ->
-                    {
-                        if (!exiting) {
-                            exiting = true
-                            routeScope.launch {
-                                ensureActive()
-                                navigator.back()
-                            }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            DeviceInfoEvent.Exit ->
+                {
+                    if (!exiting) {
+                        exiting = true
+                        routeScope.launch {
+                            ensureActive()
+                            navigator.back()
                         }
                     }
-            }
+                }
         }
     }
 
@@ -65,4 +59,3 @@ fun DeviceInfoRoute(
         onAction = { if (!exiting) viewModel.dispatch(it) },
     )
 }
-

@@ -1,10 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import java.util.Locale
-
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.networkkit.model.NetworkSpeed
 import com.aicleanerstorage.networkkit.model.NetworkInfo
+import com.aicleanerstorage.networkkit.model.NetworkSpeed
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import java.util.Locale
 
 enum class NetworkSpeedPhase {
     Idle,
@@ -19,8 +20,11 @@ data class NetworkSpeedUiState(
     val hasNetwork: Boolean = false,
     val phase: NetworkSpeedPhase = NetworkSpeedPhase.Idle,
     val speed: NetworkSpeed = NetworkSpeed(),
-    val errorMessage: String? = null,
 ) {
+    /** 单一真相：错误文案由 phase 派生。 */
+    val error: UiText?
+        get() = if (phase == NetworkSpeedPhase.Error) UiText.Res(R.string.speed_test_failed) else null
+
     val downloadLabel: String
         get() = speed.downloadMbps.formatMbps()
 
@@ -29,18 +33,27 @@ data class NetworkSpeedUiState(
 }
 
 sealed interface NetworkSpeedAction {
-    data class NavigationRequested(val destination: AppDestination) : NetworkSpeedAction
+    data class NavigationRequested(
+        val destination: AppDestination,
+    ) : NetworkSpeedAction
+
     data object BackClicked : NetworkSpeedAction
+
     data object NetworkRefreshRequested : NetworkSpeedAction
+
     data object SpeedTestRequested : NetworkSpeedAction
+
     data object ResultRequested : NetworkSpeedAction
+
     data object StopClicked : NetworkSpeedAction
 }
 
 sealed interface NetworkSpeedEvent {
+    data object Exit : NetworkSpeedEvent
 
-    data class Exit(val home: Boolean) : NetworkSpeedEvent
-    data class Navigate(val destination: AppDestination) : NetworkSpeedEvent
+    data class Navigate(
+        val destination: AppDestination,
+    ) : NetworkSpeedEvent
 }
 
-internal fun Double?.formatMbps(): String = this?.let { String.format(Locale.getDefault(), "%.1f", it) } ?: "--"
+internal fun Double?.formatMbps(): String = this?.let { String.format(Locale.US, "%.1f", it) } ?: "--"

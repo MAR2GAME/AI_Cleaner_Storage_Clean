@@ -13,33 +13,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardColor
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardRadius
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockNavy
 
 @Composable
 internal fun CheckActionCard(
     title: String,
     checked: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .clickable { onClick() },
         color = AppLockCardColor,
-        shape = RoundedCornerShape(AppLockCardRadius)
+        shape = RoundedCornerShape(AppLockCardRadius),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = title,
                 color = AppLockNavy,
                 fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             AppLockCheckContent(checked = checked)
         }

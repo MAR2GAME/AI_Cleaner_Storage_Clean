@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.data.repository.notificationcleaner
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
 import org.koin.android.ext.android.inject
 
 class StorageCleanNotificationListener : NotificationListenerService() {
@@ -24,8 +24,7 @@ class StorageCleanNotificationListener : NotificationListenerService() {
         cancelNotification(sbn.key)
     }
 
-    private fun Notification.titleText(): String =
-        extras.getCharSequence(Notification.EXTRA_TITLE)?.toString().orEmpty()
+    private fun Notification.titleText(): String = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString().orEmpty()
 
     private fun Notification.bodyText(): String {
         val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString().orEmpty()

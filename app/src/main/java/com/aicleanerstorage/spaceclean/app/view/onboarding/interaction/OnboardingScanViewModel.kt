@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import kotlinx.coroutines.launch
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class OnboardingScanViewModel(
     private val repository: DeviceInfoRepository,
@@ -23,7 +23,7 @@ class OnboardingScanViewModel(
             OnboardingAction.Entered -> startScanProgress()
             OnboardingAction.RefreshRequested -> refresh()
             OnboardingAction.GetStartedClicked -> completeOnboarding()
-            is OnboardingLoaded, is OnboardingProgressUpdated -> setState { OnboardingReducer.reduce(this, action) }
+            is OnboardingLoaded, is OnboardingProgressUpdated -> setState { OnboardingReducer.reduce(it, action) }
         }
     }
 
@@ -32,11 +32,18 @@ class OnboardingScanViewModel(
             val hardware = repository.hardwareInfo()
             val battery = repository.batteryInfo()
             val storage = repository.internalStorageInfo()
-            dispatch(OnboardingLoaded(currentState.copy(
-                deviceModel = hardware.model, androidVersion = hardware.androidVersion,
-                screenSize = hardware.screenSize, batteryHealth = battery.health,
-                batteryStatusText = battery.statusText, storageInfo = storage,
-            )))
+            dispatch(
+                OnboardingLoaded(
+                    currentState.copy(
+                        deviceModel = hardware.model,
+                        androidVersion = hardware.androidVersion,
+                        screenSize = hardware.screenSize,
+                        batteryHealth = battery.health,
+                        batteryStatusText = battery.statusText,
+                        storageInfo = storage,
+                    ),
+                ),
+            )
         }
     }
 

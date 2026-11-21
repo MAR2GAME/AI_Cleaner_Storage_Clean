@@ -1,22 +1,26 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.networkkit.model.NetworkUsageApp
 import com.aicleanerstorage.networkkit.NetworkRepository
+import com.aicleanerstorage.networkkit.model.NetworkUsageApp
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NetworkUsageViewModel(
     private val repository: NetworkRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : MviViewModel<NetworkUsageUiState, NetworkUsageAction, NetworkUsageEvent>(NetworkUsageUiState(
-                hasAccess = repository.hasNetworkUsageAccess(),
-            )) {
+) : MviViewModel<NetworkUsageUiState, NetworkUsageAction, NetworkUsageEvent>(
+        NetworkUsageUiState(
+            hasAccess = repository.hasNetworkUsageAccess(),
+        ),
+    ) {
     private var scanDelayFinished = false
     private var scanJob: Job? = null
     private var permissionRequestAttempted = false
@@ -30,7 +34,7 @@ class NetworkUsageViewModel(
             NetworkUsageAction.Resumed -> refreshUsage(startScan = true)
             NetworkUsageAction.PermissionRequestConsumed -> {
                 permissionRequestAttempted = true
-                changeState { it.copy(permissionRequestPending = false) }
+                setState { it.copy(permissionRequestPending = false) }
             }
             NetworkUsageAction.PermissionGranted -> refreshUsage(startScan = true)
             NetworkUsageAction.PermissionRejected -> exit(NetworkUsageExitReason.PermissionRejected)
@@ -43,7 +47,7 @@ class NetworkUsageViewModel(
                 }
             }
             NetworkUsageAction.QuitScanConfirmed -> {
-                changeState { it.copy(showStopDialog = false) }
+                setState { it.copy(showStopDialog = false) }
                 exit(NetworkUsageExitReason.Return)
             }
             NetworkUsageAction.ResumeScanClicked -> startScanDelay()
@@ -56,22 +60,22 @@ class NetworkUsageViewModel(
         if (!currentState.isScanning) return
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(showStopDialog = true) }
+        setState { it.copy(showStopDialog = true) }
     }
 
     private fun selectTab(index: Int) {
         val tab = NetworkUsageTab.entries.getOrNull(index) ?: return
-        changeState { it.copy(selectedTab = tab) }
+        setState { it.copy(selectedTab = tab) }
     }
 
     private fun refreshUsage(startScan: Boolean) {
         val hasAccess = repository.hasNetworkUsageAccess()
-        changeState {
+        setState {
             it.copy(
                 hasAccess = hasAccess,
                 usage = if (hasAccess) it.usage else null,
                 isLoading = hasAccess,
-                errorMessage = null,
+                error = null,
                 isScanning = hasAccess && (startScan || it.isScanning),
                 showStopDialog = false,
                 permissionRequestPending = !hasAccess && !permissionRequestAttempted,
@@ -87,21 +91,21 @@ class NetworkUsageViewModel(
             runSuspendCatching {
                 repository.readNetworkUsage()
             }.onSuccess { usage ->
-                changeState {
+                setState {
                     it.copy(
                         hasAccess = !usage.needsUsageAccess,
                         usage = if (usage.needsUsageAccess) null else usage,
                         isLoading = false,
-                        errorMessage = null,
+                        error = null,
                     )
                 }
                 finishScanIfReady()
             }.onFailure { error ->
-                changeState {
+                setState {
                     it.copy(
                         hasAccess = repository.hasNetworkUsageAccess(),
                         isLoading = false,
-                        errorMessage = error.message,
+                        error = UiText.Res(R.string.load_failed),
                     )
                 }
                 finishScanIfReady()
@@ -112,7 +116,7 @@ class NetworkUsageViewModel(
     private fun startScanDelay() {
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(isScanning = true, showStopDialog = false) }
+        setState { it.copy(isScanning = true, showStopDialog = false) }
         scanJob =
             viewModelScope.launch {
                 delay(TOOLBOX_SCAN_DURATION_MILLIS)
@@ -123,7 +127,7 @@ class NetworkUsageViewModel(
 
     private fun finishScanIfReady() {
         if (scanDelayFinished && !currentState.isLoading) {
-            changeState { it.copy(isScanning = false, showStopDialog = false) }
+            setState { it.copy(isScanning = false, showStopDialog = false) }
         }
     }
 
@@ -181,4 +185,3 @@ fun buildNetworkUsageDisplayItems(
             )
     ).sortedByDescending { it.totalBytes }
 }
-

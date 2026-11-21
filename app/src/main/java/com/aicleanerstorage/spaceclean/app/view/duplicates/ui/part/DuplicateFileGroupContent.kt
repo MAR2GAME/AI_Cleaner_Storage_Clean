@@ -34,9 +34,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDivider
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerListBottomPadding
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.SelectionCircle
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDivider
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListBottomPadding
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.duplicateFileKey
@@ -56,16 +56,21 @@ internal fun DuplicateFileGroupContent(
     val groupSize = group.files.sumOf { it.realFile?.sizeBytes ?: 0L }
     val groupSizeLabel = remember(groupSize) { FormatUtil.formatSize(groupSize) }
     val groupKeys = group.files.map(::duplicateFileKey).toSet()
-    val recommendedKeys = group.files.drop(1).map(::duplicateFileKey).toSet()
+    val recommendedKeys =
+        group.files
+            .drop(1)
+            .map(::duplicateFileKey)
+            .toSet()
     val selectedGroupKeys = selectedFileKeys.intersect(groupKeys)
     val autoSelectedExactly = recommendedKeys.isNotEmpty() && selectedGroupKeys == recommendedKeys
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(bottom = FileManagerListBottomPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(bottom = FileManagerListBottomPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(26.dp))
         DuplicateDetailHero()
@@ -93,7 +98,7 @@ internal fun DuplicateFileGroupContent(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Color.White,
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -120,7 +125,7 @@ internal fun DuplicateFileGroupContent(
                     DuplicateFileRow(
                         file = file,
                         selected = fileKey in selectedFileKeys,
-                        onToggleSelection = { onToggleFile(file) }
+                        onToggleSelection = { onToggleFile(file) },
                     )
                     if (index != group.files.lastIndex) {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -140,10 +145,11 @@ private fun DuplicateDetailHero() {
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier = Modifier
-                .size(119.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
+            modifier =
+                Modifier
+                    .size(119.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White),
         )
         DuplicateFileIconContainer()
     }
@@ -153,12 +159,13 @@ private fun DuplicateDetailHero() {
 internal fun DuplicateFileRow(
     file: DuplicateFileEntry,
     selected: Boolean,
-    onToggleSelection: () -> Unit
+    onToggleSelection: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         DuplicateFileIcon(modifier = Modifier.size(44.dp))
         Spacer(modifier = Modifier.width(10.dp))
@@ -182,13 +189,13 @@ internal fun DuplicateFileRow(
                     localizedDuplicateFileNote(file.note),
                     color = FileManagerPrimaryGreen,
                     fontSize = 14.sp,
-                    lineHeight = 17.sp
+                    lineHeight = 17.sp,
                 )
             }
         }
         SelectionCircle(
             selected = selected,
-            modifier = Modifier.clickable { onToggleSelection() }
+            modifier = Modifier.clickable { onToggleSelection() },
         )
     }
 }
@@ -223,10 +230,11 @@ private fun duplicateFileName(file: DuplicateFileEntry): String =
 private fun duplicateFilePathPrefix(file: DuplicateFileEntry): String {
     val fullPath = file.path
     val fileName = duplicateFileName(file)
-    val parent = if (fullPath.endsWith(fileName)) {
-        fullPath.removeSuffix(fileName).trimEnd('/')
-    } else {
-        fullPath.substringBeforeLast('/', missingDelimiterValue = fullPath).trimEnd('/')
-    }
+    val parent =
+        if (fullPath.endsWith(fileName)) {
+            fullPath.removeSuffix(fileName).trimEnd('/')
+        } else {
+            fullPath.substringBeforeLast('/', missingDelimiterValue = fullPath).trimEnd('/')
+        }
     return if (parent.isBlank()) "/" else "$parent/"
 }

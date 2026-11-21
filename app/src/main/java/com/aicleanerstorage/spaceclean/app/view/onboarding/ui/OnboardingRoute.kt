@@ -11,11 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingAction
+import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingEvent
+import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingEvent
-import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingAction
-import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
 
 @Composable
 fun OnboardingRoute(
@@ -26,27 +27,26 @@ fun OnboardingRoute(
     var exiting by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel) {
-        viewModel.dispatch(OnboardingAction.Entered)
-        viewModel.event.collect { effect ->
-            when (effect) {
-                OnboardingEvent.NotifyScanFinished -> Unit
-                OnboardingEvent.FinishOnboarding -> {
-                    if (!exiting) {
-                        exiting = true
-                        navigator.replace(AppDestination.Main())
-                    }
+    LaunchedEffect(viewModel) { viewModel.dispatch(OnboardingAction.Entered) }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            OnboardingEvent.NotifyScanFinished -> Unit
+            OnboardingEvent.FinishOnboarding -> {
+                if (!exiting) {
+                    exiting = true
+                    navigator.replace(AppDestination.Main())
                 }
             }
         }
     }
 
     DisposableEffect(lifecycleOwner, viewModel) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.dispatch(OnboardingAction.RefreshRequested)
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    viewModel.dispatch(OnboardingAction.RefreshRequested)
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }

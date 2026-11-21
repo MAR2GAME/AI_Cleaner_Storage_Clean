@@ -1,76 +1,60 @@
 package com.aicleanerstorage.spaceclean.app.di
 
 import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
-import org.koin.core.qualifier.named
-
-
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
-
-import com.aicleanerstorage.spaceclean.app.background.syncAppLockMonitoring
-
-
-
-import com.aicleanerstorage.spaceclean.app.AppViewModel
+import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
-import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
-import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
-import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanDevicesViewModel
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageViewModel
-import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
-import com.aicleanerstorage.spaceclean.base.permission.ContextPermissionChecker
-import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
-import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
-import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsViewModel
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerViewModel
+import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
+import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsViewModel
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
+import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.Dispatchers
-import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val presentationModule =
     module {
-        viewModel { AppViewModel() }
-        single<PermissionChecker> { ContextPermissionChecker(androidContext()) }
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel { AppUsageViewModel(get(), Dispatchers.IO) }
         viewModel { DeviceInfoViewModel(get(), get(), get(), get(), Dispatchers.IO) }
         viewModel { BatteryInfoViewModel(get(), get(), get(), get(), get(), Dispatchers.IO) }
         viewModel { NetworkScanViewModel(get(), Dispatchers.IO) }
-        viewModel { NetworkScanDevicesViewModel(get(), Dispatchers.IO) }
         viewModel { NetworkSpeedViewModel(get(), Dispatchers.IO) }
         viewModel { NetworkUsageViewModel(get(), Dispatchers.IO) }
-        viewModel { WhatsAppCleanerViewModel(androidApplication()::getString, get(), Dispatchers.IO, get()) }
+        viewModel { WhatsAppCleanerViewModel(get(), Dispatchers.IO) }
         viewModel {
             NotificationCleanerViewModel(
-                message = androidApplication()::getString,
                 repository = get(),
                 ioDispatcher = Dispatchers.IO,
-                permissionChecker = get(),
             )
         }
         viewModel { OnboardingScanViewModel(get(), get()) }
         viewModel {
             JunkCleanViewModel(
                 cleanRepository = get(),
-                permissionChecker = get(),
                 ioDispatcher = Dispatchers.IO,
             )
         }
@@ -116,17 +100,17 @@ val presentationModule =
             )
         }
         viewModel { DuplicateFilesManagerViewModel(get(), get(), Dispatchers.IO) }
-        viewModel { VirusScanViewModel(get(), get(), get()) }
+        viewModel { VirusScanViewModel(get(), get()) }
         viewModel { ManagePermissionsViewModel() }
         viewModel { SettingsViewModel(get()) }
         viewModel {
             val repository = get<AppLockRepository>()
+            val settingsRepository = get<SettingsRepository>()
             val context = androidContext()
             AppLockViewModel(
                 repository = repository,
-                syncMonitoringService = { syncAppLockMonitoring(context, repository) },
+                syncMonitoringService = { AppRuntimeService.reconcile(context, repository, settingsRepository) },
                 ioDispatcher = Dispatchers.IO,
-                permissionChecker = get(),
             )
         }
     }

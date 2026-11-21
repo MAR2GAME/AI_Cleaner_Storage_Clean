@@ -55,7 +55,6 @@
 ## v2 基线（历史内容，冲突处以以上 v3 为准）
 
 - **版本**：v2，基于 v1 评审结论修订（5 项决策已定，见 §1.3）
-- **配套文档**：`docs/refactor-audit.md`（排查报告，本计划所有"现状"均引用其章节）
 - **基线**：git `da1d7eb`（`fix/tp` 分支），单模块 406 kt / 42,532 行
 - **执行资源**：**1 人 + AI 协作**（§5 给出按周排期与 AI 分工）
 
@@ -81,7 +80,7 @@
 
 ### 1.1 三个目标（按优先级）
         
-1. **可靠性**：消掉 `refactor-audit.md` §1 中 11 类 P0 里的 10 类（P0-5 因决定保留 `:junkcc` 转为已接受债务）。这些不是架构洁癖，是「全站导航卡死 / 只能杀进程 / 可能删错文件 / 审核风险」的实际故障。
+1. **可靠性**：消掉 原排查报告 §1 中 11 类 P0 里的 10 类（P0-5 因决定保留 `:junkcc` 转为已接受债务）。这些不是架构洁癖，是「全站导航卡死 / 只能杀进程 / 可能删错文件 / 审核风险」的实际故障。
 2. **可演进**：把「单模块 + 无 domain + 无 MVI 基类 + 双向依赖」变成「core/shared/feature 分层 + 统一 MVI 契约 + 拦截器承载横切」。
 3. **可验证**：让门禁真实生效（当前 5 个 check 脚本全部空转）。没有这一条，前两条会在 3 个月内退化回原点。
 
@@ -170,7 +169,7 @@ P7  路由类型安全 + 收尾 ── @Serializable 路由、删 withArgs/detai
 | PR0-1 | `docs/figma-screen-map.md` 的 `Rules` 段：删除 "Keep device data, ViewModels, repositories, navigation, and effects **from the mother project**"，改为"以本仓库当前实现为准；母版不再作为同步来源" | 文档内无 "mother project" 表述 |
 | PR0-2 | 删除 `config/variant-source.json`（母版拷贝记录，含 `D:/pros/my/...` 绝对路径，无任何代码读取） | `grep -r variant-source` = 0 |
 | PR0-3 | 清理无主配置：`config/product.schema.json`（5.7 KB，无人校验）、`docs/testtt.md`（0 字节） | 二者删除 |
-| PR0-4 | `docs/figma-screen-map.md` 补一句"当前进度以 `docs/refactor-audit.md` §2 章节索引为准"，避免与新文档冲突 | — |
+| PR0-4 | `docs/figma-screen-map.md` 补一句"当前进度以 原排查报告 §2 章节索引为准"，避免与新文档冲突 | — |
 
 > `docs/ice_age_survival_game_design_and_development.md` 已处于"已暂存删除"状态（非本次改动），按你的清理意图保留该删除。
 

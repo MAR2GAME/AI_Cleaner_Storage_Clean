@@ -26,10 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXMutedText
-import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 
 @Composable
 internal fun DeviceModelCard(hardware: DeviceHardwareInfo) {
@@ -67,17 +67,17 @@ internal fun DeviceModelCard(hardware: DeviceHardwareInfo) {
             Spacer(Modifier.weight(1.0f))
 
             Box(
-                Modifier.padding(2.72727.dp)
+                Modifier
+                    .padding(2.72727.dp)
                     .width(120.dp)
-                    .height(96.dp)
+                    .height(96.dp),
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.device_model),
                     contentDescription = null,
-                    contentScale = ContentScale.None
+                    contentScale = ContentScale.None,
                 )
             }
-
         }
     }
 }
@@ -90,7 +90,7 @@ private fun SummaryTextLine(
     value: String,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = label,

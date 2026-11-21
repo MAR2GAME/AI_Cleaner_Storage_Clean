@@ -56,18 +56,19 @@ fun CleanXDecisionDialog(
                 modifier = Modifier.fillMaxWidth(),
             )
         },
-        text = body?.let {
-            {
-                Text(
-                    text = it,
-                    color = CleanXMutedText,
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        },
+        text =
+            body?.let {
+                {
+                    Text(
+                        text = it,
+                        color = CleanXMutedText,
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
         confirmButton = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
@@ -79,11 +80,12 @@ fun CleanXDecisionDialog(
                     val confirmInteractionSource = remember { MutableInteractionSource() }
                     TextButton(
                         onClick = onDismissAction,
-                        modifier = Modifier.cleanXPressFeedback(
-                            interactionSource = dismissInteractionSource,
-                            pressedAlpha = 0.78f,
-                            pressedScale = 1f,
-                        ),
+                        modifier =
+                            Modifier.cleanXPressFeedback(
+                                interactionSource = dismissInteractionSource,
+                                pressedAlpha = 0.78f,
+                                pressedScale = 1f,
+                            ),
                         interactionSource = dismissInteractionSource,
                     ) {
                         Text(
@@ -95,14 +97,15 @@ fun CleanXDecisionDialog(
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedButton(
                         onClick = onConfirmAction,
-                        modifier = Modifier.cleanXPressFeedback(
-                            interactionSource = confirmInteractionSource,
-                            pressedAlpha = 0.78f,
-                            pressedScale = 1f,
-                        ),
+                        modifier =
+                            Modifier.cleanXPressFeedback(
+                                interactionSource = confirmInteractionSource,
+                                pressedAlpha = 0.78f,
+                                pressedScale = 1f,
+                            ),
                         shape = RoundedCornerShape(50),
                         interactionSource = confirmInteractionSource,
-                        border = BorderStroke(width = 1.dp, color = CleanXBlue)
+                        border = BorderStroke(width = 1.dp, color = CleanXBlue),
                     ) {
                         Text(
                             text = confirmText,

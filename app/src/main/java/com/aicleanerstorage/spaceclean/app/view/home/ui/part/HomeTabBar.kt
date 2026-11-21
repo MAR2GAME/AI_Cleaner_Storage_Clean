@@ -58,8 +58,7 @@ internal fun HomeTabBar(
                                     2 -> 60.dp
                                     else -> 39.dp
                                 },
-                            )
-                            .height(2.dp)
+                            ).height(2.dp)
                             .background(if (selected) Color(0xFF5DD595) else Color.Transparent),
                 )
             }

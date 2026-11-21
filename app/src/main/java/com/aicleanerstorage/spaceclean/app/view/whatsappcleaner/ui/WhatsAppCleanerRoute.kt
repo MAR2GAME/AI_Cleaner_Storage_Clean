@@ -1,23 +1,24 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui
 
-
-import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerEvent
-
-import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
-import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
-
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
+import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerEvent
+import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerScreen
+import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
+import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 
 @Composable
 fun WhatsAppCleanerRoute(
@@ -28,7 +29,27 @@ fun WhatsAppCleanerRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val permissionGate = rememberPermissionGate()
+    var pendingAction by remember { mutableStateOf<WhatsAppCleanerAction?>(null) }
+    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
+
+    fun gated(action: WhatsAppCleanerAction) {
+        if (exiting) return
+        pendingAction = action
+        pendingPermission = AppPermission.StorageFiles
+    }
+
+    PermissionRequestEffect(pendingPermission) { result ->
+        val action = pendingAction
+        pendingAction = null
+        pendingPermission = null
+        if (action != null) {
+            if (result == PermissionResult.Granted) {
+                viewModel.dispatch(action)
+            } else {
+                viewModel.dispatch(WhatsAppCleanerAction.PermissionDenied)
+            }
+        }
+    }
 
     fun exitOnce(navigate: () -> Unit) {
         if (exiting) return
@@ -40,37 +61,34 @@ fun WhatsAppCleanerRoute(
     }
 
     LaunchedEffect(viewModel) {
-        permissionGate.allow(AppPermission.StorageFiles) {
-            viewModel.dispatch(WhatsAppCleanerAction.ScanStartRequested)
-        }
+        gated(WhatsAppCleanerAction.ScanStartRequested)
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                is WhatsAppCleanerEvent.Exit ->
-                    exitOnce {
-                        if (effect.home) { viewModel.dispatch(WhatsAppCleanerAction.ResultDismissed); navigator.resetToRoot(AppDestination.Main()) }
-                        else navigator.back()
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            is WhatsAppCleanerEvent.Exit ->
+                exitOnce {
+                    if (effect.home) {
+                        viewModel.dispatch(WhatsAppCleanerAction.ResultDismissed)
+                        navigator.resetToRoot(AppDestination.Main())
+                    } else {
+                        navigator.back()
                     }
-                is WhatsAppCleanerEvent.Navigate -> if (!exiting) navigator.navigate(effect.destination)
-            }
+                }
+
+            is WhatsAppCleanerEvent.Navigate -> if (!exiting) navigator.navigate(effect.destination)
         }
     }
 
     WhatsAppCleanerScreen(
         state = state,
-        onAction = actions@{ action ->
-            if (exiting) return@actions
+        onAction = { action ->
+            if (exiting) return@WhatsAppCleanerScreen
             when (action) {
-                WhatsAppCleanerAction.CleanClicked -> {
-                    if (!exiting) {
-                        permissionGate.allow(AppPermission.StorageFiles) { viewModel.dispatch(action) }
-                    }
-                }
+                WhatsAppCleanerAction.CleanClicked -> gated(action)
+                is WhatsAppCleanerAction.NavigationRequested -> if (!exiting) viewModel.dispatch(action)
                 else -> viewModel.dispatch(action)
             }
         },
-        onNavigate = { if (!exiting) viewModel.dispatch(WhatsAppCleanerAction.NavigationRequested(it)) },
     )
 }

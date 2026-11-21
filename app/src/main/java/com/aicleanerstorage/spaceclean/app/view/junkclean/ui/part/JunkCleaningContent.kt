@@ -25,9 +25,7 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.Cl
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXSpiralCleaningContent
 
 @Composable
-internal fun JunkCleaningContent(
-    stage: CleanXDeleteCompleteStage = CleanXDeleteCompleteStage.Deleting,
-) {
+internal fun JunkCleaningContent(stage: CleanXDeleteCompleteStage = CleanXDeleteCompleteStage.Deleting) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (stage == CleanXDeleteCompleteStage.Complete) {
             JunkCleanCompleteMark(
@@ -49,10 +47,11 @@ private fun JunkCleanCompleteMark(modifier: Modifier = Modifier) {
     var animationStarted by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (animationStarted) 1f else 0.35f,
-        animationSpec = tween(
-            durationMillis = 800,
-            easing = FastOutSlowInEasing,
-        ),
+        animationSpec =
+            tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing,
+            ),
         label = "junkCleanCompleteScale",
     )
 

@@ -35,22 +35,24 @@ fun CleanXPillTabs(
     val safeSelectedIndex = selectedIndex.coerceIn(0, items.lastIndex)
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         items.forEachIndexed { index, item ->
             val selected = index == safeSelectedIndex
             Box(
-                modifier = Modifier
-                    .height(42.dp)
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(22.dp))
-                    .background(if (selected) FileManagerPrimaryGreen else Color.White)
-                    .clickable { onSelected(index) }
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .height(42.dp)
+                        .wrapContentWidth()
+                        .clip(RoundedCornerShape(22.dp))
+                        .background(if (selected) FileManagerPrimaryGreen else Color.White)
+                        .clickable { onSelected(index) }
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(

@@ -63,9 +63,8 @@
 # or system callbacks. Avoid keeping feature/skin pages wholesale so R8 can still shrink.
 -keep class com.aicleanerstorage.spaceclean.app.MyApp { public <init>(); }
 -keep class com.aicleanerstorage.spaceclean.app.MainActivity { public <init>(); }
--keep class com.aicleanerstorage.spaceclean.app.background.AppBackgroundRuntimeService { public <init>(); }
+-keep class com.aicleanerstorage.spaceclean.app.background.AppRuntimeService { public <init>(); }
 -keep class com.aicleanerstorage.spaceclean.data.notificationcleaner.StorageCleanNotificationListener { public <init>(); }
--keep class com.aicleanerstorage.spaceclean.app.view.applock.ui.LockScreenOverlayService { public <init>(); }
 
 -keep class com.aicleanerstorage.spaceclean.junkcc.** { *; }
 -keep class com.aicleanerstorage.spaceclean.junkcc.R { *; }

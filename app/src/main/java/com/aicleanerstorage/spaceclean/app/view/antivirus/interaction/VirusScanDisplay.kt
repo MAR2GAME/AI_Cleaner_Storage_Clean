@@ -30,33 +30,36 @@ internal class VirusScanDisplay(
     }
 
     fun start(startedAt: Long) {
-        displayJob = scope.launch {
-            var appJob: Job? = null
-            var appStageEnded = false
-            val endOfApps = when (mode) {
-                VirusScanMode.Quick -> mode.circleFillThreshold(1)
-                VirusScanMode.Deep -> mode.circleStartThreshold(2)
-            }
-            while (true) {
-                val elapsed = nowMillis() - startedAt
-                val fraction = (elapsed.toFloat() / mode.minDurationMillis * MAX_DISPLAY_PROGRESS)
-                    .coerceIn(0f, MAX_DISPLAY_PROGRESS)
-                onUpdate(VirusScanUpdate.ProgressUpdated(fraction))
-                if (!appStageEnded && fraction >= endOfApps) {
-                    appStageEnded = true
-                    appJob?.cancel()
-                    apps.cancel()
-                    if (mode == VirusScanMode.Deep) {
-                        onUpdate(VirusScanUpdate.PathDisplayStarted)
-                        launch { displayPaths() }
+        displayJob =
+            scope.launch {
+                var appJob: Job? = null
+                var appStageEnded = false
+                val endOfApps =
+                    when (mode) {
+                        VirusScanMode.Quick -> mode.circleFillThreshold(1)
+                        VirusScanMode.Deep -> mode.circleStartThreshold(2)
                     }
-                } else if (!appStageEnded && appJob == null && fraction >= mode.circleStartThreshold(1)) {
-                    appJob = launch { displayApps() }
+                while (true) {
+                    val elapsed = nowMillis() - startedAt
+                    val fraction =
+                        (elapsed.toFloat() / mode.minDurationMillis * MAX_DISPLAY_PROGRESS)
+                            .coerceIn(0f, MAX_DISPLAY_PROGRESS)
+                    onUpdate(VirusScanUpdate.ProgressUpdated(fraction))
+                    if (!appStageEnded && fraction >= endOfApps) {
+                        appStageEnded = true
+                        appJob?.cancel()
+                        apps.cancel()
+                        if (mode == VirusScanMode.Deep) {
+                            onUpdate(VirusScanUpdate.PathDisplayStarted)
+                            launch { displayPaths() }
+                        }
+                    } else if (!appStageEnded && appJob == null && fraction >= mode.circleStartThreshold(1)) {
+                        appJob = launch { displayApps() }
+                    }
+                    if (fraction >= MAX_DISPLAY_PROGRESS) break
+                    delay(TICK_MILLIS)
                 }
-                if (fraction >= MAX_DISPLAY_PROGRESS) break
-                delay(TICK_MILLIS)
             }
-        }
     }
 
     private suspend fun displayApps() {

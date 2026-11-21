@@ -12,6 +12,9 @@ import com.aicleanerstorage.networkkit.model.NetworkSpeed
 import com.aicleanerstorage.networkkit.model.NetworkUsageInfo
 import com.aicleanerstorage.networkkit.permission.hasUsageAccess as hasSystemUsageAccess
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 internal class NetworkRepositoryImpl(
@@ -21,6 +24,9 @@ internal class NetworkRepositoryImpl(
     private val appContext = context.applicationContext
 
     private val infoReader = AndroidNetworkInfoReader(appContext)
+    private val mutableLastScan = MutableStateFlow<NetworkScanResult?>(null)
+
+    override val lastScan: StateFlow<NetworkScanResult?> = mutableLastScan.asStateFlow()
 
     override fun readNetworkInfo() = infoReader.read()
 
@@ -58,6 +64,11 @@ internal class NetworkRepositoryImpl(
             result
         }
 
-    override suspend fun scanWifi(): NetworkScanResult = NetworkToolboxDataSource.scanWifi(appContext)
+    override suspend fun scanWifi(): NetworkScanResult =
+        NetworkToolboxDataSource.scanWifi(appContext).also { mutableLastScan.value = it }
+
+    override fun clearLastScan() {
+        mutableLastScan.value = null
+    }
 }
 

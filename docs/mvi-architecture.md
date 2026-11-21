@@ -1,7 +1,7 @@
 # 多模块 MVI 架构规范
 
 本文是当前 MVI 规范。权限和广告采用 `refactor-sample.md` 第 3、4 节的职责划分；与示例不同的业务和生命周期规则以本文为准。
-当前采用 4 个 core 模块与 10 个 feature 模块。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost、权限 Host 与广告实现。旧 common 生产源码已迁入对应模块，不保留兼容别名。
+当前采用 4 个 core 模块与 10 个 feature 模块。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost、权限 Coordinator 与广告实现。旧 common 生产源码已迁入对应模块，不保留兼容别名。
 
 ## 包职责
 
@@ -19,7 +19,7 @@
 模块清单：startup、onboarding、home、settings、junkclean、antivirus、files、applock、notificationcleaner、toolbox。
 业务接口和跨功能复用的数据放入 core:contracts；单功能仓库接口仍留在自身 domain。不得为了减少依赖报错让 feature 依赖另一个 feature。
 
-`CleanItem`、`CategoryCleanGroup` 属于 presentation.model。`CleanItem.isChecked` 不可变，修改选择时复制数据。
+`CleanItem`、`CategoryCleanGroup` 属于 presentation 模型，平铺在 `junkclean/interaction/`。`CleanItem.isChecked` 不可变，修改选择时复制数据。
 仓库接收 `List<JunkFile>`，由 ViewModel 筛选选中项，仓库不认识 UI 选择模型。
 `CleanSessionStore` 保存业务结果，不提供第二套页面状态。`SharedScanState` 属于 data.session。
 不增加无使用者的 shared 包、转发式 UseCase、通用业务 Job 管理器或 Coordinator。
@@ -37,12 +37,17 @@
 ```
 
 - ViewModel 保留 `MviViewModel<State, Action, Event>` 三个类型参数。基类提供 State 和 Event，不管理扫描/清理任务。
-- junkclean 的所有页面状态修改经过 Reducer；`updateState` 内只有纯函数，不能调用仓库、埋点或发送 Effect。
+- junkclean 的所有页面状态修改经过 Reducer；`setState` 内只有纯函数，不能调用仓库、埋点或发送 Effect。
 - 页面输入与异步结果使用同一个 `XxxAction`，通过 `dispatch` 上报。Action 按已发生的事实命名，例如 `TermsClicked`、`DeleteConfirmed`、`ScanCompleted`。ViewModel 下发的 `XxxEvent` 使用祈使式，例如 `OpenTerms`、`NavigateBack`。
 - `phase` 是唯一业务阶段；扫描/清理 Job、删除结果暂存、退出去重属于任务管理，不作为 UI 阶段来源。
 - 页面入口放在 `app/view/<page>/ui/XxxScreen.kt`，按状态组装展示组件，通过回调上报交互。单页专用组件放在同页 `ui/part/`，文件名与主 Composable 一致，用 `Header`、`Row`、`Card`、`Dialog`、`Content` 等后缀表达组件职责。跨页业务组件放在 `app/view/common/`，预览放在 `ui/preview/`。
 - Route 订阅一份 State 和一个 Event 流。平台副作用执行后派发 Action，不能直接写 State。
+- Event 统一用 `CollectEffects`（`base/mvi/CollectEffects.kt`）收集：只在 `RESUMED` 时消费，页面不可见期间事件留在通道里，恢复后再执行。禁止在 Route 里手写 `LaunchedEffect { viewModel.event.collect { } }`，否则后台仍会执行导航、Toast、finish。
 - junkclean presentation 禁止依赖 `android.*`；允许资源 ID、AndroidX 生命周期和注解。ViewModel 不接收 Context，不创建 PendingIntent，也不解析文案。
+- 用户可见文案走 `UiText`（`base/mvi/UiText.kt`）：状态只保存 `error: UiText?` 这类值，UI 层用 `resolve(context)` 解析。错误到文案的映射收口在页面 `interaction/XxxErrorText.kt` 的 `internal fun XxxError.toUiText(): UiText`，`when` 必须穷尽分支；禁止在状态里塞 `String` 或异常 `message`。
+- 系统返回键统一 `BackHandler { onAction/dispatch(XxxAction.BackClicked) }`，由 Route 消费 Event 再 `back()`；不在 Route/Screen 里直接调 `navigator.back()` 或 `finish()`。首页用 `enabled` 让弹窗期间不拦截；Splash/Onboarding 可以用 `BackHandler {}` 显式吞掉返回。
+- `XxxScreen` 只接收 `state` + `onAction`（+ `modifier`）；需要渲染插槽时用 `@Composable (...) -> Unit` 内容槽（组合而非回调）。`permissionGranted`、`interactionsEnabled` 这类门控必须并进 `XxxUiState`，由 Route 用 `copy(...)` 注入。
+- 页面副作用宿主统一放 `app/view/<page>/ui/effect/`：只 dispatch Action、计时或调用平台 API，不渲染界面。命名三类：`XxxEffectHandler.kt`（Composable 事件宿主）、`XxxEffect.kt` / `XxxEffects.kt`（进度、计时或一组小副作用）、`CollectXxxEvents.kt`（suspend 事件收集器）。`ui/` 根目录放 Screen、Route 与页面级渲染辅助（`*View`、`*Tokens`、`*Popups` 等）；纯展示组件与对话框优先放 `ui/part/`，`@Preview` 放 `ui/preview/`。
 - 删除授权 Effect 只携带去重后的 URI 字符串快照；状态保存 `pendingAuthorizationCount`，UI 使用 stringResource 解析等待文案。UI 在页面未退出且处于 AwaitingAuthorization 时创建并启动系统授权，通过 DeleteAuthorizationResultReceived 回传结果。
 - 不支持平台、空 URI、授权创建或启动失败均回传 false，沿用用户拒绝的部分失败汇总：保留直接删除成功和内存结果，直接失败与全部待授权文件计入失败，不调用 finalizeAuthorizedDeletes，继续历史记录和完成广告。CancellationException 继续传播。接受回调时同步离开 AwaitingAuthorization 并清零数量，重复或退出后的回调无效。
 
@@ -68,25 +73,23 @@ Main(initialTab) 表示三个首页标签；切换现有 Main 时通过 SavedSta
 Effect 使用 `Channel.UNLIMITED` 同步入队，保持调用顺序；低频导航、授权和操作事件可短暂积压。进度等高频数据必须写入 State。每个 ViewModel 只有一个 UI 消费者，禁止把同一 `receiveAsFlow()` 分给多个收集器。
 ViewModel 清理时取消队列、丢弃未消费事件；之后发送不再入队。此契约仅限进程内存活期间，不保证进程恢复或平台操作恰好执行一次。业务退出、授权和广告仍各自保留去重及状态检查。
 
-## 权限与广告的唯一执行链路
+## 权限与广告的执行链路
 
 ```text
-业务 / resolvePolicies → PermissionInterceptor（也实现 PermissionGateway）
-                                  → 根 AppPermissionHost → Android
-完成 Effect / FeatureFlow / 路由 → AdInterceptor.show → AdvertiseAdDriver → SDK
+页面 Route → PermissionRequestEffect → PermissionGate（系统弹窗 / 设置页）
+                    ↓
+             PermissionResult → 页面 / ViewModel 判断
 ```
 
 ### 权限
 
-- Koin 只创建一个 PermissionInterceptor，PermissionGateway 直接绑定这个实例。业务通过纯数据 PermissionNeed 或 PermissionTarget 请求权限，不依赖 app 实现。
-- 拦截器拥有一份不可变 Prompt 快照和私有 Request/CompletableDeferred。阶段与当前权限只保存在 Prompt 中，Request 只保存等待结果及启动、取消等元数据。阶段为 AwaitingUser、LaunchRequested、WaitingRuntime、WaitingSettings；Busy 不替换当前请求。
-- PermissionPlatform 集中真实授权判断、运行时权限列表、设置页候选 Intent、Activity rationale 和 Android 版本分支。偏好键继续复用原存储。
-- ProtectedAction 的组合权限按原顺序申请。每步按真实授权复查；最终先清理占用，再恢复等待者。Host 回调携带 Prompt，由拦截器校验请求对象、当前权限步骤及预期阶段；Host 不另存运行时权限或设置页请求归属。
-- 启动前取消立即清除提示；系统页面已经启动时取消只停止业务等待，保留占用直到系统返回，静默释放。Host 销毁取消等待和状态。取消不转换成 Denied，不发旧页面退出广告；设置页没有绝对超时。
-- 仅根 AppPermissionHost 注册权限和设置 Launcher；启动前同步标记等待阶段。设置页的 ActivityResult 与暂停/恢复事件共同触发复查，重复返回不重复完成。
-- PostNotifications 与 NotificationListener 是不同权限。通知提示策略保留首页 350ms 延迟、每日频率、会话延后、启动页暂停；系统执行复用同一个 Host。Busy 等空闲后按当前页面重新评估，页面切换取消等待。普通业务请求会隐藏通知专用提示，避免两套弹窗叠加。
-- 通知策略只读取和更新一份 StateFlow。首页提示通过 repeatOnLifecycle(RESUMED) 统一计时：进入已恢复的首页或再次恢复后等待 350ms，暂停、离开首页或 Host 销毁时取消；不并行设置页面进入计时与恢复计时。
-- 申请记录仅在真实启动系统权限时写入，提示时间仅在实际展示时写入。启动失败、Busy、取消不记作用户拒绝。通知申请不自动打开设置，只有确认专用提示后才打开。
+- `AppPermission` 只放平台事实：`isGranted` / `runtimePermissions` / `settingsIntents` / `requiresSettings` / `shouldExplain` / `resultAfterSettings`。
+- `PermissionRequestEffect(request, onResult)` 是唯一的申请副作用：运行时权限拉系统弹窗，特殊权限跳设置页并在 `ON_RESUME` 重查。
+- 页面持有 `pendingPermission`，结果通过 `onResult` 回传；是否先解释、是否提示去设置、弹窗长什么样，都由页面决定。
+- 文案和弹窗在视图层：`app/view/common/permission/` 下的 `PermissionUiCopy` 与 `ui/*Dialog`，base 不依赖 `R`。
+- ViewModel 不注入 `PermissionChecker`、不查权限；通过 Action 接收 `PermissionResult`。
+- 通知权限保留每天一次节流；`PostNotifications.isGranted` 使用 `areNotificationsEnabled()`。
+- `PermissionGate` 只保留 `request / openSettings / isGranted`；`allow` 已删除。
 
 ### 普通插屏、冷启动和外部返回
 
@@ -115,7 +118,11 @@ ViewModel 清理时取消队列、丢弃未消费事件；之后发送不再入�
 
 ## 检查和验证状态
 
-`./scripts/check-mvi-boundaries.ps1` 扫描全部 core/feature/app 模块的源码和测试目录，检查模块方向、domain/presentation/data 边界、Screen 限制、旧 common 引用和 package/目录一致性。
-`./scripts/check-permission-ad-boundaries.ps1` 扫描所有模块，检查唯一权限 Host、唯一 AdDriver、Gateway 绑定和旧框架残留。
-各模块执行受影响的定向 JVM 测试；权限、广告及跨模块 junkclean 集成测试仍由 app 测试源集持有，避免 feature 测试反向依赖 app。不执行全量测试或 Release 构建。
-本轮命令、结果、文件迁移说明和未覆盖项见 [多模块迁移记录](multi-module-migration.md)。此前权限/广告设备验收保留在 [历史验收记录](permission-ad-acceptance.md)，不作为本轮多模块变更的设备验收结果。
+`scripts/check-rules.ps1` + `profiles/android-compose-mvi.json` 是本仓库 MVI 规则的唯一门禁，覆盖：domain 纯净、分层方向、view 不依赖 root、`ui/part` 无状态、错误走 `UiText`、事件走 `CollectEffects`、返回键 dispatch、package/目录一致、语言包 key 对齐。
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-rules.ps1
+```
+
+改动上述区域后必须运行；单测用 `.\gradlew.bat :app:testDebugUnitTest`，构建验证用 `.\gradlew.bat :app:assembleDebug`。CI（`.github/workflows/ci.yml`）把这三步串在一起，本地等价命令是 `scripts\ci.ps1`，详见 [CI](ci.md)。
+旧脚本 `check-mvi-boundaries.ps1` / `check-permission-ad-boundaries.ps1` 已不再维护，历史记录见 [多模块迁移记录](multi-module-migration.md)。

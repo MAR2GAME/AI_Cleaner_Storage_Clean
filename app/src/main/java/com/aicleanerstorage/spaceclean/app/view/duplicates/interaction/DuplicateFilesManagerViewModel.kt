@@ -1,19 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.appString
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.duplicateScanFailedMessage
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
-import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -24,16 +23,20 @@ class DuplicateFilesManagerViewModel(
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
     private val completeDelayMillis: Long = 800L,
-) : MviViewModel<DuplicateFilesManagerUiState, FileManagerAction, FileManagerEvent>(DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted())) {
-    private val operations = FileOperations(viewModelScope, ioDispatcher) {
-        val groups = mapDuplicateGroups(repository.loadDuplicateFiles())
-        DuplicateFilesManagerUiState(
-            phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
-            groups = groups,
-        )
-    }
+) : MviViewModel<DuplicateFilesManagerUiState, FileManagerAction, FileManagerEvent>(
+        DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()),
+    ) {
+    private val operations =
+        FileOperations(viewModelScope, ioDispatcher) {
+            val groups = mapDuplicateGroups(repository.loadDuplicateFiles())
+            DuplicateFilesManagerUiState(
+                phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+                groups = groups,
+            )
+        }
 
     private var exitRequested = false
+
     private fun exit(home: Boolean) {
         if (exitRequested) return
         exitRequested = true
@@ -80,13 +83,18 @@ class DuplicateFilesManagerViewModel(
     }
 
     private fun showStopDialog(blockedPhase: FileOperationPhase? = null) {
-        changeState { it.copy(showStopDialog = true, blockedPhase = blockedPhase) }
+        setState { it.copy(showStopDialog = true, blockedPhase = blockedPhase) }
     }
-    private fun dismissStopDialog() { changeState { it.copy(showStopDialog = false, blockedPhase = null) } }
+
+    private fun dismissStopDialog() {
+        setState { it.copy(showStopDialog = false, blockedPhase = null) }
+    }
+
     private fun cancelActiveOperation() {
         operations.cancel()
         dismissStopDialog()
     }
+
     private fun startIfNeeded() {
         if (hasStartedForCurrentState()) return
         refresh()
@@ -98,33 +106,33 @@ class DuplicateFilesManagerViewModel(
             onStart = { setState { DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onLoaded = { loaded -> setState { loaded.copy(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onFailure = { error ->
-                setState { copy(phase = FileOperationPhase.NoResults, errorMessage = error.message ?: duplicateScanFailedMessage()) }
+                setState { it.copy(phase = FileOperationPhase.NoResults, error = FileOperationError.DuplicateScanFailed.toUiText()) }
             },
         )
     }
 
     private fun openGroup(group: DuplicateGroupItem) {
-        changeState { it.copy(selectedGroupId = group.id) }
+        setState { it.copy(selectedGroupId = group.id) }
     }
 
     private fun closeGroup() {
-        changeState { it.copy(selectedGroupId = null) }
+        setState { it.copy(selectedGroupId = null) }
     }
 
     private fun toggleAll() {
-        changeState {
+        setState {
             it.copy(selectedFileKeys = toggleIds(it.selectedFileKeys, it.allDeleteFileKeys))
         }
     }
 
     private fun acceptDuplicateFilesWarning() {
         settingsRepository.acceptDuplicateFilesWarning()
-        changeState { it.copy(showWarning = false) }
+        setState { it.copy(showWarning = false) }
     }
 
     private fun toggleFile(file: DuplicateFileEntry) {
         val key = duplicateFileKey(file)
-        changeState {
+        setState {
             it.copy(selectedFileKeys = toggleId(it.selectedFileKeys, key))
         }
     }
@@ -132,30 +140,39 @@ class DuplicateFilesManagerViewModel(
     private fun autoSelectCurrentGroup() {
         val group = currentState.selectedGroup ?: return
         val groupKeys = group.files.map(::duplicateFileKey).toSet()
-        val deletableGroupKeys = group.files.drop(1).map(::duplicateFileKey).toSet()
-        changeState {
+        val deletableGroupKeys =
+            group.files
+                .drop(1)
+                .map(::duplicateFileKey)
+                .toSet()
+        setState {
             it.copy(selectedFileKeys = (it.selectedFileKeys - groupKeys) + deletableGroupKeys)
         }
     }
 
     private fun toggleGroupSelection(group: DuplicateGroupItem) {
         val groupKeys = group.files.map(::duplicateFileKey).toSet()
-        val deletableGroupKeys = group.files.drop(1).map(::duplicateFileKey).toSet()
-        changeState {
+        val deletableGroupKeys =
+            group.files
+                .drop(1)
+                .map(::duplicateFileKey)
+                .toSet()
+        setState {
             val selectedGroupKeys = it.selectedFileKeys.intersect(groupKeys)
             it.copy(
-                selectedFileKeys = if (selectedGroupKeys == deletableGroupKeys) {
-                    it.selectedFileKeys - groupKeys
-                } else {
-                    (it.selectedFileKeys - groupKeys) + deletableGroupKeys
-                }
+                selectedFileKeys =
+                    if (selectedGroupKeys == deletableGroupKeys) {
+                        it.selectedFileKeys - groupKeys
+                    } else {
+                        (it.selectedFileKeys - groupKeys) + deletableGroupKeys
+                    },
             )
         }
     }
 
     private fun requestDelete() {
         if (currentState.globalFilesToDelete.isNotEmpty()) {
-            changeState { it.copy(phase = FileOperationPhase.ConfirmDelete, pendingDeleteFileKeys = null) }
+            setState { it.copy(phase = FileOperationPhase.ConfirmDelete, pendingDeleteFileKeys = null) }
         }
     }
 
@@ -163,25 +180,25 @@ class DuplicateFilesManagerViewModel(
         val state = currentState
         val selectedGroupKeys = state.selectedGroupFileKeys
         if (state.selectedGroupFilesToDelete.isNotEmpty()) {
-            changeState {
+            setState {
                 it.copy(
                     phase = FileOperationPhase.ConfirmDelete,
-                    pendingDeleteFileKeys = selectedGroupKeys
+                    pendingDeleteFileKeys = selectedGroupKeys,
                 )
             }
         }
     }
 
     private fun cancelDelete() {
-        changeState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
+        setState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
     }
 
     private fun clearError() {
-        changeState { it.copy(errorMessage = null) }
+        setState { it.copy(error = null) }
     }
 
     private fun clearSkippedDeleteCount() {
-        changeState { it.copy(skippedDeleteCount = 0) }
+        setState { it.copy(skippedDeleteCount = 0) }
     }
 
     private fun deleteSelectedFiles() {
@@ -189,23 +206,22 @@ class DuplicateFilesManagerViewModel(
         operations.changeFiles(
             hasSelection = selectedFiles.isNotEmpty(),
             onEmptySelection = {
-                changeState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
+                setState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
             },
-            onStart = { changeState { it.copy(phase = FileOperationPhase.Deleting, selectedGroupId = null) } },
+            onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, selectedGroupId = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = {
                 val verifiedFiles = selectedFiles.filter { !it.duplicateHash.isNullOrBlank() && it.duplicatePeers.isNotEmpty() }
-                val result = repository.deleteFiles(verifiedFiles)
-                val skipped = selectedFiles.size - verifiedFiles.size + result.skippedCount
-                result.copy(skippedCount = skipped)
+                repository.deleteFiles(verifiedFiles)
             },
             isSuccessful = { result ->
-                setState { copy(skippedDeleteCount = result.skippedCount) }
+                val unverifiedCount = selectedFiles.count { it.duplicateHash.isNullOrBlank() || it.duplicatePeers.isEmpty() }
+                setState { it.copy(skippedDeleteCount = result.skippedCount + unverifiedCount) }
                 result.deletedCount > 0
             },
             onCompleteAnimation = { outcome, loaded ->
-                changeState {
+                setState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,
                         groups = loaded.groups,
@@ -216,13 +232,13 @@ class DuplicateFilesManagerViewModel(
                     )
                 }
             },
-            onResult = { changeState { it.copy(phase = FileOperationPhase.Result) } },
+            onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
-                changeState {
+                setState {
                     it.copy(
                         phase = FileOperationPhase.Browsing,
                         pendingDeleteFileKeys = null,
-                        errorMessage = error.message ?: appString(R.string.deletion_failed)
+                        error = FileOperationError.DeletionFailed.toUiText(),
                     )
                 }
             },
@@ -230,12 +246,12 @@ class DuplicateFilesManagerViewModel(
     }
 
     private fun continueManaging() {
-        changeState {
+        setState {
             it.copy(
                 phase = FileOperationPhase.Browsing,
                 selectedFileKeys = emptySet(),
                 pendingDeleteFileKeys = null,
-                selectedGroupId = null
+                selectedGroupId = null,
             )
         }
     }
@@ -243,6 +259,6 @@ class DuplicateFilesManagerViewModel(
     private fun hasStartedForCurrentState(): Boolean {
         val state = currentState
         if (state.phase != FileOperationPhase.Scanning) return true
-        return state.groups.isNotEmpty() || state.errorMessage != null
+        return state.groups.isNotEmpty() || state.error != null
     }
 }

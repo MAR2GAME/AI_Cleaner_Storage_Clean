@@ -1,12 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part
 
-import com.aicleanerstorage.networkkit.model.SpeedTestPhase
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.aicleanerstorage.networkkit.model.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
 
 @Composable

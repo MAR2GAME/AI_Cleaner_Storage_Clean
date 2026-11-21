@@ -33,13 +33,12 @@ import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part.Noti
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBottomActionBar
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
 fun NotificationCleanerScreen(
     state: NotificationCleanerUiState,
     onAction: (NotificationCleanerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showBlockingTurnedOffDialog by remember { mutableStateOf(false) }
@@ -66,7 +65,7 @@ fun NotificationCleanerScreen(
         bottomBar = {
             if (
                 state.isInitialized &&
-                state.errorMessage == null &&
+                state.error == null &&
                 state.page == NotificationCleanerPage.Onboarding
             ) {
                 CleanXBottomActionBar(
@@ -76,7 +75,7 @@ fun NotificationCleanerScreen(
                 )
             } else if (
                 state.isInitialized &&
-                state.errorMessage == null &&
+                state.error == null &&
                 state.page == NotificationCleanerPage.Status &&
                 state.blockedCount > 0
             ) {
@@ -98,7 +97,7 @@ fun NotificationCleanerScreen(
                 PaddingValues(horizontal = 16.dp)
             },
         scrollEnabled =
-                state.page != NotificationCleanerPage.Onboarding &&
+            state.page != NotificationCleanerPage.Onboarding &&
                 state.page != NotificationCleanerPage.Scanning &&
                 state.page != NotificationCleanerPage.Settings &&
                 state.page != NotificationCleanerPage.Cleaning &&
@@ -106,38 +105,42 @@ fun NotificationCleanerScreen(
     ) {
         when {
             !state.isInitialized -> Spacer(modifier = Modifier.height(220.dp))
-            state.errorMessage != null -> ErrorCard(
-                message = state.errorMessage.orEmpty(),
-                onRetry = { onAction(NotificationCleanerAction.RefreshRequested) },
-            )
+            state.error != null ->
+                ErrorCard(
+                    message = state.error?.asString().orEmpty(),
+                    onRetry = { onAction(NotificationCleanerAction.RefreshRequested) },
+                )
             else -> {
                 when (state.page) {
                     NotificationCleanerPage.Onboarding -> NotificationOnboardingContent()
                     NotificationCleanerPage.Scanning -> NotificationScanningContent()
                     NotificationCleanerPage.Status -> NotificationStatusContent(uiState = state)
-                    NotificationCleanerPage.Settings -> NotificationSettingsContent(
-                        listModifier = Modifier.weight(1f),
-                        uiState = state,
-                        onEnabledChange = { checked ->
-                            if (checked) {
-                                onAction(NotificationCleanerAction.BlockingEnableRequested)
-                            } else {
-                                showBlockingTurnedOffDialog = true
-                            }
-                        },
-                        onTogglePackage = { onAction(NotificationCleanerAction.PackageToggled(it)) },
-                    )
-                    NotificationCleanerPage.Cleaning -> NotificationCleaningContent(
-                        paused = state.showStopDialog,
-                        complete = state.cleaningAnimationComplete,
-                        onFinished = { onAction(NotificationCleanerAction.CleaningAnimationFinished) },
-                    )
-                    NotificationCleanerPage.Complete -> NotificationCompleteContent(
-                        cleanedCount = state.cleanedCount,
-                        showResult = state.completionResultVisible,
-                        onCelebrationFinished = { onAction(NotificationCleanerAction.CompletionAnimationFinished) },
-                        onNavigateTool = onNavigate,
-                    )
+                    NotificationCleanerPage.Settings ->
+                        NotificationSettingsContent(
+                            listModifier = Modifier.weight(1f),
+                            uiState = state,
+                            onEnabledChange = { checked ->
+                                if (checked) {
+                                    onAction(NotificationCleanerAction.BlockingEnableRequested)
+                                } else {
+                                    showBlockingTurnedOffDialog = true
+                                }
+                            },
+                            onTogglePackage = { onAction(NotificationCleanerAction.PackageToggled(it)) },
+                        )
+                    NotificationCleanerPage.Cleaning ->
+                        NotificationCleaningContent(
+                            paused = state.showStopDialog,
+                            complete = state.cleaningAnimationComplete,
+                            onFinished = { onAction(NotificationCleanerAction.CleaningAnimationFinished) },
+                        )
+                    NotificationCleanerPage.Complete ->
+                        NotificationCompleteContent(
+                            cleanedCount = state.cleanedCount,
+                            showResult = state.completionResultVisible,
+                            onCelebrationFinished = { onAction(NotificationCleanerAction.CompletionAnimationFinished) },
+                            onNavigateTool = { destination -> onAction(NotificationCleanerAction.NavigationRequested(destination)) },
+                        )
                 }
             }
         }

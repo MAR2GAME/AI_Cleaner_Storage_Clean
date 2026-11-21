@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.spaceclean.data.security.VirusScanner
+import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
 import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
-import com.aicleanerstorage.spaceclean.data.security.VirusScanner
-import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -34,11 +34,13 @@ class VirusScanViewModelTest {
     fun setUp() {
         val dispatcher = StandardTestDispatcher(main)
         Dispatchers.setMain(dispatcher)
-        viewModel = VirusScanViewModel(
-            engine, FakeSecurityRepository(),
-            ioDispatcher = StandardTestDispatcher(io),
-            defaultDispatcher = dispatcher,
-        )
+        viewModel =
+            VirusScanViewModel(
+                engine,
+                FakeSecurityRepository(),
+                ioDispatcher = StandardTestDispatcher(io),
+                defaultDispatcher = dispatcher,
+            )
         viewModel.viewModelScope.launch { viewModel.event.collect { events.add(it) } }
     }
 
@@ -59,7 +61,10 @@ class VirusScanViewModelTest {
         io.runCurrent()
         main.runCurrent()
         assertTrue(viewModel.state.value.isScanning)
-        assertTrue(viewModel.state.value.threats.isEmpty())
+        assertTrue(
+            viewModel.state.value.threats
+                .isEmpty(),
+        )
         assertTrue(events.isEmpty())
         second.onScanFinished()
         finishDisplay()
@@ -77,7 +82,11 @@ class VirusScanViewModelTest {
         io.runCurrent()
         main.runCurrent()
         assertTrue(viewModel.state.value.scanCompleted)
-        assertEquals(listOf("pkg"), viewModel.state.value.threats.map { it.id })
+        assertEquals(
+            listOf("pkg"),
+            viewModel.state.value.threats
+                .map { it.id },
+        )
         assertEquals(1, viewModel.state.value.appThreatCount)
         assertEquals(listOf(VirusScanEvent.NavigateToResult(true)), events)
     }
@@ -111,20 +120,35 @@ class VirusScanViewModelTest {
 
     private class FakeScanEngine : VirusScanner {
         lateinit var listener: VirusScanner.Listener
-        override fun startScan(mode: VirusScanMode, listener: VirusScanner.Listener) { this.listener = listener }
+
+        override fun startScan(
+            mode: VirusScanMode,
+            listener: VirusScanner.Listener,
+        ) {
+            this.listener = listener
+        }
+
         override fun cancelScan() = Unit
     }
 
     private class FakeSecurityRepository : VirusSecurityRepository {
         override fun appLabel(packageName: String) = packageName
-        override fun threatFor(item: VirusScanItemModel, isFile: Boolean) =
-            VirusThreatModel(requireNotNull(item.packageName), item.packageName, null, "", "", isFile, null)
+
+        override fun threatFor(
+            item: VirusScanItemModel,
+            isFile: Boolean,
+        ) = VirusThreatModel(requireNotNull(item.packageName), item.packageName, null, "", "", isFile, null)
+
         override fun hasInstalledAppsAccess() = true
+
         override fun hasAdbRisk() = false
 
         override fun isScanNoticeAccepted() = true
+
         override fun setScanNoticeAccepted() = Unit
+
         override fun hasInstalledAppsAccessFailedBefore() = false
+
         override fun setInstalledAppsAccessFailed(failed: Boolean) = Unit
     }
 }

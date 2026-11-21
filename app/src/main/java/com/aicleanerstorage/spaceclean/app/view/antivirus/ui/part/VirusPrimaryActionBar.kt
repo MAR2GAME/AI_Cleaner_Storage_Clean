@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.VirusBlue
-import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.VirusButtonShape
+import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusBlue
+import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusButtonShape
 
 @Composable
 internal fun VirusPrimaryActionBar(
@@ -24,16 +24,18 @@ internal fun VirusPrimaryActionBar(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(55.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(55.dp),
         shape = VirusButtonShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = VirusBlue,
-            contentColor = Color.White,
-            disabledContainerColor = VirusBlue.copy(alpha = 0.45f),
-            disabledContentColor = Color.White.copy(alpha = 0.75f),
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = VirusBlue,
+                contentColor = Color.White,
+                disabledContainerColor = VirusBlue.copy(alpha = 0.45f),
+                disabledContentColor = Color.White.copy(alpha = 0.75f),
+            ),
     ) {
         Text(
             text = text,

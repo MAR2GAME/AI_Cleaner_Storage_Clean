@@ -20,30 +20,32 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.rememberPacka
 @Composable
 internal fun PackageIconContent(
     packageName: String,
-    fallbackText: String
+    fallbackText: String,
 ) {
     val bitmap = rememberPackageIconBitmap(packageName)
     if (bitmap != null) {
         Image(
             painter = BitmapPainter(bitmap),
             contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape),
         )
     } else {
         Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(CleanXBlue.copy(alpha = 0.18f)),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(CleanXBlue.copy(alpha = 0.18f)),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = fallbackText,
                 color = CleanXBlue,
                 fontSize = 17.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }

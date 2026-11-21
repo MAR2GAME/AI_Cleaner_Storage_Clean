@@ -13,10 +13,13 @@ interface VirusSecurityRepository {
     fun setInstalledAppsAccessFailed(failed: Boolean)
 
     fun appLabel(packageName: String): String
-    fun threatFor(item: VirusScanItemModel, isFile: Boolean): VirusThreatModel
+
+    fun threatFor(
+        item: VirusScanItemModel,
+        isFile: Boolean,
+    ): VirusThreatModel
 
     fun hasInstalledAppsAccess(): Boolean
 
     fun hasAdbRisk(): Boolean
-
 }

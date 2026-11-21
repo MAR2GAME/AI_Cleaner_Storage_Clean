@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavyMuted
 
 @Composable
 internal fun NetworkScanLoading(uiState: NetworkScanUiState) {

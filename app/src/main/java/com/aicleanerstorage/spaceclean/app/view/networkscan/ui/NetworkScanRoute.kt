@@ -1,25 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.ui
 
-
-import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanEvent
-
-import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanPhase
-import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
-import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanAction
-
-
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanRoute
-
-
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -28,11 +14,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanAction
+import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanEvent
+import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanRoute
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanScreen
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanScreen
+import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
+import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
+import kotlinx.coroutines.*
 
 @Composable
 fun NetworkScanRoute(
@@ -45,7 +37,13 @@ fun NetworkScanRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionGate = rememberPermissionGate()
+    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
+    PermissionRequestEffect(pendingPermission) { result ->
+        pendingPermission = null
+        if (result == PermissionResult.Granted) {
+            viewModel.dispatch(NetworkScanAction.ScanStartRequested)
+        }
+    }
 
     fun handleBack() {
         if (exiting) return
@@ -69,40 +67,26 @@ fun NetworkScanRoute(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                NetworkScanEvent.Exit -> handleBack()
-                NetworkScanEvent.OpenDevices -> if (!exiting) navigator.navigate(AppDestination.NetworkScanDevices)
-                NetworkScanEvent.OpenWifiSettings -> {
-
-            val openedSettings =
-                openWifiSettings(context = context)
-            viewModel.dispatch(NetworkScanAction.WifiRefreshRequested)
-        
-                }
-            }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            NetworkScanEvent.Exit -> handleBack()
+            NetworkScanEvent.OpenWifiSettings -> openWifiSettings(context = context)
         }
     }
-    BackHandler { viewModel.dispatch(NetworkScanAction.BackClicked) }
 
     NetworkScanScreen(
         uiState = uiState,
-        onBack = { viewModel.dispatch(NetworkScanAction.BackClicked) },
-        onRefreshWifi = { viewModel.dispatch(NetworkScanAction.WifiRefreshRequested) },
-        onSwitchWifi = { viewModel.dispatch(NetworkScanAction.SwitchWifiClicked) },
-        onScan = {
-            if (!exiting) {
-                permissionGate.allow(AppPermission.Location) { viewModel.dispatch(NetworkScanAction.ScanStartRequested) }
+        onAction = { action ->
+            when (action) {
+                NetworkScanAction.ScanStartRequested ->
+                    if (!exiting) pendingPermission = AppPermission.Location
+                else -> viewModel.dispatch(action)
             }
         },
-        onOpenDevices = { viewModel.dispatch(NetworkScanAction.DevicesClicked) },
     )
 }
 
-private fun openWifiSettings(
-    context: Context,
-): Boolean {
+private fun openWifiSettings(context: Context) {
     val intents =
         buildList {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) add(Intent(Settings.Panel.ACTION_WIFI))
@@ -112,11 +96,9 @@ private fun openWifiSettings(
     intents.forEach { intent ->
         try {
             context.startActivity(intent)
-            return true
+            return
         } catch (_: ActivityNotFoundException) {
         } catch (_: Exception) {
         }
     }
-    return false
 }
-

@@ -1,15 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
-
+import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.data.security.VirusScanner
+import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanErrorKind
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,13 +29,12 @@ private enum class ScanTerminalState {
 class VirusScanViewModel(
     private val scanEngine: VirusScanner,
     private val securityRepository: VirusSecurityRepository,
-    private val permissionChecker: PermissionChecker? = null,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : MviViewModel<VirusScanUiState, VirusScanAction, VirusScanEvent>(VirusScanUiState()) {
-
     private var resultVisible = false
     private var emptyResultSent = false
+
     private fun checkEmptyResult() {
         if (resultVisible && currentState.effectiveThreatCount == 0 && !emptyResultSent) {
             emptyResultSent = true
@@ -57,7 +53,7 @@ class VirusScanViewModel(
     private val pendingThreatJobs = ConcurrentHashMap.newKeySet<Job>()
 
     override fun onAction(action: VirusScanAction) {
-        setState { VirusScanReducer.reduce(this, action) }
+        setState { VirusScanReducer.reduce(it, action) }
         when (action) {
             VirusScanAction.ResultBackClicked -> sendEvent(VirusScanEvent.NavigateBack)
             VirusScanAction.ResultEntered -> {
@@ -112,7 +108,8 @@ class VirusScanViewModel(
                 }
             }
             is VirusScanUpdate, VirusScanAction.InstalledAppsDialogDismissed,
-            VirusScanAction.SettingsLaunchFailed -> Unit
+            VirusScanAction.SettingsLaunchFailed,
+            -> Unit
         }
     }
 
@@ -137,11 +134,18 @@ class VirusScanViewModel(
             val hasAccess = withContext(ioDispatcher) { securityRepository.hasInstalledAppsAccess() }
             val elapsed = System.currentTimeMillis() - startedAt
             securityRepository.setInstalledAppsAccessFailed(!hasAccess)
-            val showDialog = !hasAccess && !returningFromSettings && hadPreviousFailure &&
-                elapsed < INSTALLED_APPS_DIALOG_INTERACTION_THRESHOLD_MILLIS
+            val showDialog =
+                !hasAccess &&
+                    !returningFromSettings &&
+                    hadPreviousFailure &&
+                    elapsed < INSTALLED_APPS_DIALOG_INTERACTION_THRESHOLD_MILLIS
             dispatch(VirusScanUpdate.AccessCheckFinished(showDialog))
-            if (hasAccess && (mode != VirusScanMode.Deep || permissionChecker?.isGranted(AppPermission.StorageFiles) != false)) {
-                sendEvent(VirusScanEvent.NavigateToScan(mode))
+            if (hasAccess) {
+                if (mode == VirusScanMode.Deep) {
+                    sendEvent(VirusScanEvent.RequestDeepScanPermission(mode))
+                } else {
+                    sendEvent(VirusScanEvent.NavigateToScan(mode))
+                }
             }
         }
     }
@@ -189,12 +193,14 @@ class VirusScanViewModel(
     private fun refreshAdbRisk() {
         val generation = scanGeneration
         adbRiskJob?.cancel()
-        adbRiskJob = viewModelScope.launch {
-            val hasRisk = withContext(defaultDispatcher) {
-                securityRepository.hasAdbRisk()
+        adbRiskJob =
+            viewModelScope.launch {
+                val hasRisk =
+                    withContext(defaultDispatcher) {
+                        securityRepository.hasAdbRisk()
+                    }
+                if (generation == scanGeneration) dispatch(VirusScanUpdate.AdbRiskChecked(hasRisk))
             }
-            if (generation == scanGeneration) dispatch(VirusScanUpdate.AdbRiskChecked(hasRisk))
-        }
     }
 
     fun hasInstalledAppsAccess(): Boolean = securityRepository.hasInstalledAppsAccess()
@@ -213,7 +219,10 @@ class VirusScanViewModel(
         scanStartedAt = 0L
     }
 
-    private fun createScanListener(mode: VirusScanMode, generation: Int): VirusScanner.Listener {
+    private fun createScanListener(
+        mode: VirusScanMode,
+        generation: Int,
+    ): VirusScanner.Listener {
         return object : VirusScanner.Listener {
             override fun onScanStarted() {
                 viewModelScope.launch {
@@ -263,13 +272,15 @@ class VirusScanViewModel(
         }
     }
 
-    private fun canAcceptSdkCallback(generation: Int): Boolean {
-        return generation == scanGeneration &&
+    private fun canAcceptSdkCallback(generation: Int): Boolean =
+        generation == scanGeneration &&
             scanTerminalState == ScanTerminalState.Running &&
             !currentState.scanCompleted
-    }
 
-    private fun handleScanStarted(mode: VirusScanMode, generation: Int) {
+    private fun handleScanStarted(
+        mode: VirusScanMode,
+        generation: Int,
+    ) {
         if (generation != scanGeneration) return
         if (currentState.scanCompleted) return
         if (scanStartedAt == 0L) {
@@ -277,16 +288,21 @@ class VirusScanViewModel(
         }
         dispatch(VirusScanUpdate.ScanStarted(mode))
         if (display == null) {
-            display = VirusScanDisplay(
-                scope = viewModelScope,
-                mode = mode,
-                loadAppLabel = { withContext(ioDispatcher) { securityRepository.appLabel(it) } },
-                onUpdate = { if (generation == scanGeneration) dispatch(it) },
-            ).also { it.start(scanStartedAt) }
+            display =
+                VirusScanDisplay(
+                    scope = viewModelScope,
+                    mode = mode,
+                    loadAppLabel = { withContext(ioDispatcher) { securityRepository.appLabel(it) } },
+                    onUpdate = { if (generation == scanGeneration) dispatch(it) },
+                ).also { it.start(scanStartedAt) }
         }
     }
 
-    private fun handleScanProgress(mode: VirusScanMode, item: VirusScanItemModel, generation: Int) {
+    private fun handleScanProgress(
+        mode: VirusScanMode,
+        item: VirusScanItemModel,
+        generation: Int,
+    ) {
         val packageName = item.packageName?.takeIf { it.isNotBlank() }
         if (packageName != null) {
             if (item.score >= 6) addThreat(item, isFile = false, generation = generation)
@@ -301,51 +317,66 @@ class VirusScanViewModel(
         }
     }
 
-    private fun addThreat(item: VirusScanItemModel, isFile: Boolean, generation: Int) {
-        val job = viewModelScope.launch {
-            val threat = withContext(ioDispatcher) {
-                securityRepository.threatFor(item, isFile)
-            }
-            if (generation != scanGeneration) return@launch
-            if (!threatIds.add(threat.id)) return@launch
+    private fun addThreat(
+        item: VirusScanItemModel,
+        isFile: Boolean,
+        generation: Int,
+    ) {
+        val job =
+            viewModelScope.launch {
+                val threat =
+                    withContext(ioDispatcher) {
+                        securityRepository.threatFor(item, isFile)
+                    }
+                if (generation != scanGeneration) return@launch
+                if (!threatIds.add(threat.id)) return@launch
 
-            dispatch(VirusScanUpdate.ThreatFound(threat))
-        }
+                dispatch(VirusScanUpdate.ThreatFound(threat))
+            }
         pendingThreatJobs.add(job)
         job.invokeOnCompletion { pendingThreatJobs.remove(job) }
     }
 
-    private fun finishWhenUiIsReady(mode: VirusScanMode, generation: Int) {
+    private fun finishWhenUiIsReady(
+        mode: VirusScanMode,
+        generation: Int,
+    ) {
         completionJob?.cancel()
-        completionJob = viewModelScope.launch {
-            val startedAt = scanStartedAt.takeIf { it > 0L } ?: System.currentTimeMillis()
-            val elapsed = System.currentTimeMillis() - startedAt
-            val remaining = (mode.minDurationMillis - elapsed).coerceAtLeast(0L)
-            if (remaining > 0L) delay(remaining)
-            pendingThreatJobs.toList().joinAll()
-            adbRiskJob?.join()
-            if (generation != scanGeneration) return@launch
-            stopTerminalTimeout()
-            display?.stop()
-            display = null
-            dispatch(VirusScanUpdate.ScanFinished)
-            sendEvent(VirusScanEvent.NavigateToResult(currentState.effectiveThreatCount > 0))
-        }
+        completionJob =
+            viewModelScope.launch {
+                val startedAt = scanStartedAt.takeIf { it > 0L } ?: System.currentTimeMillis()
+                val elapsed = System.currentTimeMillis() - startedAt
+                val remaining = (mode.minDurationMillis - elapsed).coerceAtLeast(0L)
+                if (remaining > 0L) delay(remaining)
+                pendingThreatJobs.toList().joinAll()
+                adbRiskJob?.join()
+                if (generation != scanGeneration) return@launch
+                stopTerminalTimeout()
+                display?.stop()
+                display = null
+                dispatch(VirusScanUpdate.ScanFinished)
+                sendEvent(VirusScanEvent.NavigateToResult(currentState.effectiveThreatCount > 0))
+            }
     }
 
-    private fun startTerminalTimeout(mode: VirusScanMode, generation: Int) {
+    private fun startTerminalTimeout(
+        mode: VirusScanMode,
+        generation: Int,
+    ) {
         terminalTimeoutJob?.cancel()
-        val graceMillis = when (mode) {
-            VirusScanMode.Quick -> QUICK_SCAN_CALLBACK_GRACE_MILLIS
-            VirusScanMode.Deep -> DEEP_SCAN_CALLBACK_GRACE_MILLIS
-        }
-        terminalTimeoutJob = viewModelScope.launch {
-            delay(mode.minDurationMillis + graceMillis)
-            if (canAcceptSdkCallback(generation)) {
-                terminalTimeoutJob = null
-                handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+        val graceMillis =
+            when (mode) {
+                VirusScanMode.Quick -> QUICK_SCAN_CALLBACK_GRACE_MILLIS
+                VirusScanMode.Deep -> DEEP_SCAN_CALLBACK_GRACE_MILLIS
             }
-        }
+        terminalTimeoutJob =
+            viewModelScope.launch {
+                delay(mode.minDurationMillis + graceMillis)
+                if (canAcceptSdkCallback(generation)) {
+                    terminalTimeoutJob = null
+                    handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
+                }
+            }
     }
 
     private fun stopTerminalTimeout() {

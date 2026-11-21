@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.ui.part
 
-import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,8 +34,9 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 internal fun OnboardingResultContent(
@@ -47,9 +46,10 @@ internal fun OnboardingResultContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.height(48.dp))
         StorageCard(storageInfo = storageInfo)
@@ -89,11 +89,12 @@ private fun StorageCard(storageInfo: StorageInfo) {
         )
 
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(115.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(115.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White),
     ) {
         val isCompactCard = maxWidth < 340.dp
         val imageWidth = if (isCompactCard) 76.dp else 88.dp
@@ -101,15 +102,17 @@ private fun StorageCard(storageInfo: StorageInfo) {
         val textEndPadding = if (isCompactCard) 8.dp else 12.dp
 
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, end = 7.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp, end = 7.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = textEndPadding),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(end = textEndPadding),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -130,27 +133,30 @@ private fun StorageCard(storageInfo: StorageInfo) {
                         val maxWidthPx = with(density) { maxWidth.roundToPx() }
                         val measuredTotalWidthPx =
                             remember(totalText, textMeasurer) {
-                                textMeasurer.measure(
-                                    text = totalText,
-                                    style = totalTextStyle,
-                                    maxLines = 1,
-                                ).size.width
+                                textMeasurer
+                                    .measure(
+                                        text = totalText,
+                                        style = totalTextStyle,
+                                        maxLines = 1,
+                                    ).size.width
                             }
                         val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
                         val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
                         val usedFontSize =
                             remember(usedText, usedWidthPx, textMeasurer) {
-                                (24 downTo 16).firstOrNull { size ->
-                                    textMeasurer.measure(
-                                        text = usedText,
-                                        style =
-                                            TextStyle(
-                                                fontSize = size.sp,
-                                                fontWeight = FontWeight.SemiBold,
-                                            ),
-                                        maxLines = 1,
-                                    ).size.width <= usedWidthPx
-                                }?.sp ?: 16.sp
+                                (24 downTo 16)
+                                    .firstOrNull { size ->
+                                        textMeasurer
+                                            .measure(
+                                                text = usedText,
+                                                style =
+                                                    TextStyle(
+                                                        fontSize = size.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                    ),
+                                                maxLines = 1,
+                                            ).size.width <= usedWidthPx
+                                    }?.sp ?: 16.sp
                             }
                         val totalWidth = with(density) { totalWidthPx.toDp() }
 
@@ -180,18 +186,20 @@ private fun StorageCard(storageInfo: StorageInfo) {
                 }
                 Spacer(modifier = Modifier.height(7.dp))
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                        .clip(RoundedCornerShape(14.5.dp))
-                        .background(OnboardingProgressTrack),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth((storageInfo.usagePercent.coerceIn(0, 100)) / 100f)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
                             .height(16.dp)
                             .clip(RoundedCornerShape(14.5.dp))
-                            .background(OnboardingGreen),
+                            .background(OnboardingProgressTrack),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth((storageInfo.usagePercent.coerceIn(0, 100)) / 100f)
+                                .height(16.dp)
+                                .clip(RoundedCornerShape(14.5.dp))
+                                .background(OnboardingGreen),
                     )
                 }
             }
@@ -210,16 +218,16 @@ private fun compactStorageSize(value: String): String = value.replace(" ", "")
 @Composable
 private fun GetStartedButton(onClick: () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp)
-            .clip(RoundedCornerShape(26.dp))
-            .background(
-                Brush.horizontalGradient(
-                    colors = listOf(Color(0xFFD0FD91), OnboardingGreen),
-                ),
-            )
-            .clickable(onClick = onClick),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .clip(RoundedCornerShape(26.dp))
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFD0FD91), OnboardingGreen),
+                    ),
+                ).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Text(

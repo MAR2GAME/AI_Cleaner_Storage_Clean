@@ -33,9 +33,10 @@ fun CleanXScaffoldPage(
     actions: @Composable (RowScope.() -> Unit)? = null,
     customTopBar: (@Composable () -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
-    backgroundBrush: Brush = Brush.linearGradient(
-        colors = listOf(Color(0xFFF7FAFD), Color(0xFFF7FAFD)),
-    ),
+    backgroundBrush: Brush =
+        Brush.linearGradient(
+            colors = listOf(Color(0xFFF7FAFD), Color(0xFFF7FAFD)),
+        ),
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     scrollEnabled: Boolean = true,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
@@ -43,9 +44,10 @@ fun CleanXScaffoldPage(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(brush = backgroundBrush),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(brush = backgroundBrush),
         containerColor = Color.Transparent,
         topBar = {
             if (customTopBar != null) {
@@ -64,17 +66,18 @@ fun CleanXScaffoldPage(
         bottomBar = bottomBar,
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
     ) { paddingValues ->
-        val contentModifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(contentPadding)
-            .then(
-                if (scrollEnabled) {
-                    Modifier.verticalScroll(rememberScrollState())
-                } else {
-                    Modifier
-                },
-            )
+        val contentModifier =
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(contentPadding)
+                .then(
+                    if (scrollEnabled) {
+                        Modifier.verticalScroll(rememberScrollState())
+                    } else {
+                        Modifier
+                    },
+                )
 
         val pageContent: @Composable () -> Unit = {
             Column(

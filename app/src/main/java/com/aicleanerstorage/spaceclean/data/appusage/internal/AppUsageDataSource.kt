@@ -3,20 +3,27 @@ package com.aicleanerstorage.spaceclean.data.appusage.internal
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import com.aicleanerstorage.spaceclean.base.permission.hasUsageAccess as hasSystemUsageAccess
-import kotlin.math.max
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
-internal data class UsageTotals(val packageName: String, val foregroundMillis: Long, val launches: Int)
+internal data class UsageTotals(
+    val packageName: String,
+    val foregroundMillis: Long,
+    val launches: Int,
+)
 
 internal object AppUsageDataSource {
     @Volatile
     private var usageAccessGranted: Boolean? = null
 
-    fun hasUsageAccess(context: Context, refresh: Boolean = false): Boolean {
+    fun hasUsageAccess(
+        context: Context,
+        refresh: Boolean = false,
+    ): Boolean {
         if (!refresh) usageAccessGranted?.let { return it }
-        val granted = hasSystemUsageAccess(context)
+        val granted = AppPermission.UsageAccess.isGranted(context)
         usageAccessGranted = granted
         return granted
     }
@@ -53,7 +60,56 @@ internal object AppUsageDataSource {
         return running
     }
 
-    suspend fun readUsage(context: Context, startMillis: Long, endMillis: Long): List<UsageTotals> =
+    fun foregroundPackage(context: Context): String? {
+        if (!hasUsageAccess(context)) return null
+        val manager =
+            runCatching { context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager }
+                .getOrNull() ?: return null
+        val now = System.currentTimeMillis()
+        val events =
+            runCatching {
+                manager.queryEvents((now - FOREGROUND_EVENT_LOOKBACK_MILLIS).coerceAtLeast(0L), now)
+            }.getOrNull()
+        val event = UsageEvents.Event()
+        var foreground: String? = null
+        if (events != null) {
+            while (events.hasNextEvent()) {
+                events.getNextEvent(event)
+                val packageName = event.packageName ?: continue
+                when (event.eventType) {
+                    UsageEvents.Event.MOVE_TO_FOREGROUND,
+                    UsageEvents.Event.ACTIVITY_RESUMED,
+                    -> foreground = packageName
+
+                    UsageEvents.Event.MOVE_TO_BACKGROUND,
+                    UsageEvents.Event.ACTIVITY_PAUSED,
+                    UsageEvents.Event.ACTIVITY_STOPPED,
+                    -> if (foreground == packageName) foreground = null
+                }
+            }
+        }
+        return foreground ?: foregroundPackageFromStats(manager, now)
+    }
+
+    private fun foregroundPackageFromStats(
+        manager: UsageStatsManager,
+        now: Long,
+    ): String? =
+        runCatching {
+            manager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                (now - FOREGROUND_STATS_LOOKBACK_MILLIS).coerceAtLeast(0L),
+                now,
+            )
+        }.getOrNull()
+            ?.maxByOrNull { it.lastTimeUsed }
+            ?.packageName
+
+    suspend fun readUsage(
+        context: Context,
+        startMillis: Long,
+        endMillis: Long,
+    ): List<UsageTotals> =
         withContext(Dispatchers.IO) {
             val manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
             val durationByPackage = mutableMapOf<String, Long>()
@@ -116,5 +172,6 @@ internal object AppUsageDataSource {
         }.getOrDefault(packageName.substringAfterLast('.'))
 
     private const val USAGE_STATE_LOOKBACK_MILLIS = 31L * 24L * 60L * 60L * 1000L
+    private const val FOREGROUND_EVENT_LOOKBACK_MILLIS = 3_000L
+    private const val FOREGROUND_STATS_LOOKBACK_MILLIS = 10_000L
 }
-

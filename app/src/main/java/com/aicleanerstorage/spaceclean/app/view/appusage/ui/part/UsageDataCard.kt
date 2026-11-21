@@ -51,10 +51,11 @@ internal fun UsageDataCard(
     onTabSelected: (AppUsageMetricTab) -> Unit,
     onStopApp: (String) -> Unit,
 ) {
-    val pagerState = rememberPagerState(
-        initialPage = if (uiState.selectedTab == AppUsageMetricTab.Duration) 0 else 1,
-        pageCount = { 2 },
-    )
+    val pagerState =
+        rememberPagerState(
+            initialPage = if (uiState.selectedTab == AppUsageMetricTab.Duration) 0 else 1,
+            pageCount = { 2 },
+        )
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pagerState.currentPage) {
@@ -75,9 +76,10 @@ internal fun UsageDataCard(
         shape = RoundedCornerShape(CardRadius),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
@@ -140,9 +142,10 @@ private val CardRadius = 12.dp
 @Composable
 private fun EmptyUsageText() {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 32.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -160,15 +163,15 @@ private fun AppUsageHeaderTab(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(if (selected) PrimaryGreen else Color.Transparent)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick,
-            )
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(if (selected) PrimaryGreen else Color.Transparent)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClick,
+                ).padding(horizontal = 14.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -233,17 +236,19 @@ private fun AppUsageRow(
         Button(
             onClick = { onStopApp(item.packageName) },
             enabled = item.isRunning,
-            modifier = Modifier
-                .width(64.dp)
-                .height(32.dp),
+            modifier =
+                Modifier
+                    .width(64.dp)
+                    .height(32.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = StopRed,
-                disabledContainerColor = StopDisabledOrange.copy(alpha = 0.65f),
-                contentColor = Color.White,
-                disabledContentColor = Color.White,
-            ),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = StopRed,
+                    disabledContainerColor = StopDisabledOrange.copy(alpha = 0.65f),
+                    contentColor = Color.White,
+                    disabledContentColor = Color.White,
+                ),
         ) {
             Text(
                 text = stringResource(R.string.stop),
@@ -255,14 +260,18 @@ private fun AppUsageRow(
 }
 
 @Composable
-private fun itemValueText(item: AppUsageDisplayItem, selectedTab: AppUsageMetricTab): String =
+private fun itemValueText(
+    item: AppUsageDisplayItem,
+    selectedTab: AppUsageMetricTab,
+): String =
     when (selectedTab) {
         AppUsageMetricTab.Duration -> formatDuration(item.totalForegroundMs)
-        AppUsageMetricTab.LaunchCount -> pluralStringResource(
-            R.plurals.launch_times_count,
-            item.launchCount,
-            item.launchCount,
-        )
+        AppUsageMetricTab.LaunchCount ->
+            pluralStringResource(
+                R.plurals.launch_times_count,
+                item.launchCount,
+                item.launchCount,
+            )
     }
 
 @Composable

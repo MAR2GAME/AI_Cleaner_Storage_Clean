@@ -34,12 +34,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryChartAxisBounds
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryChartPoint
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentAxisLabels
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryOneMinuteWindowEnd
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryTemperatureAxisBounds
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.downsampleBatteryChartPoints
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartAxisBounds
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartPoint
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentAxisLabels
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryOneMinuteWindowEnd
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryTemperatureAxisBounds
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.downsampleBatteryChartPoints
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.displayBatteryTemperatureValue
@@ -54,35 +54,37 @@ internal fun BatteryTemperatureCard(uiState: DeviceInfoUiState) {
         rows =
             listOf(
                 stringResource(R.string.battery_realtime_temperature) to
-                        formatBatteryTemperature(
-                            uiState.displayTemperatureC,
-                            uiState.temperatureUnit,
-                            includeSpace = false
-                        ),
+                    formatBatteryTemperature(
+                        uiState.displayTemperatureC,
+                        uiState.temperatureUnit,
+                        includeSpace = false,
+                    ),
                 stringResource(R.string.battery_average_temperature) to
-                        formatBatteryTemperature(
-                            uiState.selectedTemperatureAverageC,
-                            uiState.temperatureUnit,
-                            includeSpace = false
-                        ),
+                    formatBatteryTemperature(
+                        uiState.selectedTemperatureAverageC,
+                        uiState.temperatureUnit,
+                        includeSpace = false,
+                    ),
             ),
     ) {
         val chartPoints =
             uiState.selectedTemperatureSamples.map {
                 BatteryChartPoint(
                     timestampMillis = it.timestampMillis,
-                    value = displayBatteryTemperatureValue(
-                        it.temperatureC,
-                        uiState.temperatureUnit
-                    ),
+                    value =
+                        displayBatteryTemperatureValue(
+                            it.temperatureC,
+                            uiState.temperatureUnit,
+                        ),
                 )
             }
         BatteryLineChart(
             points = chartPoints,
-            windowEndMillis = oneMinuteChartWindowEnd(
-                chartPoints,
-                uiState.latestSampleTimestampMillis
-            ),
+            windowEndMillis =
+                oneMinuteChartWindowEnd(
+                    chartPoints,
+                    uiState.latestSampleTimestampMillis,
+                ),
             windowMillis = TEMPERATURE_CHART_WINDOW_MILLIS,
             xLabels = secondsAxisLabels(),
             axisBounds = temperatureAxisBounds(uiState.temperatureUnit),
@@ -91,7 +93,7 @@ internal fun BatteryTemperatureCard(uiState: DeviceInfoUiState) {
                     Locale.US,
                     "%.1f\u00B0%s",
                     it,
-                    uiState.temperatureUnit
+                    uiState.temperatureUnit,
                 )
             },
         )
@@ -197,7 +199,7 @@ internal fun BatteryLineChart(
                 label,
                 x,
                 chartBottom + 14.dp.toPx(),
-                textPaint
+                textPaint,
             )
             textPaint.textAlign = Paint.Align.LEFT
         }
@@ -325,16 +327,14 @@ private fun InfoRow(
     }
 }
 
-private fun secondsAxisLabels(): List<String> =
-    batteryCurrentAxisLabels(BatteryCurrentRange.OneMinute)
+private fun secondsAxisLabels(): List<String> = batteryCurrentAxisLabels(BatteryCurrentRange.OneMinute)
 
 private fun oneMinuteChartWindowEnd(
     points: List<BatteryChartPoint>,
     latestSampleTimestampMillis: Long,
 ): Long = batteryOneMinuteWindowEnd(points, latestSampleTimestampMillis)
 
-private fun temperatureAxisBounds(unit: String): BatteryChartAxisBounds =
-    batteryTemperatureAxisBounds(unit)
+private fun temperatureAxisBounds(unit: String): BatteryChartAxisBounds = batteryTemperatureAxisBounds(unit)
 
 private fun BatteryChartPoint.toOffset(
     windowEndMillis: Long,

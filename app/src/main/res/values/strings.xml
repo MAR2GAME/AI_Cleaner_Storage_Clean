@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="open_ad_loading">Loading...</string>
     <string name="app_lock_usage_permission_desc">Locate Storage Clean and toggle on permission.</string>
     <string name="app_lock_overlay_permission_desc">Locate Storage Clean and toggle on permission.</string>
     <string name="permission_usage_desc">To show app usage details, please allow Storage Clean in Usage Access settings.</string>
@@ -45,6 +44,9 @@
     <string name="cleaning_selected_files">Cleaning selected files...</string>
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
+    <string name="load_failed">Unable to load. Please try again.</string>
+    <string name="speed_test_failed">Speed test failed. Please try again.</string>
+    <string name="permission_denied">Permission denied. Please grant access in settings.</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
@@ -460,4 +462,5 @@
     <string name="cleanup_stopped_summary">Stopped. Removed %1$d files (%2$s).</string>
     <string name="available_memory_increase">Available memory increased by %1$s during cleanup.</string>
     <string name="network_speed_estimated">Estimated speed</string>
+    <string name="settings_post_notifications">Notifications</string>
 </resources>

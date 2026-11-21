@@ -53,8 +53,6 @@ internal fun NotificationOnboardingContent() {
 
 internal val Navy = Color(0xFF2D3748)
 
-
-
 private const val NOTIFICATION_GUIDE_SLIDE_DELAY_MILLIS = 2_000L
 
 private val NotificationGuideSlides =

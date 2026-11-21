@@ -34,9 +34,10 @@ fun CleanXEmptyScanResult(
     ) {
         val imageSize = minOf(256.dp, (maxHeight - topPadding - 18.dp).coerceAtLeast(0.dp))
         Column(
-            modifier = Modifier
-                .padding(top = topPadding)
-                .width(256.dp),
+            modifier =
+                Modifier
+                    .padding(top = topPadding)
+                    .width(256.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy((-24).dp),
         ) {

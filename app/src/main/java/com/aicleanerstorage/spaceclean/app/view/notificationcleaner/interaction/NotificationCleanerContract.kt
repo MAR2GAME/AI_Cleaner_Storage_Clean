@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockedNotificationModel
@@ -27,7 +28,7 @@ data class NotificationCleanerUiState(
     val isLoading: Boolean = true,
     val scanInProgress: Boolean = false,
     val isInitialized: Boolean = false,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
     val cleanedCount: Int = 0,
     val cleaningAnimationComplete: Boolean = false,
     val completionResultVisible: Boolean = false,
@@ -36,24 +37,43 @@ data class NotificationCleanerUiState(
 )
 
 sealed interface NotificationCleanerAction {
-    data class NavigationRequested(val destination: AppDestination) : NotificationCleanerAction
+    data class NavigationRequested(
+        val destination: AppDestination,
+    ) : NotificationCleanerAction
+
     data object BackClicked : NotificationCleanerAction
+
     data object StopConfirmed : NotificationCleanerAction
+
     data object StopDismissed : NotificationCleanerAction
+
     data object RefreshRequested : NotificationCleanerAction
+
     data object SettingsClicked : NotificationCleanerAction
+
     data object BlockingEnableRequested : NotificationCleanerAction
+
     data object BlockingDisableRequested : NotificationCleanerAction
+
     data object TidyUpClicked : NotificationCleanerAction
+
     data object CleaningAnimationFinished : NotificationCleanerAction
+
     data object CompletionAnimationFinished : NotificationCleanerAction
-    data class StatusRequested(val scanGeneration: Long) : NotificationCleanerAction
-    data class PackageToggled(val packageName: String) : NotificationCleanerAction
 
+    data class StatusRequested(
+        val scanGeneration: Long,
+    ) : NotificationCleanerAction
+
+    data class PackageToggled(
+        val packageName: String,
+    ) : NotificationCleanerAction
 }
-
 
 sealed interface NotificationCleanerEvent {
     data object Exit : NotificationCleanerEvent
-    data class Navigate(val destination: AppDestination) : NotificationCleanerEvent
+
+    data class Navigate(
+        val destination: AppDestination,
+    ) : NotificationCleanerEvent
 }

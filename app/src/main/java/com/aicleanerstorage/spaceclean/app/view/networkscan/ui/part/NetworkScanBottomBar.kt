@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanPhase
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanButtonOutline
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanButtonOutline
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 

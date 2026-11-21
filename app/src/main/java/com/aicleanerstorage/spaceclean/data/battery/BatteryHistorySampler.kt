@@ -1,8 +1,8 @@
-先·package com.aicleanerstorage.spaceclean.data.battery
+package com.aicleanerstorage.spaceclean.data.battery
 
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
 import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -88,4 +88,3 @@ class BatteryHistorySampler(
 }
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
-

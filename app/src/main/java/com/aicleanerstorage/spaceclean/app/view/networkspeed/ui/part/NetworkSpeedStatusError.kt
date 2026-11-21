@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedDanger
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedDanger
 
 @Composable
 internal fun NetworkSpeedStatusError(message: String?) {

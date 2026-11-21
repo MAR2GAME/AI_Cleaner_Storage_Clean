@@ -31,9 +31,10 @@ fun DeviceInfoScreen(
 ) {
     CleanXScaffoldPage(
         title = stringResource(R.string.device_model),
-        backgroundBrush = Brush.linearGradient(
-            colors = listOf(DevicePageBackground, DevicePageBackground),
-        ),
+        backgroundBrush =
+            Brush.linearGradient(
+                colors = listOf(DevicePageBackground, DevicePageBackground),
+            ),
         onBack = { onAction(DeviceInfoAction.BackClicked) },
         contentPadding = if (state.isScanning) PaddingValues(0.dp) else PaddingValues(horizontal = 16.dp),
         scrollEnabled = !state.isScanning,

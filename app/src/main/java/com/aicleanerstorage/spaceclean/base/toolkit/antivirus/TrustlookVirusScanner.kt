@@ -2,15 +2,15 @@ package com.aicleanerstorage.spaceclean.base.toolkit.antivirus
 
 import android.content.Context
 import com.aicleanerstorage.spaceclean.data.security.ScanEngineConfigurationException
+import com.aicleanerstorage.spaceclean.data.security.VirusScanner
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanErrorKind
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanMode
-import com.aicleanerstorage.spaceclean.data.security.VirusScanner
 import com.trustlook.sdk.cloudscan.CloudScanClient
 import com.trustlook.sdk.cloudscan.CloudScanListener
 import com.trustlook.sdk.data.AppInfo
-import com.trustlook.sdk.data.Error as TrustlookError
 import com.trustlook.sdk.data.Region
+import com.trustlook.sdk.data.Error as TrustlookError
 
 class TrustlookVirusScanner(
     context: Context,
@@ -24,38 +24,48 @@ class TrustlookVirusScanner(
         listener: VirusScanner.Listener,
     ) {
         if (apiKey.isBlank()) throw ScanEngineConfigurationException()
-        cloudScanClient = CloudScanClient.Builder(appContext)
-            .setRegion(Region.INTL)
-            .setConnectionTimeout(30_000)
-            .setSocketTimeout(30_000)
-            .build()
+        cloudScanClient =
+            CloudScanClient
+                .Builder(appContext)
+                .setRegion(Region.INTL)
+                .setConnectionTimeout(30_000)
+                .setSocketTimeout(30_000)
+                .build()
 
-        val cloudListener = object : CloudScanListener() {
-            override fun onScanStarted() {
-                listener.onScanStarted()
-            }
+        val cloudListener =
+            object : CloudScanListener() {
+                override fun onScanStarted() {
+                    listener.onScanStarted()
+                }
 
-            override fun onScanProgress(progress: Int, total: Int, appInfo: AppInfo?) {
-                listener.onScanProgress(appInfo?.toVirusScanItem())
-            }
+                override fun onScanProgress(
+                    progress: Int,
+                    total: Int,
+                    appInfo: AppInfo?,
+                ) {
+                    listener.onScanProgress(appInfo?.toVirusScanItem())
+                }
 
-            override fun onScanError(code: Int, message: String?) {
-                android.util.Log.w("VirusScan", "Scan error $code: ${message.orEmpty()}")
-                listener.onScanError(code, message, code.toErrorKind())
-            }
+                override fun onScanError(
+                    code: Int,
+                    message: String?,
+                ) {
+                    android.util.Log.w("VirusScan", "Scan error $code: ${message.orEmpty()}")
+                    listener.onScanError(code, message, code.toErrorKind())
+                }
 
-            override fun onScanCanceled() {
-                listener.onScanCanceled()
-            }
+                override fun onScanCanceled() {
+                    listener.onScanCanceled()
+                }
 
-            override fun onScanInterrupt() {
-                listener.onScanInterrupt()
-            }
+                override fun onScanInterrupt() {
+                    listener.onScanInterrupt()
+                }
 
-            override fun onScanFinished(appList: List<AppInfo?>?) {
-                listener.onScanFinished()
+                override fun onScanFinished(appList: List<AppInfo?>?) {
+                    listener.onScanFinished()
+                }
             }
-        }
 
         when (mode) {
             VirusScanMode.Quick -> cloudScanClient?.startQuickScan(cloudListener)

@@ -3,7 +3,6 @@ package com.aicleanerstorage.spaceclean.base.navigation
 import androidx.annotation.Keep
 import kotlinx.serialization.Serializable
 
-
 /** 类型化导航目的地；只表达“去哪里”，不携带路由字符串、广告或通知元数据。 */
 @Keep
 @Serializable
@@ -12,7 +11,9 @@ sealed interface AppDestination {
 
     @Serializable data object OnboardingScan : AppDestination
 
-    @Serializable data class Main(val initialTab: MainTab = MainTab.Home) : AppDestination
+    @Serializable data class Main(
+        val initialTab: MainTab = MainTab.Home,
+    ) : AppDestination
 
     @Serializable data object Settings : AppDestination
 
@@ -42,8 +43,6 @@ sealed interface AppDestination {
 
     @Serializable data object NetworkScan : AppDestination
 
-    @Serializable data object NetworkScanDevices : AppDestination
-
     @Serializable data object NetworkSpeed : AppDestination
 
     @Serializable data object WhatsAppCleaner : AppDestination
@@ -68,17 +67,31 @@ sealed interface AppDestination {
 
     @Serializable data object DocumentsManager : AppDestination
 
-    @Serializable data class PhotosDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class PhotosDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class SimilarPhotosDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class SimilarPhotosDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class ScreenshotsDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class ScreenshotsDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class VideosDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class VideosDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class AudiosDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class AudiosDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class LargeFilesDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class LargeFilesDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 
-    @Serializable data class DocumentsDetail(val initialIndex: Int = 0) : AppDestination
+    @Serializable data class DocumentsDetail(
+        val initialIndex: Int = 0,
+    ) : AppDestination
 }

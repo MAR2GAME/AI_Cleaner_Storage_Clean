@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.base.designsystem.component
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
@@ -23,14 +23,16 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.designsystem.theme.LocalAppThemeTokens
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXHeaderBottomPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXHeaderIconSize
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXHeaderTopPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXIconButtonSize
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXPillShape
+import com.aicleanerstorage.spaceclean.base.designsystem.theme.LocalAppThemeTokens
 
-private val CleanXHeaderText: Color @Composable @ReadOnlyComposable get() = LocalAppThemeTokens.current.colors.textPrimary
+private val CleanXHeaderText: Color
+    @Composable @ReadOnlyComposable
+    get() = LocalAppThemeTokens.current.colors.textPrimary
 
 @Composable
 fun CleanXTopAppBar(
@@ -69,7 +71,7 @@ fun CleanXTopAppBar(
                 Image(
                     modifier = Modifier.size(CleanXHeaderIconSize),
                     painter = painterResource(R.drawable.ic_left),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
             Spacer(modifier = Modifier.size(4.dp))

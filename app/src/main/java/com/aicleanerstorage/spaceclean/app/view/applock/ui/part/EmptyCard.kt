@@ -11,18 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardColor
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockSecondaryText
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardRadius
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockSecondaryText
 
 @Composable
 internal fun EmptyCard(text: String) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(120.dp),
         color = AppLockCardColor,
-        shape = RoundedCornerShape(AppLockCardRadius)
+        shape = RoundedCornerShape(AppLockCardRadius),
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(text = text, color = AppLockSecondaryText, fontSize = 16.sp)

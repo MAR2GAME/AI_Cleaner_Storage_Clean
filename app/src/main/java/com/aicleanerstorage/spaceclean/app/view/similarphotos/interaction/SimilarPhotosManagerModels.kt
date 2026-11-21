@@ -1,13 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageGroupDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managedFileToImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 data class SimilarPhotoItem(
@@ -22,6 +21,7 @@ data class SimilarPhotoGroup(
 )
 
 data class SimilarPhotosManagerUiState(
+    val permissionGranted: Boolean = false,
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
     val phase: FileOperationPhase = FileOperationPhase.Scanning,
@@ -29,7 +29,7 @@ data class SimilarPhotosManagerUiState(
     val selectedIds: Set<Int> = emptySet(),
     val detailStartIndex: Int? = null,
     val deletedBytes: Long = 0L,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
 ) {
     val items: List<SimilarPhotoItem> get() = groups.flatMap { it.items }
     val totalPhotoCount: Int get() = items.size
@@ -48,13 +48,14 @@ data class SimilarPhotosManagerUiState(
 internal fun mapSimilarPhotoGroups(groups: List<List<ManagedFileItem>>): List<SimilarPhotoGroup> {
     var nextId = 1
     return groups.map { group ->
-        val items = group.mapIndexed { index, file ->
-            SimilarPhotoItem(
-                id = nextId++,
-                file = file,
-                bestPhoto = index == 0,
-            )
-        }
+        val items =
+            group.mapIndexed { index, file ->
+                SimilarPhotoItem(
+                    id = nextId++,
+                    file = file,
+                    bestPhoto = index == 0,
+                )
+            }
         SimilarPhotoGroup(count = items.size, items = items)
     }
 }

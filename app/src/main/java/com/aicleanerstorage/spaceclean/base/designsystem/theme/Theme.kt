@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
 
-
 private fun lightSchemeFor(colors: AppColors) =
     lightColorScheme(
         primary = colors.primary,
@@ -95,7 +94,9 @@ private object NoRippleIndication : IndicationNodeFactory {
 
     override fun equals(other: Any?): Boolean = other === this
 
-    private class NoRippleNode : Modifier.Node(), DrawModifierNode {
+    private class NoRippleNode :
+        Modifier.Node(),
+        DrawModifierNode {
         override fun ContentDrawScope.draw() {
             drawContent()
         }

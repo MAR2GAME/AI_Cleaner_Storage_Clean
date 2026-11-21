@@ -16,24 +16,26 @@ import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiSta
 @Composable
 internal fun AppLockSelectionList(
     uiState: AppLockUiState,
-    onTogglePackage: (String) -> Unit
+    onTogglePackage: (String) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 30.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 30.dp),
         contentPadding = PaddingValues(bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
+        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         when {
             uiState.isLoading && uiState.apps.isEmpty() -> item { LoadingCard() }
             uiState.apps.isEmpty() -> item { EmptyCard(text = stringResource(R.string.app_lock_no_apps)) }
-            else -> items(uiState.apps, key = { app -> app.packageName }) { app ->
-                AppLockRow(
-                    app = app,
-                    onClick = { onTogglePackage(app.packageName) },
-                )
-            }
+            else ->
+                items(uiState.apps, key = { app -> app.packageName }) { app ->
+                    AppLockRow(
+                        app = app,
+                        onClick = { onTogglePackage(app.packageName) },
+                    )
+                }
         }
     }
 }

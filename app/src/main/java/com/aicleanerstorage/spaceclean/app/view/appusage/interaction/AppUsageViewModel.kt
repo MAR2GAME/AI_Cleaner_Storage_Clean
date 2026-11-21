@@ -1,10 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.appusage.interaction
 
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
 import com.aicleanerstorage.spaceclean.data.appusage.AppUsageRepository
+import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,9 +17,11 @@ import java.util.Locale
 class AppUsageViewModel(
     private val repository: AppUsageRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : MviViewModel<AppUsageUiState, AppUsageAction, AppUsageEvent>(AppUsageUiState(
-                hasAccess = repository.hasAppUsageAccess(),
-            )) {
+) : MviViewModel<AppUsageUiState, AppUsageAction, AppUsageEvent>(
+        AppUsageUiState(
+            hasAccess = repository.hasAppUsageAccess(),
+        ),
+    ) {
     private var scanDelayFinished = false
     private var scanJob: Job? = null
     private var loadJob: Job? = null
@@ -32,7 +36,7 @@ class AppUsageViewModel(
             AppUsageAction.Resumed, AppUsageAction.PermissionGranted -> refreshUsage(startScan = true, refreshPermission = true)
             AppUsageAction.PermissionRequestConsumed -> {
                 permissionRequestAttempted = true
-                changeState { it.copy(permissionRequestPending = false) }
+                setState { it.copy(permissionRequestPending = false) }
             }
             AppUsageAction.PermissionRejected -> exit(AppUsageExitReason.PermissionRejected)
             AppUsageAction.BackClicked -> {
@@ -44,7 +48,7 @@ class AppUsageViewModel(
                 }
             }
             AppUsageAction.QuitScanConfirmed -> {
-                changeState { it.copy(showStopDialog = false) }
+                setState { it.copy(showStopDialog = false) }
                 exit(AppUsageExitReason.Return)
             }
             AppUsageAction.ResumeScanClicked -> startScanDelay()
@@ -59,18 +63,18 @@ class AppUsageViewModel(
         if (!currentState.isScanning) return
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(showStopDialog = true) }
+        setState { it.copy(showStopDialog = true) }
     }
 
     private fun selectRange(range: AppUsageDateRange) {
         if (currentState.selectedRange == range) return
-        changeState { it.copy(selectedRange = range) }
+        setState { it.copy(selectedRange = range) }
         refreshUsage(startScan = false)
     }
 
     private fun selectTab(tab: AppUsageMetricTab) {
         if (currentState.selectedTab == tab) return
-        changeState { current ->
+        setState { current ->
             current.copy(
                 selectedTab = tab,
                 visibleItems =
@@ -87,9 +91,12 @@ class AppUsageViewModel(
         sendEvent(AppUsageEvent.OpenAppInfo(packageName))
     }
 
-    private fun refreshUsage(startScan: Boolean, refreshPermission: Boolean = false) {
+    private fun refreshUsage(
+        startScan: Boolean,
+        refreshPermission: Boolean = false,
+    ) {
         val hasAccess = repository.hasAppUsageAccess(refresh = refreshPermission)
-        changeState { state ->
+        setState { state ->
             state.copy(
                 hasAccess = hasAccess,
                 usages = if (hasAccess) state.usages else emptyList(),
@@ -97,7 +104,7 @@ class AppUsageViewModel(
                 visibleItems = if (hasAccess) state.visibleItems else emptyList(),
                 totalUsageMs = if (hasAccess) state.totalUsageMs else 0L,
                 isLoading = hasAccess,
-                errorMessage = null,
+                error = null,
                 isScanning = hasAccess && (startScan || state.isScanning),
                 showStopDialog = false,
                 permissionRequestPending = !hasAccess && !permissionRequestAttempted,
@@ -117,7 +124,7 @@ class AppUsageViewModel(
                 val runningPackages = repository.runningPackages(usages.map { it.packageName }.toSet())
                 usages to runningPackages
             }.onSuccess { (usages, runningPackages) ->
-                changeState { current ->
+                setState { current ->
                     current.copy(
                         hasAccess = true,
                         usages = usages,
@@ -130,15 +137,15 @@ class AppUsageViewModel(
                             ),
                         totalUsageMs = usages.sumOf { it.totalForegroundMs },
                         isLoading = false,
-                        errorMessage = null,
+                        error = null,
                     )
                 }
                 finishScanIfReady()
             }.onFailure { error ->
-                changeState {
+                setState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message,
+                        error = UiText.Res(R.string.load_failed),
                     )
                 }
                 finishScanIfReady()
@@ -149,7 +156,7 @@ class AppUsageViewModel(
     private fun startScanDelay() {
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(isScanning = true, showStopDialog = false) }
+        setState { it.copy(isScanning = true, showStopDialog = false) }
         scanJob =
             viewModelScope.launch {
                 delay(TOOLBOX_SCAN_DURATION_MILLIS)
@@ -160,7 +167,7 @@ class AppUsageViewModel(
 
     private fun finishScanIfReady() {
         if (scanDelayFinished && !currentState.isLoading) {
-            changeState { it.copy(isScanning = false, showStopDialog = false) }
+            setState { it.copy(isScanning = false, showStopDialog = false) }
         }
     }
 

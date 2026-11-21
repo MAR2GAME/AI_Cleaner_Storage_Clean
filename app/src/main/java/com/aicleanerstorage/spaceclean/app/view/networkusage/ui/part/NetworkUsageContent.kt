@@ -164,7 +164,7 @@ private fun NetworkUsagePageContent(
         else -> {
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.TopCenter
+                contentAlignment = Alignment.TopCenter,
             ) {
                 NetworkUsageDetailsCard(uiState = uiState, tab = tab)
             }

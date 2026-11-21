@@ -9,11 +9,12 @@ class NetworkUsageAggregationTest {
     @Test
     fun unknownSourcesAndUnattributedBytesProduceOneRowAcrossBrands() {
         for (name in listOf("example.first", "example.second")) {
-            val apps = listOf(
-                NetworkUsageApp(TrafficSource.App(name, "App"), 20, 30),
-                NetworkUsageApp(TrafficSource.SystemAndUnknown, 5, 5),
-                NetworkUsageApp(TrafficSource.SystemAndUnknown, 3, 7),
-            )
+            val apps =
+                listOf(
+                    NetworkUsageApp(TrafficSource.App(name, "App"), 20, 30),
+                    NetworkUsageApp(TrafficSource.SystemAndUnknown, 5, 5),
+                    NetworkUsageApp(TrafficSource.SystemAndUnknown, 3, 7),
+                )
             val rows = buildNetworkUsageDisplayItems(apps, 90)
             assertEquals(40L, rows.single { it.isAggregate }.totalBytes)
             assertEquals(name, rows.single { !it.isAggregate }.packageName)

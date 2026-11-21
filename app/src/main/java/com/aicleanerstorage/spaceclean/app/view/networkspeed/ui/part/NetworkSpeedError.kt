@@ -8,6 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
 internal fun NetworkSpeedError(uiState: NetworkSpeedUiState) {
@@ -22,6 +23,6 @@ internal fun NetworkSpeedError(uiState: NetworkSpeedUiState) {
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
-    NetworkSpeedStatusError(message = uiState.errorMessage)
+    NetworkSpeedStatusError(message = uiState.error?.asString())
     Spacer(modifier = Modifier.height(96.dp))
 }

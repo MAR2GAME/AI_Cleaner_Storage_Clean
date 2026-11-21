@@ -16,7 +16,6 @@ data class VirusScanUiState(
     val appThreatCount: Int = 0,
     val fileThreatCount: Int = 0,
     val progressFraction: Float = 0f,
-    val errorMessage: String? = null
 ) {
     val effectiveThreatCount: Int
         get() = threats.size + if (hasAdbRisk) 1 else 0

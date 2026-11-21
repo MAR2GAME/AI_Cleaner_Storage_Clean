@@ -8,15 +8,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanDevicesUiState
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
-internal fun NetworkScanDevicesError(
-    uiState: NetworkScanDevicesUiState,
-) {
+internal fun NetworkScanDevicesError(uiState: NetworkScanDevicesUiState) {
     NetworkScanDevicesHeaderCard(count = uiState.devices.size)
     Spacer(modifier = Modifier.height(20.dp))
     NetworkScanMessageCard(
         title = stringResource(R.string.scan_failed),
-        message = uiState.errorMessage.orEmpty(),
+        message = uiState.error?.asString().orEmpty(),
     )
 }

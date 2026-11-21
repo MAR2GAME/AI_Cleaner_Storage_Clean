@@ -9,6 +9,10 @@ interface SettingsRepository {
 
     fun saveLastAutoRatePromptAt(timestampMillis: Long)
 
+    fun readLastNotificationPermissionPromptAt(): Long
+
+    fun saveLastNotificationPermissionPromptAt(timestampMillis: Long)
+
     fun hasShownNotificationCleanerExitPrompt(): Boolean
 
     fun saveNotificationCleanerExitPromptShown()

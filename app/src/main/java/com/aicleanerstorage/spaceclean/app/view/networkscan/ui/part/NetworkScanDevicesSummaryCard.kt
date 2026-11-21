@@ -27,13 +27,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavy
 import com.aicleanerstorage.networkkit.model.NetworkDeviceInfo
 import com.aicleanerstorage.networkkit.model.NetworkScanResult
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanDivider
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavy
 
 @Composable
 internal fun NetworkScanDevicesSummaryCard(
@@ -85,9 +85,10 @@ internal fun NetworkScanDevicesSummaryCard(
 @Composable
 internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceInfo) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(

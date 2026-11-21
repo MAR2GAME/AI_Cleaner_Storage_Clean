@@ -84,7 +84,7 @@ val AllToolFeatures
                 Brush.linearGradient(listOf(Color(0xFF6EC6FF), Color(0xFF2196F3))),
                 R.string.view_now,
             ),
-            */
+             */
             ToolFeature(
                 R.string.nav_notification_cleaner,
                 R.string.common_tool_notification_cleaner_desc,
@@ -126,7 +126,7 @@ val AllToolFeatures
                 Brush.linearGradient(listOf(Color(0xFFCE93D8), Color(0xFF9C27B0))),
                 R.string.test_now,
             ),
-            */
+             */
         )
 
 @Composable

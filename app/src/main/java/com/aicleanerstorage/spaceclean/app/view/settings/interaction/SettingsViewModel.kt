@@ -1,17 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.view.settings.interaction
 
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 
-class SettingsViewModel(private val repository: SettingsRepository) :
-    MviViewModel<SettingsUiState, SettingsAction, SettingsEvent>(
+class SettingsViewModel(
+    private val repository: SettingsRepository,
+) : MviViewModel<SettingsUiState, SettingsAction, SettingsEvent>(
         SettingsUiState(repository.readTemperatureUnit().normalizeTemperatureUnit()),
     ) {
     override fun onAction(intent: SettingsAction) {
         when (intent) {
             is SettingsAction.TemperatureUnitChanged -> {
                 repository.saveTemperatureUnit(intent.unit.normalizeTemperatureUnit())
-                setState { SettingsReducer.reduce(this, intent) }
+                setState { SettingsReducer.reduce(it, intent) }
             }
             is SettingsAction.NavigationRequested -> sendEvent(SettingsEvent.Navigate(intent.destination))
             SettingsAction.BackClicked -> sendEvent(SettingsEvent.NavigateBack)

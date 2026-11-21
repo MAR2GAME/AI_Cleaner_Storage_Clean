@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeAction
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeUiState
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.toolNotificationSpec
 import com.aicleanerstorage.spaceclean.app.view.home.ui.part.FilesManagerTabContent
 import com.aicleanerstorage.spaceclean.app.view.home.ui.part.HomeBackgroundContent
 import com.aicleanerstorage.spaceclean.app.view.home.ui.part.HomeExitPromptDialog
@@ -41,9 +42,6 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     state: HomeUiState,
     onAction: (HomeAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
-    onSettingsClick: () -> Unit,
-    onExitPromptView: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val summaryState = state.summary
@@ -51,7 +49,7 @@ fun HomeScreen(
     val showAutoRateDialog = state.showAutoRateDialog
 
     fun openFeature(feature: AppDestination) {
-        onNavigate(feature)
+        onAction(HomeAction.NavigationRequested(feature))
     }
 
     BackHandler(
@@ -95,7 +93,7 @@ fun HomeScreen(
                         .padding(horizontal = CleanXPagePadding),
             ) {
                 HomeHeader(
-                    onSettingsClick = onSettingsClick,
+                    onSettingsClick = { onAction(HomeAction.NavigationRequested(AppDestination.Settings)) },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 HomeTabBar(
@@ -143,7 +141,7 @@ fun HomeScreen(
                 onAction(HomeAction.ExitDismissed)
                 onAction(HomeAction.ExitConfirmed)
             },
-            onViewNow = onExitPromptView,
+            onViewNow = { onAction(HomeAction.ExitPromptViewClicked) },
         )
     }
 

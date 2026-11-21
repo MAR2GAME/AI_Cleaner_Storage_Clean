@@ -143,8 +143,6 @@
     <string name="home_app_lock_title">Kunci App</string>
     <string name="file_unselect">Batalkan pilihan</string>
     <string name="file_music">Musik</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">Untuk menampilkan detail penggunaan app, izinkan Storage Clean di Akses penggunaan.</string>
     <string name="permission_network_usage_desc">Untuk menampilkan detail penggunaan jaringan, izinkan Storage Clean di Akses penggunaan.</string>
     <string name="permission_notification_desc">Untuk merapikan notifikasi secara otomatis, izinkan Storage Clean di Akses notifikasi.</string>
@@ -195,6 +193,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">Gagal memuat. Silakan coba lagi.</string>
+    <string name="speed_test_failed">Uji kecepatan gagal. Silakan coba lagi.</string>
+    <string name="permission_denied">Izin ditolak. Harap izinkan akses di pengaturan.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -470,4 +471,9 @@
     <string name="notification_status_empty_title">Pemblokiran notifikasi diaktifkan</string>
     <string name="notification_status_empty_message">Notifikasi yang diblokir akan muncul di sini</string>
     <string name="network_speed_estimated">Perkiraan kecepatan</string>
+    <string name="similar_photo_grouping_hint">Dikelompokkan berdasarkan album, tanggal modifikasi, dan ukuran file serupa. Tinjau foto sebelum menghapus.</string>
+    <string name="junk_review_hint">Tinjau file yang disarankan sebelum memilihnya. Hanya cache aplikasi ini yang dipilih secara default.</string>
+    <string name="cleanup_stopped_summary">Dihentikan. %1$d file dihapus (%2$s).</string>
+    <string name="available_memory_increase">Memori tersedia bertambah %1$s selama pembersihan.</string>
+    <string name="settings_post_notifications">Notifikasi</string>
 </resources>

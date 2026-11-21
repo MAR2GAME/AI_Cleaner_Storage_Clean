@@ -57,8 +57,7 @@ internal fun NotificationStatusContent(uiState: NotificationCleanerUiState) {
                                 ?: BlockableNotificationAppModel(sortedItems.firstOrNull()?.appName ?: packageName, packageName),
                         items = sortedItems,
                     )
-                }
-                .sortedByDescending { it.items.firstOrNull()?.postTimeMillis ?: 0L }
+                }.sortedByDescending { it.items.firstOrNull()?.postTimeMillis ?: 0L }
         }
 
     Surface(
@@ -73,15 +72,16 @@ internal fun NotificationStatusContent(uiState: NotificationCleanerUiState) {
             BellBadge()
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = stringResource(
-                    if (showEmptyState) {
-                        R.string.notification_status_empty_title
-                    } else if (uiState.enabled) {
-                        R.string.notification_status_enabled
-                    } else {
-                        R.string.notification_status_disabled
-                    },
-                ),
+                text =
+                    stringResource(
+                        if (showEmptyState) {
+                            R.string.notification_status_empty_title
+                        } else if (uiState.enabled) {
+                            R.string.notification_status_enabled
+                        } else {
+                            R.string.notification_status_disabled
+                        },
+                    ),
                 color = NotificationSettingsText,
                 fontSize = 18.sp,
                 lineHeight = 22.sp,
@@ -190,9 +190,10 @@ private fun BlockedNotificationRow(
         remember(context, entry.postTimeMillis) {
             DateFormat.getTimeFormat(context).format(Date(entry.postTimeMillis))
         }
-    val messageText = remember(entry.title, entry.text) {
-        entry.text.ifBlank { entry.title }.ifBlank { "" }
-    }
+    val messageText =
+        remember(entry.title, entry.text) {
+            entry.text.ifBlank { entry.title }.ifBlank { "" }
+        }
 
     Surface(
         modifier =

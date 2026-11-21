@@ -18,25 +18,25 @@ import com.aicleanerstorage.spaceclean.R
 fun CleanXCheckBadge(
     modifier: Modifier = Modifier,
     checked: Boolean = true,
-    size: Dp = 24.dp
+    size: Dp = 24.dp,
 ) {
     Box(
-        modifier = modifier
-            .size(size),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .size(size),
+        contentAlignment = Alignment.Center,
     ) {
         if (checked) {
             Image(
                 painter = painterResource(R.drawable.ic_ok),
-                contentDescription = null
+                contentDescription = null,
             )
-
         } else {
             Canvas(modifier = Modifier.size(size)) {
                 drawCircle(
                     color = Color(0xFFC8D2DE),
                     radius = this.size.minDimension / 2.35f,
-                    style = Stroke(width = 2.dp.toPx())
+                    style = Stroke(width = 2.dp.toPx()),
                 )
             }
         }

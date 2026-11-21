@@ -3,10 +3,10 @@ package com.aicleanerstorage.spaceclean.data.battery.internal
 import android.content.Context
 import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
-import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.io.File
 
 internal class BatteryHistoryRepositoryImpl(
     historyFile: File,
@@ -107,4 +107,3 @@ private fun BatteryHistorySampleModel.isUsable(): Boolean =
         currentMa?.isFiniteValue() != false
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
-

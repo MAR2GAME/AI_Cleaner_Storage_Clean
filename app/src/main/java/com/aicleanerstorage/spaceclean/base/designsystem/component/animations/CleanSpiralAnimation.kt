@@ -40,13 +40,15 @@ fun CleanSpiralAnimation(
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = animationDurationMillis,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = animationDurationMillis,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Restart,
             ),
-            repeatMode = RepeatMode.Restart,
-        ),
         label = "cleanSpiralAngle",
     )
 
@@ -60,20 +62,22 @@ fun CleanSpiralAnimation(
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            modifier = Modifier
-                .size(centerSize)
-                .clip(CircleShape)
-                .background(Color.White),
-            contentAlignment = Alignment.Center
-        ){
+            modifier =
+                Modifier
+                    .size(centerSize)
+                    .clip(CircleShape)
+                    .background(Color.White),
+            contentAlignment = Alignment.Center,
+        ) {
             content()
         }
         Image(
             painter = painterResource(spiralResId),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer(rotationZ = rotation),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer(rotationZ = rotation),
             contentScale = ContentScale.Fit,
         )
     }

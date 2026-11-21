@@ -50,8 +50,7 @@ internal fun VirusThreatSummaryPanel(
                             shape = CircleShape,
                             ambientColor = Color(0x40FC8541),
                             spotColor = Color(0x40FC8541),
-                        )
-                        .clip(CircleShape)
+                        ).clip(CircleShape)
                         .background(Brush.linearGradient(listOf(VirusResultMedium, VirusResultHigh))),
                 contentAlignment = Alignment.Center,
             ) {

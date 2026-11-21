@@ -15,37 +15,39 @@ import com.aicleanerstorage.spaceclean.R
 @Composable
 fun PhoneScanIllustration(
     scanLineProgress: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Image(
             painter = painterResource(id = R.drawable.scan_phone_bg),
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Fit,
         )
         Image(
             painter = painterResource(id = R.drawable.scan_phone),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(width = 96.dp, height = 150.dp),
-            contentScale = ContentScale.Fit
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .size(width = 96.dp, height = 150.dp),
+            contentScale = ContentScale.Fit,
         )
         Image(
             painter = painterResource(id = R.drawable.scan_phone_border),
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Fit,
         )
         Image(
             painter = painterResource(id = R.drawable.scan_phone_line),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = (56 + 90 * scanLineProgress).dp)
-                .size(width = 192.dp, height = 18.dp),
-            contentScale = ContentScale.FillBounds
+            modifier =
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = (56 + 90 * scanLineProgress).dp)
+                    .size(width = 192.dp, height = 18.dp),
+            contentScale = ContentScale.FillBounds,
         )
     }
 }

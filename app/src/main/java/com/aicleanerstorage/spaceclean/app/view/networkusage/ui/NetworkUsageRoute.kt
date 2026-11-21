@@ -1,17 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.ui
 
-import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageExitReason
-import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageEvent
-import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageAction
-import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageViewModel
-
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
-import com.aicleanerstorage.spaceclean.app.view.networkusage.ui.NetworkUsageRoute
-
-
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -20,10 +10,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageAction
+import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageEvent
+import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageViewModel
+import com.aicleanerstorage.spaceclean.app.view.networkusage.ui.NetworkUsageRoute
+import com.aicleanerstorage.spaceclean.app.view.networkusage.ui.NetworkUsageScreen
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.app.view.networkusage.ui.NetworkUsageScreen
+import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
+import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
+import kotlinx.coroutines.*
 
 @Composable
 fun NetworkUsageRoute(
@@ -34,26 +31,32 @@ fun NetworkUsageRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionGate = rememberPermissionGate()
+    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
+    PermissionRequestEffect(pendingPermission) { result ->
+        pendingPermission = null
+        viewModel.dispatch(
+            if (result == PermissionResult.Granted) {
+                NetworkUsageAction.PermissionGranted
+            } else {
+                NetworkUsageAction.PermissionRejected
+            },
+        )
+    }
     LaunchedEffect(uiState.permissionRequestPending) {
         if (uiState.permissionRequestPending) {
             viewModel.dispatch(NetworkUsageAction.PermissionRequestConsumed)
-            permissionGate.request(AppPermission.UsageAccess) { granted ->
-                viewModel.dispatch(if (granted) NetworkUsageAction.PermissionGranted else NetworkUsageAction.PermissionRejected)
-            }
+            pendingPermission = AppPermission.UsageAccess
         }
     }
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                is NetworkUsageEvent.Exit -> {
-                    if (!exiting) {
-                        exiting = true
-                        routeScope.launch {
-                            ensureActive()
-                            navigator.back()
-                        }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            is NetworkUsageEvent.Exit -> {
+                if (!exiting) {
+                    exiting = true
+                    routeScope.launch {
+                        ensureActive()
+                        navigator.back()
                     }
                 }
             }
@@ -78,4 +81,3 @@ fun NetworkUsageRoute(
         onAction = { if (!exiting) viewModel.dispatch(it) },
     )
 }
-

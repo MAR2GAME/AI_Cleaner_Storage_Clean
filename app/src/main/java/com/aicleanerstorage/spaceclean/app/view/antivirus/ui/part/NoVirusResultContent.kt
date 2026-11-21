@@ -35,7 +35,9 @@ internal fun NoVirusResultContent(
                 Modifier
                     .align(Alignment.TopCenter)
                     .offset(y = 231.dp),
-            color = androidx.compose.ui.graphics.Color(0xFF999999),
+            color =
+                androidx.compose.ui.graphics
+                    .Color(0xFF999999),
             fontSize = 20.sp,
             lineHeight = 23.sp,
         )

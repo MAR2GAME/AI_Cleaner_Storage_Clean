@@ -16,14 +16,23 @@ private fun isWhatsAppCandidate(item: ManagedFileItem): Boolean {
 
 private val WHATSAPP_SCAN_DIRECTORIES =
     listOf(
-        "WhatsApp", "WhatsApp Business", "Android/media/com.whatsapp/WhatsApp",
-        "Android/media/com.whatsapp.w4b/WhatsApp Business", "Android/media/com.whatsapp.w4b/WhatsApp",
-        "Android/media/com.gbwhatsapp/GBWhatsApp", "Android/media/com.yowhatsapp/YoWhatsApp",
+        "WhatsApp",
+        "WhatsApp Business",
+        "Android/media/com.whatsapp/WhatsApp",
+        "Android/media/com.whatsapp.w4b/WhatsApp Business",
+        "Android/media/com.whatsapp.w4b/WhatsApp",
+        "Android/media/com.gbwhatsapp/GBWhatsApp",
+        "Android/media/com.yowhatsapp/YoWhatsApp",
         "Android/media/com.fmwhatsapp/FMWhatsApp",
     )
 
 private val WHATSAPP_PATH_MARKERS =
     listOf(
-        "/whatsapp/", "/whatsapp business/", "/gbwhatsapp/", "/yowhatsapp/", "/fmwhatsapp/",
-        "com.whatsapp", "com.whatsapp.w4b",
+        "/whatsapp/",
+        "/whatsapp business/",
+        "/gbwhatsapp/",
+        "/yowhatsapp/",
+        "/fmwhatsapp/",
+        "com.whatsapp",
+        "com.whatsapp.w4b",
     )

@@ -13,7 +13,10 @@ internal object PinCredential {
         return encoder.encodeToString(salt) + "." + encoder.encodeToString(derive(pin, salt))
     }
 
-    fun matches(pin: String, stored: String): Boolean {
+    fun matches(
+        pin: String,
+        stored: String,
+    ): Boolean {
         val parts = stored.split('.')
         if (parts.size != 2) return false
         return try {
@@ -24,7 +27,10 @@ internal object PinCredential {
         }
     }
 
-    private fun derive(pin: String, salt: ByteArray): ByteArray {
+    private fun derive(
+        pin: String,
+        salt: ByteArray,
+    ): ByteArray {
         val key = PBEKeySpec(pin.toCharArray(), salt, 210_000, 256)
         return try {
             SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(key).encoded

@@ -16,17 +16,24 @@ data class OnboardingUiState(
 
 sealed interface OnboardingAction {
     data object Entered : OnboardingAction
+
     data object RefreshRequested : OnboardingAction
+
     data object GetStartedClicked : OnboardingAction
-
-
 }
 
 sealed interface OnboardingEvent {
     data object NotifyScanFinished : OnboardingEvent
+
     data object FinishOnboarding : OnboardingEvent
 }
 
-internal data class OnboardingLoaded(val value: OnboardingUiState) : OnboardingAction
-internal data class OnboardingProgressUpdated(val step: Int) : OnboardingAction
+internal data class OnboardingLoaded(
+    val value: OnboardingUiState,
+) : OnboardingAction
+
+internal data class OnboardingProgressUpdated(
+    val step: Int,
+) : OnboardingAction
+
 internal const val ONBOARDING_SCAN_ROW_COUNT = 6

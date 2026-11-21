@@ -1,23 +1,21 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.ui
 
-import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
-import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoAction
-import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoEvent
-
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoAction
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoEvent
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryInfoScreen
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import kotlinx.coroutines.*
 
 @Composable
 fun BatteryInfoRoute(
@@ -29,20 +27,18 @@ fun BatteryInfoRoute(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                BatteryInfoEvent.Exit ->
-                    {
-                        if (!exiting) {
-                            exiting = true
-                            routeScope.launch {
-                                ensureActive()
-                                navigator.back()
-                            }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            BatteryInfoEvent.Exit ->
+                {
+                    if (!exiting) {
+                        exiting = true
+                        routeScope.launch {
+                            ensureActive()
+                            navigator.back()
                         }
                     }
-            }
+                }
         }
     }
 
@@ -71,4 +67,3 @@ fun BatteryInfoRoute(
         onAction = { if (!exiting) viewModel.dispatch(it) },
     )
 }
-

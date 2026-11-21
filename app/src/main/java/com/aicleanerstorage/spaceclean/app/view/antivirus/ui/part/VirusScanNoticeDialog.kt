@@ -36,14 +36,15 @@ internal fun VirusScanNoticeDialog(
     VirusDialogPanel(
         onDismiss = onDecline,
         surfaceColor = Color.Transparent,
-        panelModifier = Modifier.offset(y = 16.dp).background(
-            Brush.verticalGradient(
-                0f to Color(0xFFDFFFDC),
-                0.26381f to Color.White,
-                1f to Color.White,
+        panelModifier =
+            Modifier.offset(y = 16.dp).background(
+                Brush.verticalGradient(
+                    0f to Color(0xFFDFFFDC),
+                    0.26381f to Color.White,
+                    1f to Color.White,
+                ),
+                virusDialogShape,
             ),
-            virusDialogShape,
-        ),
     ) {
         Image(
             painter = painterResource(R.drawable.virus_app_list_permission),

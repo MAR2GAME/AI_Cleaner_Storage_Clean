@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import androidx.core.content.edit
 import com.aicleanerstorage.spaceclean.data.security.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.data.security.model.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.data.security.model.VirusThreatModel
-import androidx.core.content.edit
 import java.io.File
 
 internal class VirusSecurityRepositoryImpl(
@@ -17,15 +17,13 @@ internal class VirusSecurityRepositoryImpl(
 
     private val preferences = appContext.getSharedPreferences("quick_clean_settings", Context.MODE_PRIVATE)
 
-    override fun isScanNoticeAccepted(): Boolean =
-        preferences.getBoolean(KEY_VIRUS_SCAN_NOTICE_ACCEPTED, false)
+    override fun isScanNoticeAccepted(): Boolean = preferences.getBoolean(KEY_VIRUS_SCAN_NOTICE_ACCEPTED, false)
 
     override fun setScanNoticeAccepted() {
         preferences.edit(commit = true) { putBoolean(KEY_VIRUS_SCAN_NOTICE_ACCEPTED, true) }
     }
 
-    override fun hasInstalledAppsAccessFailedBefore(): Boolean =
-        preferences.getBoolean(KEY_VIRUS_INSTALLED_APPS_ACCESS_FAILED_ONCE, false)
+    override fun hasInstalledAppsAccessFailedBefore(): Boolean = preferences.getBoolean(KEY_VIRUS_INSTALLED_APPS_ACCESS_FAILED_ONCE, false)
 
     override fun setInstalledAppsAccessFailed(failed: Boolean) {
         if (failed) {
@@ -36,22 +34,28 @@ internal class VirusSecurityRepositoryImpl(
     }
 
     override fun appLabel(packageName: String): String = installedAppLabel(appContext, packageName)
-    override fun threatFor(item: VirusScanItemModel, isFile: Boolean): VirusThreatModel = item.toThreat(isFile)
+
+    override fun threatFor(
+        item: VirusScanItemModel,
+        isFile: Boolean,
+    ): VirusThreatModel = item.toThreat(isFile)
+
     override fun hasInstalledAppsAccess(): Boolean {
         val packageManager = appContext.packageManager
         val currentPackageName = appContext.packageName
-        val installedPackages = try {
-            @Suppress("DEPRECATION")
-            packageManager.getInstalledPackages(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    TRUSTLOOK_INSTALLED_PACKAGES_FLAGS_API_30_PLUS
-                } else {
-                    TRUSTLOOK_INSTALLED_PACKAGES_FLAGS_LEGACY
-                },
-            )
-        } catch (_: Exception) {
-            return false
-        }
+        val installedPackages =
+            try {
+                @Suppress("DEPRECATION")
+                packageManager.getInstalledPackages(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        TRUSTLOOK_INSTALLED_PACKAGES_FLAGS_API_30_PLUS
+                    } else {
+                        TRUSTLOOK_INSTALLED_PACKAGES_FLAGS_LEGACY
+                    },
+                )
+            } catch (_: Exception) {
+                return false
+            }
 
         return installedPackages.any { packageInfo ->
             packageInfo.packageName.isNotBlank() && packageInfo.packageName != currentPackageName
@@ -59,13 +63,14 @@ internal class VirusSecurityRepositoryImpl(
     }
 
     override fun hasAdbRisk(): Boolean {
-        val adbEnabled = try {
-            Settings.Global.getInt(appContext.contentResolver, Settings.Global.ADB_ENABLED, 0) == 1
-        } catch (_: Exception) {
-            runCatching {
-                Settings.Secure.getInt(appContext.contentResolver, Settings.Secure.ADB_ENABLED, 0) == 1
-            }.getOrDefault(false)
-        }
+        val adbEnabled =
+            try {
+                Settings.Global.getInt(appContext.contentResolver, Settings.Global.ADB_ENABLED, 0) == 1
+            } catch (_: Exception) {
+                runCatching {
+                    Settings.Secure.getInt(appContext.contentResolver, Settings.Secure.ADB_ENABLED, 0) == 1
+                }.getOrDefault(false)
+            }
         if (!adbEnabled) return false
 
         val intent = Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
@@ -90,7 +95,7 @@ private fun VirusScanItemModel.toThreat(isFile: Boolean): VirusThreatModel {
             title = path?.let { File(it).name } ?: virusName.orEmpty(),
             description = description,
             isFile = true,
-            icon = null
+            icon = null,
         )
     } else {
         VirusThreatModel(
@@ -100,15 +105,16 @@ private fun VirusScanItemModel.toThreat(isFile: Boolean): VirusThreatModel {
             title = appName,
             description = description,
             isFile = false,
-            icon = packageName
+            icon = packageName,
         )
     }
 }
 
 private fun VirusScanItemModel.threatDescription(): String {
-    val summaryText = runCatching {
-        if (summary != null && summary.size > 1) summary[1] else null
-    }.getOrNull()
+    val summaryText =
+        runCatching {
+            if (summary != null && summary.size > 1) summary[1] else null
+        }.getOrNull()
     return summaryText?.takeIf { it.isNotBlank() }
         ?: virusName?.takeIf { it.isNotBlank() }
         ?: ""

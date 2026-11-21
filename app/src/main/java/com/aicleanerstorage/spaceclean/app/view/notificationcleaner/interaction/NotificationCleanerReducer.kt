@@ -27,12 +27,15 @@ internal object NotificationCleanerReducer {
             isLoading = true,
             scanInProgress = true,
             isInitialized = true,
-            errorMessage = null,
+            error = null,
             showStopDialog = false,
             stopDialogPage = null,
         )
 
-    fun notificationsCleaned(state: NotificationCleanerUiState, cleanedCount: Int): NotificationCleanerUiState =
+    fun notificationsCleaned(
+        state: NotificationCleanerUiState,
+        cleanedCount: Int,
+    ): NotificationCleanerUiState =
         state.copy(
             page = NotificationCleanerPage.Cleaning,
             blockedCount = 0,
@@ -41,7 +44,7 @@ internal object NotificationCleanerReducer {
             cleanedCount = cleanedCount,
             cleaningAnimationComplete = false,
             completionResultVisible = false,
-            errorMessage = null,
+            error = null,
         )
 
     fun cleaningFinished(state: NotificationCleanerUiState): NotificationCleanerUiState =
@@ -51,7 +54,10 @@ internal object NotificationCleanerReducer {
             completionResultVisible = false,
         )
 
-    fun completionDisplayed(state: NotificationCleanerUiState, targetPage: NotificationCleanerPage): NotificationCleanerUiState =
+    fun completionDisplayed(
+        state: NotificationCleanerUiState,
+        targetPage: NotificationCleanerPage,
+    ): NotificationCleanerUiState =
         when (targetPage) {
             NotificationCleanerPage.Complete ->
                 state.copy(

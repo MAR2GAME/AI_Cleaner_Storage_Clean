@@ -18,9 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
-import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 
 @Composable
 internal fun ScreenCard(hardware: DeviceHardwareInfo) {

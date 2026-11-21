@@ -8,13 +8,10 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashProgressStage
 
 @Composable
 internal fun SplashStageProgressBar(
     progress: Float,
-    activeStage: SplashProgressStage,
-    paused: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Canvas(

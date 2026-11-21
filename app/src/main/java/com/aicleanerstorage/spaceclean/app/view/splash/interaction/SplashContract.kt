@@ -13,36 +13,38 @@ enum class SplashPauseReason {
     ExternalLink,
 }
 
-enum class SplashProgressStage {
-    Preparing,
-    RequestingAd,
-    ShowingAd,
-    Finishing,
-    Completed,
+data class SplashUiState(
+    val stage: SplashStage = SplashStage.Preparing,
+    val pauseReasons: Set<SplashPauseReason> = emptySet(),
+) {
+    val paused: Boolean get() = pauseReasons.isNotEmpty()
+    val finishRequested: Boolean get() = stage == SplashStage.Finishing
 }
-
-val SplashProgressStage.targetProgress: Float
-    get() =
-        when (this) {
-            SplashProgressStage.Preparing -> 0.25f
-            SplashProgressStage.RequestingAd,
-            SplashProgressStage.ShowingAd,
-            -> 0.25f
-            SplashProgressStage.Finishing,
-            SplashProgressStage.Completed,
-            -> 1f
-        }
 
 sealed interface SplashAction {
     data object VisualPreparationCompleted : SplashAction
 
     data object VisualFinished : SplashAction
 
-    data class PermissionPauseChanged(val active: Boolean) : SplashAction
+    data object TermsClicked : SplashAction
 
-    data class ExternalLinkStateChanged(val active: Boolean) : SplashAction
+    data object PrivacyClicked : SplashAction
+
+    data class PermissionPauseChanged(
+        val active: Boolean,
+    ) : SplashAction
+
+    data class ExternalLinkStateChanged(
+        val active: Boolean,
+    ) : SplashAction
 }
 
 sealed interface SplashEvent {
-    data class Navigate(val destination: AppDestination) : SplashEvent
+    data class Navigate(
+        val destination: AppDestination,
+    ) : SplashEvent
+
+    data object OpenTerms : SplashEvent
+
+    data object OpenPrivacy : SplashEvent
 }

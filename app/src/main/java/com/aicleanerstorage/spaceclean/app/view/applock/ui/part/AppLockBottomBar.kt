@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockBackground
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockBackground
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 
@@ -17,21 +17,22 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigat
 internal fun AppLockBottomBar(
     text: String,
     onClick: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(AppLockBackground)
-            .stableNavigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(AppLockBackground)
+                .stableNavigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
         CleanXPrimaryButton(
             text = text,
             onClick = onClick,
             enabled = enabled,
             height = 52.dp,
-            fontSize = 20.sp
+            fontSize = 20.sp,
         )
     }
 }

@@ -127,8 +127,6 @@
     <string name="home_app_lock_title">アプリロック</string>
     <string name="file_unselect">選択解除</string>
     <string name="file_music">音楽</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">アプリ使用状況の詳細を表示するため、使用状況アクセスでStorage Cleanを許可してください。</string>
     <string name="permission_network_usage_desc">ネットワーク使用状況の詳細を表示するため、使用状況アクセスでStorage Cleanを許可してください。</string>
     <string name="permission_notification_desc">通知を自動的に整理するため、通知アクセスでStorage Cleanを許可してください。</string>
@@ -181,6 +179,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">読み込めませんでした。もう一度お試しください。</string>
+    <string name="speed_test_failed">速度テストに失敗しました。もう一度お試しください。</string>
+    <string name="permission_denied">権限が拒否されました。設定でアクセスを許可してください。</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -469,4 +470,9 @@
     <string name="notification_status_empty_title">通知のブロックが有効です</string>
     <string name="notification_status_empty_message">ブロックした通知はここに表示されます</string>
     <string name="network_speed_estimated">推定速度</string>
+    <string name="similar_photo_grouping_hint">アルバム、更新日時、類似したファイルサイズでグループ化しています。削除する前に写真を確認してください。</string>
+    <string name="junk_review_hint">選択する前に提案されたファイルを確認してください。デフォルトではこのアプリのキャッシュのみが選択されています。</string>
+    <string name="cleanup_stopped_summary">停止しました。%1$d 個のファイルを削除しました（%2$s）。</string>
+    <string name="available_memory_increase">クリーンアップ中に空きメモリが %1$s 増加しました。</string>
+    <string name="settings_post_notifications">通知</string>
 </resources>

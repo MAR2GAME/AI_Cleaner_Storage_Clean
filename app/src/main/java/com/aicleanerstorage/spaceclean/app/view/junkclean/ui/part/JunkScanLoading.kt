@@ -16,10 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanSpiralAnimation
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 
 @Composable
 internal fun JunkScanLoading(uiState: JunkCleanUiState) {
@@ -86,11 +86,9 @@ private fun ScanSizeLabel(formattedSize: String) {
     }
 }
 
-private fun sizeMainValue(formattedSize: String): String =
-    formattedSize.trim().takeWhile { it.isDigit() || it == '.' }.ifBlank { "0" }
+private fun sizeMainValue(formattedSize: String): String = formattedSize.trim().takeWhile { it.isDigit() || it == '.' }.ifBlank { "0" }
 
-private fun sizeUnitValue(formattedSize: String): String =
-    formattedSize.trim().dropWhile { it.isDigit() || it == '.' }.trim()
+private fun sizeUnitValue(formattedSize: String): String = formattedSize.trim().dropWhile { it.isDigit() || it == '.' }.trim()
 
 private fun normalizeScanSize(formattedSize: String): String {
     val trimmed = formattedSize.trim()

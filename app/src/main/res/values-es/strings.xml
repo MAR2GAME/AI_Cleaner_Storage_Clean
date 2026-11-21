@@ -31,6 +31,9 @@
     <string name="scan_loading_fallback">Escaneando...</string>
     <string name="delete_loading_fallback">Eliminando...</string>
     <string name="device_info_load_failed">No se pudo cargar la información del dispositivo.</string>
+    <string name="load_failed">No se pudo cargar. Inténtalo de nuevo.</string>
+    <string name="speed_test_failed">La prueba de velocidad falló. Inténtalo de nuevo.</string>
+    <string name="permission_denied">Permiso denegado. Concede el acceso en los ajustes.</string>
     <string name="file_scan_failed">Error al escanear archivos.</string>
     <string name="duplicate_scan_failed">Error al escanear archivos duplicados.</string>
     <string name="nav_settings">Ajustes</string>
@@ -211,8 +214,6 @@
     <string name="home_app_lock_title">Bloqueo de apps</string>
     <string name="file_unselect">Deseleccionar</string>
     <string name="file_music">M?sica</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_overlay_desc">Para mostrar la pantalla PIN sobre las apps protegidas, permite que Storage Clean se muestre sobre otras apps.</string>
     <string name="rate_title">¿Te gusta Storage Clean?</string>
     <string name="rate_feedback_message">Gracias por tus comentarios. Seguiremos mejorando Storage Clean.</string>
@@ -481,4 +482,9 @@
     <string name="notification_status_empty_title">Interceptación de notificaciones activada</string>
     <string name="notification_status_empty_message">Las notificaciones interceptadas aparecen aquí</string>
     <string name="network_speed_estimated">Velocidad estimada</string>
+    <string name="similar_photo_grouping_hint">Agrupadas por álbum, fecha de modificación y tamaño de archivo similar. Revisa las fotos antes de eliminarlas.</string>
+    <string name="junk_review_hint">Revisa los archivos sugeridos antes de seleccionarlos. Solo la caché de esta app se selecciona de forma predeterminada.</string>
+    <string name="cleanup_stopped_summary">Detenido. Se eliminaron %1$d archivos (%2$s).</string>
+    <string name="available_memory_increase">La memoria disponible aumentó en %1$s durante la limpieza.</string>
+    <string name="settings_post_notifications">Notificaciones</string>
 </resources>

@@ -25,11 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavy
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanDivider
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavy
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavyMuted
 
 @Composable
 internal fun NetworkScanResultCard(uiState: NetworkScanUiState) {
@@ -80,9 +80,10 @@ internal fun NetworkScanInfoRow(
     value: String,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -1,8 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.ui
 
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentAxisBounds
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.batteryCurrentChartPoints
-import com.aicleanerstorage.spaceclean.app.view.battery.ui.downsampleBatteryChartPoints
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartPoint
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentAxisBounds
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartPoints
+import com.aicleanerstorage.spaceclean.app.view.battery.interaction.downsampleBatteryChartPoints
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentSample
 import org.junit.Assert.assertEquals
@@ -26,12 +27,13 @@ class BatteryChartModelTest {
 
     @Test
     fun downsamplingKeepsFirstAndLastPoint() {
-        val points = (0 until 10).map { index ->
-            com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryChartPoint(
-                timestampMillis = index.toLong(),
-                value = index.toFloat(),
-            )
-        }
+        val points =
+            (0 until 10).map { index ->
+                com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChartPoint(
+                    timestampMillis = index.toLong(),
+                    value = index.toFloat(),
+                )
+            }
 
         val result = downsampleBatteryChartPoints(points, 4)
 
@@ -49,4 +51,3 @@ class BatteryChartModelTest {
         assertTrue(bounds.yLabels.isNotEmpty())
     }
 }
-

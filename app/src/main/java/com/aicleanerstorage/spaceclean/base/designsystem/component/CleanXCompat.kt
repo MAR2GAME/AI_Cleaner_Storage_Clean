@@ -37,9 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 val CleanXBackground = Color(0xFFF7FAFD)
 val CleanXText = Color(0xFF2D3748)

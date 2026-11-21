@@ -59,11 +59,12 @@ internal fun NotificationCompleteContent(
                 CommonResultCheckIcon(size = 45.dp)
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
-                    text = stringResource(
-                        R.string.notification_clean_result_count,
-                        cleanedCount,
-                        pluralStringResource(R.plurals.notifications_count, cleanedCount),
-                    ),
+                    text =
+                        stringResource(
+                            R.string.notification_clean_result_count,
+                            cleanedCount,
+                            pluralStringResource(R.plurals.notifications_count, cleanedCount),
+                        ),
                     color = Navy,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,

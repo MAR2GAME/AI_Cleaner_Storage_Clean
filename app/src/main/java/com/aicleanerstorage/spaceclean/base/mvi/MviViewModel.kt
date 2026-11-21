@@ -38,12 +38,8 @@ abstract class MviViewModel<State : Any, Action : Any, Event : Any>(
 
     protected abstract fun onAction(action: Action)
 
-    protected fun setState(reducer: State.() -> State) {
-        mutableState.update(reducer)
-    }
-
-    protected fun changeState(transform: (State) -> State) {
-        if (viewModelScope.isActive) setState(transform)
+    protected fun setState(transform: (State) -> State) {
+        mutableState.update(transform)
     }
 
     protected fun sendEvent(event: Event) {

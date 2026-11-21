@@ -1,13 +1,11 @@
 package com.aicleanerstorage.spaceclean.base.permission
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PermissionGateTest {
     private var granted = false
-    private var rationale = false
     private var afterSystemUi: (() -> Unit)? = null
     private val requested = mutableListOf<AppPermission>()
     private val openedSettings = mutableListOf<AppPermission>()
@@ -15,7 +13,6 @@ class PermissionGateTest {
     private fun gate(): PermissionGate =
         PermissionGate(
             hasPermission = { granted },
-            rationale = { rationale },
         ).apply {
             attach(
                 launchSystemUi = { permission, onDone ->
@@ -25,31 +22,6 @@ class PermissionGateTest {
                 openSettings = { permission -> openedSettings += permission },
             )
         }
-
-    @Test
-    fun `granted permission runs without launching system ui`() {
-        granted = true
-        var ran = false
-
-        gate().allow(AppPermission.StorageFiles) { ran = true }
-
-        assertTrue(ran)
-        assertTrue(requested.isEmpty())
-    }
-
-    @Test
-    fun `denied permission launches first and runs only after recheck passes`() {
-        var ran = false
-        val gate = gate()
-
-        gate.allow(AppPermission.StorageFiles) { ran = true }
-
-        assertEquals(listOf(AppPermission.StorageFiles), requested)
-        assertFalse(ran)
-        granted = true
-        afterSystemUi?.invoke()
-        assertTrue(ran)
-    }
 
     @Test
     fun `result comes from recheck not from launcher callback`() {
@@ -81,7 +53,7 @@ class PermissionGateTest {
         granted = true
         var result: Boolean? = null
         val gate =
-            PermissionGate(hasPermission = { granted }, rationale = { false }).apply {
+            PermissionGate(hasPermission = { granted }).apply {
                 attach(launchSystemUi = { _, onDone -> onDone() }, openSettings = {})
             }
 
@@ -94,19 +66,10 @@ class PermissionGateTest {
     fun `request without attached launchers finishes immediately`() {
         var result: Boolean? = null
 
-        PermissionGate(hasPermission = { granted }, rationale = { false })
+        PermissionGate(hasPermission = { granted })
             .request(AppPermission.StorageFiles) { result = it }
 
         assertEquals(false, result)
-    }
-
-    @Test
-    fun `should show rationale delegates to platform check`() {
-        rationale = true
-        assertTrue(gate().shouldShowRationale(AppPermission.PostNotifications))
-
-        rationale = false
-        assertFalse(gate().shouldShowRationale(AppPermission.PostNotifications))
     }
 
     @Test

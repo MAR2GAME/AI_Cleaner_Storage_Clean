@@ -3,15 +3,18 @@ package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 import com.aicleanerstorage.spaceclean.R
 
 internal object AppLockReducer {
-    fun firstPinEntered(state: AppLockUiState, pin: String): AppLockUiState =
+    fun firstPinEntered(
+        state: AppLockUiState,
+        pin: String,
+    ): AppLockUiState =
         state.copy(
             pinStep = AppLockPinStep.CreateConfirm,
             pinInput = "",
             firstPin = pin,
-            pinErrorRes = null
+            pinErrorRes = null,
         )
 
-    fun pinCreated(state: AppLockUiState, requiresOverlay: Boolean): AppLockUiState =
+    fun pinCreated(state: AppLockUiState): AppLockUiState =
         state.copy(
             page = AppLockPage.Manage,
             pinStep = AppLockPinStep.Create,
@@ -20,16 +23,14 @@ internal object AppLockReducer {
             pinErrorRes = null,
             monitoringEnabled = true,
             isPinSet = true,
-            overlayPermissionRequired = requiresOverlay
         )
 
-    fun pinVerified(state: AppLockUiState, requiresOverlay: Boolean): AppLockUiState =
+    fun pinVerified(state: AppLockUiState): AppLockUiState =
         state.copy(
             page = AppLockPage.Manage,
             pinInput = "",
             pinErrorRes = null,
             isPinSet = true,
-            overlayPermissionRequired = requiresOverlay
         )
 
     fun oldPinVerified(state: AppLockUiState): AppLockUiState =
@@ -37,15 +38,18 @@ internal object AppLockReducer {
             pinStep = AppLockPinStep.ChangeNew,
             pinInput = "",
             firstPin = "",
-            pinErrorRes = null
+            pinErrorRes = null,
         )
 
-    fun newPinEntered(state: AppLockUiState, pin: String): AppLockUiState =
+    fun newPinEntered(
+        state: AppLockUiState,
+        pin: String,
+    ): AppLockUiState =
         state.copy(
             pinStep = AppLockPinStep.ChangeConfirm,
             pinInput = "",
             firstPin = pin,
-            pinErrorRes = null
+            pinErrorRes = null,
         )
 
     fun pinChanged(state: AppLockUiState): AppLockUiState =
@@ -55,13 +59,12 @@ internal object AppLockReducer {
             firstPin = "",
             pinErrorRes = null,
             isPinSet = true,
-            overlayPermissionRequired = false,
-            toastRes = R.string.pin_updated_successfully
+            toastRes = R.string.pin_updated_successfully,
         )
 
     fun pinRejected(state: AppLockUiState): AppLockUiState =
         state.copy(
             pinInput = "",
-            pinErrorRes = R.string.pin_no_match
+            pinErrorRes = R.string.pin_no_match,
         )
 }

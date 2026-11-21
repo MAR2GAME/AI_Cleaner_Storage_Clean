@@ -9,14 +9,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperation
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CleanItem
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBackground
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
 internal fun JunkCleanContent(
@@ -29,41 +30,51 @@ internal fun JunkCleanContent(
 ) {
     when (val phase = uiState.phase) {
         JunkCleanPhase.Idle,
-        JunkCleanPhase.Scanning -> JunkScanLoading(uiState = uiState)
+        JunkCleanPhase.Scanning,
+        -> JunkScanLoading(uiState = uiState)
         is JunkCleanPhase.CheckingPermission -> {
             when (phase.request) {
                 JunkOperation.Scan -> JunkScanLoading(uiState = uiState)
-                JunkOperation.Clean -> JunkScanResultContent(
-                    groups = uiState.groups,
-                    checkedEmptyCategories = uiState.checkedEmptyCategories,
-                    selectedSummary = uiState.selectedSummary,
-                    onToggleCategorySelection = onToggleCategorySelection,
-                    onToggleItem = onToggleItem,
-                    interactionsEnabled = false,
-                )
+                JunkOperation.Clean ->
+                    JunkScanResultContent(
+                        groups = uiState.groups,
+                        checkedEmptyCategories = uiState.checkedEmptyCategories,
+                        selectedSummary = uiState.selectedSummary,
+                        onToggleCategorySelection = onToggleCategorySelection,
+                        onToggleItem = onToggleItem,
+                        interactionsEnabled = false,
+                    )
             }
         }
         JunkCleanPhase.Preview ->
-                JunkScanResultContent(
-                    stoppedSummary = uiState.stoppedSummary?.let {
-                        stringResource(com.aicleanerstorage.spaceclean.R.string.cleanup_stopped_summary, it.cleanedCount, com.aicleanerstorage.spaceclean.base.util.FormatUtil.formatSize(it.freedSpace))
+            JunkScanResultContent(
+                stoppedSummary =
+                    uiState.stoppedSummary?.let {
+                        stringResource(
+                            com.aicleanerstorage.spaceclean.R.string.cleanup_stopped_summary,
+                            it.cleanedCount,
+                            com.aicleanerstorage.spaceclean.base.util.FormatUtil
+                                .formatSize(it.freedSpace),
+                        )
                     },
-                    groups = uiState.groups,
-                    checkedEmptyCategories = uiState.checkedEmptyCategories,
-                    selectedSummary = uiState.selectedSummary,
-                    onToggleCategorySelection = onToggleCategorySelection,
-                    onToggleItem = onToggleItem,
-                    interactionsEnabled = interactionsEnabled,
-                )
+                groups = uiState.groups,
+                checkedEmptyCategories = uiState.checkedEmptyCategories,
+                selectedSummary = uiState.selectedSummary,
+                onToggleCategorySelection = onToggleCategorySelection,
+                onToggleItem = onToggleItem,
+                interactionsEnabled = interactionsEnabled,
+            )
         JunkCleanPhase.Cleaning,
-        JunkCleanPhase.CompleteAnimation -> JunkCleaningContent(
-            stage =
-                if (uiState.phase == JunkCleanPhase.CompleteAnimation) {
-                    CleanXDeleteCompleteStage.Complete
-                } else {
-                    CleanXDeleteCompleteStage.Deleting
-                },
-        )
+        JunkCleanPhase.CompleteAnimation,
+        ->
+            JunkCleaningContent(
+                stage =
+                    if (uiState.phase == JunkCleanPhase.CompleteAnimation) {
+                        CleanXDeleteCompleteStage.Complete
+                    } else {
+                        CleanXDeleteCompleteStage.Deleting
+                    },
+            )
         JunkCleanPhase.AwaitingAuthorization ->
             Box(
                 modifier =
@@ -92,10 +103,9 @@ internal fun JunkCleanContent(
                         .padding(horizontal = 24.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                JunkCleanError(
-                    message = uiState.errorMessage ?: uiState.errorMessageRes?.let { stringResource(it) }.orEmpty(),
+                JunkCleanErrorView(
+                    message = uiState.error?.asString().orEmpty(),
                 )
             }
-
     }
 }

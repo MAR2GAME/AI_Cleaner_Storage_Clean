@@ -8,7 +8,8 @@ plugins {
 apply(from = "product-config.gradle")
 
 val disableReleaseResourceShrink =
-    providers.gradleProperty("disableReleaseResourceShrink")
+    providers
+        .gradleProperty("disableReleaseResourceShrink")
         .map { it.equals("true", ignoreCase = true) }
         .getOrElse(false)
 

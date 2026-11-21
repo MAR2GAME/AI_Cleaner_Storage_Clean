@@ -1,9 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
 data class DuplicateFilesManagerUiState(
+    val permissionGranted: Boolean = false,
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
     val phase: FileOperationPhase = FileOperationPhase.Scanning,
@@ -12,7 +14,7 @@ data class DuplicateFilesManagerUiState(
     val selectedFileKeys: Set<String> = emptySet(),
     val pendingDeleteFileKeys: Set<String>? = null,
     val deletedBytes: Long = 0L,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
     val showWarning: Boolean = false,
     val skippedDeleteCount: Int = 0,
 ) {
@@ -54,5 +56,4 @@ data class DuplicateFilesManagerUiState(
 
     val allSelected: Boolean
         get() = allDeleteFileKeys.isNotEmpty() && selectedFileKeys.containsAll(allDeleteFileKeys)
-
 }

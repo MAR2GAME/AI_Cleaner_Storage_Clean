@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.home.ui.FileManagerTargets
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.FileManagerTargets
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable

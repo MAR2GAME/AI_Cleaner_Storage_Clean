@@ -12,9 +12,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavy
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavy
 
 @Composable
 internal fun NetworkScanDevicesHeaderCard(count: Int) {

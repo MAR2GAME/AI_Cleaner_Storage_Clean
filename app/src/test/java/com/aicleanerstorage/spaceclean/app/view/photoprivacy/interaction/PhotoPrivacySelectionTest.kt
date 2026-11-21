@@ -1,30 +1,28 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
 import com.aicleanerstorage.cleanerkit.files.model.FileUri
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
-import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import java.util.Calendar
-import java.util.TimeZone
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.test.resetMain
-import org.junit.After
-import org.junit.Before
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import java.util.Calendar
+import java.util.TimeZone
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PhotoPrivacySelectionTest {
@@ -41,11 +39,12 @@ class PhotoPrivacySelectionTest {
         withDefaultTimeZone(TimeZone.getTimeZone("UTC")) {
             val mayFirst = timestampMillis(2026, Calendar.MAY, 1)
             val aprilFirst = timestampMillis(2026, Calendar.APRIL, 1)
-            val items = listOf(
-                image(1, aprilFirst / 1000L),
-                image(2, mayFirst),
-                image(3, mayFirst / 1000L),
-            ).withSelectionIds()
+            val items =
+                listOf(
+                    image(1, aprilFirst / 1000L),
+                    image(2, mayFirst),
+                    image(3, mayFirst / 1000L),
+                ).withSelectionIds()
 
             val groups = buildPrivacyPhotoGroups(items)
 
@@ -56,51 +55,60 @@ class PhotoPrivacySelectionTest {
     }
 
     @Test
-    fun `global and group toggles keep selection states synchronized`() = runTest {
-        val viewModel = viewModel(FakeFileRepository())
+    fun `global and group toggles keep selection states synchronized`() =
+        runTest {
+            val viewModel = viewModel(FakeFileRepository())
 
-        viewModel.dispatch(FileManagerAction.RefreshRequested)
-        advanceUntilIdle()
+            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            advanceUntilIdle()
 
-        val initial = viewModel.state.value
-        assertTrue(initial.allSelected)
-        assertEquals(initial.visibleIds, initial.selectedIds)
+            val initial = viewModel.state.value
+            assertTrue(initial.allSelected)
+            assertEquals(initial.visibleIds, initial.selectedIds)
 
-        viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
-        assertTrue(viewModel.state.value.selectedIds.isEmpty())
-        assertFalse(viewModel.state.value.allSelected)
+            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            assertTrue(
+                viewModel.state.value.selectedIds
+                    .isEmpty(),
+            )
+            assertFalse(viewModel.state.value.allSelected)
 
-        val firstGroupIds = initial.groups.first().ids
-        viewModel.dispatch(FileManagerAction.VisibleSelectionToggled(firstGroupIds))
-        assertEquals(firstGroupIds, viewModel.state.value.selectedIds)
-        assertFalse(viewModel.state.value.allSelected)
+            val firstGroupIds = initial.groups.first().ids
+            viewModel.dispatch(FileManagerAction.VisibleSelectionToggled(firstGroupIds))
+            assertEquals(firstGroupIds, viewModel.state.value.selectedIds)
+            assertFalse(viewModel.state.value.allSelected)
 
-        viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
-        assertTrue(viewModel.state.value.allSelected)
-        assertEquals(initial.visibleIds, viewModel.state.value.selectedIds)
-    }
+            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            assertTrue(viewModel.state.value.allSelected)
+            assertEquals(initial.visibleIds, viewModel.state.value.selectedIds)
+        }
 
     @Test
-    fun `removing location data submits only selected photos and rebuilds groups`() = runTest {
-        val repository = FakeFileRepository()
-        val viewModel = viewModel(repository)
+    fun `removing location data submits only selected photos and rebuilds groups`() =
+        runTest {
+            val repository = FakeFileRepository()
+            val viewModel = viewModel(repository)
 
-        viewModel.dispatch(FileManagerAction.RefreshRequested)
-        advanceUntilIdle()
-        viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
-        viewModel.dispatch(FileManagerAction.SelectionToggled(1))
-        viewModel.dispatch(FileManagerAction.LocationRemovalConfirmed)
-        advanceUntilIdle()
+            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            advanceUntilIdle()
+            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            viewModel.dispatch(FileManagerAction.SelectionToggled(1))
+            viewModel.dispatch(FileManagerAction.LocationRemovalConfirmed)
+            advanceUntilIdle()
 
-        assertEquals(listOf(1L), repository.removedIds)
-        assertEquals(FileOperationPhase.Result, viewModel.state.value.phase)
-        assertTrue(viewModel.state.value.items.none { it.file.id == 1L })
-        assertTrue(viewModel.state.value.selectedIds.isEmpty())
-    }
+            assertEquals(listOf(1L), repository.removedIds)
+            assertEquals(FileOperationPhase.Result, viewModel.state.value.phase)
+            assertTrue(
+                viewModel.state.value.items
+                    .none { it.file.id == 1L },
+            )
+            assertTrue(
+                viewModel.state.value.selectedIds
+                    .isEmpty(),
+            )
+        }
 
-    private fun viewModel(
-        repository: FileRepository,
-    ): PhotoPrivacyManagerViewModel =
+    private fun viewModel(repository: FileRepository): PhotoPrivacyManagerViewModel =
         PhotoPrivacyManagerViewModel(
             repository = repository,
             ioDispatcher = dispatcher,
@@ -110,27 +118,38 @@ class PhotoPrivacySelectionTest {
         )
 
     private class FakeFileRepository : FileRepository {
-        private var privacyImages = listOf(
-            image(1, timestampMillis(2026, Calendar.MAY, 1) / 1000L),
-            image(2, timestampMillis(2026, Calendar.MAY, 2) / 1000L),
-            image(3, timestampMillis(2026, Calendar.APRIL, 1) / 1000L),
-        )
+        private var privacyImages =
+            listOf(
+                image(1, timestampMillis(2026, Calendar.MAY, 1) / 1000L),
+                image(2, timestampMillis(2026, Calendar.MAY, 2) / 1000L),
+                image(3, timestampMillis(2026, Calendar.APRIL, 1) / 1000L),
+            )
         var removedIds: List<Long> = emptyList()
             private set
 
         override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadPrivacyImages(): List<ManagedFileItem> = privacyImages
+
         override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
+
         override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
+
         override suspend fun loadFilesInDirectories(
             relativeDirectories: List<String>,
             matchesMedia: (ManagedFileItem) -> Boolean,
         ): List<ManagedFileItem> = emptyList()
+
         override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult = FileDeleteResult(emptyList())
+
         override suspend fun removeLocationData(items: List<ManagedFileItem>): Int {
             removedIds = items.map { it.id }
             privacyImages = privacyImages.filterNot { candidate -> items.any { it.id == candidate.id } }
@@ -139,7 +158,10 @@ class PhotoPrivacySelectionTest {
     }
 
     private companion object {
-        fun image(id: Long, modifiedSeconds: Long): ManagedFileItem =
+        fun image(
+            id: Long,
+            modifiedSeconds: Long,
+        ): ManagedFileItem =
             ManagedFileItem(
                 id = id,
                 uri = FileUri("content://media/external/images/media/$id"),
@@ -152,14 +174,21 @@ class PhotoPrivacySelectionTest {
                 type = ManagedFileType.Image,
             )
 
-        fun timestampMillis(year: Int, month: Int, day: Int): Long =
+        fun timestampMillis(
+            year: Int,
+            month: Int,
+            day: Int,
+        ): Long =
             Calendar.getInstance(TimeZone.getTimeZone("UTC")).run {
                 clear()
                 set(year, month, day, 12, 0, 0)
                 timeInMillis
             }
 
-        fun withDefaultTimeZone(timeZone: TimeZone, block: () -> Unit) {
+        fun withDefaultTimeZone(
+            timeZone: TimeZone,
+            block: () -> Unit,
+        ) {
             val previous = TimeZone.getDefault()
             try {
                 TimeZone.setDefault(timeZone)

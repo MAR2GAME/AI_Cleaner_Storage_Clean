@@ -28,19 +28,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiState
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.PinErrorColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.PinErrorColor
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTopAppBar
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 
 @Composable
-internal fun AppLockPinPanel(uiState: AppLockUiState, onDigit: (Char) -> Unit, onDelete: () -> Unit, onBack: () -> Unit) {
+internal fun AppLockPinPanel(
+    uiState: AppLockUiState,
+    onDigit: (Char) -> Unit,
+    onDelete: () -> Unit,
+    onBack: () -> Unit,
+) {
     val context = LocalContext.current
     val errorOffset = remember { Animatable(0f) }
     LaunchedEffect(uiState.pinErrorRes) {
         if (uiState.pinErrorRes != null) {
             errorOffset.snapTo(0f)
             listOf(20f, -20f, 20f, -20f, 0f).forEach { errorOffset.animateTo(it, tween(80)) }
-        } else errorOffset.snapTo(0f)
+        } else {
+            errorOffset.snapTo(0f)
+        }
     }
 
     Box(Modifier.fillMaxSize().background(Color(0xFFF4F4F4)).stableNavigationBarsPadding()) {
@@ -48,10 +55,26 @@ internal fun AppLockPinPanel(uiState: AppLockUiState, onDigit: (Char) -> Unit, o
             title = stringResource(R.string.app_lock),
             onBack = onBack,
         )
-        Text(stringResource(uiState.pinStep.hintRes), color = Color(0xFF282927), fontSize = 18.sp, modifier = Modifier.fillMaxWidth().padding(top = 170.dp), textAlign = TextAlign.Center)
+        Text(
+            stringResource(uiState.pinStep.hintRes),
+            color = Color(0xFF282927),
+            fontSize = 18.sp,
+            modifier = Modifier.fillMaxWidth().padding(top = 170.dp),
+            textAlign = TextAlign.Center,
+        )
         PinDots(uiState.pinInput.length, Modifier.align(Alignment.TopCenter).padding(top = 233.dp))
         if (uiState.pinErrorRes != null) {
-            Text(stringResource(uiState.pinErrorRes), color = PinErrorColor, fontSize = 14.sp, modifier = Modifier.fillMaxWidth().padding(top = 260.dp).graphicsLayer { translationX = errorOffset.value }, textAlign = TextAlign.Center)
+            Text(
+                stringResource(uiState.pinErrorRes),
+                color = PinErrorColor,
+                fontSize = 14.sp,
+                modifier =
+                    Modifier.fillMaxWidth().padding(top = 260.dp).graphicsLayer {
+                        translationX =
+                            errorOffset.value
+                    },
+                textAlign = TextAlign.Center,
+            )
         }
         NumberPad(
             modifier = Modifier.align(Alignment.TopCenter).padding(top = 289.dp),
@@ -65,7 +88,10 @@ internal fun AppLockPinPanel(uiState: AppLockUiState, onDigit: (Char) -> Unit, o
 }
 
 @Composable
-private fun PinDots(length: Int, modifier: Modifier = Modifier) {
+private fun PinDots(
+    length: Int,
+    modifier: Modifier = Modifier,
+) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
         repeat(4) { index ->
             Box(Modifier.size(24.dp).background(if (index < length) Color(0xFF282927) else Color.Transparent, CircleShape))
@@ -74,10 +100,20 @@ private fun PinDots(length: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun NumberPad(modifier: Modifier, onDigit: (Char) -> Unit, onDelete: () -> Unit) {
+private fun NumberPad(
+    modifier: Modifier,
+    onDigit: (Char) -> Unit,
+    onDelete: () -> Unit,
+) {
     val rows = listOf(listOf('1', '2', '3'), listOf('4', '5', '6'), listOf('7', '8', '9'))
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        rows.forEach { row -> Row(horizontalArrangement = Arrangement.spacedBy(44.dp)) { row.forEach { digit -> NumberButton(digit.toString()) { onDigit(digit) } } } }
+        rows.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(44.dp)) {
+                row.forEach { digit ->
+                    NumberButton(digit.toString()) { onDigit(digit) }
+                }
+            }
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(44.dp), verticalAlignment = Alignment.CenterVertically) {
             Spacer(Modifier.size(66.dp))
             NumberButton("0") { onDigit('0') }
@@ -87,14 +123,50 @@ private fun NumberPad(modifier: Modifier, onDigit: (Char) -> Unit, onDelete: () 
 }
 
 @Composable
-private fun NumberButton(label: String?, onClick: () -> Unit) {
-    Box(Modifier.size(66.dp).background(Color.White.copy(alpha = 0.65f), CircleShape).clickable(remember { MutableInteractionSource() }, indication = null, onClick = onClick), contentAlignment = Alignment.Center) {
-        if (label != null) Text(label, color = Color(0xFF282927), fontSize = 32.sp, fontWeight = FontWeight.Medium)
-        else Image(painterResource(R.drawable.ic_pin_delete_figma), contentDescription = stringResource(R.string.delete), modifier = Modifier.size(36.dp))
+private fun NumberButton(
+    label: String?,
+    onClick: () -> Unit,
+) {
+    Box(
+        Modifier.size(66.dp).background(Color.White.copy(alpha = 0.65f), CircleShape).clickable(
+            remember {
+                MutableInteractionSource()
+            },
+            indication = null,
+            onClick = onClick,
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (label != null) {
+            Text(label, color = Color(0xFF282927), fontSize = 32.sp, fontWeight = FontWeight.Medium)
+        } else {
+            Image(
+                painterResource(R.drawable.ic_pin_delete_figma),
+                contentDescription = stringResource(R.string.delete),
+                modifier = Modifier.size(36.dp),
+            )
+        }
     }
 }
 
 private fun performPinVibration(context: Context) {
-    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator else @Suppress("DEPRECATION") (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
-    runCatching { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibrator.vibrate(VibrationEffect.createOneShot(30L, VibrationEffect.DEFAULT_AMPLITUDE)) else @Suppress("DEPRECATION") vibrator.vibrate(30L) }
+    val vibrator =
+        if (Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.S
+        ) {
+            (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            (context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
+        }
+    runCatching {
+        if (Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.O
+        ) {
+            vibrator.vibrate(VibrationEffect.createOneShot(30L, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(30L)
+        }
+    }
 }

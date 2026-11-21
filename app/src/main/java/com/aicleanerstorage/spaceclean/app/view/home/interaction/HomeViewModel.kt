@@ -1,16 +1,16 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import com.aicleanerstorage.devicekit.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.data.applock.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val AUTO_RATE_PROMPT_DELAY_MS = 15_000L
 private const val AUTO_RATE_PROMPT_COOLDOWN_MS = 24L * 60 * 60 * 1000
@@ -23,7 +23,6 @@ class HomeViewModel(
     private val autoRateDispatcher: CoroutineDispatcher = Dispatchers.Main,
     private val autoRatePromptDelayMillis: Long = AUTO_RATE_PROMPT_DELAY_MS,
 ) : MviViewModel<HomeUiState, HomeAction, HomeEvent>(HomeUiState()) {
-
     private var autoRatePromptJob: Job? = null
     private var entered = false
     private var featureClicked = false
@@ -34,7 +33,7 @@ class HomeViewModel(
         scheduleAutoRatePrompt()
         viewModelScope.launch {
             appLockRepository.lockedAppCountFlow.collect { count ->
-                changeState { it.copy(summary = it.summary.copy(lockedAppCount = count)) }
+                setState { it.copy(summary = it.summary.copy(lockedAppCount = count)) }
             }
         }
     }
@@ -48,46 +47,60 @@ class HomeViewModel(
             HomeAction.TabInteracted -> onTabInteraction()
             HomeAction.SummaryRefreshRequested -> refreshSummary()
             is HomeAction.ExternalBlockingPromptChanged -> setExternalBlockingPromptActive(action.active)
-            is HomeAction.Entered -> if (!entered) { entered = true; selectTab(action.initialTab) }
-            is HomeAction.TabSelected -> { entered = true; onTabInteraction(); selectTab(action.index) }
-            is HomeAction.NavigationRequested -> { onFeatureClicked(); sendEvent(HomeEvent.Navigate(action.destination)) }
+            is HomeAction.Entered ->
+                if (!entered) {
+                    entered = true
+                    selectTab(action.initialTab)
+                }
+            is HomeAction.TabSelected -> {
+                entered = true
+                onTabInteraction()
+                selectTab(action.index)
+            }
+            is HomeAction.NavigationRequested -> {
+                onFeatureClicked()
+                sendEvent(HomeEvent.Navigate(action.destination))
+            }
             HomeAction.ExitConfirmed -> sendEvent(HomeEvent.ExitApp)
             HomeAction.RateAppClicked -> sendEvent(HomeEvent.RateApp)
+            HomeAction.ExitPromptViewClicked -> {
+                consumeExitPromptForNavigation()?.let { sendEvent(HomeEvent.Navigate(it)) }
+            }
         }
     }
 
     private fun selectTab(index: Int) {
-        changeState { it.copy(selectedTab = index.coerceIn(0, 2)) }
+        setState { it.copy(selectedTab = index.coerceIn(0, 2)) }
     }
 
     private fun requestExitPrompt() {
         if (currentState.exitPromptDestination != null) return
         autoRatePromptJob?.cancel()
         val destination = nextExitPromptDestination()
-        changeState { it.copy(exitPromptDestination = destination) }
+        setState { it.copy(exitPromptDestination = destination) }
     }
 
     private fun dismissExitPrompt() {
-        changeState { it.copy(exitPromptDestination = null) }
+        setState { it.copy(exitPromptDestination = null) }
     }
 
     private fun dismissAutoRateDialog() {
-        changeState { it.copy(showAutoRateDialog = false) }
+        setState { it.copy(showAutoRateDialog = false) }
     }
 
     private fun onFeatureClicked() {
         featureClicked = true
         autoRatePromptJob?.cancel()
-        changeState { it.copy(showAutoRateDialog = false) }
+        setState { it.copy(showAutoRateDialog = false) }
     }
 
     private fun setExternalBlockingPromptActive(active: Boolean) {
         if (externalBlockingPromptActive == active) return
         externalBlockingPromptActive = active
-        changeState { it.copy(externalBlockingPromptActive = active) }
+        setState { it.copy(externalBlockingPromptActive = active) }
         if (active) {
             autoRatePromptJob?.cancel()
-            changeState { it.copy(showAutoRateDialog = false) }
+            setState { it.copy(showAutoRateDialog = false) }
             return
         }
         scheduleAutoRatePrompt()
@@ -97,10 +110,10 @@ class HomeViewModel(
         onFeatureClicked()
     }
 
-    fun consumeExitPromptForNavigation(): AppDestination? {
+    private fun consumeExitPromptForNavigation(): AppDestination? {
         val route = currentState.exitPromptDestination ?: return null
         onFeatureClicked()
-        changeState { it.copy(exitPromptDestination = null) }
+        setState { it.copy(exitPromptDestination = null) }
         return route
     }
 
@@ -121,7 +134,7 @@ class HomeViewModel(
                 }.getOrElse {
                     currentSummary.copy(isLoading = false)
                 }
-            changeState { it.copy(summary = loadedState) }
+            setState { it.copy(summary = loadedState) }
         }
     }
 
@@ -131,13 +144,14 @@ class HomeViewModel(
             settingsRepository.saveNotificationCleanerExitPromptShown()
             return notificationCleaner
         }
-        val suggestions = listOf(
-            AppDestination.DeviceInfo,
-            AppDestination.JunkClean,
-            AppDestination.BatteryInfo,
-            AppDestination.NetworkScan,
-            AppDestination.NetworkUsage,
-        )
+        val suggestions =
+            listOf(
+                AppDestination.DeviceInfo,
+                AppDestination.JunkClean,
+                AppDestination.BatteryInfo,
+                AppDestination.NetworkScan,
+                AppDestination.NetworkUsage,
+            )
         return suggestions.randomOrNull() ?: notificationCleaner
     }
 
@@ -152,7 +166,7 @@ class HomeViewModel(
                 if (featureClicked) return@launch
                 if (externalBlockingPromptActive) return@launch
                 settingsRepository.saveLastAutoRatePromptAt(System.currentTimeMillis())
-                changeState { it.copy(showAutoRateDialog = true) }
+                setState { it.copy(showAutoRateDialog = true) }
             }
     }
 

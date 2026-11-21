@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockAction
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockPage
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiState
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockBackground
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockBackground
 
 @Composable
 internal fun AppLockContent(
@@ -16,34 +16,40 @@ internal fun AppLockContent(
     onAction: (AppLockAction) -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppLockBackground)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(AppLockBackground),
     ) {
         when (uiState.page) {
-            AppLockPage.SelectApps -> AppLockSelectionList(
-                uiState = uiState,
-                onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) }
-            )
+            AppLockPage.SelectApps ->
+                AppLockSelectionList(
+                    uiState = uiState,
+                    onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) },
+                )
             AppLockPage.Pin -> Unit
-            AppLockPage.Manage -> AppLockManageContent(
-                uiState = uiState,
-                onOpenSearch = { onAction(AppLockAction.SearchClicked) },
-                onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) },
-                onToggleAll = { onAction(AppLockAction.AllAppsSelectionToggled) },
-                onAutoLockChange = { onAction(AppLockAction.AutoLockChanged(it)) }
-            )
-            AppLockPage.Search -> AppLockSearchContent(
-                uiState = uiState,
-                onSearch = { onAction(AppLockAction.SearchQueryChanged(it)) },
-                onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) }
-            )
-            AppLockPage.Settings -> AppLockSettingsContent(
-                uiState = uiState,
-                onMonitoringChange = { onAction(AppLockAction.MonitoringChanged(it)) },
-                onVibrationChange = { onAction(AppLockAction.VibrationChanged(it)) },
-                onStartChangePin = { onAction(AppLockAction.ChangePinClicked) }
-            )
+            AppLockPage.Manage ->
+                AppLockManageContent(
+                    uiState = uiState,
+                    onOpenSearch = { onAction(AppLockAction.SearchClicked) },
+                    onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) },
+                    onToggleAll = { onAction(AppLockAction.AllAppsSelectionToggled) },
+                    onAutoLockChange = { onAction(AppLockAction.AutoLockChanged(it)) },
+                    onPermissionClick = { onAction(AppLockAction.PermissionClicked(it)) },
+                )
+            AppLockPage.Search ->
+                AppLockSearchContent(
+                    uiState = uiState,
+                    onSearch = { onAction(AppLockAction.SearchQueryChanged(it)) },
+                    onTogglePackage = { onAction(AppLockAction.PackageToggled(it)) },
+                )
+            AppLockPage.Settings ->
+                AppLockSettingsContent(
+                    uiState = uiState,
+                    onMonitoringChange = { onAction(AppLockAction.MonitoringChanged(it)) },
+                    onVibrationChange = { onAction(AppLockAction.VibrationChanged(it)) },
+                    onStartChangePin = { onAction(AppLockAction.ChangePinClicked) },
+                )
         }
     }
 }

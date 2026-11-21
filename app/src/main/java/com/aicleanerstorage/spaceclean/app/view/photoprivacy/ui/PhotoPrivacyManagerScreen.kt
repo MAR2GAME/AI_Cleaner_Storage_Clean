@@ -11,21 +11,18 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.DeleteConfirmDialog
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerBottomActionBar
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPhotoPrivacyView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.DeleteConfirmDialog
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBottomActionBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun PhotoPrivacyManagerScreen(
     state: PhotoPrivacyManagerUiState,
-    permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BackHandler { onAction(FileManagerAction.BackClicked) }
@@ -33,7 +30,7 @@ fun PhotoPrivacyManagerScreen(
         title = stringResource(R.string.nav_photo_privacy),
         onBack = { onAction(FileManagerAction.BackClicked) },
         bottomBar = {
-            if (permissionGranted &&
+            if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults)
             ) {
                 FileManagerBottomActionBar(
@@ -54,7 +51,7 @@ fun PhotoPrivacyManagerScreen(
                 resultAmount = state.removedLocationCount.toString(),
                 resultUnit = stringResource(R.string.file_photos),
                 resultCaption = stringResource(R.string.file_location_data_removed),
-                onNavigateTool = onNavigate,
+                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
             ) {
                 FileManagerPhotoPrivacyView(
@@ -68,7 +65,7 @@ fun PhotoPrivacyManagerScreen(
             }
         }
     }
-    if (permissionGranted && state.phase == FileOperationPhase.ConfirmDelete) {
+    if (state.permissionGranted && state.phase == FileOperationPhase.ConfirmDelete) {
         DeleteConfirmDialog(
             title = stringResource(R.string.file_remove_location_title),
             message = stringResource(R.string.file_remove_location_message),

@@ -113,10 +113,11 @@ private fun CleanXDeleteCompleteCheckAnimation(
     var animationStarted by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (animationStarted) 1f else 0.35f,
-        animationSpec = tween(
-            durationMillis = 800,
-            easing = FastOutSlowInEasing,
-        ),
+        animationSpec =
+            tween(
+                durationMillis = 800,
+                easing = FastOutSlowInEasing,
+            ),
         label = "whatsAppCleanCompleteScale",
     )
 

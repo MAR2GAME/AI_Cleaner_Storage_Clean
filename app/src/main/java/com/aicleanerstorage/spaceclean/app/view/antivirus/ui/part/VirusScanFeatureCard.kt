@@ -25,9 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 
 @Composable
-internal fun VirusScanFeatureCard(
-    modifier: Modifier = Modifier,
-) {
+internal fun VirusScanFeatureCard(modifier: Modifier = Modifier) {
     val features =
         listOf(
             R.mipmap.ic_virus to R.string.virus,

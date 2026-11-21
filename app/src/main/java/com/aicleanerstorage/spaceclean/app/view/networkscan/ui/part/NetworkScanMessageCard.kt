@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavyMuted
 
 @Composable
 internal fun NetworkScanMessageCard(

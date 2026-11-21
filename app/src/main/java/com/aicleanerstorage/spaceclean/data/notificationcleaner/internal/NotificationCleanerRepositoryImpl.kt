@@ -20,9 +20,14 @@ internal class NotificationCleanerRepositoryImpl(
 
     override fun shouldBlock(packageName: String) = NotificationCleanerDataSource.shouldBlock(appContext, listener, packageName)
 
-    override fun recordBlockedNotification(posted: PostedNotificationModel) = NotificationCleanerDataSource.recordBlockedNotification(appContext, if (retainContent) posted else posted.copy(title = "", text = ""))
+    override fun recordBlockedNotification(posted: PostedNotificationModel) =
+        NotificationCleanerDataSource.recordBlockedNotification(
+            appContext,
+            if (retainContent) posted else posted.copy(title = "", text = ""),
+        )
 
-    override fun hasNotificationListenerAccess(): Boolean = NotificationCleanerDataSource.hasNotificationListenerAccess(appContext, listener)
+    override fun hasNotificationListenerAccess(): Boolean =
+        NotificationCleanerDataSource.hasNotificationListenerAccess(appContext, listener)
 
     override fun notificationSnapshot(includeApps: Boolean): NotificationCleanerSnapshotModel {
         val hasAccess = hasNotificationListenerAccess()

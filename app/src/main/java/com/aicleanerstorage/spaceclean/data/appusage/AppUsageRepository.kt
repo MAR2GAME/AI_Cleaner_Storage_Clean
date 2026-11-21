@@ -11,5 +11,10 @@ interface AppUsageRepository {
     ): List<AppUsageInfoModel>
 
     suspend fun runningPackages(packageNames: Set<String>): Set<String>
-}
 
+    /**
+     * Package currently in the foreground, or null when usage access is missing or
+     * the system reports nothing. Used by the App Lock monitor.
+     */
+    suspend fun foregroundPackage(): String?
+}

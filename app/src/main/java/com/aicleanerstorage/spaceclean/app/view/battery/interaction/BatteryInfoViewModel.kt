@@ -1,15 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.interaction
 
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoMode
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoStateController
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -31,7 +31,7 @@ class BatteryInfoViewModel(
             ioDispatcher = ioDispatcher,
             initialMode = DeviceInfoMode.Battery,
             currentState = { currentState },
-            changeState = ::changeState,
+            setState = ::setState,
         )
 
     override fun onAction(action: BatteryInfoAction) {
@@ -63,4 +63,3 @@ class BatteryInfoViewModel(
         super.onCleared()
     }
 }
-

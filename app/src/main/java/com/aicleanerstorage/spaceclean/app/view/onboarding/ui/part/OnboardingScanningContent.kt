@@ -56,20 +56,23 @@ internal fun OnboardingScanningContent(
     val scanLineProgress by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = ONBOARDING_SCAN_LINE_DURATION_MILLIS,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = ONBOARDING_SCAN_LINE_DURATION_MILLIS,
+                        easing = LinearEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
         label = "scanLine",
     )
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(62.dp))
@@ -116,9 +119,10 @@ internal fun DeviceRows(
     cardHeight: androidx.compose.ui.unit.Dp,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(cardHeight),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(cardHeight),
         color = Color.White,
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -130,10 +134,11 @@ internal fun DeviceRows(
                 DeviceRow(row = row)
                 if (index < rows.lastIndex) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(OnboardingDivider),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(OnboardingDivider),
                     )
                 }
             }
@@ -144,9 +149,10 @@ internal fun DeviceRows(
 @Composable
 private fun DeviceRow(row: DeviceScanRow) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(23.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(23.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -180,14 +186,15 @@ private fun DeviceRow(row: DeviceScanRow) {
 private fun StatusBadge(row: DeviceScanRow) {
     when {
         row.complete -> CompletedBadge()
-        row.active -> RotatingRingAnimation(
-            modifier = Modifier.size(20.dp),
-            ringWidth = 1.75.dp,
-            ringColor = OnboardingGreen,
-            backgroundColor = Color(0x40999999),
-            animationDurationMillis = 1200,
-            arcLength = 180f,
-        )
+        row.active ->
+            RotatingRingAnimation(
+                modifier = Modifier.size(20.dp),
+                ringWidth = 1.75.dp,
+                ringColor = OnboardingGreen,
+                backgroundColor = Color(0x40999999),
+                animationDurationMillis = 1200,
+                arcLength = 180f,
+            )
         else -> EmptyBadge()
     }
 }
@@ -208,9 +215,10 @@ private fun PhoneScanIllustration(
         Image(
             painter = painterResource(id = R.drawable.scan_phone),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(width = 96.dp, height = 150.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .size(width = 96.dp, height = 150.dp),
             contentScale = ContentScale.Fit,
         )
         Image(
@@ -222,10 +230,11 @@ private fun PhoneScanIllustration(
         Image(
             painter = painterResource(id = R.drawable.scan_phone_line),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = (56 + 90 * scanLineProgress).dp)
-                .size(width = 192.dp, height = 18.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = (56 + 90 * scanLineProgress).dp)
+                    .size(width = 192.dp, height = 18.dp),
             contentScale = ContentScale.FillBounds,
         )
     }
@@ -264,7 +273,15 @@ private fun ScanCornerFrame(modifier: Modifier = Modifier) {
 
         fun drawBottomRight() {
             drawLine(color, Offset(right, bottom - radius - leg), Offset(right, bottom - radius), stroke, StrokeCap.Round)
-            drawArc(color, 0f, 90f, false, Offset(right - radius * 2f, bottom - radius * 2f), arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
+            drawArc(
+                color,
+                0f,
+                90f,
+                false,
+                Offset(right - radius * 2f, bottom - radius * 2f),
+                arcSize,
+                style = Stroke(stroke, cap = StrokeCap.Round),
+            )
             drawLine(color, Offset(right - radius, bottom), Offset(right - radius - leg, bottom), stroke, StrokeCap.Round)
         }
 
@@ -278,10 +295,11 @@ private fun ScanCornerFrame(modifier: Modifier = Modifier) {
 @Composable
 private fun CompletedBadge() {
     Box(
-        modifier = Modifier
-            .size(20.dp)
-            .clip(CircleShape)
-            .background(OnboardingGreen),
+        modifier =
+            Modifier
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(OnboardingGreen),
         contentAlignment = Alignment.Center,
     ) {
         Canvas(modifier = Modifier.size(20.dp)) {
@@ -306,9 +324,10 @@ private fun CompletedBadge() {
 @Composable
 private fun EmptyBadge() {
     Box(
-        modifier = Modifier
-            .size(20.dp)
-            .border(width = 1.75.dp, color = Color(0x40999999), shape = CircleShape),
+        modifier =
+            Modifier
+                .size(20.dp)
+                .border(width = 1.75.dp, color = Color(0x40999999), shape = CircleShape),
     )
 }
 

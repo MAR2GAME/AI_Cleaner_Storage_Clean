@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerGroupItem
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerSubItem
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerUiState
@@ -44,6 +42,8 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedTe
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
 
 @Composable
 internal fun WhatsAppScanResultContent(

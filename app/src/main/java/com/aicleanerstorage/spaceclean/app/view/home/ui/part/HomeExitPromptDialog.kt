@@ -47,7 +47,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.home.ui.ToolNotificationSpec
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.ToolNotificationSpec
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.LocalAppThemeTokens
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -199,7 +199,7 @@ private fun NotificationCleanerExitPromptDialog(
                             text = stringResource(R.string.close),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF999999)
+                            color = Color(0xFF999999),
                         )
                     }
                 }
@@ -259,13 +259,11 @@ private fun HomeExitPromptScaffold(
                                         1f to Color.White,
                                     ),
                             ),
-                        )
-                        .clickable(
+                        ).clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {},
-                        )
-                        .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp),
+                        ).padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 content()

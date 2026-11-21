@@ -19,9 +19,10 @@ internal fun VirusThreatIconContent(
 ) {
     if (drawable != null) {
         Image(
-            painter = remember(drawable) {
-                BitmapPainter(drawable.toBitmap().asImageBitmap())
-            },
+            painter =
+                remember(drawable) {
+                    BitmapPainter(drawable.toBitmap().asImageBitmap())
+                },
             contentDescription = null,
             modifier = modifier,
             contentScale = ContentScale.Fit,

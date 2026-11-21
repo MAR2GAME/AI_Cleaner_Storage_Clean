@@ -13,20 +13,17 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDeleteBottomBar
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerSimilarPhotosView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerSimilarPhotosView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun SimilarPhotosManagerScreen(
     state: SimilarPhotosManagerUiState,
-    permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = remember { ScrollState(0) }
@@ -37,7 +34,7 @@ fun SimilarPhotosManagerScreen(
         title = stringResource(R.string.nav_similar_photos),
         onBack = { onAction(FileManagerAction.BackClicked) },
         bottomBar = {
-            if (permissionGranted &&
+            if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
                 !isDetailMode
             ) {
@@ -62,7 +59,7 @@ fun SimilarPhotosManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = onNavigate,
+                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
             ) {
                 FileManagerSimilarPhotosView(
@@ -74,7 +71,11 @@ fun SimilarPhotosManagerScreen(
                     scrollState = scrollState,
                     onToggleAll = { onAction(FileManagerAction.VisibleItemsToggled) },
                     onToggleGroup = { group ->
-                        val bulkSelectableIds = group.items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+                        val bulkSelectableIds =
+                            group.items
+                                .filterNot { it.bestPhoto }
+                                .map { it.id }
+                                .toSet()
                         onAction(FileManagerAction.GroupItemsToggled(bulkSelectableIds))
                     },
                     onSelect = { onAction(FileManagerAction.SelectionToggled(it)) },

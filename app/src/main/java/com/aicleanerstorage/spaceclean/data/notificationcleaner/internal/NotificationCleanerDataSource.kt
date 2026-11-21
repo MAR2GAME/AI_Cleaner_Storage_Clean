@@ -6,10 +6,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.core.content.edit
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockedNotificationModel
 import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.PostedNotificationModel
-import androidx.core.content.edit
 import java.util.Base64
 import java.util.UUID
 
@@ -23,7 +23,10 @@ internal object NotificationCleanerDataSource {
     private val DEFAULT_PACKAGES =
         listOf("com.tencent.wemeet.app", "com.google.android.youtube", "com.spotify.music")
 
-    fun isEnabled(context: Context, listener: ComponentName?): Boolean = prefs(context).getBoolean(KEY_ENABLED, false) && hasNotificationListenerAccess(context, listener)
+    fun isEnabled(
+        context: Context,
+        listener: ComponentName?,
+    ): Boolean = prefs(context).getBoolean(KEY_ENABLED, false) && hasNotificationListenerAccess(context, listener)
 
     fun setEnabled(
         context: Context,
@@ -35,7 +38,8 @@ internal object NotificationCleanerDataSource {
     }
 
     fun blockedNotifications(context: Context): List<BlockedNotificationModel> =
-        BlockedNotificationCodec.decode(prefs(context).getString(KEY_BLOCKED_NOTIFICATIONS, ""))
+        BlockedNotificationCodec
+            .decode(prefs(context).getString(KEY_BLOCKED_NOTIFICATIONS, ""))
             .filterNot { it.packageName == context.packageName }
 
     fun recordBlockedNotification(
@@ -78,7 +82,9 @@ internal object NotificationCleanerDataSource {
     }
 
     fun selectedPackages(context: Context): Set<String> =
-        prefs(context).getStringSet(KEY_SELECTED_PACKAGES, DEFAULT_PACKAGES.toSet()).orEmpty()
+        prefs(context)
+            .getStringSet(KEY_SELECTED_PACKAGES, DEFAULT_PACKAGES.toSet())
+            .orEmpty()
             .filterNot { it == context.packageName }
             .toSet()
 
@@ -101,12 +107,12 @@ internal object NotificationCleanerDataSource {
                     .thenByDescending { it.packageName in selected }
                     .thenBy { it.appName.lowercase() },
             ).ifEmpty {
-            listOf(
-                BlockableNotificationAppModel("Tencent Meeting", "com.tencent.wemeet.app"),
-                BlockableNotificationAppModel("YouTube", "com.google.android.youtube"),
-                BlockableNotificationAppModel("Spotify", "com.spotify.music"),
-            )
-        }
+                listOf(
+                    BlockableNotificationAppModel("Tencent Meeting", "com.tencent.wemeet.app"),
+                    BlockableNotificationAppModel("YouTube", "com.google.android.youtube"),
+                    BlockableNotificationAppModel("Spotify", "com.spotify.music"),
+                )
+            }
     }
 
     fun shouldBlock(
@@ -115,7 +121,10 @@ internal object NotificationCleanerDataSource {
         packageName: String,
     ): Boolean = packageName != context.packageName && isEnabled(context, listener) && packageName in selectedPackages(context)
 
-    fun hasNotificationListenerAccess(context: Context, listener: ComponentName?): Boolean {
+    fun hasNotificationListenerAccess(
+        context: Context,
+        listener: ComponentName?,
+    ): Boolean {
         if (listener == null) return false
         val flat = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
         return flat?.split(':')?.any { ComponentName.unflattenFromString(it) == listener } == true
@@ -178,7 +187,6 @@ internal object NotificationCleanerDataSource {
     }
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-
 }
 
 private object BlockedNotificationCodec {
@@ -233,10 +241,7 @@ private object BlockedNotificationCodec {
             )
         }.getOrNull()
 
-    private fun encodeField(value: String): String =
-        encoder.encodeToString(value.toByteArray(Charsets.UTF_8))
+    private fun encodeField(value: String): String = encoder.encodeToString(value.toByteArray(Charsets.UTF_8))
 
-    private fun decodeField(value: String): String =
-        String(decoder.decode(value), Charsets.UTF_8)
+    private fun decodeField(value: String): String = String(decoder.decode(value), Charsets.UTF_8)
 }
-

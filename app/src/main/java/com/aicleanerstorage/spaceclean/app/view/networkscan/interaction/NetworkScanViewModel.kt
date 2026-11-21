@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.networkkit.NetworkRepository
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,12 +22,25 @@ class NetworkScanViewModel(
 ) : MviViewModel<NetworkScanUiState, NetworkScanAction, NetworkScanEvent>(NetworkScanUiState()) {
     override fun onAction(intent: NetworkScanAction) {
         when (intent) {
-            NetworkScanAction.BackClicked -> { cancelScan(); sendEvent(NetworkScanEvent.Exit) }
+            NetworkScanAction.BackClicked -> {
+                if (currentState.mode == NetworkScanMode.Devices) {
+                    setState { NetworkScanReducer.devicesClosed(it) }
+                } else {
+                    cancelScan()
+                    sendEvent(NetworkScanEvent.Exit)
+                }
+            }
             NetworkScanAction.SwitchWifiClicked -> sendEvent(NetworkScanEvent.OpenWifiSettings)
-            NetworkScanAction.DevicesClicked -> sendEvent(NetworkScanEvent.OpenDevices)
+            NetworkScanAction.DevicesClicked -> {
+                setState { NetworkScanReducer.devicesOpened(it) }
+                if (currentState.scan == null && currentState.phase != NetworkScanPhase.Scanning) {
+                    startScan()
+                }
+            }
+            NetworkScanAction.DevicesClosed -> setState { NetworkScanReducer.devicesClosed(it) }
+            NetworkScanAction.DevicesRetryClicked -> startScan()
             NetworkScanAction.WifiRefreshRequested -> refreshNetworkStateUntilWifiConnected()
             NetworkScanAction.ScanStartRequested -> startScan()
-
         }
     }
 
@@ -35,16 +48,16 @@ class NetworkScanViewModel(
     private var scanJob: Job? = null
 
     init {
-        refreshNetworkState()
+        viewModelScope.launch(ioDispatcher) { refreshNetworkState() }
     }
 
     fun refreshNetworkState(): Boolean {
         val hasWifi = repository.isWifiConnected()
-        changeState {
+        setState {
             it.copy(
                 networkInfo = repository.readNetworkInfo(),
                 hasWifi = hasWifi,
-                errorMessage = null,
+                phase = if (it.phase == NetworkScanPhase.Error) NetworkScanPhase.Idle else it.phase,
             )
         }
         return hasWifi
@@ -70,23 +83,22 @@ class NetworkScanViewModel(
 
         networkRefreshJob?.cancel()
         scanJob?.cancel()
-        NetworkScanSessionStore.clear()
-        changeState { NetworkScanReducer.scanStarted(it) }
+        repository.clearLastScan()
+        setState { NetworkScanReducer.scanStarted(it) }
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 runCatching {
                     val scan = repository.scanWifi()
-                    NetworkScanSessionStore.save(scan)
                     repeat(SCAN_DETAIL_COUNT) { index ->
                         delay(PROGRESS_DELAY_MILLIS)
-                        changeState { it.copy(completedDetailCount = index + 1) }
+                        setState { it.copy(completedDetailCount = index + 1) }
                     }
                     scan
                 }.onSuccess { scan ->
-                    changeState { NetworkScanReducer.scanCompleted(it, scan, nowLabel()) }
+                    setState { NetworkScanReducer.scanCompleted(it, scan, nowLabel()) }
                 }.onFailure { error ->
                     if (error is CancellationException) throw error
-                    changeState { NetworkScanReducer.scanFailed(it, error.message) }
+                    setState { NetworkScanReducer.scanFailed(it) }
                 }
             }
     }
@@ -94,7 +106,7 @@ class NetworkScanViewModel(
     private fun cancelScan() {
         scanJob?.cancel()
         scanJob = null
-        changeState { NetworkScanReducer.scanCancelled(it) }
+        setState { NetworkScanReducer.scanCancelled(it) }
     }
 
     private companion object {
@@ -104,4 +116,3 @@ class NetworkScanViewModel(
         private const val NETWORK_REFRESH_RETRY_DELAY_MILLIS = 500L
     }
 }
-

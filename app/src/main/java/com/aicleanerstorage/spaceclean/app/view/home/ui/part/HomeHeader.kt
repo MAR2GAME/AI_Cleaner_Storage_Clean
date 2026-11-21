@@ -54,10 +54,12 @@ internal fun HomeHeader(onSettingsClick: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.ic_settings),
                 contentDescription = "image description",
-                contentScale = ContentScale.None
+                contentScale = ContentScale.None,
             )
         }
     }
 }
 
-private val PrimaryText: Color @Composable @ReadOnlyComposable get() = LocalAppThemeTokens.current.colors.textPrimary
+private val PrimaryText: Color
+    @Composable @ReadOnlyComposable
+    get() = LocalAppThemeTokens.current.colors.textPrimary

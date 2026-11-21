@@ -23,9 +23,10 @@ fun OnboardingScanScreen(
     val rows = onboardingDeviceRows(state)
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(OnboardingBackground),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(OnboardingBackground),
     ) {
         if (state.complete) {
             OnboardingResultContent(

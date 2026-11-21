@@ -20,16 +20,15 @@ fun JunkCleanScreen(
     state: JunkCleanUiState,
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
     onAction: (JunkCleanAction) -> Unit,
-    interactionsEnabled: Boolean = true,
 ) {
     BackHandler {
-        if (interactionsEnabled) onAction(JunkCleanAction.BackClicked)
+        if (state.interactionsEnabled) onAction(JunkCleanAction.BackClicked)
     }
 
     JunkCleanPanel(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (interactionsEnabled && state.phase == JunkCleanPhase.Preview) {
+            if (state.interactionsEnabled && state.phase == JunkCleanPhase.Preview) {
                 JunkRemoveBar(
                     selectedSummary = state.selectedSummary,
                     onClick = { onAction(JunkCleanAction.CleanClicked) },
@@ -39,7 +38,7 @@ fun JunkCleanScreen(
     ) {
         JunkCleanContent(
             uiState = state,
-            interactionsEnabled = interactionsEnabled,
+            interactionsEnabled = state.interactionsEnabled,
             onToggleCategorySelection = { onAction(JunkCleanAction.CategoriesToggled(it)) },
             onToggleItem = { onAction(JunkCleanAction.ItemToggled(it.junkFile.id)) },
             resultTools = resultTools,
@@ -49,7 +48,7 @@ fun JunkCleanScreen(
             title = stringResource(R.string.junk_removal),
             showBack = true,
             onBack = {
-                if (interactionsEnabled) onAction(JunkCleanAction.BackClicked)
+                if (state.interactionsEnabled) onAction(JunkCleanAction.BackClicked)
             },
         )
     }

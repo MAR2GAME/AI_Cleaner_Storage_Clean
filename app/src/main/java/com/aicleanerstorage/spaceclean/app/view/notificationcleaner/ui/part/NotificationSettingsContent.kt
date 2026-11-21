@@ -129,9 +129,7 @@ private val NotificationSettingsRowHeight = 84.dp
 private val NotificationSelectionSize = 20.dp
 
 @Composable
-private fun NotificationSettingsSwitch(
-    checked: Boolean,
-) {
+private fun NotificationSettingsSwitch(checked: Boolean) {
     Box(
         modifier =
             Modifier
@@ -182,7 +180,7 @@ private fun NotificationAppRow(
             PackageAppIcon(
                 packageName = app.packageName,
                 fallbackText = app.appName.take(1).ifBlank { "A" },
-                modifier = Modifier.size(44.dp)
+                modifier = Modifier.size(44.dp),
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(

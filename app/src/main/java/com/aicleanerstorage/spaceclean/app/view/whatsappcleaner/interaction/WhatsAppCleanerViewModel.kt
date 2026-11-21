@@ -1,18 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
-import com.aicleanerstorage.spaceclean.data.whatsapp.loadWhatsAppFileGroups
-
-import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
-
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppFileBucket
 import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppFileBucket
+import com.aicleanerstorage.spaceclean.data.whatsapp.loadWhatsAppFileGroups
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -21,10 +18,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class WhatsAppCleanerViewModel(
-    private val message: (Int) -> String,
     private val repository: FileRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val permissionChecker: PermissionChecker? = null,
 ) : MviViewModel<WhatsAppCleanerUiState, WhatsAppCleanerAction, WhatsAppCleanerEvent>(WhatsAppCleanerUiState()) {
     private var hasStarted = false
     private var scanJob: Job? = null
@@ -33,7 +28,10 @@ class WhatsAppCleanerViewModel(
     override fun onAction(action: WhatsAppCleanerAction) {
         when (action) {
             is WhatsAppCleanerAction.NavigationRequested -> sendEvent(WhatsAppCleanerEvent.Navigate(action.destination))
-            WhatsAppCleanerAction.BackClicked -> { cancelActiveOperation(); sendEvent(WhatsAppCleanerEvent.Exit(false)) }
+            WhatsAppCleanerAction.BackClicked -> {
+                cancelActiveOperation()
+                sendEvent(WhatsAppCleanerEvent.Exit(false))
+            }
             WhatsAppCleanerAction.CompletionExitClicked -> sendEvent(WhatsAppCleanerEvent.Exit(true))
             WhatsAppCleanerAction.ScanStartRequested -> startScanIfNeeded()
             WhatsAppCleanerAction.CleanClicked -> cleanSelectedFiles()
@@ -42,6 +40,13 @@ class WhatsAppCleanerViewModel(
             WhatsAppCleanerAction.CleaningCancellationRequested -> cancelCleaningAndReturnToResult()
             WhatsAppCleanerAction.ResultDismissed -> clearResult()
             WhatsAppCleanerAction.ResultRequested -> showResult()
+            WhatsAppCleanerAction.PermissionDenied ->
+                setState {
+                    it.copy(
+                        phase = WhatsAppCleanerPhase.Error,
+                        error = UiText.Res(R.string.permission_denied),
+                    )
+                }
             is WhatsAppCleanerAction.GroupToggled -> toggleGroup(action.group)
             is WhatsAppCleanerAction.CategoryToggled -> toggleCategory(action.group, action.category)
             is WhatsAppCleanerAction.GroupExpansionToggled -> toggleExpanded(action.group)
@@ -56,11 +61,6 @@ class WhatsAppCleanerViewModel(
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
-                    if (permissionChecker?.isGranted(AppPermission.StorageFiles) == false) {
-                        hasStarted = false
-                        changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = "permission_denied") }
-                        return@launch
-                    }
                     val buckets = repository.loadWhatsAppFileGroups()
                     delay(SCAN_DELAY_MILLIS)
                     val nextState = buildScanResultState(buckets)
@@ -68,10 +68,10 @@ class WhatsAppCleanerViewModel(
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
-                    changeState {
+                    setState {
                         it.copy(
                             phase = WhatsAppCleanerPhase.Error,
-                            errorMessage = error.message ?: appString(R.string.whatsapp_clean_unavailable),
+                            error = UiText.Res(R.string.whatsapp_clean_unavailable),
                         )
                     }
                 }
@@ -79,9 +79,9 @@ class WhatsAppCleanerViewModel(
     }
 
     private fun toggleGroup(group: WhatsAppCleanerGroup) {
-        changeState { state ->
-            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@changeState state
-            val targetGroup = state.groups.firstOrNull { it.group == group } ?: return@changeState state
+        setState { state ->
+            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@setState state
+            val targetGroup = state.groups.firstOrNull { it.group == group } ?: return@setState state
             val shouldSelect = !targetGroup.selected
             state.withGroups(
                 state.groups.map { groupItem ->
@@ -89,9 +89,10 @@ class WhatsAppCleanerViewModel(
                         groupItem
                     } else {
                         groupItem.copy(
-                            children = groupItem.children.map { child ->
-                                if (child.hasFiles) child.copy(selected = shouldSelect) else child
-                            },
+                            children =
+                                groupItem.children.map { child ->
+                                    if (child.hasFiles) child.copy(selected = shouldSelect) else child
+                                },
                         )
                     }
                 },
@@ -99,22 +100,26 @@ class WhatsAppCleanerViewModel(
         }
     }
 
-    private fun toggleCategory(group: WhatsAppCleanerGroup, category: WhatsAppCleanerCategory) {
-        changeState { state ->
-            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@changeState state
+    private fun toggleCategory(
+        group: WhatsAppCleanerGroup,
+        category: WhatsAppCleanerCategory,
+    ) {
+        setState { state ->
+            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@setState state
             state.withGroups(
                 state.groups.map { groupItem ->
                     if (groupItem.group != group) {
                         groupItem
                     } else {
                         groupItem.copy(
-                            children = groupItem.children.map { child ->
-                                if (child.category == category && child.hasFiles) {
-                                    child.copy(selected = !child.selected)
-                                } else {
-                                    child
-                                }
-                            },
+                            children =
+                                groupItem.children.map { child ->
+                                    if (child.category == category && child.hasFiles) {
+                                        child.copy(selected = !child.selected)
+                                    } else {
+                                        child
+                                    }
+                                },
                         )
                     }
                 },
@@ -123,16 +128,17 @@ class WhatsAppCleanerViewModel(
     }
 
     private fun toggleExpanded(group: WhatsAppCleanerGroup) {
-        changeState { state ->
-            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@changeState state
+        setState { state ->
+            if (state.phase != WhatsAppCleanerPhase.ScanResult) return@setState state
             state.copy(
-                groups = state.groups.map { groupItem ->
-                    if (groupItem.group == group) {
-                        groupItem.copy(expanded = !groupItem.expanded)
-                    } else {
-                        groupItem
-                    }
-                },
+                groups =
+                    state.groups.map { groupItem ->
+                        if (groupItem.group == group) {
+                            groupItem.copy(expanded = !groupItem.expanded)
+                        } else {
+                            groupItem
+                        }
+                    },
             )
         }
     }
@@ -150,32 +156,30 @@ class WhatsAppCleanerViewModel(
         val expectedBytes = selectedFiles.sumOf { it.sizeBytes }
         val cleaningStartedAt = System.currentTimeMillis()
 
-        changeState { WhatsAppCleanerReducer.cleaningStarted(it, expectedBytes, selectedFiles.size) }
+        setState { WhatsAppCleanerReducer.cleaningStarted(it, expectedBytes, selectedFiles.size) }
         cleanJob?.cancel()
         cleanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
-                    if (permissionChecker?.isGranted(AppPermission.StorageFiles) == false) {
-                        changeState { it.copy(phase = WhatsAppCleanerPhase.Error, errorMessage = "permission_denied") }
-                        return@launch
-                    }
                     val result = repository.deleteFiles(selectedFiles)
-                    if (result.deletedCount <= 0) error(appString(R.string.whatsapp_clean_unavailable))
+                    if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
                     delayRemainingCleaningAnimation(cleaningStartedAt)
-                    setState { WhatsAppCleanerUiState(
+                    setState {
+                        WhatsAppCleanerUiState(
                             phase = WhatsAppCleanerPhase.CompleteAnimation,
                             deletedBytes = result.freedBytes,
                             deletedCount = result.deletedCount,
-                        ) }
+                        )
+                    }
                     delay(COMPLETE_ANIMATION_MILLIS)
                     dispatch(WhatsAppCleanerAction.ResultRequested)
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
-                    changeState {
+                    setState {
                         it.copy(
                             phase = WhatsAppCleanerPhase.Error,
-                            errorMessage = error.message ?: appString(R.string.whatsapp_clean_unavailable),
+                            error = UiText.Res(R.string.whatsapp_clean_unavailable),
                         )
                     }
                 }
@@ -207,13 +211,13 @@ class WhatsAppCleanerViewModel(
     }
 
     private fun showResult() {
-        changeState { WhatsAppCleanerReducer.resultRequested(it) }
+        setState { WhatsAppCleanerReducer.resultRequested(it) }
     }
 
     private fun cancelCleaningAndReturnToResult() {
         cleanJob?.cancel()
         cleanJob = null
-        changeState { WhatsAppCleanerReducer.cleaningCancelled(it) }
+        setState { WhatsAppCleanerReducer.cleaningCancelled(it) }
     }
 
     override fun onCleared() {
@@ -263,7 +267,4 @@ class WhatsAppCleanerViewModel(
         private const val CLEANING_ANIMATION_MIN_MILLIS = 1600L
         private const val COMPLETE_ANIMATION_MILLIS = 800L
     }
-
-    private fun appString(resId: Int): String = message(resId)
 }
-

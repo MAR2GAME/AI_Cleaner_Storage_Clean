@@ -43,9 +43,10 @@ fun AppUsageScreen(
                 )
             }
         },
-        backgroundBrush = Brush.linearGradient(
-            colors = listOf(PageBg, PageBg),
-        ),
+        backgroundBrush =
+            Brush.linearGradient(
+                colors = listOf(PageBg, PageBg),
+            ),
         contentPadding =
             if (state.hasAccess && state.isScanning) {
                 PaddingValues(0.dp)

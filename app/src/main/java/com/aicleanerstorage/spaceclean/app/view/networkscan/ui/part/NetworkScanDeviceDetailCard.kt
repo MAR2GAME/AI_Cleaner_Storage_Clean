@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
 import com.aicleanerstorage.networkkit.model.NetworkDeviceInfo
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanDivider
 
 @Composable
 internal fun NetworkScanDeviceDetailCard(device: NetworkDeviceInfo) {

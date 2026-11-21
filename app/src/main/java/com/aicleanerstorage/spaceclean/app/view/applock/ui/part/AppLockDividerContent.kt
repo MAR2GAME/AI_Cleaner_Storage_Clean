@@ -7,14 +7,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockDividerColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockDividerColor
 
 @Composable
 internal fun AppLockDividerContent() {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(AppLockDividerColor)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(AppLockDividerColor),
     )
 }

@@ -34,21 +34,26 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val packageIconBitmapCache = ConcurrentHashMap<String, ImageBitmap>()
 
-private fun loadPackageIconBitmap(context: Context, packageName: String): ImageBitmap? {
+private fun loadPackageIconBitmap(
+    context: Context,
+    packageName: String,
+): ImageBitmap? {
     packageIconBitmapCache[packageName]?.let { return it }
 
     val packageManager = context.packageManager
-    val icon = runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
-        ?: runCatching {
-            packageManager.getLaunchIntentForPackage(packageName)
-                ?.resolveActivity(packageManager)
-                ?.let { componentName ->
-                    packageManager.getActivityInfo(componentName, 0).loadIcon(packageManager)
-                }
-        }.getOrNull()
-        ?: runCatching {
-            packageManager.getApplicationInfo(packageName, 0).loadIcon(packageManager)
-        }.getOrNull()
+    val icon =
+        runCatching { packageManager.getApplicationIcon(packageName) }.getOrNull()
+            ?: runCatching {
+                packageManager
+                    .getLaunchIntentForPackage(packageName)
+                    ?.resolveActivity(packageManager)
+                    ?.let { componentName ->
+                        packageManager.getActivityInfo(componentName, 0).loadIcon(packageManager)
+                    }
+            }.getOrNull()
+            ?: runCatching {
+                packageManager.getApplicationInfo(packageName, 0).loadIcon(packageManager)
+            }.getOrNull()
 
     return icon?.toBitmap()?.asImageBitmap()?.also {
         packageIconBitmapCache[packageName] = it
@@ -79,19 +84,20 @@ private fun Drawable.toBitmap(): Bitmap {
 fun TextIcon(
     text: String,
     color: Color,
-    modifier: Modifier = Modifier.size(44.dp)
+    modifier: Modifier = Modifier.size(44.dp),
 ) {
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(color),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(50))
+                .background(color),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
             color = Color.White,
             fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -136,7 +142,7 @@ fun PackageAppIcon(
     fallbackText: String,
     color: Color = Color(0xFF000000),
     isAggregate: Boolean = false,
-    modifier: Modifier = Modifier.size(44.dp)
+    modifier: Modifier = Modifier.size(44.dp),
 ) {
     if (isAggregate) {
         TextIcon(text = fallbackText, color = color, modifier = modifier)
@@ -147,15 +153,16 @@ fun PackageAppIcon(
 
     Box(
         modifier = modifier.size(44.dp).clip(CircleShape),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         if (appIcon != null) {
             Image(
                 bitmap = appIcon,
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Fit
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
+                contentScale = ContentScale.Fit,
             )
         } else {
             // 婢跺洭鈧绱伴弰鍓с仛闁氨鏁ら崡鐘辩秴閸ョ偓鐖?

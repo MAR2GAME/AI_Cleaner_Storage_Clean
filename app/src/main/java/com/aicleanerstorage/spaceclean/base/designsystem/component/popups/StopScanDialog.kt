@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.base.designsystem.component.popups
 
+import android.view.WindowManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import android.view.WindowManager
 import com.aicleanerstorage.spaceclean.R
 
 private val StopDialogTitleColor = Color(0xFF282927)
@@ -51,7 +51,10 @@ private val StopDialogButtonEnd = Color(0xFF5DD595)
 private val StopDialogCardStart = Color(0xFFDFFFDC)
 
 @Composable
-fun StopScanDialog(onQuit: () -> Unit, onResume: () -> Unit) {
+fun StopScanDialog(
+    onQuit: () -> Unit,
+    onResume: () -> Unit,
+) {
     Dialog(
         onDismissRequest = onResume,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -103,13 +106,11 @@ private fun StopScanDialogCard(
                                 1f to Color.White,
                             ),
                     ),
-                )
-                .clickable(
+                ).clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {},
-                )
-                .verticalScroll(rememberScrollState())
+                ).verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),

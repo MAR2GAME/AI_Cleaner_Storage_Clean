@@ -1,13 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.ui
 
-import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanAction
-import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
-
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -17,13 +13,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanAction
+import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.NoVirusResultScreen
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.ScanVirusResultScreen
-import java.io.File
-
-
+import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.PackageRemovedReceiver
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
 fun ScanVirusResultRoute(
@@ -34,14 +29,13 @@ fun ScanVirusResultRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-
-
     LaunchedEffect(Unit) { viewModel.dispatch(VirusScanAction.AdbRiskRefreshRequested) }
 
     DisposableEffect(lifecycleOwner, viewModel) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) viewModel.dispatch(VirusScanAction.AdbRiskRefreshRequested)
-        }
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) viewModel.dispatch(VirusScanAction.AdbRiskRefreshRequested)
+            }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
@@ -51,9 +45,9 @@ fun ScanVirusResultRoute(
         onDispose { viewModel.dispatch(VirusScanAction.ResultLeft) }
     }
 
-
     DisposableEffect(context, viewModel) {
-        val receiver = PackageRemovedReceiver({ packageName -> viewModel.dispatch(VirusScanAction.PackageThreatRemovalRequested(packageName)) })
+        val receiver =
+            PackageRemovedReceiver({ packageName -> viewModel.dispatch(VirusScanAction.PackageThreatRemovalRequested(packageName)) })
         val filter = IntentFilter(Intent.ACTION_PACKAGE_REMOVED).apply { addDataScheme("package") }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
@@ -77,6 +71,5 @@ fun NoVirusResultRoute(
 ) {
     NoVirusResultScreen(
         onAction = viewModel::dispatch,
-        onNavigate = { viewModel.dispatch(VirusScanAction.NavigationRequested(it)) },
     )
 }

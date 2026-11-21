@@ -1,20 +1,21 @@
 package com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction
 
 import androidx.annotation.StringRes
-import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.devicekit.DeviceInfoRepository
+import com.aicleanerstorage.devicekit.model.BatteryInfo
 import com.aicleanerstorage.devicekit.model.DeviceCpuInfo
 import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 import com.aicleanerstorage.devicekit.model.DeviceSensorInfo
-import com.aicleanerstorage.devicekit.model.BatteryInfo
 import com.aicleanerstorage.devicekit.model.MemoryInfo
 import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
 import com.aicleanerstorage.spaceclean.data.battery.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
 import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.data.battery.model.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -22,8 +23,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.math.roundToInt
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 enum class DeviceInfoMode {
     Device,
@@ -65,7 +66,7 @@ data class DeviceInfoUiState(
     val latestSampleTimestampMillis: Long = 0L,
     val temperatureUnit: String = TEMPERATURE_UNIT_CELSIUS,
     val isLoading: Boolean = true,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
     val isScanning: Boolean = true,
     val showStopDialog: Boolean = false,
 ) {
@@ -184,6 +185,7 @@ internal val EMPTY_HARDWARE_INFO =
 internal fun Float?.normalizedBatteryCurrent(): Float? = this?.takeIf { it.isFiniteValue() }?.let { abs(it) }
 
 internal const val TEMPERATURE_WINDOW_MILLIS = 60_000L
+
 internal fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
 
 fun formatBatteryTemperature(
@@ -193,11 +195,12 @@ fun formatBatteryTemperature(
 ): String {
     val temperature = tempC?.takeIf { it.isFiniteValue() } ?: return "--"
     val normalizedUnit = unit.normalizeTemperatureUnit()
-    val displayTemperature = if (normalizedUnit == TEMPERATURE_UNIT_FAHRENHEIT) {
-        celsiusToFahrenheit(temperature)
-    } else {
-        temperature
-    }
+    val displayTemperature =
+        if (normalizedUnit == TEMPERATURE_UNIT_FAHRENHEIT) {
+            celsiusToFahrenheit(temperature)
+        } else {
+            temperature
+        }
     val separator = if (includeSpace) " " else ""
     return String.format(Locale.US, "%.1f%s\u00B0%s", displayTemperature, separator, normalizedUnit)
 }
@@ -248,7 +251,7 @@ class DeviceInfoStateController(
     private val ioDispatcher: CoroutineDispatcher,
     initialMode: DeviceInfoMode,
     private val currentState: () -> DeviceInfoUiState,
-    private val changeState: ((DeviceInfoUiState) -> DeviceInfoUiState) -> Unit,
+    private val setState: ((DeviceInfoUiState) -> DeviceInfoUiState) -> Unit,
     private val nowMillis: () -> Long = System::currentTimeMillis,
     private val maxSampleCount: Int = BatteryHistoryRepository.MAX_SAMPLES,
 ) {
@@ -262,12 +265,12 @@ class DeviceInfoStateController(
 
     fun load(mode: DeviceInfoMode) {
         startScanDelay()
-        changeState {
+        setState {
             it.copy(
                 mode = mode,
                 isLoading = true,
                 cpuUsagePercent = null,
-                errorMessage = null,
+                error = null,
                 showStopDialog = false,
             )
         }
@@ -286,7 +289,7 @@ class DeviceInfoStateController(
                     timestampMillis = timestamp,
                 )
             }.onSuccess { loaded ->
-                changeState { flowState ->
+                setState { flowState ->
                     loaded.copy(
                         isScanning = flowState.isScanning,
                         showStopDialog = flowState.showStopDialog,
@@ -294,10 +297,10 @@ class DeviceInfoStateController(
                 }
                 finishScanIfReady()
             }.onFailure { error ->
-                changeState {
+                setState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message,
+                        error = UiText.Res(R.string.device_info_load_failed),
                     )
                 }
                 finishScanIfReady()
@@ -309,7 +312,7 @@ class DeviceInfoStateController(
         if (!currentState().isScanning) return
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(showStopDialog = true) }
+        setState { it.copy(showStopDialog = true) }
     }
 
     fun resumeScan() {
@@ -317,7 +320,7 @@ class DeviceInfoStateController(
     }
 
     fun dismissStopDialog() {
-        changeState { it.copy(showStopDialog = false) }
+        setState { it.copy(showStopDialog = false) }
     }
 
     fun startBatterySampling() {
@@ -338,7 +341,7 @@ class DeviceInfoStateController(
     }
 
     fun selectCurrentRange(range: BatteryCurrentRange) {
-        changeState { it.copy(selectedCurrentRange = range) }
+        setState { it.copy(selectedCurrentRange = range) }
     }
 
     fun close() {
@@ -349,7 +352,7 @@ class DeviceInfoStateController(
     private fun startScanDelay() {
         scanJob?.cancel()
         scanDelayFinished = false
-        changeState { it.copy(isScanning = true, showStopDialog = false) }
+        setState { it.copy(isScanning = true, showStopDialog = false) }
         scanJob =
             scope.launch {
                 delay(INFO_SCAN_DURATION_MILLIS)
@@ -360,7 +363,7 @@ class DeviceInfoStateController(
 
     private fun finishScanIfReady() {
         if (scanDelayFinished && !currentState().isLoading) {
-            changeState { it.copy(isScanning = false, showStopDialog = false) }
+            setState { it.copy(isScanning = false, showStopDialog = false) }
         }
     }
 
@@ -399,7 +402,7 @@ class DeviceInfoStateController(
             latestSampleTimestampMillis = timestampMillis,
             temperatureUnit = readTemperatureUnit(),
             isLoading = false,
-            errorMessage = null,
+            error = null,
         ).withHistorySamples(historySamples, timestampMillis, maxSampleCount)
     }
 
@@ -413,7 +416,7 @@ class DeviceInfoStateController(
         val currentAverage = runSuspendCatching { repository.batteryCurrentAverageMa().normalizedBatteryCurrent() }.getOrNull()
         val samples = batteryHistoryRepository.loadRecent(timestamp)
 
-        changeState { state ->
+        setState { state ->
             state
                 .copy(
                     battery = battery ?: state.battery,
@@ -439,7 +442,7 @@ class DeviceInfoStateController(
         samples: List<BatteryHistorySampleModel>,
         timestampMillis: Long,
     ) {
-        changeState { state ->
+        setState { state ->
             state
                 .copy(temperatureUnit = readTemperatureUnit())
                 .withHistorySamples(samples, timestampMillis, maxSampleCount)

@@ -1,11 +1,14 @@
 package com.aicleanerstorage.spaceclean.app.view.appusage.interaction
 
-import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import androidx.annotation.StringRes
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.data.appusage.model.AppUsageInfoModel
 import java.util.Calendar
 
-enum class AppUsageDateRange(@StringRes val labelRes: Int) {
+enum class AppUsageDateRange(
+    @StringRes val labelRes: Int,
+) {
     Today(R.string.today),
     Yesterday(R.string.yesterday),
     Last7Days(R.string.last_7_days),
@@ -36,7 +39,9 @@ enum class AppUsageDateRange(@StringRes val labelRes: Int) {
     }
 }
 
-enum class AppUsageMetricTab(@StringRes val titleRes: Int) {
+enum class AppUsageMetricTab(
+    @StringRes val titleRes: Int,
+) {
     Duration(R.string.hours_spent),
     LaunchCount(R.string.times_opened),
 }
@@ -61,16 +66,20 @@ data class AppUsageUiState(
     val visibleItems: List<AppUsageDisplayItem> = emptyList(),
     val totalUsageMs: Long = 0L,
     val isLoading: Boolean = true,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
     val isScanning: Boolean = false,
     val showStopDialog: Boolean = false,
     val permissionRequestPending: Boolean = false,
 )
 
 sealed interface AppUsageEvent {
-    data class OpenAppInfo(val packageName: String) : AppUsageEvent
+    data class OpenAppInfo(
+        val packageName: String,
+    ) : AppUsageEvent
 
-    data class Exit(val reason: AppUsageExitReason) : AppUsageEvent
+    data class Exit(
+        val reason: AppUsageExitReason,
+    ) : AppUsageEvent
 }
 
 enum class AppUsageExitReason {
@@ -80,14 +89,28 @@ enum class AppUsageExitReason {
 
 sealed interface AppUsageAction {
     data object Resumed : AppUsageAction
-    data object PermissionRequestConsumed : AppUsageAction
-    data object PermissionGranted : AppUsageAction
-    data object PermissionRejected : AppUsageAction
-    data object BackClicked : AppUsageAction
-    data object QuitScanConfirmed : AppUsageAction
-    data object ResumeScanClicked : AppUsageAction
-    data class RangeSelected(val range: AppUsageDateRange) : AppUsageAction
-    data class TabSelected(val tab: AppUsageMetricTab) : AppUsageAction
-    data class StopAppClicked(val packageName: String) : AppUsageAction
 
+    data object PermissionRequestConsumed : AppUsageAction
+
+    data object PermissionGranted : AppUsageAction
+
+    data object PermissionRejected : AppUsageAction
+
+    data object BackClicked : AppUsageAction
+
+    data object QuitScanConfirmed : AppUsageAction
+
+    data object ResumeScanClicked : AppUsageAction
+
+    data class RangeSelected(
+        val range: AppUsageDateRange,
+    ) : AppUsageAction
+
+    data class TabSelected(
+        val tab: AppUsageMetricTab,
+    ) : AppUsageAction
+
+    data class StopAppClicked(
+        val packageName: String,
+    ) : AppUsageAction
 }

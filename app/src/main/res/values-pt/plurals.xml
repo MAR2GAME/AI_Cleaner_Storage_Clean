@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <plurals name="duplicate_files_count">
         <item quantity="one">%1$d arquivo duplicado</item>
         <item quantity="other">%1$d arquivos duplicados</item>
@@ -16,7 +16,7 @@
         <item quantity="one">%1$d notificação bloqueada</item>
         <item quantity="other">%1$d notificações bloqueadas</item>
     </plurals>
-    <plurals name="notifications_count">
+    <plurals name="notifications_count" tools:ignore="ImpliedQuantity">
         <item quantity="one">notificação</item>
         <item quantity="other">notificações</item>
     </plurals>

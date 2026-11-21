@@ -1,18 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
@@ -146,11 +143,11 @@ private fun FileDetailRoute(
             when (action) {
                 FileManagerAction.BackClicked -> dispatch(FileManagerAction.DetailBackClicked)
                 FileManagerAction.DeleteClicked,
-                is FileManagerAction.SelectionToggled -> dispatch(action)
+                is FileManagerAction.SelectionToggled,
+                -> dispatch(action)
                 else -> Unit
             }
         },
-        onNavigate = { navigator.navigate(it) },
     )
 
     FileManagerDeleteConfirmDialog(

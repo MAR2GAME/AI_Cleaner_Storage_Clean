@@ -1,9 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
-import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.data.whatsapp.WhatsAppCleanerGroup
 
 enum class WhatsAppCleanerPhase {
     Scanning,
@@ -43,32 +44,54 @@ data class WhatsAppCleanerUiState(
     val selectedCount: Int = 0,
     val deletedBytes: Long = 0L,
     val deletedCount: Int = 0,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
 )
 
 sealed interface WhatsAppCleanerAction {
-    data class NavigationRequested(val destination: AppDestination) : WhatsAppCleanerAction
+    data class NavigationRequested(
+        val destination: AppDestination,
+    ) : WhatsAppCleanerAction
+
     data object BackClicked : WhatsAppCleanerAction
+
     data object CompletionExitClicked : WhatsAppCleanerAction
+
     data object ScanStartRequested : WhatsAppCleanerAction
+
     data object CleanClicked : WhatsAppCleanerAction
+
     data object RetryClicked : WhatsAppCleanerAction
+
     data object OperationCancellationRequested : WhatsAppCleanerAction
+
     data object CleaningCancellationRequested : WhatsAppCleanerAction
+
     data object ResultDismissed : WhatsAppCleanerAction
+
     data object ResultRequested : WhatsAppCleanerAction
-    data class GroupToggled(val group: WhatsAppCleanerGroup) : WhatsAppCleanerAction
+
+    data object PermissionDenied : WhatsAppCleanerAction
+
+    data class GroupToggled(
+        val group: WhatsAppCleanerGroup,
+    ) : WhatsAppCleanerAction
+
     data class CategoryToggled(
         val group: WhatsAppCleanerGroup,
         val category: WhatsAppCleanerCategory,
     ) : WhatsAppCleanerAction
-    data class GroupExpansionToggled(val group: WhatsAppCleanerGroup) : WhatsAppCleanerAction
 
+    data class GroupExpansionToggled(
+        val group: WhatsAppCleanerGroup,
+    ) : WhatsAppCleanerAction
 }
 
-
 sealed interface WhatsAppCleanerEvent {
+    data class Exit(
+        val home: Boolean,
+    ) : WhatsAppCleanerEvent
 
-    data class Exit(val home: Boolean) : WhatsAppCleanerEvent
-    data class Navigate(val destination: AppDestination) : WhatsAppCleanerEvent
+    data class Navigate(
+        val destination: AppDestination,
+    ) : WhatsAppCleanerEvent
 }

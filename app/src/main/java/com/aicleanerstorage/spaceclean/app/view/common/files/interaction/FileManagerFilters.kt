@@ -2,8 +2,8 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterMediaGridItems
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterFileManagerListItems
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterMediaGridItems
 
 fun filterMediaGridItems(
     tabTitle: String,

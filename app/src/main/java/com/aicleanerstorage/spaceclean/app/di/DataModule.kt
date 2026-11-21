@@ -9,9 +9,7 @@ import com.aicleanerstorage.devicekit.DeviceInfoRepository
 import com.aicleanerstorage.devicekit.DeviceKit
 import com.aicleanerstorage.networkkit.NetworkKit
 import com.aicleanerstorage.networkkit.NetworkRepository
-import com.aicleanerstorage.spaceclean.app.AppConfig
-import com.aicleanerstorage.spaceclean.app.background.AppBackgroundRuntimeService
-import com.aicleanerstorage.spaceclean.app.platform.permission.PermissionPreferences
+import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
 import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionHost
 import com.aicleanerstorage.spaceclean.base.storage.PreferencesUtil
 import com.aicleanerstorage.spaceclean.base.toolkit.antivirus.TrustlookVirusScanner
@@ -45,14 +43,13 @@ val dataModule: Module =
             )
         }
         single { PreferencesUtil(androidContext()) }
-        single { PermissionPreferences(get()) }
         single {
             val context = androidContext()
+            val settingsRepository = get<SettingsRepository>()
+            val appLockRepository = get<AppLockRepository>()
             SyncBackgroundBatterySamplingUseCase(
-                settingsRepository = get(),
-                hasNotificationPermission = { AppConfig.hasPostNotificationsPermission(context) },
-                enableServiceSampling = { AppBackgroundRuntimeService.enableBatterySampling(context) },
-                disableServiceSampling = { AppBackgroundRuntimeService.disableBatterySampling(context) },
+                settingsRepository = settingsRepository,
+                syncRuntime = { AppRuntimeService.reconcile(context, appLockRepository, settingsRepository) },
             )
         }
         single<DeviceInfoRepository> { DeviceKit.create(androidContext()) }

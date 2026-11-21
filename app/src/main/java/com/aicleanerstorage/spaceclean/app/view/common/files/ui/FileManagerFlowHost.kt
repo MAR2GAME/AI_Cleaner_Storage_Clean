@@ -13,11 +13,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerFlowEffects
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 
-internal class FileManagerOwnerState(initialGranted: Boolean) : ViewModel() {
+internal class FileManagerOwnerState(
+    initialGranted: Boolean,
+) : ViewModel() {
     val permissionState = FileManagerPermissionState(initialGranted)
 
     override fun onCleared() {
@@ -28,17 +32,16 @@ internal class FileManagerOwnerState(initialGranted: Boolean) : ViewModel() {
 
 /** 文件管理流程的权限状态挂在流程根 entry 上，列表页与详情页共享同一份。 */
 @Composable
-internal fun rememberFileManagerOwnerState(
-    ownerEntry: NavBackStackEntry,
-): FileManagerPermissionState {
+internal fun rememberFileManagerOwnerState(ownerEntry: NavBackStackEntry): FileManagerPermissionState {
     val context = LocalContext.current
     val granted = AppPermission.StorageFiles.isGranted(context)
-    val factory = remember(granted) {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T = FileManagerOwnerState(granted) as T
+    val factory =
+        remember(granted) {
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T = FileManagerOwnerState(granted) as T
+            }
         }
-    }
     val holder: FileManagerOwnerState = viewModel(viewModelStoreOwner = ownerEntry, factory = factory)
     return holder.permissionState
 }
@@ -53,7 +56,7 @@ internal fun <S : Any> FileManagerFlowHost(
     currentEntry: NavBackStackEntry,
     navigator: AppNavigator,
     viewModel: MviViewModel<S, FileManagerAction, FileManagerEvent>,
-    errorMessage: (S) -> String?,
+    error: (S) -> UiText?,
     content: @Composable (FileManagerPermissionState) -> Unit,
 ) {
     val permissionState = rememberFileManagerOwnerState(rootEntry)
@@ -64,7 +67,7 @@ internal fun <S : Any> FileManagerFlowHost(
             effects = viewModel.event,
             navigator = navigator,
             permissionState = permissionState,
-            errorMessage = errorMessage(uiState),
+            error = error(uiState),
             onClearError = { viewModel.dispatch(FileManagerAction.ErrorDismissed) },
             onStartIfNeeded = { viewModel.dispatch(FileManagerAction.InitialLoadRequested) },
         )

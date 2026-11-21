@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
-import com.aicleanerstorage.spaceclean.app.view.home.ui.ToolboxTargets
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.ToolboxTargets
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressable
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.CleanXSingleActionDialog
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -159,7 +159,7 @@ private fun ToolboxShortcut(
             textAlign = TextAlign.Center,
             softWrap = true,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

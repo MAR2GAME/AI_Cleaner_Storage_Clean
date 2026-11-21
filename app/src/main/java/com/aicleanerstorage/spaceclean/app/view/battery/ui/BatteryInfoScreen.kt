@@ -57,9 +57,12 @@ fun BatteryInfoScreen(
                 uiState = state,
                 onRangeSelected = { onAction(BatteryInfoAction.RangeSelected(it)) },
             )
-            Spacer(modifier = Modifier
-                .stableNavigationBarsPadding()
-                .height(24.dp))
+            Spacer(
+                modifier =
+                    Modifier
+                        .stableNavigationBarsPadding()
+                        .height(24.dp),
+            )
         }
     }
 

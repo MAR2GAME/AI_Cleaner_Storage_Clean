@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 import com.aicleanerstorage.networkkit.model.NetworkUsageApp
 import com.aicleanerstorage.networkkit.model.NetworkUsageInfo
 import com.aicleanerstorage.networkkit.model.TrafficSource
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
 enum class NetworkUsageTab {
     Cellular,
@@ -46,7 +47,7 @@ data class NetworkUsageUiState(
     val hasAccess: Boolean = false,
     val usage: NetworkUsageInfo? = null,
     val isLoading: Boolean = true,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
     val isScanning: Boolean = false,
     val showStopDialog: Boolean = false,
     val permissionRequestPending: Boolean = false,
@@ -76,14 +77,15 @@ data class NetworkUsageUiState(
     fun totalBytes(tab: NetworkUsageTab): Long = rxBytes(tab) + txBytes(tab)
 
     fun apps(tab: NetworkUsageTab): List<NetworkUsageApp> =
-        usage?.let {
-            when {
-                tab == NetworkUsageTab.Cellular && it.cellularApps.isNotEmpty() -> it.cellularApps
-                tab == NetworkUsageTab.Wifi && it.wifiApps.isNotEmpty() -> it.wifiApps
-                it.fallbackApps.isNotEmpty() -> it.fallbackApps
-                else -> emptyList()
-            }
-        }.orEmpty()
+        usage
+            ?.let {
+                when {
+                    tab == NetworkUsageTab.Cellular && it.cellularApps.isNotEmpty() -> it.cellularApps
+                    tab == NetworkUsageTab.Wifi && it.wifiApps.isNotEmpty() -> it.wifiApps
+                    it.fallbackApps.isNotEmpty() -> it.fallbackApps
+                    else -> emptyList()
+                }
+            }.orEmpty()
 
     fun displayItems(tab: NetworkUsageTab): List<NetworkUsageDisplayItem> =
         buildNetworkUsageDisplayItems(
@@ -103,16 +105,27 @@ enum class NetworkUsageExitReason {
 }
 
 sealed interface NetworkUsageEvent {
-    data class Exit(val reason: NetworkUsageExitReason) : NetworkUsageEvent
+    data class Exit(
+        val reason: NetworkUsageExitReason,
+    ) : NetworkUsageEvent
 }
 
 sealed interface NetworkUsageAction {
     data object Resumed : NetworkUsageAction
+
     data object PermissionRequestConsumed : NetworkUsageAction
+
     data object PermissionGranted : NetworkUsageAction
+
     data object PermissionRejected : NetworkUsageAction
+
     data object BackClicked : NetworkUsageAction
+
     data object QuitScanConfirmed : NetworkUsageAction
+
     data object ResumeScanClicked : NetworkUsageAction
-    data class TabSelected(val index: Int) : NetworkUsageAction
+
+    data class TabSelected(
+        val index: Int,
+    ) : NetworkUsageAction
 }

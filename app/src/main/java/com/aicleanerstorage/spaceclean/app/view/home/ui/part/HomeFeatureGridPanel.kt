@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeFeatureUiSpec
+import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeFeatureUiSpec
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressable
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 

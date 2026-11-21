@@ -23,13 +23,12 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.part.WhatsApp
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 
 @Composable
 fun WhatsAppCleanerScreen(
     state: WhatsAppCleanerUiState,
     onAction: (WhatsAppCleanerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showStopDialog by remember { mutableStateOf(false) }
@@ -44,7 +43,8 @@ fun WhatsAppCleanerScreen(
                 showStopDialog = true
             }
             WhatsAppCleanerPhase.CompleteAnimation,
-            WhatsAppCleanerPhase.Result -> onAction(WhatsAppCleanerAction.CompletionExitClicked)
+            WhatsAppCleanerPhase.Result,
+            -> onAction(WhatsAppCleanerAction.CompletionExitClicked)
             else -> onAction(WhatsAppCleanerAction.BackClicked)
         }
     }
@@ -86,30 +86,35 @@ fun WhatsAppCleanerScreen(
         when (state.phase) {
             WhatsAppCleanerPhase.Scanning -> WhatsAppLoadingContent()
             WhatsAppCleanerPhase.Cleaning,
-            WhatsAppCleanerPhase.CompleteAnimation -> WhatsAppCleaningContent(
-                stage =
-                    if (state.phase == WhatsAppCleanerPhase.CompleteAnimation) {
-                        CleanXDeleteCompleteStage.Complete
-                    } else {
-                        CleanXDeleteCompleteStage.Deleting
+            WhatsAppCleanerPhase.CompleteAnimation,
+            ->
+                WhatsAppCleaningContent(
+                    stage =
+                        if (state.phase == WhatsAppCleanerPhase.CompleteAnimation) {
+                            CleanXDeleteCompleteStage.Complete
+                        } else {
+                            CleanXDeleteCompleteStage.Deleting
+                        },
+                )
+            WhatsAppCleanerPhase.ScanResult ->
+                WhatsAppScanResultContent(
+                    uiState = state,
+                    onToggleGroup = { onAction(WhatsAppCleanerAction.GroupToggled(it)) },
+                    onToggleCategory = { group, category ->
+                        onAction(WhatsAppCleanerAction.CategoryToggled(group, category))
                     },
-            )
-            WhatsAppCleanerPhase.ScanResult -> WhatsAppScanResultContent(
-                uiState = state,
-                onToggleGroup = { onAction(WhatsAppCleanerAction.GroupToggled(it)) },
-                onToggleCategory = { group, category ->
-                    onAction(WhatsAppCleanerAction.CategoryToggled(group, category))
-                },
-                onToggleExpanded = { onAction(WhatsAppCleanerAction.GroupExpansionToggled(it)) },
-            )
-            WhatsAppCleanerPhase.Result -> WhatsAppResultContent(
-                uiState = state,
-                onNavigateTool = onNavigate,
-            )
-            WhatsAppCleanerPhase.Error -> WhatsAppErrorContent(
-                message = state.errorMessage ?: stringResource(R.string.whatsapp_clean_unavailable),
-                onRetry = { onAction(WhatsAppCleanerAction.RetryClicked) },
-            )
+                    onToggleExpanded = { onAction(WhatsAppCleanerAction.GroupExpansionToggled(it)) },
+                )
+            WhatsAppCleanerPhase.Result ->
+                WhatsAppResultContent(
+                    uiState = state,
+                    onNavigateTool = { destination -> onAction(WhatsAppCleanerAction.NavigationRequested(destination)) },
+                )
+            WhatsAppCleanerPhase.Error ->
+                WhatsAppErrorContent(
+                    message = state.error?.asString() ?: stringResource(R.string.whatsapp_clean_unavailable),
+                    onRetry = { onAction(WhatsAppCleanerAction.RetryClicked) },
+                )
         }
     }
 

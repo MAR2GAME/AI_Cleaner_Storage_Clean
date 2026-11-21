@@ -1,22 +1,20 @@
 package com.aicleanerstorage.spaceclean.app.view.photos.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.appString
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.fileScanFailedMessage
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleAllVisible
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
 import androidx.lifecycle.viewModelScope
+import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleAllVisible
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -27,16 +25,18 @@ class PhotosManagerViewModel(
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
     private val completeDelayMillis: Long = 800L,
 ) : MviViewModel<PhotosManagerUiState, FileManagerAction, FileManagerEvent>(PhotosManagerUiState()) {
-    private val operations = FileOperations(viewModelScope, ioDispatcher) {
-        val photos = repository.loadImages().take(60).withSelectionIds()
-        PhotosManagerUiState(
-            phase = if (photos.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
-            items = photos,
-            tabs = buildPhotoTabs(photos),
-        )
-    }
+    private val operations =
+        FileOperations(viewModelScope, ioDispatcher) {
+            val photos = repository.loadImages().take(60).withSelectionIds()
+            PhotosManagerUiState(
+                phase = if (photos.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+                items = photos,
+                tabs = buildPhotoTabs(photos),
+            )
+        }
 
     private var exitRequested = false
+
     private fun exit(home: Boolean) {
         if (exitRequested) return
         exitRequested = true
@@ -50,7 +50,10 @@ class PhotosManagerViewModel(
             is FileManagerAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
             FileManagerAction.PermissionRejected -> exit(home = false)
             FileManagerAction.BackClicked -> handleBack()
-            FileManagerAction.DetailBackClicked -> { closeDetail(); sendEvent(FileManagerEvent.NavigateBack) }
+            FileManagerAction.DetailBackClicked -> {
+                closeDetail()
+                sendEvent(FileManagerEvent.NavigateBack)
+            }
 
             FileManagerAction.StopDismissed -> dismissStopDialog()
             FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
@@ -82,13 +85,18 @@ class PhotosManagerViewModel(
     }
 
     private fun showStopDialog(blockedPhase: FileOperationPhase? = null) {
-        changeState { it.copy(showStopDialog = true, blockedPhase = blockedPhase) }
+        setState { it.copy(showStopDialog = true, blockedPhase = blockedPhase) }
     }
-    private fun dismissStopDialog() { changeState { it.copy(showStopDialog = false, blockedPhase = null) } }
+
+    private fun dismissStopDialog() {
+        setState { it.copy(showStopDialog = false, blockedPhase = null) }
+    }
+
     private fun cancelActiveOperation() {
         operations.cancel()
         dismissStopDialog()
     }
+
     private fun startIfNeeded() {
         if (currentState.phase != FileOperationPhase.Scanning || currentState.items.isNotEmpty()) return
         refresh()
@@ -100,13 +108,13 @@ class PhotosManagerViewModel(
             onStart = { setState { PhotosManagerUiState(phase = FileOperationPhase.Scanning) } },
             onLoaded = { loaded -> setState { loaded } },
             onFailure = { error ->
-                setState { copy(phase = FileOperationPhase.NoResults, errorMessage = error.message ?: fileScanFailedMessage()) }
+                setState { it.copy(phase = FileOperationPhase.NoResults, error = FileOperationError.ScanFailed.toUiText()) }
             },
         )
     }
 
     private fun selectTab(index: Int) {
-        changeState {
+        setState {
             it.copy(
                 selectedTabIndex = index.coerceAtLeast(0),
                 selectedIds = emptySet(),
@@ -116,27 +124,27 @@ class PhotosManagerViewModel(
     }
 
     private fun toggleSelection(id: Int) {
-        changeState {
+        setState {
             it.copy(selectedIds = toggleId(it.selectedIds, id))
         }
     }
 
     private fun toggleVisibleItems() {
-        changeState { state ->
+        setState { state ->
             state.copy(selectedIds = toggleAllVisible(state.selectedIds, state.visibleIds))
         }
     }
 
     private fun openDetail(index: Int?) {
-        changeState { it.copy(detailStartIndex = openDetailIndex(index)) }
+        setState { it.copy(detailStartIndex = openDetailIndex(index)) }
     }
 
     private fun closeDetail() {
-        changeState { it.copy(detailStartIndex = null) }
+        setState { it.copy(detailStartIndex = null) }
     }
 
     private fun requestDelete() {
-        changeState {
+        setState {
             if (it.selectedIds.isNotEmpty()) {
                 it.copy(phase = FileOperationPhase.ConfirmDelete)
             } else {
@@ -146,25 +154,25 @@ class PhotosManagerViewModel(
     }
 
     private fun cancelDelete() {
-        changeState { it.copy(phase = FileOperationPhase.Browsing) }
+        setState { it.copy(phase = FileOperationPhase.Browsing) }
     }
 
     private fun clearError() {
-        changeState { it.copy(errorMessage = null) }
+        setState { it.copy(error = null) }
     }
 
     private fun deleteSelectedFiles() {
         val selectedFiles = currentState.selectedFiles
         operations.changeFiles(
             hasSelection = selectedFiles.isNotEmpty(),
-            onEmptySelection = { changeState { it.copy(phase = FileOperationPhase.Browsing) } },
-            onStart = { changeState { it.copy(phase = FileOperationPhase.Deleting, detailStartIndex = null) } },
+            onEmptySelection = { setState { it.copy(phase = FileOperationPhase.Browsing) } },
+            onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, detailStartIndex = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = { repository.deleteFiles(selectedFiles) },
             isSuccessful = { it.deletedCount > 0 },
             onCompleteAnimation = { outcome, loaded ->
-                changeState {
+                setState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,
                         items = loaded.items,
@@ -174,12 +182,12 @@ class PhotosManagerViewModel(
                     )
                 }
             },
-            onResult = { changeState { it.copy(phase = FileOperationPhase.Result) } },
+            onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
-                changeState {
+                setState {
                     it.copy(
                         phase = FileOperationPhase.Browsing,
-                        errorMessage = error.message ?: appString(R.string.deletion_failed)
+                        error = FileOperationError.DeletionFailed.toUiText(),
                     )
                 }
             },
@@ -187,6 +195,6 @@ class PhotosManagerViewModel(
     }
 
     private fun continueManaging() {
-        changeState { it.copy(phase = FileOperationPhase.Browsing, selectedIds = emptySet(), detailStartIndex = null) }
+        setState { it.copy(phase = FileOperationPhase.Browsing, selectedIds = emptySet(), detailStartIndex = null) }
     }
 }

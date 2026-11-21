@@ -21,24 +21,20 @@ import androidx.compose.ui.platform.LocalContext
 @Stable
 class PermissionGate internal constructor(
     private val hasPermission: (AppPermission) -> Boolean,
-    private val rationale: (AppPermission) -> Boolean,
 ) {
     private var systemUiLauncher: ((AppPermission, () -> Unit) -> Unit)? = null
     private var settingsLauncher: ((AppPermission) -> Unit)? = null
     private var pendingPermission: AppPermission? = null
     private var pendingResult: ((Boolean) -> Unit)? = null
 
-    /** 已授权直接执行 [onGranted]；否则拉起系统界面，复检通过后再执行。 */
-    fun allow(permission: AppPermission, onGranted: () -> Unit = {}) {
-        if (hasPermission(permission)) {
-            onGranted()
-            return
-        }
-        request(permission) { granted -> if (granted) onGranted() }
-    }
+    /** 只查询，不发起任何系统界面。*/
+    fun isGranted(permission: AppPermission): Boolean = hasPermission(permission)
 
     /** 无条件拉起（「去管理」场景）。 */
-    fun request(permission: AppPermission, onResult: (Boolean) -> Unit = {}) {
+    fun request(
+        permission: AppPermission,
+        onResult: (Boolean) -> Unit = {},
+    ) {
         if (pendingPermission != null) return
         pendingPermission = permission
         pendingResult = onResult
@@ -52,7 +48,6 @@ class PermissionGate internal constructor(
     }
 
     /** 是否该先解释再申请；只对运行时权限有意义，设置类权限恒为 false。 */
-    fun shouldShowRationale(permission: AppPermission): Boolean = rationale(permission)
 
     internal fun attach(
         launchSystemUi: (AppPermission, () -> Unit) -> Unit,
@@ -78,7 +73,6 @@ fun rememberPermissionGate(): PermissionGate {
         remember(context) {
             PermissionGate(
                 hasPermission = { permission -> permission.isGranted(context) },
-                rationale = { permission -> context.shouldShowRationale(permission) },
             )
         }
     val runtimeLauncher =
@@ -138,12 +132,6 @@ private fun AppPermission.openSettings(
         }
     }
     return false
-}
-
-private fun Context.shouldShowRationale(permission: AppPermission): Boolean {
-    val activity = findActivityOrNull() ?: return false
-    return permission.runtimePermissions(this)
-        .any { value -> activity.shouldShowRequestPermissionRationale(value) }
 }
 
 internal tailrec fun Context.findActivityOrNull(): Activity? =

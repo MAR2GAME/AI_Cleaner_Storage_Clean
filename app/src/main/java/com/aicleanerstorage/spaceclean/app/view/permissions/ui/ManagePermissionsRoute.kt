@@ -4,51 +4,68 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsAction
+import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsEvent
+import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
-import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsEvent
-import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsAction
-import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
+import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 
 @Composable
-fun ManagePermissionsRoute(navigator: AppNavigator, viewModel: ManagePermissionsViewModel) {
+fun ManagePermissionsRoute(
+    navigator: AppNavigator,
+    viewModel: ManagePermissionsViewModel,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val owner = LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
 
     fun refreshStatuses() {
-        viewModel.dispatch(
-            ManagePermissionsAction.StatusesChanged(
-                AppPermission.entries.associateWith { it.isGranted(context) },
-            ),
-        )
-    }
-
-    val permissionGate = rememberPermissionGate()
-
-    DisposableEffect(owner, viewModel) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) refreshStatuses()
-        }
-        owner.lifecycle.addObserver(observer)
-        onDispose { owner.lifecycle.removeObserver(observer) }
-    }
-    LaunchedEffect(viewModel) { refreshStatuses() }
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                ManagePermissionsEvent.NavigateBack -> navigator.back()
-                is ManagePermissionsEvent.OpenSettings -> {
-                    permissionGate.request(effect.permission) { refreshStatuses() }
-                }
+        val statuses =
+            AppPermission.entries.associateWith { permission ->
+                permission.isGranted(context)
             }
+        viewModel.dispatch(ManagePermissionsAction.StatusesChanged(statuses))
+    }
+
+    PermissionRequestEffect(pendingPermission) {
+        pendingPermission = null
+        refreshStatuses()
+    }
+
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) refreshStatuses()
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    LaunchedEffect(viewModel) {
+        refreshStatuses()
+    }
+
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            ManagePermissionsEvent.NavigateBack -> navigator.back()
+            is ManagePermissionsEvent.OpenPermissionSettings ->
+                pendingPermission = effect.permission
         }
     }
-    ManagePermissionsScreen(state = state, onAction = viewModel::dispatch)
+
+    ManagePermissionsScreen(
+        state = state,
+        onAction = viewModel::dispatch,
+    )
 }

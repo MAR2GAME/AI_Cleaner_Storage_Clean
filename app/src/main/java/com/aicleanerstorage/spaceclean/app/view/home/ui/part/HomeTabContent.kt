@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.home.ui.part
 
-import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,11 +44,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.devicekit.model.StorageInfo
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
-import com.aicleanerstorage.devicekit.model.StorageInfo
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 internal fun HomeTabContent(
@@ -210,27 +209,30 @@ private fun StorageMeta(storageInfo: StorageInfo) {
             val maxWidthPx = with(density) { maxWidth.roundToPx() }
             val measuredTotalWidthPx =
                 remember(totalText, textMeasurer) {
-                    textMeasurer.measure(
-                        text = totalText,
-                        style = totalTextStyle,
-                        maxLines = 1,
-                    ).size.width
+                    textMeasurer
+                        .measure(
+                            text = totalText,
+                            style = totalTextStyle,
+                            maxLines = 1,
+                        ).size.width
                 }
             val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
             val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
             val usedFontSize =
                 remember(usedText, usedWidthPx, textMeasurer) {
-                    (24 downTo 16).firstOrNull { size ->
-                        textMeasurer.measure(
-                            text = usedText,
-                            style =
-                                TextStyle(
-                                    fontSize = size.sp,
-                                    fontWeight = FontWeight.Bold,
-                                ),
-                            maxLines = 1,
-                        ).size.width <= usedWidthPx
-                    }?.sp ?: 16.sp
+                    (24 downTo 16)
+                        .firstOrNull { size ->
+                            textMeasurer
+                                .measure(
+                                    text = usedText,
+                                    style =
+                                        TextStyle(
+                                            fontSize = size.sp,
+                                            fontWeight = FontWeight.Bold,
+                                        ),
+                                    maxLines = 1,
+                                ).size.width <= usedWidthPx
+                        }?.sp ?: 16.sp
                 }
             val totalWidth = with(density) { totalWidthPx.toDp() }
 

@@ -172,8 +172,6 @@
     <string name="home_app_lock_title">Bloqueio de apps</string>
     <string name="file_unselect">Desmarcar</string>
     <string name="file_music">M?sica</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_network_usage_desc">Para mostrar detalhes de uso de rede, permita Storage Clean no Acesso de uso.</string>
     <string name="permission_notification_desc">Para organizar notificações automaticamente, permita Storage Clean no Acesso a notificações.</string>
     <string name="permission_overlay_desc">Para mostrar a tela PIN sobre os apps protegidos, permita que o Storage Clean seja exibido sobre outros apps.</string>
@@ -222,6 +220,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">Falha ao carregar. Tente novamente.</string>
+    <string name="speed_test_failed">Falha no teste de velocidade. Tente novamente.</string>
+    <string name="permission_denied">Permissão negada. Conceda o acesso nas configurações.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -472,4 +473,9 @@
     <string name="notification_status_empty_title">Intercepção de notificações ativada</string>
     <string name="notification_status_empty_message">As notificações interceptadas aparecem aqui</string>
     <string name="network_speed_estimated">Velocidade estimada</string>
+    <string name="similar_photo_grouping_hint">Agrupadas por álbum, data de modificação e tamanho de arquivo semelhante. Revise as fotos antes de excluí-las.</string>
+    <string name="junk_review_hint">Revise os arquivos sugeridos antes de selecioná-los. Apenas o cache deste app é selecionado por padrão.</string>
+    <string name="cleanup_stopped_summary">Interrompido. %1$d arquivos removidos (%2$s).</string>
+    <string name="available_memory_increase">A memória disponível aumentou %1$s durante a limpeza.</string>
+    <string name="settings_post_notifications">Notificações</string>
 </resources>

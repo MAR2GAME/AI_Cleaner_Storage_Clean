@@ -1,29 +1,21 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui
 
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedEvent
-
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedViewModel
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedAction
-
-
 import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedRoute
-
-
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedAction
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedEvent
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedViewModel
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedRoute
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedScreen
+import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import kotlinx.coroutines.*
 
 @Composable
 fun NetworkSpeedRoute(
@@ -35,6 +27,7 @@ fun NetworkSpeedRoute(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+
     fun handleBack() {
         if (exiting) return
         if (!exiting) {
@@ -57,22 +50,20 @@ fun NetworkSpeedRoute(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.event.collect { effect ->
-            when (effect) {
-                is NetworkSpeedEvent.Exit -> handleBack()
-                is NetworkSpeedEvent.Navigate -> if (!exiting) navigator.resetToRoot(effect.destination)
-            }
+    CollectEffects(viewModel) { effect ->
+        when (effect) {
+            is NetworkSpeedEvent.Exit -> handleBack()
+            is NetworkSpeedEvent.Navigate -> if (!exiting) navigator.resetToRoot(effect.destination)
         }
     }
 
-    BackHandler { viewModel.dispatch(NetworkSpeedAction.BackClicked) }
-
     NetworkSpeedScreen(
         uiState = uiState,
-        onBack = { viewModel.dispatch(NetworkSpeedAction.BackClicked) },
-        onRunSpeedTest = { viewModel.dispatch(NetworkSpeedAction.SpeedTestRequested) },
-        onStopSpeedTest = { viewModel.dispatch(NetworkSpeedAction.StopClicked) },
-        onNavigateTool = { if (!exiting) viewModel.dispatch(NetworkSpeedAction.NavigationRequested(it)) },
+        onAction = { action ->
+            when (action) {
+                is NetworkSpeedAction.NavigationRequested -> if (!exiting) viewModel.dispatch(action)
+                else -> viewModel.dispatch(action)
+            }
+        },
     )
 }

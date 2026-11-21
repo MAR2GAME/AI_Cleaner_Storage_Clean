@@ -2,9 +2,9 @@ package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
-import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
 
 @Composable
 internal fun CpuCard(hardware: DeviceHardwareInfo) {

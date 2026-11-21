@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.base.designsystem.component
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,7 +50,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import android.view.WindowManager
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBlue
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedText
@@ -128,6 +128,7 @@ fun SettingsRateDialog(
 ) {
     var rating by remember { mutableIntStateOf(0) }
     var showFeedback by remember { mutableStateOf(false) }
+
     fun close() = onDismiss()
 
     Dialog(
@@ -272,8 +273,7 @@ private fun RateSelectionContent(
                                 Brush.horizontalGradient(
                                     listOf(Color(0xFFD0FD91), Color(0xFF5DD595)),
                                 ),
-                            )
-                            .clickable(
+                            ).clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 enabled = rating > 0,

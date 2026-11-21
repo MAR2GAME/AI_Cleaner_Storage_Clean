@@ -127,8 +127,6 @@
     <string name="home_app_lock_title">App-Sperre</string>
     <string name="file_unselect">Abw?hlen</string>
     <string name="file_music">Musik</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">Um App-Nutzungsdetails anzuzeigen, erlaube Storage Clean den Nutzungszugriff.</string>
     <string name="permission_network_usage_desc">Um Netzwerknutzungsdetails anzuzeigen, erlaube Storage Clean den Nutzungszugriff.</string>
     <string name="permission_notification_desc">Um Benachrichtigungen automatisch zu ordnen, erlaube Storage Clean den Benachrichtigungszugriff.</string>
@@ -181,6 +179,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">Laden fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="speed_test_failed">Geschwindigkeitstest fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="permission_denied">Berechtigung verweigert. Bitte erlauben Sie den Zugriff in den Einstellungen.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -469,4 +470,9 @@
     <string name="notification_status_empty_title">Benachrichtigungsblockierung aktiviert</string>
     <string name="notification_status_empty_message">Blockierte Benachrichtigungen werden hier angezeigt</string>
     <string name="network_speed_estimated">Geschätzte Geschwindigkeit</string>
+    <string name="similar_photo_grouping_hint">Gruppiert nach Album, Änderungsdatum und ähnlicher Dateigröße. Prüfen Sie die Fotos vor dem Löschen.</string>
+    <string name="junk_review_hint">Prüfen Sie die vorgeschlagenen Dateien vor der Auswahl. Standardmäßig ist nur der Cache dieser App ausgewählt.</string>
+    <string name="cleanup_stopped_summary">Angehalten. %1$d Dateien entfernt (%2$s).</string>
+    <string name="available_memory_increase">Der verfügbare Speicher wurde während der Bereinigung um %1$s erhöht.</string>
+    <string name="settings_post_notifications">Benachrichtigungen</string>
 </resources>

@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
@@ -32,12 +32,14 @@ fun RotatingRingAnimation(
     val rotation by transition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = animationDurationMillis,
-                easing = LinearEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = animationDurationMillis,
+                        easing = LinearEasing,
+                    ),
             ),
-        ),
         label = "rotatingRingAngle",
     )
 
@@ -53,7 +55,9 @@ fun RotatingRingAnimation(
                 sweepAngle = 360f,
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-                topLeft = androidx.compose.ui.geometry.Offset(strokeWidth / 2f, strokeWidth / 2f),
+                topLeft =
+                    androidx.compose.ui.geometry
+                        .Offset(strokeWidth / 2f, strokeWidth / 2f),
                 size =
                     androidx.compose.ui.geometry.Size(
                         size.width - strokeWidth,
@@ -62,9 +66,10 @@ fun RotatingRingAnimation(
             )
         }
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .graphicsLayer(rotationZ = rotation),
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .graphicsLayer(rotationZ = rotation),
         ) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 val strokeWidth = ringWidth.toPx()
@@ -74,7 +79,9 @@ fun RotatingRingAnimation(
                     sweepAngle = arcLength,
                     useCenter = false,
                     style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-                    topLeft = androidx.compose.ui.geometry.Offset(strokeWidth / 2f, strokeWidth / 2f),
+                    topLeft =
+                        androidx.compose.ui.geometry
+                            .Offset(strokeWidth / 2f, strokeWidth / 2f),
                     size =
                         androidx.compose.ui.geometry.Size(
                             size.width - strokeWidth,

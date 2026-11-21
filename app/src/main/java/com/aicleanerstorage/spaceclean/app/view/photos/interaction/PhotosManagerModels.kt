@@ -1,15 +1,13 @@
 package com.aicleanerstorage.spaceclean.app.view.photos.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.IndexedFileItem
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.totalSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.IndexedFileItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.totalSizeLabel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 data class PhotosManagerTab(
@@ -19,6 +17,7 @@ data class PhotosManagerTab(
 )
 
 data class PhotosManagerUiState(
+    val permissionGranted: Boolean = false,
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
     val phase: FileOperationPhase = FileOperationPhase.Scanning,
@@ -28,7 +27,7 @@ data class PhotosManagerUiState(
     val selectedIds: Set<Int> = emptySet(),
     val detailStartIndex: Int? = null,
     val deletedBytes: Long = 0L,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
 ) {
     val displayItems: List<FileImageDisplayItem> get() = items.map { it.toImageDisplayItem() }
 
@@ -50,7 +49,6 @@ data class PhotosManagerUiState(
 
     val selectedSizeBytes: Long get() = selectedFiles.sumOf { it.sizeBytes }
 
-
     val resultSize: Pair<String, String> get() = FormatUtil.formatSize(deletedBytes).splitFileSizeLabel()
 }
 
@@ -64,12 +62,14 @@ fun buildPhotoTabs(items: List<IndexedFileItem>): List<PhotosManagerTab> {
     val used = (pictures + dcim).map { it.id }.toSet()
     val other = items.filter { it.id !in used }
 
-    fun tab(title: String, tabItems: List<IndexedFileItem>) =
-        PhotosManagerTab(
-            title = title,
-            sizeLabel = totalSizeLabel(tabItems.map { it.file }).takeIf { it.isNotBlank() },
-            itemIds = tabItems.map { it.id }.toSet(),
-        )
+    fun tab(
+        title: String,
+        tabItems: List<IndexedFileItem>,
+    ) = PhotosManagerTab(
+        title = title,
+        sizeLabel = totalSizeLabel(tabItems.map { it.file }).takeIf { it.isNotBlank() },
+        itemIds = tabItems.map { it.id }.toSet(),
+    )
 
     return listOf(
         tab("Photo", items),

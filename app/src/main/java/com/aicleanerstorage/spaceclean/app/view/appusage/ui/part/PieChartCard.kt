@@ -53,11 +53,12 @@ internal fun PieChartCard(uiState: AppUsageUiState) {
 
     val donutItems = mutableListOf<DonutItem>()
     topItems.forEachIndexed { index, usage ->
-        val fraction = if (uiState.totalUsageMs > 0) {
-            usage.totalForegroundMs.toFloat() / uiState.totalUsageMs
-        } else {
-            0f
-        }
+        val fraction =
+            if (uiState.totalUsageMs > 0) {
+                usage.totalForegroundMs.toFloat() / uiState.totalUsageMs
+            } else {
+                0f
+            }
         donutItems.add(
             DonutItem(
                 fraction = fraction.coerceAtLeast(0.02f),
@@ -67,11 +68,12 @@ internal fun PieChartCard(uiState: AppUsageUiState) {
     }
     if (otherItems.isNotEmpty()) {
         val otherTotalMs = otherItems.sumOf { it.totalForegroundMs }
-        val otherFraction = if (uiState.totalUsageMs > 0) {
-            otherTotalMs.toFloat() / uiState.totalUsageMs
-        } else {
-            0f
-        }
+        val otherFraction =
+            if (uiState.totalUsageMs > 0) {
+                otherTotalMs.toFloat() / uiState.totalUsageMs
+            } else {
+                0f
+            }
         donutItems.add(
             DonutItem(
                 fraction = otherFraction.coerceAtLeast(0.02f),
@@ -134,7 +136,6 @@ internal fun PieChartCard(uiState: AppUsageUiState) {
                         .padding(start = startPadding, end = 16.dp, top = 20.dp, bottom = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-
                 Column(
                     modifier =
                         Modifier
@@ -176,7 +177,6 @@ internal fun PieChartCard(uiState: AppUsageUiState) {
                         )
                     }
                 }
-
             }
         }
     }
@@ -186,11 +186,12 @@ internal val NavyMuted = Color(0xFF999999)
 
 private val OtherColor = Color(0xFF4F75FE)
 
-private val DonutColors = listOf(
-    Color(0xFFFF565D),
-    Color(0xFFA03CFE),
-    Color(0xFF80F17D),
-)
+private val DonutColors =
+    listOf(
+        Color(0xFFFF565D),
+        Color(0xFFA03CFE),
+        Color(0xFF80F17D),
+    )
 
 @Composable
 private fun LegendItem(
@@ -204,10 +205,11 @@ private fun LegendItem(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box(
-            modifier = Modifier
-                .size(5.dp)
-                .clip(CircleShape)
-                .background(color),
+            modifier =
+                Modifier
+                    .size(5.dp)
+                    .clip(CircleShape)
+                    .background(color),
         )
         Text(
             text = label,
@@ -240,10 +242,11 @@ private fun DonutChart(
     Canvas(modifier = modifier) {
         val strokeWidth = 21.dp.toPx()
         val radius = (size.minDimension - strokeWidth) / 2
-        val topLeft = Offset(
-            (size.width - radius * 2) / 2,
-            (size.height - radius * 2) / 2,
-        )
+        val topLeft =
+            Offset(
+                (size.width - radius * 2) / 2,
+                (size.height - radius * 2) / 2,
+            )
         val arcSize = Size(radius * 2, radius * 2)
         var startAngle = -90f
 

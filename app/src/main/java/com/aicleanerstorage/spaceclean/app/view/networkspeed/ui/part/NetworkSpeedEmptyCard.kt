@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavy
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavy
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavyMuted
 
 @Composable
 internal fun NetworkSpeedEmptyCard(

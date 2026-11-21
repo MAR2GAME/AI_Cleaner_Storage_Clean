@@ -1,21 +1,19 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.ui
 
-import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowDialogs
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -28,25 +26,27 @@ fun DuplicateFilesManagerRoute(
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
     val context = LocalContext.current
-    LaunchedEffect(uiState.skippedDeleteCount) {
+    val skippedMessage =
         if (uiState.skippedDeleteCount > 0) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.clean_result_files_failed, uiState.skippedDeleteCount),
-                Toast.LENGTH_LONG,
-            ).show()
+            stringResource(R.string.clean_result_files_failed, uiState.skippedDeleteCount)
+        } else {
+            null
+        }
+    LaunchedEffect(uiState.skippedDeleteCount, skippedMessage) {
+        if (skippedMessage != null) {
+            Toast.makeText(context, skippedMessage, Toast.LENGTH_LONG).show()
             viewModel.dispatch(FileManagerAction.SkippedDeleteCountConsumed)
         }
     }
 
     DuplicateFilesManagerScreen(
-        state = displayState,
-        permissionGranted = permissionState.granted,
+        state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked -> viewModel.dispatch(
-                    if (permissionState.granted) action else FileManagerAction.PermissionRejected,
-                )
+                FileManagerAction.BackClicked ->
+                    viewModel.dispatch(
+                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                    )
                 FileManagerAction.DeleteClicked,
                 FileManagerAction.GroupDeleteClicked,
                 FileManagerAction.SelectAllClicked,
@@ -55,11 +55,12 @@ fun DuplicateFilesManagerRoute(
                 FileManagerAction.ContinueManagingClicked,
                 is FileManagerAction.GroupClicked,
                 is FileManagerAction.FileToggled,
-                is FileManagerAction.GroupSelectionToggled -> viewModel.dispatch(action)
+                is FileManagerAction.GroupSelectionToggled,
+                -> viewModel.dispatch(action)
+                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
-        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it)) },
     )
 
     FileManagerFlowDialogs(

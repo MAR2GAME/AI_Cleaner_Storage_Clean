@@ -1,16 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part
 
-import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
-import com.aicleanerstorage.spaceclean.R
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavyMuted
 import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 

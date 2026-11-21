@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.splash.interaction
 
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
 
 class SplashViewModel(
     private val settingsRepository: SettingsRepository,
@@ -14,7 +14,7 @@ class SplashViewModel(
             } else {
                 AppDestination.OnboardingScan
             }
-        val transition = reduceSplashState(currentState, intent, destination)
+        val transition = SplashReducer.reduce(currentState, intent, destination)
         setState { transition.state }
         transition.events.forEach(::sendEvent)
     }

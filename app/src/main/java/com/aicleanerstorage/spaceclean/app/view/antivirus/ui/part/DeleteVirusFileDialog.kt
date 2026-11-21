@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.VirusSecondary
-import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.VirusTitle
+import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusSecondary
+import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part.VirusTitle
 
 @Composable
 internal fun DeleteVirusFileDialog(

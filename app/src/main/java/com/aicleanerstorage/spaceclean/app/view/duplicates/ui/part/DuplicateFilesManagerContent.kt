@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
@@ -32,15 +32,15 @@ internal fun DuplicateFilesManagerContent(
     onToggleGroupSelection: (DuplicateGroupItem) -> Unit,
     onAcceptWarning: () -> Unit,
     onNavigateTool: (AppDestination) -> Unit,
-
     onContinue: () -> Unit,
 ) {
     val result = FormatUtil.formatSize(uiState.deletedBytes).splitFileSizeLabel()
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(FileManagerPageBrush)
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(FileManagerPageBrush)
+                .padding(horizontal = 16.dp),
     ) {
         FileOperationPhaseContent(
             phase = uiState.phase,

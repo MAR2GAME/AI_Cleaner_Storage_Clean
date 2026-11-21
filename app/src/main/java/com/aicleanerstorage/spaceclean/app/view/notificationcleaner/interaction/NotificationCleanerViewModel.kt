@@ -1,14 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 
-import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionChecker
-
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.data.notificationcleaner.model.BlockableNotificationAppModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,10 +15,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NotificationCleanerViewModel(
-    private val message: (Int) -> String,
     private val repository: NotificationCleanerRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val permissionChecker: PermissionChecker? = null,
 ) : MviViewModel<NotificationCleanerUiState, NotificationCleanerAction, NotificationCleanerEvent>(NotificationCleanerUiState()) {
     private var scanJob: Job? = null
     private var activeScanGeneration = 0L
@@ -43,27 +39,20 @@ class NotificationCleanerViewModel(
                     else -> sendEvent(NotificationCleanerEvent.Exit)
                 }
             }
-            NotificationCleanerAction.StopConfirmed -> { confirmStoppedOperationExit(); sendEvent(NotificationCleanerEvent.Exit) }
+            NotificationCleanerAction.StopConfirmed -> {
+                confirmStoppedOperationExit()
+                sendEvent(NotificationCleanerEvent.Exit)
+            }
             NotificationCleanerAction.StopDismissed -> resumeStoppedOperation()
             NotificationCleanerAction.RefreshRequested -> refreshState()
             NotificationCleanerAction.SettingsClicked -> showSettings()
-            NotificationCleanerAction.BlockingEnableRequested -> guardEnableBlocking()
+            NotificationCleanerAction.BlockingEnableRequested -> setBlockingEnabled(true)
             NotificationCleanerAction.BlockingDisableRequested -> setBlockingEnabled(false)
             NotificationCleanerAction.TidyUpClicked -> tidyUp()
             NotificationCleanerAction.CleaningAnimationFinished -> finishCleaning()
             NotificationCleanerAction.CompletionAnimationFinished -> finishCompleteAnimation()
             is NotificationCleanerAction.StatusRequested -> showStatus(action.scanGeneration)
             is NotificationCleanerAction.PackageToggled -> togglePackage(action.packageName)
-        }
-    }
-
-    private fun guardEnableBlocking() {
-        launch {
-            if (permissionChecker?.isGranted(AppPermission.NotificationListener) != false) {
-                setBlockingEnabled(true)
-            } else {
-                changeState { it.copy(hasAccess = false, enabled = false) }
-            }
         }
     }
 
@@ -81,7 +70,7 @@ class NotificationCleanerViewModel(
     private fun setBlockingEnabled(checked: Boolean): Boolean {
         val hasAccess = repository.hasNotificationListenerAccess()
         if (checked && !hasAccess) {
-            changeState {
+            setState {
                 it.copy(hasAccess = false, enabled = false, isLoading = false, scanInProgress = false)
             }
             return true
@@ -100,22 +89,22 @@ class NotificationCleanerViewModel(
                 repository.setNotificationPackageSelected(packageName, selected)
                 repository.selectedNotificationPackages()
             }.onSuccess { selectedPackages ->
-                changeState { it.copy(selectedPackages = selectedPackages, errorMessage = null) }
+                setState { it.copy(selectedPackages = selectedPackages, error = null) }
             }.onFailure { error ->
-                changeState {
-                    it.copy(errorMessage = error.message ?: appString(R.string.notification_app_selection_update_failed))
+                setState {
+                    it.copy(error = UiText.Res(R.string.notification_app_selection_update_failed))
                 }
             }
         }
     }
 
     private fun showSettings() {
-        changeState { it.copy(page = NotificationCleanerPage.Settings) }
+        setState { it.copy(page = NotificationCleanerPage.Settings) }
         loadNotificationAppsIfNeeded()
     }
 
     private fun leaveSettings() {
-        changeState { it.copy(page = NotificationCleanerPage.Status) }
+        setState { it.copy(page = NotificationCleanerPage.Status) }
     }
 
     private fun showStatus(scanGeneration: Long) {
@@ -145,7 +134,7 @@ class NotificationCleanerViewModel(
         }
         pendingScanCompletionGeneration = null
         deferredScanCompletionGeneration = null
-        changeState { NotificationCleanerReducer.scanCompleted(it) }
+        setState { NotificationCleanerReducer.scanCompleted(it) }
     }
 
     private fun requestStopDialog() {
@@ -156,7 +145,7 @@ class NotificationCleanerViewModel(
         ) {
             return
         }
-        changeState {
+        setState {
             if (it.page == stoppedPage) {
                 it.copy(showStopDialog = true, stopDialogPage = stoppedPage)
             } else {
@@ -174,7 +163,7 @@ class NotificationCleanerViewModel(
     private fun resumeStoppedOperation() {
         val stoppedPage = currentState.stopDialogPage
         val scanCompletionPending = pendingScanCompletionGeneration == activeScanGeneration
-        changeState { it.copy(showStopDialog = false, stopDialogPage = null) }
+        setState { it.copy(showStopDialog = false, stopDialogPage = null) }
         if (stoppedPage != NotificationCleanerPage.Scanning) return
 
         val deferredGeneration = deferredScanCompletionGeneration
@@ -189,7 +178,7 @@ class NotificationCleanerViewModel(
         if (currentState.stopDialogPage == NotificationCleanerPage.Scanning) {
             cancelActiveScan()
         }
-        changeState { it.copy(showStopDialog = false, stopDialogPage = null) }
+        setState { it.copy(showStopDialog = false, stopDialogPage = null) }
     }
 
     private fun cancelActiveScan() {
@@ -198,7 +187,7 @@ class NotificationCleanerViewModel(
         deferredScanCompletionGeneration = null
         scanJob?.cancel()
         scanJob = null
-        changeState { NotificationCleanerReducer.scanCancelled(it) }
+        setState { NotificationCleanerReducer.scanCancelled(it) }
     }
 
     private fun handleAccessRefresh(hasAccess: Boolean) {
@@ -211,7 +200,7 @@ class NotificationCleanerViewModel(
             deferredScanCompletionGeneration = null
             cleaningCompletionPending = false
             postCompletionPage = null
-            changeState {
+            setState {
                 it.copy(
                     hasAccess = false,
                     enabled = false,
@@ -226,7 +215,7 @@ class NotificationCleanerViewModel(
                     isLoading = false,
                     scanInProgress = false,
                     isInitialized = true,
-                    errorMessage = null,
+                    error = null,
                     cleanedCount = 0,
                     cleaningAnimationComplete = false,
                     completionResultVisible = false,
@@ -259,7 +248,7 @@ class NotificationCleanerViewModel(
                     handleAccessRefresh(false)
                     return@onSuccess
                 }
-                changeState { state ->
+                setState { state ->
                     state.copy(
                         hasAccess = true,
                         enabled = snapshot.enabled,
@@ -270,7 +259,7 @@ class NotificationCleanerViewModel(
                         isLoading = false,
                         scanInProgress = false,
                         isInitialized = true,
-                        errorMessage = null,
+                        error = null,
                     )
                 }
             }.onFailure { error ->
@@ -285,7 +274,7 @@ class NotificationCleanerViewModel(
         val scanGeneration = activeScanGeneration
         pendingScanCompletionGeneration = null
         deferredScanCompletionGeneration = null
-        changeState { NotificationCleanerReducer.scanStarted(it) }
+        setState { NotificationCleanerReducer.scanStarted(it) }
         scanJob =
             viewModelScope.launch(ioDispatcher) {
                 val startedAtMillis = System.currentTimeMillis()
@@ -294,7 +283,7 @@ class NotificationCleanerViewModel(
                     val remainingMillis = MIN_SCAN_DURATION_MILLIS - (System.currentTimeMillis() - startedAtMillis)
                     if (remainingMillis > 0L) delay(remainingMillis)
                     if (scanGeneration != activeScanGeneration) return@launch
-                    changeState { state ->
+                    setState { state ->
                         if (!snapshot.hasAccess) {
                             state.copy(
                                 hasAccess = false,
@@ -310,7 +299,7 @@ class NotificationCleanerViewModel(
                                 isLoading = false,
                                 scanInProgress = false,
                                 isInitialized = true,
-                                errorMessage = null,
+                                error = null,
                             )
                         } else {
                             state.copy(
@@ -327,7 +316,7 @@ class NotificationCleanerViewModel(
                                 isLoading = false,
                                 scanInProgress = false,
                                 isInitialized = true,
-                                errorMessage = null,
+                                error = null,
                             )
                         }
                     }
@@ -339,12 +328,12 @@ class NotificationCleanerViewModel(
                 } catch (error: Exception) {
                     if (scanGeneration != activeScanGeneration) return@launch
                     scanJob = null
-                    changeState {
+                    setState {
                         it.copy(
                             isLoading = false,
                             scanInProgress = false,
                             isInitialized = true,
-                            errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+                            error = UiText.Res(R.string.notification_status_load_failed),
                         )
                     }
                 }
@@ -379,10 +368,10 @@ class NotificationCleanerViewModel(
                     }
                     postCompletionPage = null
                     cleaningCompletionPending = false
-                    changeState { NotificationCleanerReducer.notificationsCleaned(it, cleanedCount) }
+                    setState { NotificationCleanerReducer.notificationsCleaned(it, cleanedCount) }
                 }.onFailure { error ->
-                    changeState {
-                        it.copy(errorMessage = error.message ?: appString(R.string.notification_status_load_failed))
+                    setState {
+                        it.copy(error = UiText.Res(R.string.notification_status_load_failed))
                     }
                 }
         }
@@ -392,39 +381,37 @@ class NotificationCleanerViewModel(
         if (currentState.page != NotificationCleanerPage.Cleaning || cleaningCompletionPending) return
         cleaningCompletionPending = true
         postCompletionPage = NotificationCleanerPage.Complete
-        changeState { NotificationCleanerReducer.cleaningFinished(it) }
+        setState { NotificationCleanerReducer.cleaningFinished(it) }
     }
 
     private fun finishCompleteAnimation() {
         if (currentState.page != NotificationCleanerPage.Complete || !cleaningCompletionPending) return
         cleaningCompletionPending = false
-        showStatusAfterCompletionAd()
+        showStatusAfterCompleteAnimation()
     }
 
-    private fun showStatusAfterCompletionAd() {
+    private fun showStatusAfterCompleteAnimation() {
         val targetPage = postCompletionPage ?: NotificationCleanerPage.Status
         cleaningCompletionPending = false
         postCompletionPage = null
-        changeState { NotificationCleanerReducer.completionDisplayed(it, targetPage) }
+        setState { NotificationCleanerReducer.completionDisplayed(it, targetPage) }
     }
 
     private fun failRefresh(error: Throwable) {
-        changeState {
+        setState {
             it.copy(
                 isLoading = false,
                 scanInProgress = false,
                 isInitialized = true,
-                errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+                error = UiText.Res(R.string.notification_status_load_failed),
             )
         }
     }
 
-    private fun appString(resId: Int): String = message(resId)
-
     private fun loadNotificationAppsIfNeeded() {
         val current = currentState
         if (current.appsLoaded || current.isAppsLoading) return
-        changeState { it.copy(isAppsLoading = true) }
+        setState { it.copy(isAppsLoading = true) }
         viewModelScope.launch(ioDispatcher) {
             runSuspendCatching {
                 NotificationAppsSnapshot(
@@ -432,7 +419,7 @@ class NotificationCleanerViewModel(
                     selectedPackages = repository.selectedNotificationPackages(),
                 )
             }.onSuccess { snapshot ->
-                changeState {
+                setState {
                     it.copy(
                         apps = snapshot.apps,
                         selectedPackages = snapshot.selectedPackages,
@@ -441,10 +428,10 @@ class NotificationCleanerViewModel(
                     )
                 }
             }.onFailure { error ->
-                changeState {
+                setState {
                     it.copy(
                         isAppsLoading = false,
-                        errorMessage = error.message ?: appString(R.string.notification_status_load_failed),
+                        error = UiText.Res(R.string.notification_status_load_failed),
                     )
                 }
             }

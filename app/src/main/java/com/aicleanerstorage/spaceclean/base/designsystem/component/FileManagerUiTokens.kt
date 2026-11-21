@@ -12,6 +12,7 @@ val FileManagerPrimaryLime = Color(0xFFD0FD91)
 val FileManagerCardBackgroundColor = Color.White
 val FileManagerDividerLineColor = Color(0x1A282927)
 
-val FileManagerPrimaryGradient = Brush.horizontalGradient(
-    listOf(FileManagerPrimaryLime, FileManagerPrimaryGreen),
-)
+val FileManagerPrimaryGradient =
+    Brush.horizontalGradient(
+        listOf(FileManagerPrimaryLime, FileManagerPrimaryGreen),
+    )

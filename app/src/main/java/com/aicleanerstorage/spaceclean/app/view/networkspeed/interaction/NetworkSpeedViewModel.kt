@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.networkkit.NetworkRepository
+import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,7 @@ class NetworkSpeedViewModel(
             NetworkSpeedAction.BackClicked -> {
                 if (currentState.phase != NetworkSpeedPhase.Completing) {
                     stopSpeedTest()
-                    sendEvent(NetworkSpeedEvent.Exit(false))
+                    sendEvent(NetworkSpeedEvent.Exit)
                 }
             }
             is NetworkSpeedAction.NavigationRequested -> sendEvent(NetworkSpeedEvent.Navigate(intent.destination))
@@ -27,7 +27,6 @@ class NetworkSpeedViewModel(
             NetworkSpeedAction.SpeedTestRequested -> runSpeedTest()
             NetworkSpeedAction.ResultRequested -> showResult()
             NetworkSpeedAction.StopClicked -> stopSpeedTest()
-
         }
     }
 
@@ -35,16 +34,16 @@ class NetworkSpeedViewModel(
     private var networkRefreshJob: Job? = null
 
     init {
-        refreshNetworkState()
+        viewModelScope.launch(ioDispatcher) { refreshNetworkState() }
     }
 
     fun refreshNetworkState(): Boolean {
         val hasNetwork = repository.isNetworkAvailable()
-        changeState {
+        setState {
             it.copy(
                 networkInfo = repository.readNetworkInfo(),
                 hasNetwork = hasNetwork,
-                errorMessage = null,
+                phase = if (it.phase == NetworkSpeedPhase.Error) NetworkSpeedPhase.Idle else it.phase,
             )
         }
         return hasNetwork
@@ -70,20 +69,20 @@ class NetworkSpeedViewModel(
 
         networkRefreshJob?.cancel()
         speedTestJob?.cancel()
-        changeState { NetworkSpeedReducer.testStarted(it) }
+        setState { NetworkSpeedReducer.testStarted(it) }
         speedTestJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
                     val result =
                         repository.runSpeedTest { progress ->
-                            changeState { NetworkSpeedReducer.progressUpdated(it, progress) }
+                            setState { NetworkSpeedReducer.progressUpdated(it, progress) }
                         }
-                    changeState { NetworkSpeedReducer.testCompleted(it, result) }
+                    setState { NetworkSpeedReducer.testCompleted(it, result) }
                     dispatch(NetworkSpeedAction.ResultRequested)
                 } catch (cancellation: CancellationException) {
                     throw cancellation
                 } catch (error: Throwable) {
-                    changeState { NetworkSpeedReducer.testFailed(it, error.message) }
+                    setState { NetworkSpeedReducer.testFailed(it) }
                 } finally {
                     speedTestJob = null
                 }
@@ -91,14 +90,14 @@ class NetworkSpeedViewModel(
     }
 
     private fun showResult() {
-        changeState { NetworkSpeedReducer.resultRequested(it) }
+        setState { NetworkSpeedReducer.resultRequested(it) }
     }
 
     private fun stopSpeedTest() {
         speedTestJob?.cancel()
         speedTestJob = null
         networkRefreshJob?.cancel()
-        changeState { NetworkSpeedReducer.testStopped(it) }
+        setState { NetworkSpeedReducer.testStopped(it) }
     }
 
     private companion object {
@@ -106,4 +105,3 @@ class NetworkSpeedViewModel(
         private const val NETWORK_REFRESH_RETRY_DELAY_MILLIS = 500L
     }
 }
-

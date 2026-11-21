@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiState
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardColor
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockPlaceholderText
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardRadius
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockNavy
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockPlaceholderText
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBlue
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
 
@@ -40,40 +40,43 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillSha
 internal fun AppLockSearchContent(
     uiState: AppLockUiState,
     onSearch: (String) -> Unit,
-    onTogglePackage: (String) -> Unit
+    onTogglePackage: (String) -> Unit,
 ) {
     val query = uiState.searchQuery.trim()
-    val visibleApps = remember(uiState.apps, query) {
-        if (query.isBlank()) {
-            emptyList()
-        } else {
-            uiState.apps.filter { app -> app.appName.contains(query, ignoreCase = true) }
+    val visibleApps =
+        remember(uiState.apps, query) {
+            if (query.isBlank()) {
+                emptyList()
+            } else {
+                uiState.apps.filter { app -> app.appName.contains(query, ignoreCase = true) }
+            }
         }
-    }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
     ) {
         SearchInput(
             query = uiState.searchQuery,
-            onSearch = onSearch
+            onSearch = onSearch,
         )
         Spacer(modifier = Modifier.height(15.dp))
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 40.dp)
+            contentPadding = PaddingValues(bottom = 40.dp),
         ) {
             when {
                 query.isBlank() -> Unit
                 visibleApps.isEmpty() -> item { EmptyCard(text = stringResource(R.string.app_lock_no_search_results)) }
-                else -> items(visibleApps, key = { app -> app.packageName }) { app ->
-                    AppLockRow(
-                        app = app,
-                        onClick = { onTogglePackage(app.packageName) },
-                    )
-                }
+                else ->
+                    items(visibleApps, key = { app -> app.packageName }) { app ->
+                        AppLockRow(
+                            app = app,
+                            onClick = { onTogglePackage(app.packageName) },
+                        )
+                    }
             }
         }
     }
@@ -82,20 +85,21 @@ internal fun AppLockSearchContent(
 @Composable
 private fun SearchInput(
     query: String,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
 ) {
     OutlinedTextField(
         value = query,
         onValueChange = onSearch,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(55.dp),
         singleLine = true,
         leadingIcon = {
             Image(
                 painter = painterResource(R.mipmap.ic_ser),
                 contentDescription = null,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         },
         trailingIcon = {
@@ -103,10 +107,11 @@ private fun SearchInput(
                 Image(
                     painter = painterResource(R.mipmap.ic_close),
                     contentDescription = stringResource(R.string.delete),
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(CleanXPillShape)
-                        .clickable { onSearch("") }
+                    modifier =
+                        Modifier
+                            .size(30.dp)
+                            .clip(CleanXPillShape)
+                            .clickable { onSearch("") },
                 )
             }
         },
@@ -114,24 +119,26 @@ private fun SearchInput(
             Text(
                 text = stringResource(R.string.please_enter_app_name),
                 color = AppLockPlaceholderText,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        textStyle = androidx.compose.ui.text.TextStyle(
-            color = AppLockNavy,
-            fontSize = 16.sp
-        ),
+        textStyle =
+            androidx.compose.ui.text.TextStyle(
+                color = AppLockNavy,
+                fontSize = 16.sp,
+            ),
         shape = RoundedCornerShape(AppLockCardRadius),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = AppLockCardColor,
-            unfocusedContainerColor = AppLockCardColor,
-            disabledContainerColor = AppLockCardColor,
-            focusedBorderColor = Color.Transparent,
-            unfocusedBorderColor = Color.Transparent,
-            focusedTextColor = AppLockNavy,
-            unfocusedTextColor = AppLockNavy,
-            cursorColor = CleanXBlue
-        )
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = AppLockCardColor,
+                unfocusedContainerColor = AppLockCardColor,
+                disabledContainerColor = AppLockCardColor,
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                focusedTextColor = AppLockNavy,
+                unfocusedTextColor = AppLockNavy,
+                cursorColor = CleanXBlue,
+            ),
     )
 }

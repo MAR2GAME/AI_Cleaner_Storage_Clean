@@ -18,12 +18,12 @@ import com.aicleanerstorage.spaceclean.app.view.settings.ui.part.SettingsPanel
 import com.aicleanerstorage.spaceclean.app.view.settings.ui.part.SettingsValueRow
 import com.aicleanerstorage.spaceclean.base.designsystem.component.SettingsRateDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.TemperatureUnitDialog
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,
     onAction: (SettingsAction) -> Unit,
-    onManagePermissions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val temperatureUnit = state.temperatureUnit
@@ -38,7 +38,7 @@ fun SettingsScreen(
     ) {
         SettingsNavigationRow(
             label = stringResource(R.string.settings_manage_permissions),
-            onClick = onManagePermissions,
+            onClick = { onAction(SettingsAction.NavigationRequested(AppDestination.ManagePermissions)) },
         )
         SettingsDividerContent()
         SettingsValueRow(

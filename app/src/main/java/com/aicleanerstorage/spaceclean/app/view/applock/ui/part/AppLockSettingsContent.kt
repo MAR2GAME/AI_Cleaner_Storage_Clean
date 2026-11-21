@@ -22,36 +22,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockUiState
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardColor
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockCardRadius
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardColor
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockCardRadius
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockNavy
 
 @Composable
 internal fun AppLockSettingsContent(
     uiState: AppLockUiState,
     onMonitoringChange: (Boolean) -> Unit,
     onVibrationChange: (Boolean) -> Unit,
-    onStartChangePin: () -> Unit
+    onStartChangePin: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 15.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
         CheckActionCard(
             title = stringResource(R.string.enable),
             checked = uiState.monitoringEnabled,
-            onClick = { onMonitoringChange(!uiState.monitoringEnabled) }
+            onClick = { onMonitoringChange(!uiState.monitoringEnabled) },
         )
         CheckActionCard(
             title = stringResource(R.string.haptic_feedback),
             checked = uiState.vibrationEnabled,
-            onClick = { onVibrationChange(!uiState.vibrationEnabled) }
+            onClick = { onVibrationChange(!uiState.vibrationEnabled) },
         )
         SettingsNavigationCard(
             label = stringResource(R.string.change_pin),
-            onClick = onStartChangePin
+            onClick = onStartChangePin,
         )
     }
 }
@@ -59,30 +60,31 @@ internal fun AppLockSettingsContent(
 @Composable
 private fun SettingsNavigationCard(
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .clickable { onClick() },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .clickable { onClick() },
         color = AppLockCardColor,
-        shape = RoundedCornerShape(AppLockCardRadius)
+        shape = RoundedCornerShape(AppLockCardRadius),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 15.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = label,
                 color = AppLockNavy,
                 fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             Image(
                 painter = painterResource(R.mipmap.ic_next),
                 contentDescription = null,
-                modifier = Modifier.size(15.dp)
+                modifier = Modifier.size(15.dp),
             )
         }
     }

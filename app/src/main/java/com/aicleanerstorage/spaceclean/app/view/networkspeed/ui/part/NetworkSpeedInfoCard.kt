@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part
 
-import com.aicleanerstorage.networkkit.model.NetworkTransport
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,14 +18,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aicleanerstorage.networkkit.model.NetworkTransport
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardBg
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedCardRadius
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedDivider
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavy
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardBg
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedCardRadius
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedDivider
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavy
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavyMuted
 
 @Composable
 internal fun NetworkSpeedInfoCard(uiState: NetworkSpeedUiState) {
@@ -36,9 +35,10 @@ internal fun NetworkSpeedInfoCard(uiState: NetworkSpeedUiState) {
             (uiState.phase == NetworkSpeedPhase.Testing || uiState.phase == NetworkSpeedPhase.Completing)
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(154.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(154.dp),
         color = NetworkSpeedCardBg,
         shape = RoundedCornerShape(NetworkSpeedCardRadius),
     ) {
@@ -47,12 +47,13 @@ internal fun NetworkSpeedInfoCard(uiState: NetworkSpeedUiState) {
         ) {
             NetworkSpeedInfoLine(
                 label = stringResource(R.string.network_type),
-                value = when (uiState.networkInfo.transport.takeIf { showNetworkInfo }) {
-                    NetworkTransport.Wifi -> stringResource(R.string.wifi)
-                    NetworkTransport.Cellular -> stringResource(R.string.network_type_cellular)
-                    NetworkTransport.Ethernet -> stringResource(R.string.network_type_ethernet)
-                    NetworkTransport.Unknown, null -> "--"
-                },
+                value =
+                    when (uiState.networkInfo.transport.takeIf { showNetworkInfo }) {
+                        NetworkTransport.Wifi -> stringResource(R.string.wifi)
+                        NetworkTransport.Cellular -> stringResource(R.string.network_type_cellular)
+                        NetworkTransport.Ethernet -> stringResource(R.string.network_type_ethernet)
+                        NetworkTransport.Unknown, null -> "--"
+                    },
             )
             NetworkSpeedInfoDivider()
             NetworkSpeedInfoLine(

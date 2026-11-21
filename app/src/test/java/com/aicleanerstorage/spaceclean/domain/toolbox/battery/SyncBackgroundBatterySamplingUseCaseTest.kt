@@ -1,61 +1,39 @@
 package com.aicleanerstorage.spaceclean.domain.toolbox.battery
 
-import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
-
 import com.aicleanerstorage.spaceclean.domain.usecase.SyncBackgroundBatterySamplingUseCase
-
-import com.aicleanerstorage.spaceclean.domain.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SyncBackgroundBatterySamplingUseCaseTest {
     @Test
-    fun `activate persists preference and enables service sampling when permission is granted`() {
+    fun `activate persists preference and syncs runtime`() {
         val preferences = InMemorySettingsRepository()
         val calls = mutableListOf<String>()
-        val controller = controller(preferences, hasPermission = true, calls)
 
-        controller.activate()
+        controller(preferences, calls).activate()
 
         assertTrue(preferences.isBackgroundBatterySamplingEnabled())
-        assertEquals(listOf("enable"), calls)
+        assertEquals(listOf("sync"), calls)
     }
 
     @Test
-    fun `activate persists preference but disables service sampling without permission`() {
+    fun `reconcile syncs runtime without touching the preference`() {
         val preferences = InMemorySettingsRepository()
         val calls = mutableListOf<String>()
-        val controller = controller(preferences, hasPermission = false, calls)
 
-        controller.activate()
+        controller(preferences, calls).reconcile()
 
-        assertTrue(preferences.isBackgroundBatterySamplingEnabled())
-        assertEquals(listOf("disable"), calls)
-    }
-
-    @Test
-    fun `reconcile enables only when preference and permission are both present`() {
-        val calls = mutableListOf<String>()
-        val disabledPreferences = InMemorySettingsRepository(backgroundSampling = false)
-        controller(disabledPreferences, hasPermission = true, calls).reconcile()
-
-        val enabledPreferences = InMemorySettingsRepository(backgroundSampling = true)
-        controller(enabledPreferences, hasPermission = false, calls).reconcile()
-        controller(enabledPreferences, hasPermission = true, calls).reconcile()
-
-        assertEquals(listOf("disable", "disable", "enable"), calls)
+        assertEquals(listOf("sync"), calls)
+        assertEquals(false, preferences.isBackgroundBatterySamplingEnabled())
     }
 
     private fun controller(
-        preferences: SettingsRepository,
-        hasPermission: Boolean,
+        preferences: InMemorySettingsRepository,
         calls: MutableList<String>,
-    ) =
-        SyncBackgroundBatterySamplingUseCase(
-            settingsRepository = preferences,
-            hasNotificationPermission = { hasPermission },
-            enableServiceSampling = { calls += "enable" },
-            disableServiceSampling = { calls += "disable" },
-        )
+    ) = SyncBackgroundBatterySamplingUseCase(
+        settingsRepository = preferences,
+        syncRuntime = { calls += "sync" },
+    )
 }

@@ -24,7 +24,7 @@ fun SemiCircularGauge(
     arcStartColor: Color,
     arcEndColor: Color,
     needleColor: Color,
-    tickColor: Color
+    tickColor: Color,
 ) {
     val angleState = remember { Animatable(-90f) }
 
@@ -51,7 +51,7 @@ fun SemiCircularGauge(
             useCenter = false,
             topLeft = Offset(centerX - radius, centerY - radius),
             size = Size(radius * 2, radius * 2),
-            style = Stroke(width = 24f, cap = StrokeCap.Round)
+            style = Stroke(width = 24f, cap = StrokeCap.Round),
         )
 
         val tickCount = 11
@@ -75,15 +75,15 @@ fun SemiCircularGauge(
             val leftTip = Offset(centerX - tipWidth / 2, centerY - needleLength)
             val rightTip = Offset(centerX + tipWidth / 2, centerY - needleLength)
 
-            val needlePath = Path().apply {
-                moveTo(leftRoot.x, leftRoot.y)
-                lineTo(rightRoot.x, rightRoot.y)
-                lineTo(rightTip.x, rightTip.y)
-                lineTo(leftTip.x, leftTip.y)
-                close()
-            }
+            val needlePath =
+                Path().apply {
+                    moveTo(leftRoot.x, leftRoot.y)
+                    lineTo(rightRoot.x, rightRoot.y)
+                    lineTo(rightTip.x, rightTip.y)
+                    lineTo(leftTip.x, leftTip.y)
+                    close()
+                }
             drawPath(path = needlePath, color = needleColor)
-
 
             drawCircle(color = needleColor, radius = 14f, center = Offset(centerX, centerY))
             drawCircle(color = Color.White, radius = 5f, center = Offset(centerX, centerY))
@@ -91,12 +91,11 @@ fun SemiCircularGauge(
     }
 }
 
-
 private fun DrawScope.getPointOnCircle(
     cx: Float,
     cy: Float,
     radius: Float,
-    angleDeg: Float
+    angleDeg: Float,
 ): Offset {
     val angleRad = Math.toRadians(angleDeg.toDouble())
     val x = cx + radius * Math.cos(angleRad).toFloat()

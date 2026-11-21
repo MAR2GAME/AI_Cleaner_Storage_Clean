@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedGreen
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedGreenDeep
-import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedGreenLight
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedGreen
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedGreenDeep
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedGreenLight
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.SemiCircularGauge
 
 @Composable

@@ -1,12 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.documents.ui
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowDialogs
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -15,8 +8,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
 fun DocumentsManagerRoute(
@@ -36,35 +34,43 @@ fun DocumentsManagerRoute(
 
     DisposableEffect(lifecycleOwner, viewModel) {
         var skipInitialResume = true
-        val observer = LifecycleEventObserver { _, event ->
-            if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
-            if (skipInitialResume) { skipInitialResume = false; return@LifecycleEventObserver }
-            val canRefresh = latestPermissionGranted && !latestLeavingPage &&
-                !latestShowStopDialog && latestDisplayState.phase == FileOperationPhase.Browsing
-            if (canRefresh) viewModel.dispatch(FileManagerAction.RefreshRequested)
-        }
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event != Lifecycle.Event.ON_RESUME) return@LifecycleEventObserver
+                if (skipInitialResume) {
+                    skipInitialResume = false
+                    return@LifecycleEventObserver
+                }
+                val canRefresh =
+                    latestPermissionGranted &&
+                        !latestLeavingPage &&
+                        !latestShowStopDialog &&
+                        latestDisplayState.phase == FileOperationPhase.Browsing
+                if (canRefresh) viewModel.dispatch(FileManagerAction.RefreshRequested)
+            }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     DocumentsManagerScreen(
-        state = displayState,
-        permissionGranted = permissionState.granted,
+        state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked -> viewModel.dispatch(
-                    if (permissionState.granted) action else FileManagerAction.PermissionRejected,
-                )
+                FileManagerAction.BackClicked ->
+                    viewModel.dispatch(
+                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                    )
                 FileManagerAction.VisibleItemsToggled,
                 FileManagerAction.DeleteClicked,
                 FileManagerAction.ContinueManagingClicked,
                 is FileManagerAction.TabChangeRequested,
                 is FileManagerAction.SelectionToggled,
-                is FileManagerAction.DetailClicked -> viewModel.dispatch(action)
+                is FileManagerAction.DetailClicked,
+                -> viewModel.dispatch(action)
+                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
-        onNavigate = { viewModel.dispatch(FileManagerAction.NavigationRequested(it)) },
     )
 
     FileManagerFlowDialogs(

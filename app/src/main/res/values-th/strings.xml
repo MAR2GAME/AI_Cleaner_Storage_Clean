@@ -127,8 +127,6 @@
     <string name="home_app_lock_title">ล็อกแอป</string>
     <string name="file_unselect">ยกเลิกการเลือก</string>
     <string name="file_music">เพลง</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">หากต้องการแสดงรายละเอียดการใช้งานแอป โปรดอนุญาต Storage Clean ในการเข้าถึงการใช้งาน</string>
     <string name="permission_network_usage_desc">หากต้องการแสดงรายละเอียดการใช้งานเครือข่าย โปรดอนุญาต Storage Clean ในการเข้าถึงการใช้งาน</string>
     <string name="permission_notification_desc">หากต้องการจัดระเบียบการแจ้งเตือนอัตโนมัติ โปรดอนุญาต Storage Clean ในการเข้าถึงการแจ้งเตือน</string>
@@ -181,6 +179,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">โหลดไม่สำเร็จ โปรดลองอีกครั้ง</string>
+    <string name="speed_test_failed">ทดสอบความเร็วไม่สำเร็จ โปรดลองอีกครั้ง</string>
+    <string name="permission_denied">การอนุญาตถูกปฏิเสธ โปรดอนุญาตการเข้าถึงในการตั้งค่า</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -469,4 +470,9 @@
     <string name="notification_status_empty_title">เปิดการบล็อกการแจ้งเตือนแล้ว</string>
     <string name="notification_status_empty_message">การแจ้งเตือนที่ถูกบล็อกจะแสดงที่นี่</string>
     <string name="network_speed_estimated">ความเร็วโดยประมาณ</string>
+    <string name="similar_photo_grouping_hint">จัดกลุ่มตามอัลบั้ม วันที่แก้ไข และขนาดไฟล์ที่ใกล้เคียง ตรวจสอบรูปภาพก่อนลบ</string>
+    <string name="junk_review_hint">ตรวจสอบไฟล์ที่แนะนำก่อนเลือก ระบบจะเลือกเฉพาะแคชของแอปนี้เท่านั้น</string>
+    <string name="cleanup_stopped_summary">หยุดแล้ว ลบไฟล์ไป %1$d ไฟล์ (%2$s)</string>
+    <string name="available_memory_increase">หน่วยความจำว่างเพิ่มขึ้น %1$s ระหว่างการล้างข้อมูล</string>
+    <string name="settings_post_notifications">การแจ้งเตือน</string>
 </resources>

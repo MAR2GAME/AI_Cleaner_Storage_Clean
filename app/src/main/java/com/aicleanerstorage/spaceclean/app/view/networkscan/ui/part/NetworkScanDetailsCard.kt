@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanPhase
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanUiState
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanDivider
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanNavyMuted
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanStatusGreen
-import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanStatusTrack
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanDivider
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavyMuted
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanStatusGreen
+import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanStatusTrack
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXStatusBadge
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXStatusBadgeState
 
@@ -76,9 +76,10 @@ private fun NetworkScanDetailRow(
     status: NetworkScanDetailStatus,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

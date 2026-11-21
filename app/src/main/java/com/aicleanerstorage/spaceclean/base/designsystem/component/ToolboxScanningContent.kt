@@ -85,7 +85,9 @@ private fun ToolboxScanCenterIcon(
     Image(
         painter = painterResource(centerIconRes),
         contentDescription = null,
-        modifier = Modifier.size(centerIconSize)
-            .clip(RoundedCornerShape(10.dp)),
+        modifier =
+            Modifier
+                .size(centerIconSize)
+                .clip(RoundedCornerShape(10.dp)),
     )
 }

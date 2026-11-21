@@ -3,7 +3,6 @@ package com.aicleanerstorage.spaceclean.base.designsystem.component
 import com.aicleanerstorage.spaceclean.base.designsystem.component.AllToolFeatures
 import com.aicleanerstorage.spaceclean.base.designsystem.component.handleToolFeatureBannerClick
 import com.aicleanerstorage.spaceclean.base.designsystem.component.selectRecommendedToolFeatures
-
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -26,8 +25,7 @@ class ToolFeatureRecommendationTest {
                 .map { seed ->
                     selectRecommendedToolFeatures(AllToolFeatures, seed = seed)
                         .map { it.destination }
-                }
-                .toSet()
+                }.toSet()
 
         assertTrue(selections.size > 1)
     }

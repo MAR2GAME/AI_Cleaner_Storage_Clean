@@ -1,9 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 
 import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 data class MediaManagerUiState(
+    val permissionGranted: Boolean = false,
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
     val phase: FileOperationPhase = FileOperationPhase.Scanning,
@@ -13,7 +15,7 @@ data class MediaManagerUiState(
     val selectedIds: Set<Int> = emptySet(),
     val detailStartIndex: Int? = null,
     val deletedBytes: Long = 0L,
-    val errorMessage: String? = null,
+    val error: UiText? = null,
 ) {
     val displayItems: List<FileImageDisplayItem> get() = items.map { it.toImageDisplayItem() }
     val visibleDisplayItems: List<FileImageDisplayItem>

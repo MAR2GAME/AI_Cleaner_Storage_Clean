@@ -142,8 +142,6 @@
     <string name="home_app_lock_title">Kh?a ?ng d?ng</string>
     <string name="file_unselect">B? ch?n</string>
     <string name="file_music">Nh?c</string>
-
-    <string name="app_name">Storage Clean</string>
     <string name="permission_usage_desc">Để hiển thị chi tiết sử dụng ứng dụng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
     <string name="permission_network_usage_desc">Để hiển thị chi tiết sử dụng mạng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
     <string name="permission_notification_desc">Để tự động sắp xếp thông báo, hãy cho phép Storage Clean trong Truy cập thông báo.</string>
@@ -196,6 +194,9 @@
     <string name="scan_loading_fallback">Scanning...</string>
     <string name="delete_loading_fallback">Deleting...</string>
     <string name="device_info_load_failed">Unable to load device information.</string>
+    <string name="load_failed">Tải không thành công. Vui lòng thử lại.</string>
+    <string name="speed_test_failed">Kiểm tra tốc độ thất bại. Vui lòng thử lại.</string>
+    <string name="permission_denied">Quyền bị từ chối. Vui lòng cấp quyền truy cập trong cài đặt.</string>
     <string name="file_scan_failed">File scan failed.</string>
     <string name="duplicate_scan_failed">Duplicate file scan failed.</string>
     <string name="notification_status_load_failed">Unable to load notification status.</string>
@@ -469,4 +470,9 @@
     <string name="notification_status_empty_title">Đã bật chặn thông báo</string>
     <string name="notification_status_empty_message">Thông báo bị chặn sẽ xuất hiện tại đây</string>
     <string name="network_speed_estimated">Tốc độ ước tính</string>
+    <string name="similar_photo_grouping_hint">Được nhóm theo album, ngày sửa đổi và kích thước tệp tương tự. Hãy xem lại ảnh trước khi xóa.</string>
+    <string name="junk_review_hint">Hãy xem lại các tệp được đề xuất trước khi chọn. Chỉ bộ nhớ đệm của ứng dụng này được chọn mặc định.</string>
+    <string name="cleanup_stopped_summary">Đã dừng. Đã xóa %1$d tệp (%2$s).</string>
+    <string name="available_memory_increase">Bộ nhớ khả dụng tăng %1$s trong quá trình dọn dẹp.</string>
+    <string name="settings_post_notifications">Thông báo</string>
 </resources>

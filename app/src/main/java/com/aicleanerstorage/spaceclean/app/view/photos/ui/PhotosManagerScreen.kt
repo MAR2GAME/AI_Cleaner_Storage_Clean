@@ -13,21 +13,18 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDeleteBottomBar
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerGalleryBrowserView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerNoResultsContent
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerGalleryBrowserView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun PhotosManagerScreen(
     state: PhotosManagerUiState,
-    permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
@@ -39,7 +36,7 @@ fun PhotosManagerScreen(
         title = stringResource(R.string.nav_photos),
         onBack = { onAction(FileManagerAction.BackClicked) },
         bottomBar = {
-            if (permissionGranted &&
+            if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
                 !isDetailMode
             ) {
@@ -61,7 +58,7 @@ fun PhotosManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = onNavigate,
+                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(

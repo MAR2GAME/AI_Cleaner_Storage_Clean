@@ -9,7 +9,9 @@ import java.io.EOFException
 import java.io.File
 import java.io.FileOutputStream
 
-internal class BatteryHistoryFileStore(private val historyFile: File) {
+internal class BatteryHistoryFileStore(
+    private val historyFile: File,
+) {
     fun readAllRecords(): List<BatteryHistorySampleModel> {
         if (!historyFile.exists()) return emptyList()
         val result = mutableListOf<BatteryHistorySampleModel>()
@@ -65,5 +67,4 @@ internal class BatteryHistoryFileStore(private val historyFile: File) {
             }
         }
     }
-
 }

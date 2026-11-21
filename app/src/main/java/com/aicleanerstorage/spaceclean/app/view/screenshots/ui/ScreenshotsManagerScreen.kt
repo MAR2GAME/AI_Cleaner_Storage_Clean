@@ -13,20 +13,17 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerDeleteBottomBar
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerScreenshotGridView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScreenshotGridView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerUiState
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun ScreenshotsManagerScreen(
     state: ScreenshotsManagerUiState,
-    permissionGranted: Boolean,
     onAction: (FileManagerAction) -> Unit,
-    onNavigate: (AppDestination) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = remember { ScrollState(0) }
@@ -37,7 +34,7 @@ fun ScreenshotsManagerScreen(
         title = stringResource(R.string.nav_screenshots),
         onBack = { onAction(FileManagerAction.BackClicked) },
         bottomBar = {
-            if (permissionGranted &&
+            if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
                 !isDetailMode
             ) {
@@ -59,7 +56,7 @@ fun ScreenshotsManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = onNavigate,
+                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
                 onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
             ) {
                 FileManagerScreenshotGridView(

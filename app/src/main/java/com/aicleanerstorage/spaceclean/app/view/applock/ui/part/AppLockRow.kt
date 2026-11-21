@@ -14,24 +14,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockNavy
+import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.AppLockNavy
 import com.aicleanerstorage.spaceclean.data.applock.model.AppLockAppModel
 
 @Composable
 internal fun AppLockRow(
     app: AppLockAppModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp)
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(65.dp)
+                .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         PackageIconContent(
             packageName = app.packageName,
-            fallbackText = app.appName.take(1).ifBlank { "A" }
+            fallbackText = app.appName.take(1).ifBlank { "A" },
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
@@ -41,7 +42,7 @@ internal fun AppLockRow(
             fontWeight = FontWeight.Normal,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         Spacer(modifier = Modifier.width(10.dp))
         AppLockCheckContent(checked = app.isLocked)

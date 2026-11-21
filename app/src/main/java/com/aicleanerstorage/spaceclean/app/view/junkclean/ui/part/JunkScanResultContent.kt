@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.ui.part
 
-import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,13 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.SelectionSummary
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CategoryCleanGroup
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.model.CleanItem
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CategoryCleanGroup
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
+import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.SelectionSummary
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -96,7 +94,9 @@ internal fun JunkScanResultContent(
                         row = row,
                         interactionsEnabled = interactionsEnabled,
                         checked =
-                            row.group.items.takeIf { it.isNotEmpty() }?.all { it.isChecked }
+                            row.group.items
+                                .takeIf { it.isNotEmpty() }
+                                ?.all { it.isChecked }
                                 ?: (row.group.category in checkedEmptyCategories),
                         expanded = expandedIndex == rowIndex && items.isNotEmpty(),
                         onToggleExpanded = {
@@ -425,7 +425,8 @@ private fun mergeDisplayGroup(
 ): CategoryCleanGroup =
     CategoryCleanGroup(
         category = category,
-        items = categories.flatMap { displayCategory ->
-            groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
-        },
+        items =
+            categories.flatMap { displayCategory ->
+                groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
+            },
     )

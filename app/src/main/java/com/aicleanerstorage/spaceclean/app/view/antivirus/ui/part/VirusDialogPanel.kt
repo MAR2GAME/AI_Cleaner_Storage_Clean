@@ -70,7 +70,12 @@ internal fun VirusDialogPanel(
                         ),
             ) {
                 Surface(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).widthIn(max = 343.dp).then(panelModifier),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .widthIn(max = 343.dp)
+                            .then(panelModifier),
                     color = surfaceColor,
                     shape = virusDialogShape,
                 ) {

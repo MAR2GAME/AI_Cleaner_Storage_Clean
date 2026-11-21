@@ -72,30 +72,46 @@ internal fun VirusScanProgressBar(
 
             drawRoundRect(
                 color = VirusFigmaInactive,
-                topLeft = androidx.compose.ui.geometry.Offset(lineLeft, lineTop),
-                size = androidx.compose.ui.geometry.Size(lineWidth, lineHeight),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(6.dp.toPx()),
+                topLeft =
+                    androidx.compose.ui.geometry
+                        .Offset(lineLeft, lineTop),
+                size =
+                    androidx.compose.ui.geometry
+                        .Size(lineWidth, lineHeight),
+                cornerRadius =
+                    androidx.compose.ui.geometry
+                        .CornerRadius(6.dp.toPx()),
             )
             positions.forEach { x ->
                 drawCircle(
                     color = VirusFigmaInactive,
                     radius = radius,
-                    center = androidx.compose.ui.geometry.Offset(x.toPx() + radius, radius),
+                    center =
+                        androidx.compose.ui.geometry
+                            .Offset(x.toPx() + radius, radius),
                 )
             }
 
             clipRect(right = visualWidth.toPx() * clampedProgress) {
                 drawRoundRect(
                     color = VirusFigmaGreen,
-                    topLeft = androidx.compose.ui.geometry.Offset(lineLeft, lineTop),
-                    size = androidx.compose.ui.geometry.Size(lineWidth, lineHeight),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(6.dp.toPx()),
+                    topLeft =
+                        androidx.compose.ui.geometry
+                            .Offset(lineLeft, lineTop),
+                    size =
+                        androidx.compose.ui.geometry
+                            .Size(lineWidth, lineHeight),
+                    cornerRadius =
+                        androidx.compose.ui.geometry
+                            .CornerRadius(6.dp.toPx()),
                 )
                 positions.forEach { x ->
                     drawCircle(
                         color = VirusFigmaGreen,
                         radius = radius,
-                        center = androidx.compose.ui.geometry.Offset(x.toPx() + radius, radius),
+                        center =
+                            androidx.compose.ui.geometry
+                                .Offset(x.toPx() + radius, radius),
                     )
                 }
             }
@@ -111,8 +127,7 @@ internal fun VirusScanProgressBar(
                         .offset(
                             x = x + (56.dp - iconSize) / 2,
                             y = (56.dp - iconSize) / 2,
-                        )
-                        .size(iconSize),
+                        ).size(iconSize),
                 contentScale = ContentScale.Fit,
             )
 

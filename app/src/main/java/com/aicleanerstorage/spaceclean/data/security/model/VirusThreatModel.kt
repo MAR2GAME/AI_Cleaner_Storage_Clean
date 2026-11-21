@@ -7,5 +7,5 @@ data class VirusThreatModel(
     val title: String,
     val description: String,
     val isFile: Boolean,
-    val icon: String?
+    val icon: String?,
 )
