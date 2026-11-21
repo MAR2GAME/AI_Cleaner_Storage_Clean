@@ -106,6 +106,16 @@ if (Test-CheckEnabled 'dataVisibility' -and (Test-Path -LiteralPath $dataDir)) {
 # 2d. domain never depends on the first-party kit modules.
 Run-FilePatternCheck 'domainKitIsolation' $domainDir @('^import com\.aicleanerstorage\.(cleanerkit|devicekit|networkkit)\.') 'domain must not import kit modules'
 
+# 2e. data holds implementations only: contracts belong to domain.
+if (Test-CheckEnabled 'dataContracts' -and (Test-Path -LiteralPath $dataDir)) {
+    $bad = Get-KotlinFiles $dataDir | Select-String -Pattern '^interface '
+    if ($bad) {
+        $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'dataContracts' ("{0}:{1} data must not declare interfaces" -f (RelativePath $_.Path), $_.LineNumber) }
+    } else {
+        Add-Pass 'dataContracts'
+    }
+}
+
 # 3. pages never import the composition root.
 Run-FilePatternCheck 'viewDoesNotImportRoot' $viewDir @('^import com\.aicleanerstorage\.spaceclean\.app\.root\.') 'view must not import root'
 

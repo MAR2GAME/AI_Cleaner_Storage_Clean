@@ -9,6 +9,7 @@
     "dataImplementationIsolation": true,
     "dataVisibility": true,
     "domainKitIsolation": true,
+    "dataContracts": true,
     "viewDoesNotImportRoot": true,
     "uiPartStateless": true,
     "errorText": true,
