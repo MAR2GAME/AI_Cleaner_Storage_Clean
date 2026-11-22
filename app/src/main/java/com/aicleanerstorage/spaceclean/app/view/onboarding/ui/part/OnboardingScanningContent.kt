@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.onboarding.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.onboarding.ui.part
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -337,44 +337,53 @@ private fun EmptyBadge() {
 internal fun onboardingDeviceRows(state: OnboardingUiState): List<DeviceScanRow> {
     val completedStep = state.completedStep
     return listOf(
-        DeviceScanRow(
-            label = stringResource(R.string.home_device_model),
-            value = state.deviceModel,
-            complete = completedStep > 1,
-            active = completedStep == 1,
+        scanRow(R.string.home_device_model, state.deviceModel, 1, completedStep),
+        scanRow(
+            R.string.home_system_version,
+            if (completedStep > 2) state.androidVersion else "--",
+            2,
+            completedStep,
         ),
-        DeviceScanRow(
-            label = stringResource(R.string.home_system_version),
-            value = if (completedStep > 2) state.androidVersion else "--",
-            complete = completedStep > 2,
-            active = completedStep == 2,
+        scanRow(
+            R.string.device_screen_size,
+            if (completedStep > 3) state.screenSize else "--",
+            3,
+            completedStep,
         ),
-        DeviceScanRow(
-            label = stringResource(R.string.device_screen_size),
-            value = if (completedStep > 3) state.screenSize else "--",
-            complete = completedStep > 3,
-            active = completedStep == 3,
+        scanRow(
+            R.string.battery_health_status,
+            if (completedStep > 4) localizedBatteryHealth(state.batteryHealth) else "--",
+            4,
+            completedStep,
         ),
-        DeviceScanRow(
-            label = stringResource(R.string.battery_health_status),
-            value = if (completedStep > 4) localizedBatteryHealth(state.batteryHealth) else "--",
-            complete = completedStep > 4,
-            active = completedStep == 4,
+        scanRow(
+            R.string.battery_status,
+            if (completedStep > 5) localizedBatteryStatus(state.batteryStatus) else "--",
+            5,
+            completedStep,
         ),
-        DeviceScanRow(
-            label = stringResource(R.string.battery_status),
-            value = if (completedStep > 5) localizedBatteryStatus(state.batteryStatus) else "--",
-            complete = completedStep > 5,
-            active = completedStep == 5,
-        ),
-        DeviceScanRow(
-            label = stringResource(R.string.onboarding_generating_cleanup_plan),
-            value = if (completedStep > 6) stringResource(R.string.onboarding_done) else "--",
-            complete = completedStep > 6,
-            active = completedStep == 6,
+        scanRow(
+            R.string.onboarding_generating_cleanup_plan,
+            if (completedStep > 6) stringResource(R.string.onboarding_done) else "--",
+            6,
+            completedStep,
         ),
     )
 }
+
+@Composable
+private fun scanRow(
+    labelRes: Int,
+    value: String,
+    step: Int,
+    completedStep: Int,
+): DeviceScanRow =
+    DeviceScanRow(
+        label = stringResource(labelRes),
+        value = value,
+        complete = completedStep > step,
+        active = completedStep == step,
+    )
 
 @Composable
 private fun localizedBatteryHealth(health: BatteryHealth): String =
@@ -397,3 +406,4 @@ private fun localizedBatteryStatus(status: BatteryStatus): String =
         BatteryStatus.NotCharging -> stringResource(R.string.battery_not_charging)
         BatteryStatus.Unknown -> stringResource(R.string.device_unknown)
     }
+

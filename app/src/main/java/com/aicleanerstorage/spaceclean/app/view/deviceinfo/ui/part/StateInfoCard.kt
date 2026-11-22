@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,38 +41,47 @@ internal fun StateInfoCard(uiState: DeviceInfoUiState) {
         animationSpec = tween(500),
         label = "storageProgress",
     )
+    StateInfoContent(
+        uiState = uiState,
+        cpuProgress = animatedCpuProgress,
+        ramProgress = animatedRamProgress,
+        storageProgress = animatedStorageProgress,
+    )
+}
+
+@Composable
+private fun StateInfoContent(
+    uiState: DeviceInfoUiState,
+    cpuProgress: Float,
+    ramProgress: Float,
+    storageProgress: Float,
+) {
     val cpuUsageText = uiState.cpuUsagePercent?.let { "$it%" } ?: "--"
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
         shape = RoundedCornerShape(12.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
-        ) {
+        Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
             SectionHeader(stringResource(R.string.device_state_info))
             Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
                 label = "${stringResource(R.string.device_progress_cpu_label)}$cpuUsageText/1`C",
-                progress = animatedCpuProgress,
+                progress = cpuProgress,
                 color = DeviceCpuProgressColor,
                 trackColor = DeviceCpuProgressTrackColor,
             )
             Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
-                label = "${stringResource(
-                    R.string.device_progress_ram_label,
-                )}${formatCompactBytes(uiState.memory.usedBytes)}/${formatCompactBytes(uiState.memory.totalBytes)}",
-                progress = animatedRamProgress,
+                label = "${stringResource(R.string.device_progress_ram_label)}${formatCompactBytes(uiState.memory.usedBytes)}/${formatCompactBytes(uiState.memory.totalBytes)}",
+                progress = ramProgress,
                 color = DeviceRamProgressColor,
                 trackColor = DeviceRamProgressTrackColor,
             )
             Spacer(modifier = Modifier.height(20.dp))
             ProgressInfoRow(
-                label = "${stringResource(
-                    R.string.device_progress_storage_label,
-                )}${formatCompactBytes(uiState.storage.usedBytes)}/${formatCompactBytes(uiState.storage.totalBytes)}",
-                progress = animatedStorageProgress,
+                label = "${stringResource(R.string.device_progress_storage_label)}${formatCompactBytes(uiState.storage.usedBytes)}/${formatCompactBytes(uiState.storage.totalBytes)}",
+                progress = storageProgress,
                 color = DeviceStorageProgressColor,
                 trackColor = DeviceStorageProgressTrackColor,
             )
@@ -161,3 +170,4 @@ private fun formatCompactBytes(bytes: Long): String {
         "${mb.roundToInt()}MB"
     }
 }
+

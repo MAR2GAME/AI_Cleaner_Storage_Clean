@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -91,43 +91,55 @@ internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceModel) {
                 .height(24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Dns,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = NetworkScanNavy,
-            )
-            Text(
-                text = device.ip,
-                color = NetworkScanNavy,
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.Normal,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        DeviceIpRow(device.ip)
+        DeviceHostName(device.hostName)
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.RowScope.DeviceIpRow(ip: String) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.weight(1f),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Dns,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = NetworkScanNavy,
+        )
         Text(
-            text = device.hostName.displayUnknown(),
+            text = ip,
             color = NetworkScanNavy,
             fontSize = 18.sp,
             lineHeight = 24.sp,
             fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.End,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier =
-                Modifier
-                    .padding(start = 12.dp)
-                    .widthIn(max = 112.dp),
         )
     }
 }
 
 @Composable
+private fun DeviceHostName(hostName: String?) {
+    Text(
+        text = hostName.displayUnknown(),
+        color = NetworkScanNavy,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        fontWeight = FontWeight.Normal,
+        textAlign = TextAlign.End,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier =
+            Modifier
+                .padding(start = 12.dp)
+                .widthIn(max = 112.dp),
+    )
+}
+
+@Composable
 internal fun String?.displayUnknown(): String = this?.takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown)
+
+

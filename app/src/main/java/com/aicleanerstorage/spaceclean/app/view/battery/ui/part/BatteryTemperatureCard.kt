@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.battery.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.battery.ui.part
 
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -67,37 +67,29 @@ internal fun BatteryTemperatureCard(uiState: DeviceInfoUiState) {
                     ),
             ),
     ) {
-        val chartPoints =
-            uiState.selectedTemperatureSamples.map {
-                BatteryChartPoint(
-                    timestampMillis = it.timestampMillis,
-                    value =
-                        displayBatteryTemperatureValue(
-                            it.temperatureC,
-                            uiState.temperatureUnit,
-                        ),
-                )
-            }
-        BatteryLineChart(
-            points = chartPoints,
-            windowEndMillis =
-                oneMinuteChartWindowEnd(
-                    chartPoints,
-                    uiState.latestSampleTimestampMillis,
-                ),
-            windowMillis = TEMPERATURE_CHART_WINDOW_MILLIS,
-            xLabels = secondsAxisLabels(),
-            axisBounds = temperatureAxisBounds(uiState.temperatureUnit),
-            valueLabelFormatter = {
-                String.format(
-                    Locale.US,
-                    "%.1f\u00B0%s",
-                    it,
-                    uiState.temperatureUnit,
-                )
-            },
-        )
+        TemperatureChart(uiState)
     }
+}
+
+@Composable
+private fun TemperatureChart(uiState: DeviceInfoUiState) {
+    val chartPoints =
+        uiState.selectedTemperatureSamples.map {
+            BatteryChartPoint(
+                timestampMillis = it.timestampMillis,
+                value = displayBatteryTemperatureValue(it.temperatureC, uiState.temperatureUnit),
+            )
+        }
+    BatteryLineChart(
+        points = chartPoints,
+        windowEndMillis = oneMinuteChartWindowEnd(chartPoints, uiState.latestSampleTimestampMillis),
+        windowMillis = TEMPERATURE_CHART_WINDOW_MILLIS,
+        xLabels = secondsAxisLabels(),
+        axisBounds = temperatureAxisBounds(uiState.temperatureUnit),
+        valueLabelFormatter = {
+            String.format(Locale.US, "%.1f\u00B0%s", it, uiState.temperatureUnit)
+        },
+    )
 }
 
 internal val BatteryGreen = Color(0xFF5DD595)
@@ -387,3 +379,4 @@ private fun DrawScope.drawChartValueLabel(
 }
 
 private const val TEMPERATURE_CHART_WINDOW_MILLIS = 60_000L
+
