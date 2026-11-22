@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDateGroupDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
@@ -39,7 +39,7 @@ data class PhotoPrivacyManagerUiState(
             }
     val visibleIds: Set<Int> get() = items.map { it.id }.toSet()
     val allSelected: Boolean get() = visibleIds.isNotEmpty() && selectedIds.containsAll(visibleIds)
-    val selectedFiles: List<ManagedFileItem> get() = items.filter { it.id in selectedIds }.map { it.file }
+    val selectedFiles: List<ManagedFileModel> get() = items.filter { it.id in selectedIds }.map { it.file }
 }
 
 fun buildPrivacyPhotoGroups(items: List<IndexedFileItem>): List<PrivacyPhotoGroup> {

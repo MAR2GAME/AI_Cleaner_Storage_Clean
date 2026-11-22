@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
@@ -35,7 +35,7 @@ fun DuplicateFilesManagerRoute(
     LaunchedEffect(uiState.skippedDeleteCount, skippedMessage) {
         if (skippedMessage != null) {
             Toast.makeText(context, skippedMessage, Toast.LENGTH_LONG).show()
-            viewModel.dispatch(FileManagerAction.SkippedDeleteCountConsumed)
+            viewModel.dispatch(DuplicateFilesAction.SkippedDeleteCountConsumed)
         }
     }
 
@@ -43,21 +43,21 @@ fun DuplicateFilesManagerRoute(
         state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked ->
+                DuplicateFilesAction.BackClicked ->
                     viewModel.dispatch(
-                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                        if (permissionState.granted) action else DuplicateFilesAction.PermissionRejected,
                     )
-                FileManagerAction.DeleteClicked,
-                FileManagerAction.GroupDeleteClicked,
-                FileManagerAction.SelectAllClicked,
-                FileManagerAction.AutoSelectClicked,
-                FileManagerAction.WarningConfirmed,
-                FileManagerAction.ContinueManagingClicked,
-                is FileManagerAction.GroupClicked,
-                is FileManagerAction.FileToggled,
-                is FileManagerAction.GroupSelectionToggled,
+                DuplicateFilesAction.DeleteClicked,
+                DuplicateFilesAction.GroupDeleteClicked,
+                DuplicateFilesAction.SelectAllClicked,
+                DuplicateFilesAction.AutoSelectClicked,
+                DuplicateFilesAction.WarningConfirmed,
+                DuplicateFilesAction.ContinueManagingClicked,
+                is DuplicateFilesAction.GroupClicked,
+                is DuplicateFilesAction.FileToggled,
+                is DuplicateFilesAction.GroupSelectionToggled,
                 -> viewModel.dispatch(action)
-                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
+                is DuplicateFilesAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
@@ -65,13 +65,13 @@ fun DuplicateFilesManagerRoute(
 
     FileManagerFlowDialogs(
         flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
+        onDismissStopDialog = { viewModel.dispatch(DuplicateFilesAction.StopDismissed) },
         permissionState = permissionState,
         router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete,
-        onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
+        onCancelActiveOperation = { viewModel.dispatch(DuplicateFilesAction.OperationCancellationRequested) },
+        onCancelDelete = { viewModel.dispatch(DuplicateFilesAction.DeleteDismissed) },
+        onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
     )
 }

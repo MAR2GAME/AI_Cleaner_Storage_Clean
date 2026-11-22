@@ -40,7 +40,7 @@ fun JunkCleanScreen(
             uiState = state,
             interactionsEnabled = state.interactionsEnabled,
             onToggleCategorySelection = { onAction(JunkCleanAction.CategoriesToggled(it)) },
-            onToggleItem = { onAction(JunkCleanAction.ItemToggled(it.junkFile.id)) },
+            onToggleItem = { onAction(JunkCleanAction.ItemToggled(it.file.id)) },
             resultTools = resultTools,
             onContinueFromResult = { onAction(JunkCleanAction.ContinueClicked) },
         )

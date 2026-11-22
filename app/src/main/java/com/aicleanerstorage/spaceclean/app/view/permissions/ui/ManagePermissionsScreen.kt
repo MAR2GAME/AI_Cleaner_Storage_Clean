@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 private val ManagePermissions =
     listOf(
         AppPermission.StorageFiles,
+        AppPermission.MediaLocation,
         AppPermission.UsageAccess,
         AppPermission.Location,
         AppPermission.NotificationListener,

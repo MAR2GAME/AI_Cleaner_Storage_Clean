@@ -1,15 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class OnboardingScanViewModel(
     private val repository: DeviceInfoRepository,
-    private val settingsRepository: SettingsRepository,
+    private val settingsRepository: AppSettingsRepository,
 ) : MviViewModel<OnboardingUiState, OnboardingAction, OnboardingEvent>(OnboardingUiState()) {
     private var entered = false
     private var completionSubmitted = false

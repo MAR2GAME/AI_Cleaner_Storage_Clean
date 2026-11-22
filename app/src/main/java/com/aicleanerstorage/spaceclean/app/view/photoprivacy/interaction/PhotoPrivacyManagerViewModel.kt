@@ -1,13 +1,13 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleAllVisible
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
@@ -18,12 +18,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class PhotoPrivacyManagerViewModel(
-    private val repository: FileRepository,
+    private val repository: ManagedFileRepository,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val scanDelayMillis: Long = 900L,
     private val removeDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
     private val completeDelayMillis: Long = 800L,
-) : MviViewModel<PhotoPrivacyManagerUiState, FileManagerAction, FileManagerEvent>(PhotoPrivacyManagerUiState()) {
+) : MviViewModel<PhotoPrivacyManagerUiState, PhotoPrivacyAction, FileManagerEvent>(PhotoPrivacyManagerUiState()) {
     private val operations =
         FileOperations(viewModelScope, ioDispatcher) {
             val items = repository.loadPrivacyImages().take(60).withSelectionIds()
@@ -43,26 +43,28 @@ class PhotoPrivacyManagerViewModel(
         sendEvent(FileManagerEvent.Exit(home))
     }
 
-    override fun onAction(intent: FileManagerAction) {
+    override fun onAction(intent: PhotoPrivacyAction) {
         if (exitRequested) return
         when (intent) {
-            is FileManagerAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
-            FileManagerAction.PermissionRejected -> exit(home = false)
-            FileManagerAction.BackClicked -> handleBack()
+            is PhotoPrivacyAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
+            PhotoPrivacyAction.PermissionRejected -> exit(home = false)
+            PhotoPrivacyAction.BackClicked -> handleBack()
 
-            FileManagerAction.StopDismissed -> dismissStopDialog()
-            FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.InitialLoadRequested -> startIfNeeded()
-            FileManagerAction.RefreshRequested -> refresh()
-            is FileManagerAction.SelectionToggled -> toggleSelection(intent.id)
-            FileManagerAction.VisibleItemsToggled -> toggleVisibleItems()
-            is FileManagerAction.VisibleSelectionToggled -> toggleVisibleIds(intent.ids)
-            FileManagerAction.LocationRemovalClicked -> requestRemoveLocation()
-            FileManagerAction.LocationRemovalDismissed -> cancelRemoveLocation()
-            FileManagerAction.ErrorDismissed -> clearError()
-            FileManagerAction.LocationRemovalConfirmed -> removeLocationData()
-            FileManagerAction.ContinueManagingClicked -> continueManaging()
-            else -> Unit
+            PhotoPrivacyAction.StopDismissed -> dismissStopDialog()
+            PhotoPrivacyAction.OperationCancellationRequested -> cancelActiveOperation()
+            PhotoPrivacyAction.InitialLoadRequested -> startIfNeeded()
+            PhotoPrivacyAction.RefreshRequested -> refresh()
+            is PhotoPrivacyAction.SelectionToggled -> toggleSelection(intent.id)
+            PhotoPrivacyAction.VisibleItemsToggled -> toggleVisibleItems()
+            is PhotoPrivacyAction.VisibleSelectionToggled -> toggleVisibleIds(intent.ids)
+            PhotoPrivacyAction.DeleteClicked -> requestRemoveLocation()
+            PhotoPrivacyAction.DeleteDismissed -> cancelRemoveLocation()
+            PhotoPrivacyAction.DeletePrepared -> removeLocationData()
+            PhotoPrivacyAction.LocationRemovalClicked -> requestRemoveLocation()
+            PhotoPrivacyAction.LocationRemovalDismissed -> cancelRemoveLocation()
+            PhotoPrivacyAction.ErrorDismissed -> clearError()
+            PhotoPrivacyAction.LocationRemovalConfirmed -> removeLocationData()
+            PhotoPrivacyAction.ContinueManagingClicked -> continueManaging()
         }
     }
 
@@ -99,7 +101,7 @@ class PhotoPrivacyManagerViewModel(
             onStart = { setState { PhotoPrivacyManagerUiState(phase = FileOperationPhase.Scanning) } },
             onLoaded = { loaded -> setState { loaded } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = FileOperationError.ScanFailed.toUiText()) }
+                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText()) }
             },
         )
     }
@@ -147,21 +149,21 @@ class PhotoPrivacyManagerViewModel(
             operationDelayMillis = removeDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = { repository.removeLocationData(selectedFiles) },
-            isSuccessful = { it > 0 },
+            isSuccessful = { (it.getOrNull() ?: 0) > 0 },
             onCompleteAnimation = { outcome, loaded ->
                 setState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,
                         items = loaded.items,
                         selectedIds = emptySet(),
-                        removedLocationCount = outcome,
+                        removedLocationCount = outcome.getOrNull() ?: 0,
                     )
                 }
             },
             onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
                 setState {
-                    it.copy(phase = FileOperationPhase.Browsing, error = FileOperationError.DeletionFailed.toUiText())
+                    it.copy(phase = FileOperationPhase.Browsing, error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText())
                 }
             },
         )

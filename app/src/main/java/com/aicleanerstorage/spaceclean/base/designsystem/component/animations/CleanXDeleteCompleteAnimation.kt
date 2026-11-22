@@ -35,11 +35,6 @@ import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXHeaderBotto
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXHeaderTopPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXIconButtonSize
 
-enum class CleanXDeleteCompleteStage {
-    Deleting,
-    Complete,
-}
-
 @Composable
 fun CleanXDeleteCompleteAnimation(
     stage: CleanXDeleteCompleteStage,

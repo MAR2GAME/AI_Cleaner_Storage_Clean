@@ -558,4 +558,6 @@
     <string name="available_memory_increase">清理期间系统可用内存增加了 %1$s。</string>
     <string name="network_speed_estimated">估算网速</string>
     <string name="settings_post_notifications">通知</string>
+    <string name="settings_media_location_permission">照片位置</string>
+    <string name="permission_media_location_desc">为了找出包含位置信息的照片，请授予照片位置权限。</string>
 </resources>

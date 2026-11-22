@@ -1,15 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoMode
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoStateController
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoMode
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoStateController
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.battery.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -17,8 +17,8 @@ class BatteryInfoViewModel(
     repository: DeviceInfoRepository,
     batteryHistoryRepository: BatteryHistoryRepository,
     batteryHistorySampler: BatteryHistoryRecorder,
-    settingsRepository: SettingsRepository,
-    private val syncBackgroundBatterySampling: SyncBackgroundBatterySamplingUseCase,
+    settingsRepository: AppSettingsRepository,
+    private val batterySamplingControl: BatterySamplingControl,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MviViewModel<DeviceInfoUiState, BatteryInfoAction, BatteryInfoEvent>(DeviceInfoUiState(mode = DeviceInfoMode.Battery)) {
     private val controller =
@@ -37,7 +37,7 @@ class BatteryInfoViewModel(
     override fun onAction(action: BatteryInfoAction) {
         when (action) {
             BatteryInfoAction.Resumed -> {
-                syncBackgroundBatterySampling.activate()
+                batterySamplingControl.activate()
                 controller.load(DeviceInfoMode.Battery)
                 controller.startBatterySampling()
             }

@@ -46,7 +46,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterMediaGridItems
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillTabs
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTabItem
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
 
 @Composable
 fun FileManagerTopAction(

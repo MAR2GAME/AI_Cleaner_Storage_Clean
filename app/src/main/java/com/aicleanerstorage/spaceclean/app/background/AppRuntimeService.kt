@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockMonitoringRule
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
-import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.battery.model.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,7 +27,7 @@ class AppRuntimeService : Service() {
     private val appLockRepository: AppLockRepository by inject()
     private val appUsageRepository: AppUsageRepository by inject()
     private val batteryHistorySampler: BatteryHistoryRecorder by inject()
-    private val settingsRepository: SettingsRepository by inject()
+    private val settingsRepository: AppSettingsRepository by inject()
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var notification: ForegroundNotification
@@ -96,7 +96,7 @@ class AppRuntimeService : Service() {
         fun reconcile(
             context: Context,
             appLockRepository: AppLockRepository,
-            settingsRepository: SettingsRepository,
+            settingsRepository: AppSettingsRepository,
         ) {
             if (shouldRunRuntime(appLockRepository, settingsRepository)) {
                 start(context)
@@ -121,7 +121,7 @@ class AppRuntimeService : Service() {
 /** The only two reasons for the runtime to exist. */
 private fun shouldRunRuntime(
     appLockRepository: AppLockRepository,
-    settingsRepository: SettingsRepository,
+    settingsRepository: AppSettingsRepository,
 ): Boolean =
     AppLockMonitoringRule.shouldMonitorApps(appLockRepository) ||
         settingsRepository.isBackgroundBatterySamplingEnabled()

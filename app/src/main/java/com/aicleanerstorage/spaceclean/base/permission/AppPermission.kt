@@ -13,16 +13,42 @@ import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 
-/** 应用需要的系统权限；检查、运行时权限与设置页入口集中在这里。 */
+/**
+ * 应用需要的系统权限。
+ *
+ * 这里只描述权限事实和系统入口：是否已授予、需要哪些运行时权限、
+ * 申请失败后去哪个设置页。真正的申请副作用在 [PermissionGate] /
+ * [PermissionRequestEffect]，data 层只调用 [isGranted] 或 [requireGranted]。
+ */
 enum class AppPermission {
+    /** 文件与媒体访问；Android 11+ 对应全盘访问，Android 10 对应读写权限。 */
     StorageFiles,
+
+    /** 读取照片的 GPS 位置信息；隐私图页面在 StorageFiles 之外单独申请。 */
+    MediaLocation,
+
+    /** 精确定位；仅用于 Wi-Fi 局域网扫描。 */
     Location,
+
+    /** 使用情况访问；应用使用统计与 App Lock 需要。 */
     UsageAccess,
+
+    /** 通知监听；通知清理需要。 */
     NotificationListener,
+
+    /** 悬浮窗；App Lock 覆盖层需要。 */
     Overlay,
+
+    /** 通知权限；Android 13+ 的 POST_NOTIFICATIONS。 */
     PostNotifications,
     ;
 
+    /**
+     * 查询该权限当前是否已授予。
+     *
+     * @param context 用于查询系统权限或系统设置的上下文。
+     * @return 已授予返回 true；未授予或无法判断返回 false。
+     */
     fun isGranted(context: Context): Boolean =
         when (this) {
             StorageFiles ->
@@ -31,6 +57,7 @@ enum class AppPermission {
                 } else {
                     runtimePermissions(context).all(context::hasPermission)
                 }
+            MediaLocation -> context.hasPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
             Location -> context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             UsageAccess -> isUsageAccessGranted(context)
             NotificationListener ->
@@ -47,7 +74,12 @@ enum class AppPermission {
                 NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
 
-    /** 非空 → 弹系统运行时权限框；空 → 只能跳设置页。 */
+    /**
+     * 返回需要通过系统运行时弹窗申请的权限。
+     *
+     * @param context 用于判断 Android 版本的上下文。
+     * @return 权限名列表；空列表表示没有运行时弹窗，只能去设置页。
+     */
     fun runtimePermissions(context: Context): List<String> =
         when (this) {
             StorageFiles ->
@@ -59,6 +91,7 @@ enum class AppPermission {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     )
                 }
+            MediaLocation -> listOf(Manifest.permission.ACCESS_MEDIA_LOCATION)
             Location -> listOf(Manifest.permission.ACCESS_FINE_LOCATION)
             PostNotifications ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -69,6 +102,12 @@ enum class AppPermission {
             UsageAccess, NotificationListener, Overlay -> emptyList()
         }
 
+    /**
+     * 返回可依次尝试的设置页 Intent。
+     *
+     * @param context 用于拼 package Uri 和包名。
+     * @return 按优先级排列的 Intent 列表；调用方逐个尝试，成功拉起一个即可。
+     */
     fun settingsIntents(context: Context): List<Intent> =
         when (this) {
             StorageFiles ->
@@ -84,6 +123,7 @@ enum class AppPermission {
                 } else {
                     listOf(appSettingsAction(context))
                 }
+            MediaLocation -> listOf(appSettingsAction(context))
             Location -> listOf(appSettingsAction(context))
             UsageAccess -> listOf(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS), appSettingsAction(context))
             NotificationListener ->
@@ -103,12 +143,21 @@ enum class AppPermission {
             PostNotifications -> listOf(appSettingsAction(context))
         }
 
-    /** 特殊权限：没有系统弹窗，只能去设置页。 */
+    /**
+     * 是否只能通过设置页授予。
+     *
+     * @param context 用于判断该权限是否有运行时弹窗。
+     * @return true 表示 [runtimePermissions] 为空，只能跳设置页。
+     */
     fun requiresSettings(context: Context): Boolean = runtimePermissions(context).isEmpty()
 
     /**
-     * 是否应该先解释再申请。
-     * 只有运行时权限有意义；特殊权限返回 false。
+     * 是否应该先展示解释再申请。
+     *
+     * 只对运行时权限有意义；特殊权限或找不到 Activity 时返回 false。
+     *
+     * @param context 用于查找宿主 Activity 并查询 shouldShowRequestPermissionRationale。
+     * @return true 表示建议先解释再申请。
      */
     fun shouldExplain(context: Context): Boolean {
         val activity = context.findActivityOrNull() ?: return false
@@ -116,9 +165,28 @@ enum class AppPermission {
             .any { activity.shouldShowRequestPermissionRationale(it) }
     }
 
-    /** 从设置页返回后的结果。 */
+    /**
+     * 从设置页返回后重新判断结果。
+     *
+     * @param context 用于重新查询权限状态。
+     * @return 已授予返回 [PermissionResult.Granted]，否则返回 [PermissionResult.RequiresSettings]。
+     */
     fun resultAfterSettings(context: Context): PermissionResult =
         if (isGranted(context)) PermissionResult.Granted else PermissionResult.RequiresSettings
+}
+
+/**
+ * 要求该权限已授予，否则抛出页面可识别的异常。
+ *
+ * 供 data 层在读取平台数据前做最小断言；页面捕获
+ * [PermissionRequiredException] 后按 [PermissionRequiredException.permission]
+ * 发起申请或跳设置页。
+ *
+ * @param context 用于查询权限状态。
+ * @throws PermissionRequiredException 权限未授予时抛出。
+ */
+fun AppPermission.requireGranted(context: Context) {
+    if (!isGranted(context)) throw PermissionRequiredException(this)
 }
 
 internal fun Context.hasPermission(value: String): Boolean =

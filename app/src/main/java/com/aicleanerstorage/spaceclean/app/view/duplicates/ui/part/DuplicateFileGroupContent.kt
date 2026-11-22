@@ -40,8 +40,8 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCi
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.duplicateFileKey
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable

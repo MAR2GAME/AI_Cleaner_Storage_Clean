@@ -27,10 +27,10 @@ import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurre
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartMaxPoints
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartPoints
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartWindowEndMillis
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentSample
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryCurrent
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentRange
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentSample
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryCurrent
 import java.util.Locale
 
 @Composable

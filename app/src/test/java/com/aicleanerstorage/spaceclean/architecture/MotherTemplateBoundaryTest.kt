@@ -1,24 +1,22 @@
 package com.aicleanerstorage.spaceclean.architecture
 
-import org.junit.Assert.*
-import org.junit.Test
 import java.io.File
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class MotherTemplateBoundaryTest {
     private val root =
         sequenceOf(File("."), File(".."))
             .map(File::getCanonicalFile)
             .first { File(it, "settings.gradle.kts").exists() }
-    private val modules = listOf("app", "cleaner-kit", "network-kit", "device-kit").map { File(root, it) }
 
-    private fun sources() =
-        modules.asSequence().flatMap { module ->
-            sequenceOf("java", "kotlin").flatMap { language ->
-                File(module, "src/main/$language").walkTopDown().filter { it.extension == "kt" }
-            }
-        }
+    private fun sources(): Sequence<File> =
+        File(root, "app/src/main/java").walkTopDown().filter { it.extension == "kt" }
 
-    @Test fun `manifest component classes exist after module migration`() {
+    @Test
+    fun `manifest component classes exist`() {
         val classes =
             sources()
                 .flatMap { file ->
@@ -41,10 +39,11 @@ class MotherTemplateBoundaryTest {
         assertEquals(emptyList<String>(), declared.filterNot(classes::contains))
     }
 
-    @Test fun `core and feature modules never import application implementations`() {
+    @Test
+    fun `data and domain never import app implementations`() {
         val violations =
             sources()
-                .filter { "/app/src/" !in it.invariantSeparatorsPath }
+                .filter { "/data/" in it.invariantSeparatorsPath || "/domain/" in it.invariantSeparatorsPath }
                 .filter {
                     Regex("(?m)^import com\\.aicleanerstorage\\.spaceclean\\.app\\.").containsMatchIn(it.readText())
                 }.map { it.relativeTo(root).path }
@@ -52,19 +51,20 @@ class MotherTemplateBoundaryTest {
         assertEquals(emptyList<String>(), violations)
     }
 
-    @Test fun `presentation has no Android platform or feature data imports`() {
+    @Test
+    fun `view never imports data implementations`() {
         val violations =
             sources()
-                .filter { "/presentation/" in it.invariantSeparatorsPath }
+                .filter { "/app/view/" in it.invariantSeparatorsPath }
                 .filter {
-                    Regex("(?m)^import (android\\.|com\\.aicleanerstorage\\.spaceclean\\.feature\\.[^.]+\\.data\\.)")
-                        .containsMatchIn(it.readText())
+                    Regex("(?m)^import com\\.aicleanerstorage\\.spaceclean\\.data\\.").containsMatchIn(it.readText())
                 }.map { it.relativeTo(root).path }
                 .toList()
         assertEquals(emptyList<String>(), violations)
     }
 
-    @Test fun `screens do not hold view models repositories or navigation implementations`() {
+    @Test
+    fun `screens do not hold view models repositories or navigation implementations`() {
         val violations =
             sources()
                 .filter { it.name.endsWith("Screen.kt") || it.name.endsWith("Screens.kt") }
@@ -76,8 +76,12 @@ class MotherTemplateBoundaryTest {
         assertEquals(emptyList<String>(), violations)
     }
 
-    @Test fun `every feature view model uses the single MVI state owner`() {
-        val viewModels = sources().filter { "/app/view/" in it.invariantSeparatorsPath && it.name.endsWith("ViewModel.kt") }.toList()
+    @Test
+    fun `every feature view model uses the single MVI state owner`() {
+        val viewModels =
+            sources()
+                .filter { "/app/view/" in it.invariantSeparatorsPath && it.name.endsWith("ViewModel.kt") }
+                .toList()
         assertTrue(viewModels.isNotEmpty())
         viewModels.forEach {
             val code = it.readText()

@@ -1,17 +1,17 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 
 data class CategoryCleanGroup(
     val category: JunkCategory,
     val items: List<CleanItem>,
 ) {
     val totalSize: Long
-        get() = items.sumOf { it.fileSize }
+        get() = items.sumOf { it.sizeBytes }
 
     val checkedSize: Long
-        get() = items.filter { it.isChecked }.sumOf { it.fileSize }
+        get() = items.filter { it.isChecked }.sumOf { it.sizeBytes }
 
     val checkedCount: Int
         get() = items.count { it.isChecked }
@@ -20,8 +20,8 @@ data class CategoryCleanGroup(
         get() = items.size
 
     val formattedTotalSize: String
-        get() = JunkFile.formatFileSize(totalSize)
+        get() = FormatUtil.formatSize(totalSize)
 
     val formattedCheckedSize: String
-        get() = JunkFile.formatFileSize(checkedSize)
+        get() = FormatUtil.formatSize(checkedSize)
 }

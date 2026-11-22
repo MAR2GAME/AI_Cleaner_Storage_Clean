@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
@@ -17,7 +17,7 @@ import com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part.DuplicateFile
 @Composable
 fun DuplicateFilesManagerScreen(
     state: DuplicateFilesManagerUiState,
-    onAction: (FileManagerAction) -> Unit,
+    onAction: (DuplicateFilesAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val groupListScrollState = remember { ScrollState(0) }
@@ -25,10 +25,10 @@ fun DuplicateFilesManagerScreen(
 
     fun scrollStateForGroup(groupId: Int): ScrollState = groupDetailScrollStates.getOrPut(groupId) { ScrollState(0) }
 
-    BackHandler { onAction(FileManagerAction.BackClicked) }
+    BackHandler { onAction(DuplicateFilesAction.BackClicked) }
     FileManagerScaffold(
         title = stringResource(R.string.nav_duplicate_files),
-        onBack = { onAction(FileManagerAction.BackClicked) },
+        onBack = { onAction(DuplicateFilesAction.BackClicked) },
         bottomBar = {
             if (state.permissionGranted &&
                 (
@@ -45,14 +45,14 @@ fun DuplicateFilesManagerScreen(
             uiState = state,
             groupListScrollState = groupListScrollState,
             scrollStateForGroup = ::scrollStateForGroup,
-            onToggleAll = { onAction(FileManagerAction.SelectAllClicked) },
-            onOpenGroup = { onAction(FileManagerAction.GroupClicked(it)) },
-            onToggleFile = { onAction(FileManagerAction.FileToggled(it)) },
-            onAutoSelect = { onAction(FileManagerAction.AutoSelectClicked) },
-            onToggleGroupSelection = { onAction(FileManagerAction.GroupSelectionToggled(it)) },
-            onAcceptWarning = { onAction(FileManagerAction.WarningConfirmed) },
-            onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
-            onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
+            onToggleAll = { onAction(DuplicateFilesAction.SelectAllClicked) },
+            onOpenGroup = { onAction(DuplicateFilesAction.GroupClicked(it)) },
+            onToggleFile = { onAction(DuplicateFilesAction.FileToggled(it)) },
+            onAutoSelect = { onAction(DuplicateFilesAction.AutoSelectClicked) },
+            onToggleGroupSelection = { onAction(DuplicateFilesAction.GroupSelectionToggled(it)) },
+            onAcceptWarning = { onAction(DuplicateFilesAction.WarningConfirmed) },
+            onNavigateTool = { destination -> onAction(DuplicateFilesAction.NavigationRequested(destination)) },
+            onContinue = { onAction(DuplicateFilesAction.ContinueManagingClicked) },
         )
     }
 }

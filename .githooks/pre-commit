@@ -1,0 +1,11 @@
+#!/bin/sh
+# Runs the project rule checks before every commit.
+# Bypass (discouraged): git commit --no-verify
+
+root=$(git rev-parse --show-toplevel)
+
+if command -v pwsh >/dev/null 2>&1; then
+    exec pwsh -NoProfile -File "$root/scripts/check-rules.ps1"
+fi
+
+exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$root/scripts/check-rules.ps1"

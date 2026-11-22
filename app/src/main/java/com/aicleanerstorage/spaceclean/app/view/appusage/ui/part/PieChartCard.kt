@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageUiState
-import com.aicleanerstorage.spaceclean.domain.appusage.model.AppUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.appusage.AppUsageInfoModel
 import java.util.Locale
 
 @Composable

@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
@@ -75,19 +75,6 @@ internal fun JunkCleanContent(
                         CleanXDeleteCompleteStage.Deleting
                     },
             )
-        JunkCleanPhase.AwaitingAuthorization ->
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(CleanXBackground)
-                        .padding(horizontal = 24.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                JunkDeletePermission(
-                    message = stringResource(R.string.result_confirm_system_deletion, uiState.pendingAuthorizationCount),
-                )
-            }
         JunkCleanPhase.Complete ->
             JunkCleanResultContent(
                 uiState = uiState.cleanResult,

@@ -1,34 +1,34 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.cleanerkit.files.FileRepository
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class DuplicateFilesManagerViewModel(
-    private val repository: FileRepository,
-    private val settingsRepository: SettingsRepository,
+    private val repository: ManagedFileRepository,
+    private val settingsRepository: AppSettingsRepository,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
     private val completeDelayMillis: Long = 800L,
-) : MviViewModel<DuplicateFilesManagerUiState, FileManagerAction, FileManagerEvent>(
+) : MviViewModel<DuplicateFilesManagerUiState, DuplicateFilesAction, FileManagerEvent>(
         DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()),
     ) {
     private val operations =
         FileOperations(viewModelScope, ioDispatcher) {
-            val groups = mapDuplicateGroups(repository.loadDuplicateFiles())
+            val groups = mapDuplicateGroups(repository.loadDuplicateGroups())
             DuplicateFilesManagerUiState(
                 phase = if (groups.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
                 groups = groups,
@@ -44,31 +44,30 @@ class DuplicateFilesManagerViewModel(
         sendEvent(FileManagerEvent.Exit(home))
     }
 
-    override fun onAction(intent: FileManagerAction) {
+    override fun onAction(intent: DuplicateFilesAction) {
         if (exitRequested) return
         when (intent) {
-            is FileManagerAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
-            FileManagerAction.PermissionRejected -> exit(home = false)
-            FileManagerAction.BackClicked -> handleBack()
+            is DuplicateFilesAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
+            DuplicateFilesAction.PermissionRejected -> exit(home = false)
+            DuplicateFilesAction.BackClicked -> handleBack()
 
-            FileManagerAction.StopDismissed -> dismissStopDialog()
-            FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.InitialLoadRequested -> startIfNeeded()
-            FileManagerAction.RefreshRequested -> refresh()
-            is FileManagerAction.GroupClicked -> openGroup(intent.group)
-            FileManagerAction.SelectAllClicked -> toggleAll()
-            FileManagerAction.WarningConfirmed -> acceptDuplicateFilesWarning()
-            is FileManagerAction.FileToggled -> toggleFile(intent.file)
-            FileManagerAction.AutoSelectClicked -> autoSelectCurrentGroup()
-            is FileManagerAction.GroupSelectionToggled -> toggleGroupSelection(intent.group)
-            FileManagerAction.DeleteClicked -> requestDelete()
-            FileManagerAction.GroupDeleteClicked -> requestDeleteCurrentGroup()
-            FileManagerAction.DeleteDismissed -> cancelDelete()
-            FileManagerAction.ErrorDismissed -> clearError()
-            FileManagerAction.SkippedDeleteCountConsumed -> clearSkippedDeleteCount()
-            FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
-            FileManagerAction.ContinueManagingClicked -> continueManaging()
-            else -> Unit
+            DuplicateFilesAction.StopDismissed -> dismissStopDialog()
+            DuplicateFilesAction.OperationCancellationRequested -> cancelActiveOperation()
+            DuplicateFilesAction.InitialLoadRequested -> startIfNeeded()
+            DuplicateFilesAction.RefreshRequested -> refresh()
+            is DuplicateFilesAction.GroupClicked -> openGroup(intent.group)
+            DuplicateFilesAction.SelectAllClicked -> toggleAll()
+            DuplicateFilesAction.WarningConfirmed -> acceptDuplicateFilesWarning()
+            is DuplicateFilesAction.FileToggled -> toggleFile(intent.file)
+            DuplicateFilesAction.AutoSelectClicked -> autoSelectCurrentGroup()
+            is DuplicateFilesAction.GroupSelectionToggled -> toggleGroupSelection(intent.group)
+            DuplicateFilesAction.DeleteClicked -> requestDelete()
+            DuplicateFilesAction.GroupDeleteClicked -> requestDeleteCurrentGroup()
+            DuplicateFilesAction.DeleteDismissed -> cancelDelete()
+            DuplicateFilesAction.ErrorDismissed -> clearError()
+            DuplicateFilesAction.SkippedDeleteCountConsumed -> clearSkippedDeleteCount()
+            DuplicateFilesAction.DeleteConfirmed -> deleteSelectedFiles()
+            DuplicateFilesAction.ContinueManagingClicked -> continueManaging()
         }
     }
 
@@ -106,7 +105,7 @@ class DuplicateFilesManagerViewModel(
             onStart = { setState { DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onLoaded = { loaded -> setState { loaded.copy(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = FileOperationError.DuplicateScanFailed.toUiText()) }
+                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.DuplicateScanFailed).toUiText()) }
             },
         )
     }
@@ -202,23 +201,20 @@ class DuplicateFilesManagerViewModel(
     }
 
     private fun deleteSelectedFiles() {
-        val selectedFiles = currentState.filesToDelete
+        val selections = currentState.filesToDelete
         operations.changeFiles(
-            hasSelection = selectedFiles.isNotEmpty(),
+            hasSelection = selections.isNotEmpty(),
             onEmptySelection = {
                 setState { it.copy(phase = FileOperationPhase.Browsing, pendingDeleteFileKeys = null) }
             },
             onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, selectedGroupId = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = {
-                val verifiedFiles = selectedFiles.filter { !it.duplicateHash.isNullOrBlank() && it.duplicatePeers.isNotEmpty() }
-                repository.deleteFiles(verifiedFiles)
-            },
+            operation = { repository.deleteDuplicates(selections) },
             isSuccessful = { result ->
-                val unverifiedCount = selectedFiles.count { it.duplicateHash.isNullOrBlank() || it.duplicatePeers.isEmpty() }
-                setState { it.copy(skippedDeleteCount = result.skippedCount + unverifiedCount) }
-                result.deletedCount > 0
+                val summary = result.getOrNull()
+                setState { it.copy(skippedDeleteCount = summary?.skippedCount ?: 0) }
+                result.isSuccess && (summary?.deletedCount ?: 0) > 0
             },
             onCompleteAnimation = { outcome, loaded ->
                 setState {
@@ -228,7 +224,7 @@ class DuplicateFilesManagerViewModel(
                         selectedGroupId = null,
                         selectedFileKeys = emptySet(),
                         pendingDeleteFileKeys = null,
-                        deletedBytes = outcome.freedBytes,
+                        deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
                     )
                 }
             },
@@ -238,7 +234,7 @@ class DuplicateFilesManagerViewModel(
                     it.copy(
                         phase = FileOperationPhase.Browsing,
                         pendingDeleteFileKeys = null,
-                        error = FileOperationError.DeletionFailed.toUiText(),
+                        error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
                     )
                 }
             },

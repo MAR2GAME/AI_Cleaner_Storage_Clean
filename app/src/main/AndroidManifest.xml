@@ -63,7 +63,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.aicleanerstorage.spaceclean.data.repository.notificationcleaner.StorageCleanNotificationListener"
+            android:name="com.aicleanerstorage.spaceclean.data.local.notificationcleaner.StorageCleanNotificationListener"
             android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

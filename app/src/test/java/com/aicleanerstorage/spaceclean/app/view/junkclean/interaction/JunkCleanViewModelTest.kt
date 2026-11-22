@@ -1,15 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.cleanerkit.clean.CleanRepository
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.JunkDeleteOutcome
-import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
-import com.aicleanerstorage.cleanerkit.clean.model.MemoryCleanResult
-import com.aicleanerstorage.cleanerkit.clean.model.ScanProgress
-import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
-import com.aicleanerstorage.cleanerkit.files.model.DeleteStatus
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkDeleteOutcomeModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanProgressModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
+import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,11 +33,11 @@ class JunkCleanViewModelTest {
     private val dispatcher = StandardTestDispatcher()
 
     private val cacheFile =
-        JunkFile(
+        JunkFileModel(
             id = "cache",
-            filePath = "/data/cache/a.tmp",
-            fileName = "a.tmp",
-            fileSize = 100L,
+            path = "/data/cache/a.tmp",
+            name = "a.tmp",
+            sizeBytes = 100L,
             category = JunkCategory.CACHE,
         )
 
@@ -64,7 +64,7 @@ class JunkCleanViewModelTest {
     @Test
     fun `granted permission scans and publishes the preview`() =
         runTest(dispatcher) {
-            val viewModel = viewModel(FakeCleanRepository(result = ScanResult(listOf(cacheFile))))
+            val viewModel = viewModel(FakeCleanRepository(result = JunkScanResultModel(listOf(cacheFile))))
 
             viewModel.dispatch(JunkCleanAction.Entered)
             viewModel.dispatch(JunkCleanAction.PermissionResultReceived(JunkOperation.Scan, granted = true))
@@ -113,8 +113,8 @@ class JunkCleanViewModelTest {
         runTest(dispatcher) {
             val repository =
                 FakeCleanRepository(
-                    result = ScanResult(listOf(cacheFile)),
-                    outcomes = listOf(JunkDeleteOutcome(cacheFile, DeleteStatus.Deleted)),
+                    result = JunkScanResultModel(listOf(cacheFile)),
+                    outcomes = listOf(JunkDeleteOutcomeModel(cacheFile, DeleteStatus.Deleted)),
                 )
             val viewModel = viewModel(repository)
 
@@ -145,7 +145,7 @@ class JunkCleanViewModelTest {
             assertEquals(JunkCleanPhase.Scanning, viewModel.state.value.stopDialogPhase)
         }
 
-    private fun viewModel(repository: CleanRepository = FakeCleanRepository()): JunkCleanViewModel =
+    private fun viewModel(repository: JunkCleanRepository = FakeCleanRepository()): JunkCleanViewModel =
         JunkCleanViewModel(
             cleanRepository = repository,
             ioDispatcher = dispatcher,
@@ -154,30 +154,37 @@ class JunkCleanViewModelTest {
         )
 
     private class FakeCleanRepository(
-        private val result: ScanResult = ScanResult.EMPTY,
+        private val result: JunkScanResultModel = JunkScanResultModel.EMPTY,
         private val failure: Throwable? = null,
-        private val outcomes: List<JunkDeleteOutcome> = emptyList(),
-    ) : CleanRepository {
-        private val progress = MutableStateFlow(ScanProgress.IDLE)
-        private val resultFlow = MutableStateFlow<ScanResult?>(null)
+        private val outcomes: List<JunkDeleteOutcomeModel> = emptyList(),
+    ) : JunkCleanRepository {
+        private val progress = MutableStateFlow(JunkScanProgressModel.IDLE)
+        private val resultFlow = MutableStateFlow<JunkScanResultModel?>(null)
 
-        override val scanProgress: StateFlow<ScanProgress> = progress
-        override val scanResult: StateFlow<ScanResult?> = resultFlow
+        override val scanProgress: StateFlow<JunkScanProgressModel> = progress
+
+        override val scanResult: StateFlow<JunkScanResultModel?> = resultFlow
 
         override fun clearSession() {
             resultFlow.value = null
         }
 
-        override fun removeCleanedFiles(files: List<JunkFile>) = Unit
+        override fun removeCleanedFiles(files: List<JunkFileModel>) = Unit
 
-        override suspend fun performFullScan(): ScanResult {
-            failure?.let { throw it }
-            resultFlow.value = result
-            return result
-        }
+        override suspend fun scan(): Result<JunkScanResultModel> =
+            failure?.let { Result.failure(it) } ?: run {
+                resultFlow.value = result
+                Result.success(result)
+            }
 
-        override suspend fun cleanMemory(): MemoryCleanResult = MemoryCleanResult(freedBytes = 0L)
+        override suspend fun cleanMemory(): Result<JunkMemoryCleanModel> = Result.success(JunkMemoryCleanModel(freedBytes = 0L))
 
-        override suspend fun deleteFileItems(selectedFiles: List<JunkFile>): List<JunkDeleteOutcome> = outcomes
+        override suspend fun deleteFiles(files: List<JunkFileModel>): Result<List<JunkDeleteOutcomeModel>> =
+            Result.success(outcomes)
+
+        override suspend fun deleteFiles(
+            files: List<JunkFileModel>,
+            shouldStop: () -> Boolean,
+        ): Result<List<JunkDeleteOutcomeModel>> = Result.success(outcomes)
     }
 }

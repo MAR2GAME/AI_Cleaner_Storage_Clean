@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultCheckIcon
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultContent
+import com.aicleanerstorage.spaceclean.app.view.common.tool.CommonResultContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteAnimation
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination

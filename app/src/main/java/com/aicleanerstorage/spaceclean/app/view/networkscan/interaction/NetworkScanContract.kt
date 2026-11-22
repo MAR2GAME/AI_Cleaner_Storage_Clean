@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkInfo
-import com.aicleanerstorage.networkkit.model.NetworkScanResult
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
@@ -18,11 +18,11 @@ enum class NetworkScanMode {
 }
 
 data class NetworkScanUiState(
-    val networkInfo: NetworkInfo = NetworkInfo(),
+    val networkInfo: NetworkInfoModel = NetworkInfoModel(),
     val hasWifi: Boolean = false,
     val phase: NetworkScanPhase = NetworkScanPhase.Idle,
     val mode: NetworkScanMode = NetworkScanMode.Scan,
-    val scan: NetworkScanResult? = null,
+    val scan: NetworkScanResultModel? = null,
     val scanTime: String = "--",
     val completedDetailCount: Int = 0,
 ) {

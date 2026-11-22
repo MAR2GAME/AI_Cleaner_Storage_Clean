@@ -6,8 +6,8 @@
 
 | 步骤 | 命令 | 作用 |
 |---|---|---|
-| MVI 规则 | `pwsh -NoProfile -File scripts/check-rules.ps1` | domain 纯净、分层方向、UiText、CollectEffects、BackHandler、包名、语言包 key |
-| 单测 | `./gradlew :app:testDebugUnitTest` | JVM 单测（当前 25 suites / 78 tests） |
+| MVI 规则 | `pwsh -NoProfile -File scripts/check-rules.ps1` | domain 纯净、分层方向、kit 包纯度、kit internal 隔离、view 不直接 import kit、UiText、CollectEffects、BackHandler、包名、语言包 key |
+| 单测 | `./gradlew :app:testDebugUnitTest` | JVM 单测（当前 45 suites / 152 tests） |
 | 构建 | `./gradlew :app:assembleDebug` | 验证资源和 Kotlin 能编译出 debug APK |
 
 失败时上传 `app/build/reports/tests/testDebugUnitTest` 和 `app/build/test-results`。

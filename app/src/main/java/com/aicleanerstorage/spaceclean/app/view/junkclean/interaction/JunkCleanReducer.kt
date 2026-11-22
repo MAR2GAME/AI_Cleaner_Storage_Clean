@@ -1,12 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
 
 val DefaultResultDisplayCategories =
     listOf(
@@ -93,25 +93,12 @@ object JunkCleanReducer {
             is JunkCleanAction.CategoriesToggled -> toggleCategories(state, action.categories)
             JunkCleaningRequested -> requestCleaning(state)
 
-            is JunkDeleteAuthorizationRequested ->
-                state.copy(
-                    phase = JunkCleanPhase.AwaitingAuthorization,
-                    pendingAuthorizationCount = action.count,
-                )
-
-            JunkDeleteAuthorizationHandled ->
-                state.copy(
-                    phase = JunkCleanPhase.Cleaning,
-                    pendingAuthorizationCount = 0,
-                )
-
             is JunkCleaningCompleted ->
                 state.copy(
                     phase = JunkCleanPhase.CompleteAnimation,
                     cleanResult = action.summary,
                     showStopDialog = false,
                     stopDialogPhase = null,
-                    pendingAuthorizationCount = 0,
                     error = null,
                 )
 
@@ -139,7 +126,7 @@ object JunkCleanReducer {
             is JunkCleaningStopped -> {
                 val groups =
                     buildPreviewGroups(action.remaining).map { group ->
-                        group.copy(items = group.items.map { it.copy(isChecked = it.junkFile in action.selected) })
+                        group.copy(items = group.items.map { it.copy(isChecked = it.file in action.selected) })
                     }
                 publishPreview(state, groups).copy(
                     stoppedSummary = action.summary,
@@ -147,14 +134,6 @@ object JunkCleanReducer {
                     stopDialogPhase = null,
                 )
             }
-
-            JunkCleaningCancelled ->
-                if (state.phase == JunkCleanPhase.Cleaning || state.phase == JunkCleanPhase.AwaitingAuthorization) {
-                    state.copy(phase = JunkCleanPhase.Preview, pendingAuthorizationCount = 0)
-                } else {
-                    state
-                }
-
             is JunkStopDialogShown ->
                 state.copy(showStopDialog = true, stopDialogPhase = action.phase)
 
@@ -168,14 +147,14 @@ object JunkCleanReducer {
         itemId: String,
     ): JunkCleanUiState {
         if (state.phase != JunkCleanPhase.Preview) return state
-        val categoryIndex = state.groups.indexOfFirst { group -> group.items.any { it.junkFile.id == itemId } }
+        val categoryIndex = state.groups.indexOfFirst { group -> group.items.any { it.file.id == itemId } }
         val group = state.groups.getOrNull(categoryIndex) ?: return state
         val groups = state.groups.toMutableList()
         groups[categoryIndex] =
             group.copy(
                 items =
                     group.items.map { item ->
-                        if (item.junkFile.id == itemId) item.copy(isChecked = !item.isChecked) else item
+                        if (item.file.id == itemId) item.copy(isChecked = !item.isChecked) else item
                     },
             )
         return publishPreview(state, groups, state.checkedEmptyCategories - group.category)
@@ -216,7 +195,6 @@ object JunkCleanReducer {
         if (state.groups.flatMap { it.items }.any { it.isChecked }) {
             return state.copy(
                 phase = JunkCleanPhase.Cleaning,
-                pendingAuthorizationCount = 0,
                 error = null,
             )
         }
@@ -254,14 +232,13 @@ object JunkCleanReducer {
                     checkedSize = groups.sumOf { it.checkedSize },
                     checkedEmptyCategoryCount = checkedEmptyCategories.size,
                 ),
-            pendingAuthorizationCount = 0,
             error = null,
         )
     }
 
-    private fun buildPreviewGroups(result: com.aicleanerstorage.cleanerkit.clean.model.ScanResult) =
+    private fun buildPreviewGroups(result: com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel) =
         result.categoryBreakdown.map { (category, files) ->
-            CategoryCleanGroup(category, files.map { CleanItem(junkFile = it, isChecked = it.category == JunkCategory.CACHE) })
+            CategoryCleanGroup(category, files.map { CleanItem(file = it, isChecked = it.category == JunkCategory.CACHE) })
         }
 
     private fun defaultEmptyCheckedCategories(groups: List<CategoryCleanGroup>): Set<JunkCategory> {

@@ -8,8 +8,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
@@ -19,13 +19,13 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 @Composable
 fun LargeFilesManagerRoute(
     navigator: AppNavigator,
-    viewModel: FileListManagerViewModel,
+    viewModel: LargeFilesManagerViewModel,
     permissionState: FileManagerPermissionState,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
-    val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
+    val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState
     val latestPermissionGranted by rememberUpdatedState(permissionState.granted)
     val latestDisplayState by rememberUpdatedState(displayState)
     val latestShowStopDialog by rememberUpdatedState(flowState.showStopDialog)
@@ -46,7 +46,7 @@ fun LargeFilesManagerRoute(
                         !latestLeavingPage &&
                         !latestShowStopDialog &&
                         latestDisplayState.phase == FileOperationPhase.Browsing
-                if (canRefresh) viewModel.dispatch(FileManagerAction.RefreshRequested)
+                if (canRefresh) viewModel.dispatch(FilePageAction.RefreshRequested)
             }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
@@ -56,18 +56,18 @@ fun LargeFilesManagerRoute(
         state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked ->
+                FilePageAction.BackClicked ->
                     viewModel.dispatch(
-                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                        if (permissionState.granted) action else FilePageAction.PermissionRejected,
                     )
-                FileManagerAction.VisibleItemsToggled,
-                FileManagerAction.DeleteClicked,
-                FileManagerAction.ContinueManagingClicked,
-                is FileManagerAction.TabChangeRequested,
-                is FileManagerAction.SelectionToggled,
-                is FileManagerAction.DetailClicked,
+                FilePageAction.VisibleItemsToggled,
+                FilePageAction.DeleteClicked,
+                FilePageAction.ContinueManagingClicked,
+                is FilePageAction.TabChangeRequested,
+                is FilePageAction.SelectionToggled,
+                is FilePageAction.DetailClicked,
                 -> viewModel.dispatch(action)
-                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
+                is FilePageAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
@@ -75,13 +75,13 @@ fun LargeFilesManagerRoute(
 
     FileManagerFlowDialogs(
         flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
+        onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
         permissionState = permissionState,
         router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
+        onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
+        onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
+        onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
     )
 }

@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +18,7 @@ private const val AUTO_RATE_PROMPT_COOLDOWN_MS = 24L * 60 * 60 * 1000
 class HomeViewModel(
     private val repository: DeviceInfoRepository,
     private val appLockRepository: AppLockRepository,
-    private val settingsRepository: SettingsRepository,
+    private val settingsRepository: AppSettingsRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val autoRateDispatcher: CoroutineDispatcher = Dispatchers.Main,
     private val autoRatePromptDelayMillis: Long = AUTO_RATE_PROMPT_DELAY_MS,

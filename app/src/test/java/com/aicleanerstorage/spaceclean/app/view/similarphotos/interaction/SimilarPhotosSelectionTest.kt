@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
-import com.aicleanerstorage.spaceclean.domain.files.model.FileDeleteSummaryModel
-import com.aicleanerstorage.spaceclean.domain.files.model.FileKind
-import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
-import com.aicleanerstorage.spaceclean.domain.similarphotos.port.SimilarPhotoRepository
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
+import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.port.SimilarPhotoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -34,20 +34,20 @@ class SimilarPhotosSelectionTest {
         runTest {
             val viewModel = viewModel()
 
-            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            viewModel.dispatch(SimilarPhotosAction.RefreshRequested)
             advanceUntilIdle()
 
             val state = viewModel.state.value
             val bestPhotoId = state.items.single { it.bestPhoto }.id
             val bulkIds = state.bulkSelectableIds
 
-            viewModel.dispatch(FileManagerAction.SelectionToggled(bestPhotoId))
-            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            viewModel.dispatch(SimilarPhotosAction.SelectionToggled(bestPhotoId))
+            viewModel.dispatch(SimilarPhotosAction.VisibleItemsToggled)
 
             assertTrue(viewModel.state.value.allSelected)
             assertEquals(bulkIds + bestPhotoId, viewModel.state.value.selectedIds)
 
-            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            viewModel.dispatch(SimilarPhotosAction.VisibleItemsToggled)
 
             assertFalse(viewModel.state.value.allSelected)
             assertEquals(setOf(bestPhotoId), viewModel.state.value.selectedIds)
@@ -58,7 +58,7 @@ class SimilarPhotosSelectionTest {
         runTest {
             val viewModel = viewModel()
 
-            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            viewModel.dispatch(SimilarPhotosAction.RefreshRequested)
             advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -69,7 +69,7 @@ class SimilarPhotosSelectionTest {
                     .map { it.id }
                     .toSet()
 
-            viewModel.dispatch(FileManagerAction.GroupToggled(groupBulkIds))
+            viewModel.dispatch(SimilarPhotosAction.GroupToggled(groupBulkIds))
 
             assertEquals(groupBulkIds, viewModel.state.value.selectedIds)
             assertTrue(group.items.single { it.bestPhoto }.id !in viewModel.state.value.selectedIds)

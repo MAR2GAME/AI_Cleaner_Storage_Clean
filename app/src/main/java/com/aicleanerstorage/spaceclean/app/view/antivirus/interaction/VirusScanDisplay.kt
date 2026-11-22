@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
-import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel

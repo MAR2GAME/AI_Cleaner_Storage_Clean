@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CategoryCleanGroup
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
@@ -330,7 +330,7 @@ private fun JunkItemCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = item.fileName.ifBlank { stringResource(R.string.unnamed_file) },
+            text = item.name.ifBlank { stringResource(R.string.unnamed_file) },
             color = Color(0xA62D3748),
             fontSize = 14.sp,
             lineHeight = 16.sp,

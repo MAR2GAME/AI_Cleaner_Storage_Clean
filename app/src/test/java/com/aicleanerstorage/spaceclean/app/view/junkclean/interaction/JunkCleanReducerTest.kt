@@ -1,19 +1,16 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
-import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.DefaultResultDisplayCategories
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanReducer
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleaningCancelled
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleaningCompleted
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleaningRequested
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkDeleteAuthorizationHandled
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkDeleteAuthorizationRequested
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkFailed
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperation
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkPermissionCheckDeferred
@@ -25,8 +22,8 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkResult
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkStopDialogDismissed
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkStopDialogShown
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -40,7 +37,7 @@ class JunkCleanReducerTest {
         val previous =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(),
-                JunkPreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+                JunkPreviewLoaded(JunkScanResultModel(file("cache", 100L, JunkCategory.CACHE))),
             )
         val original = previous.groups.flatMap { it.items }.single()
         val changed = JunkCleanReducer.reduce(previous, JunkCleanAction.ItemToggled("cache"))
@@ -67,7 +64,7 @@ class JunkCleanReducerTest {
             JunkCleanReducer
                 .reduce(
                     JunkCleanUiState(),
-                    JunkPreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+                    JunkPreviewLoaded(JunkScanResultModel(file("cache", 100L, JunkCategory.CACHE))),
                 ).copy(error = UiText.Raw("previous message"), progress = 100f)
         JunkOperation.entries.forEach { request ->
             val checking = JunkCleanReducer.reduce(previous, JunkPermissionCheckStarted(request))
@@ -126,7 +123,7 @@ class JunkCleanReducerTest {
         val previous =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(),
-                JunkPreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+                JunkPreviewLoaded(JunkScanResultModel(file("cache", 100L, JunkCategory.CACHE))),
             )
         val denied = JunkCleanReducer.reduce(previous, JunkPermissionDenied(JunkOperation.Clean))
         assertEquals(previous, denied)
@@ -142,7 +139,7 @@ class JunkCleanReducerTest {
             JunkCleanReducer
                 .reduce(
                     JunkCleanUiState(),
-                    JunkPreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+                    JunkPreviewLoaded(JunkScanResultModel(file("cache", 100L, JunkCategory.CACHE))),
                 ).copy(progress = 100f, foundItemCount = 1, foundTotalSize = 100L, formattedFoundSize = "100 B")
         val checking = JunkCleanReducer.reduce(preview, JunkPermissionCheckStarted(JunkOperation.Clean))
         assertEquals(JunkCleanPhase.CheckingPermission(JunkOperation.Clean), checking.phase)
@@ -154,7 +151,7 @@ class JunkCleanReducerTest {
 
     @Test
     fun `preview selects scanned files and tracks empty display categories`() {
-        val result = scanResult(file("cache", 120L, JunkCategory.CACHE))
+        val result = JunkScanResultModel(file("cache", 120L, JunkCategory.CACHE))
 
         val state = JunkCleanReducer.reduce(JunkCleanUiState(), JunkPreviewLoaded(result))
 
@@ -178,7 +175,7 @@ class JunkCleanReducerTest {
             JunkCleanReducer.reduce(
                 JunkCleanUiState(),
                 JunkPreviewLoaded(
-                    scanResult(
+                    JunkScanResultModel(
                         file("cache-1", 100L, JunkCategory.CACHE),
                         file("cache-2", 200L, JunkCategory.CACHE),
                     ),
@@ -214,7 +211,7 @@ class JunkCleanReducerTest {
         val preview =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(),
-                JunkPreviewLoaded(ScanResult.EMPTY),
+                JunkPreviewLoaded(JunkScanResultModel.EMPTY),
             )
         val emptyCategoriesCleared =
             DefaultResultDisplayCategories.fold(preview) { state, category ->
@@ -229,19 +226,16 @@ class JunkCleanReducerTest {
     }
 
     @Test
-    fun `cleaning follows authorization animation and complete phases`() {
+    fun `cleaning follows complete animation and result phases`() {
         val preview =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(),
-                JunkPreviewLoaded(scanResult(file("cache", 100L, JunkCategory.CACHE))),
+                JunkPreviewLoaded(JunkScanResultModel(file("cache", 100L, JunkCategory.CACHE))),
             )
         val cleaning = JunkCleanReducer.reduce(preview, JunkCleaningRequested)
-        val authorization =
-            JunkCleanReducer.reduce(cleaning, JunkDeleteAuthorizationRequested(2))
-        val resumed = JunkCleanReducer.reduce(authorization, JunkDeleteAuthorizationHandled)
         val animation =
             JunkCleanReducer.reduce(
-                resumed,
+                cleaning,
                 JunkCleaningCompleted(
                     CleanupSummaryModel(
                         freedSpace = 100L,
@@ -254,11 +248,6 @@ class JunkCleanReducerTest {
         val complete = JunkCleanReducer.reduce(animation, JunkResultAnimationCompleted)
 
         assertEquals(JunkCleanPhase.Cleaning, cleaning.phase)
-        assertEquals(JunkCleanPhase.AwaitingAuthorization, authorization.phase)
-        assertEquals(2, authorization.pendingAuthorizationCount)
-        assertEquals(JunkCleanPhase.Cleaning, resumed.phase)
-        assertEquals(0, resumed.pendingAuthorizationCount)
-        assertEquals(0, animation.pendingAuthorizationCount)
         assertEquals(JunkCleanPhase.CompleteAnimation, animation.phase)
         assertEquals(100L, animation.cleanResult.freedSpace)
         assertTrue(animation.cleanResult.hasVisibleResult)
@@ -266,27 +255,11 @@ class JunkCleanReducerTest {
     }
 
     @Test
-    fun `completion and cancellation clear pending authorization count`() {
-        val waiting = JunkCleanUiState(phase = JunkCleanPhase.AwaitingAuthorization, pendingAuthorizationCount = 3)
-        val complete =
-            JunkCleanReducer.reduce(
-                waiting,
-                JunkCleaningCompleted(
-                    CleanupSummaryModel(freedSpace = 100L, cleanedCount = 1, failedCount = 3, memoryFreedBytes = 0L),
-                ),
-            )
-        assertEquals(0, complete.pendingAuthorizationCount)
-        assertEquals(0, JunkCleanReducer.reduce(waiting, JunkCleaningCancelled).pendingAuthorizationCount)
-    }
-
-    @Test
     fun `phase guarded actions do not mutate unrelated states`() {
         val scanning = JunkCleanUiState(phase = JunkCleanPhase.Scanning)
 
         assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleanAction.ItemToggled("missing")))
-        assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleaningRequested))
-        assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleaningCancelled))
-    }
+        assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleaningRequested))    }
 
     @Test
     fun `failure operation is expressed by the single phase`() {
@@ -329,27 +302,27 @@ class JunkCleanReducerTest {
         val stopped =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(phase = JunkCleanPhase.Cleaning),
-                JunkCleaningStopped(scanResult(*remaining.toTypedArray()), setOf(remaining.first()), CleanupSummaryModel(50L, 5, 0, 0L)),
+                JunkCleaningStopped(JunkScanResultModel(*remaining.toTypedArray()), setOf(remaining.first()), CleanupSummaryModel(50L, 5, 0, 0L)),
             )
         assertEquals(JunkCleanPhase.Preview, stopped.phase)
         assertEquals(5, stopped.stoppedSummary?.cleanedCount)
         assertEquals(50L, stopped.stoppedSummary?.freedSpace)
-        assertEquals(remaining, stopped.groups.flatMap { group -> group.items.map { it.junkFile } })
+        assertEquals(remaining, stopped.groups.flatMap { group -> group.items.map { it.file } })
         assertEquals(1, stopped.selectedSummary.checkedCount)
     }
 
-    private fun scanResult(vararg files: JunkFile): ScanResult = ScanResult(files.toList())
+    private fun JunkScanResultModel(vararg files: JunkFileModel): JunkScanResultModel = JunkScanResultModel(files.toList())
 
     private fun file(
         id: String,
         size: Long,
         category: JunkCategory,
-    ) = JunkFile(
+    ) = JunkFileModel(
         id = id,
-        filePath = "/$id",
-        fileName = id,
-        fileSize = size,
+        path = "/$id",
+        name = id,
+        sizeBytes = size,
         category = category,
-        lastModified = 0L,
+        modifiedMillis = 0L,
     )
 }

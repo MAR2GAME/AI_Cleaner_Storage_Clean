@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.settings.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 
 class SettingsViewModel(
-    private val repository: SettingsRepository,
+    private val repository: AppSettingsRepository,
 ) : MviViewModel<SettingsUiState, SettingsAction, SettingsEvent>(
         SettingsUiState(repository.readTemperatureUnit().normalizeTemperatureUnit()),
     ) {

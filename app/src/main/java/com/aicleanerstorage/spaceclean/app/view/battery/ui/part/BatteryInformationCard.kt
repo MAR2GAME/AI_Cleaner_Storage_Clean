@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.displayBatteryTemperatureValue
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.displayBatteryTemperatureValue
 import java.util.Locale
 
 @Composable

@@ -476,4 +476,6 @@
     <string name="cleanup_stopped_summary">Dihentikan. %1$d file dihapus (%2$s).</string>
     <string name="available_memory_increase">Memori tersedia bertambah %1$s selama pembersihan.</string>
     <string name="settings_post_notifications">Notifikasi</string>
+    <string name="settings_media_location_permission">Lokasi Foto</string>
+    <string name="permission_media_location_desc">Untuk menemukan foto yang berisi data lokasi, izinkan akses lokasi foto.</string>
 </resources>

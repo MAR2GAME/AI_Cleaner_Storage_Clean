@@ -26,7 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AICleanerStorageClean"
 include(":app")
-include(":cleaner-kit")
-include(":network-kit")
-include(":device-kit")
 include(":junkcc")

@@ -1,13 +1,14 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.cleanerkit.files.model.FileDeleteResult
-import com.aicleanerstorage.cleanerkit.files.model.FileUri
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileType
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
+import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileGroupModel
+import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
+import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -59,14 +60,14 @@ class PhotoPrivacySelectionTest {
         runTest {
             val viewModel = viewModel(FakeFileRepository())
 
-            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            viewModel.dispatch(PhotoPrivacyAction.RefreshRequested)
             advanceUntilIdle()
 
             val initial = viewModel.state.value
             assertTrue(initial.allSelected)
             assertEquals(initial.visibleIds, initial.selectedIds)
 
-            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            viewModel.dispatch(PhotoPrivacyAction.VisibleItemsToggled)
             assertTrue(
                 viewModel.state.value.selectedIds
                     .isEmpty(),
@@ -74,11 +75,11 @@ class PhotoPrivacySelectionTest {
             assertFalse(viewModel.state.value.allSelected)
 
             val firstGroupIds = initial.groups.first().ids
-            viewModel.dispatch(FileManagerAction.VisibleSelectionToggled(firstGroupIds))
+            viewModel.dispatch(PhotoPrivacyAction.VisibleSelectionToggled(firstGroupIds))
             assertEquals(firstGroupIds, viewModel.state.value.selectedIds)
             assertFalse(viewModel.state.value.allSelected)
 
-            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
+            viewModel.dispatch(PhotoPrivacyAction.VisibleItemsToggled)
             assertTrue(viewModel.state.value.allSelected)
             assertEquals(initial.visibleIds, viewModel.state.value.selectedIds)
         }
@@ -89,11 +90,11 @@ class PhotoPrivacySelectionTest {
             val repository = FakeFileRepository()
             val viewModel = viewModel(repository)
 
-            viewModel.dispatch(FileManagerAction.RefreshRequested)
+            viewModel.dispatch(PhotoPrivacyAction.RefreshRequested)
             advanceUntilIdle()
-            viewModel.dispatch(FileManagerAction.VisibleItemsToggled)
-            viewModel.dispatch(FileManagerAction.SelectionToggled(1))
-            viewModel.dispatch(FileManagerAction.LocationRemovalConfirmed)
+            viewModel.dispatch(PhotoPrivacyAction.VisibleItemsToggled)
+            viewModel.dispatch(PhotoPrivacyAction.SelectionToggled(1))
+            viewModel.dispatch(PhotoPrivacyAction.LocationRemovalConfirmed)
             advanceUntilIdle()
 
             assertEquals(listOf(1L), repository.removedIds)
@@ -108,7 +109,7 @@ class PhotoPrivacySelectionTest {
             )
         }
 
-    private fun viewModel(repository: FileRepository): PhotoPrivacyManagerViewModel =
+    private fun viewModel(repository: ManagedFileRepository): PhotoPrivacyManagerViewModel =
         PhotoPrivacyManagerViewModel(
             repository = repository,
             ioDispatcher = dispatcher,
@@ -117,7 +118,7 @@ class PhotoPrivacySelectionTest {
             completeDelayMillis = 0L,
         )
 
-    private class FakeFileRepository : FileRepository {
+    private class FakeFileRepository : ManagedFileRepository {
         private var privacyImages =
             listOf(
                 image(1, timestampMillis(2026, Calendar.MAY, 1) / 1000L),
@@ -127,33 +128,33 @@ class PhotoPrivacySelectionTest {
         var removedIds: List<Long> = emptyList()
             private set
 
-        override suspend fun loadImages(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadImages(): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadVideos(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadVideos(): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadAudios(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadAudios(): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadScreenshots(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadScreenshots(): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadPrivacyImages(): List<ManagedFileItem> = privacyImages
+        override suspend fun loadPrivacyImages(): List<ManagedFileModel> = privacyImages
 
-        override suspend fun loadDocuments(): List<ManagedFileItem> = emptyList()
+        override suspend fun loadDocuments(): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileItem> = emptyList()
+        override suspend fun loadLargeFiles(minBytes: Long): List<ManagedFileModel> = emptyList()
 
-        override suspend fun loadDuplicateFiles(): List<List<ManagedFileItem>> = emptyList()
+        override suspend fun loadDuplicateGroups(): List<DuplicateFileGroupModel> = emptyList()
 
-        override suspend fun loadFilesInDirectories(
-            relativeDirectories: List<String>,
-            matchesMedia: (ManagedFileItem) -> Boolean,
-        ): List<ManagedFileItem> = emptyList()
+        override suspend fun deleteDuplicates(
+            selections: List<DuplicateFileSelectionModel>,
+        ): Result<FileDeleteSummaryModel> = Result.failure(UnsupportedOperationException())
 
-        override suspend fun deleteFiles(items: List<ManagedFileItem>): FileDeleteResult = FileDeleteResult(emptyList())
+        override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
+            Result.success(FileDeleteSummaryModel(deletedCount = 0, freedBytes = 0L))
 
-        override suspend fun removeLocationData(items: List<ManagedFileItem>): Int {
-            removedIds = items.map { it.id }
-            privacyImages = privacyImages.filterNot { candidate -> items.any { it.id == candidate.id } }
-            return items.size
+        override suspend fun removeLocationData(files: List<ManagedFileModel>): Result<Int> {
+            removedIds = files.map { it.id }
+            privacyImages = privacyImages.filterNot { candidate -> files.any { it.id == candidate.id } }
+            return Result.success(files.size)
         }
     }
 
@@ -161,17 +162,17 @@ class PhotoPrivacySelectionTest {
         fun image(
             id: Long,
             modifiedSeconds: Long,
-        ): ManagedFileItem =
-            ManagedFileItem(
+        ): ManagedFileModel =
+            ManagedFileModel(
                 id = id,
-                uri = FileUri("content://media/external/images/media/$id"),
+                uri = "content://media/external/images/media/$id",
                 path = null,
                 name = "image-$id.jpg",
                 sizeBytes = id * 1024L,
                 modifiedSeconds = modifiedSeconds,
                 mimeType = "image/jpeg",
                 bucketName = "Camera",
-                type = ManagedFileType.Image,
+                kind = FileKind.Image,
             )
 
         fun timestampMillis(

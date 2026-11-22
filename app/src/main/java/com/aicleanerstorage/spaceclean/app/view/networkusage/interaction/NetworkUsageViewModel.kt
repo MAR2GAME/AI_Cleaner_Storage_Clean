@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.networkkit.NetworkRepository
-import com.aicleanerstorage.networkkit.model.NetworkUsageApp
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -141,7 +141,7 @@ class NetworkUsageViewModel(
 }
 
 fun buildNetworkUsageDisplayItems(
-    apps: List<NetworkUsageApp>,
+    apps: List<NetworkUsageAppModel>,
     selectedTotalBytes: Long,
 ): List<NetworkUsageDisplayItem> {
     if (selectedTotalBytes <= 0L) return emptyList()

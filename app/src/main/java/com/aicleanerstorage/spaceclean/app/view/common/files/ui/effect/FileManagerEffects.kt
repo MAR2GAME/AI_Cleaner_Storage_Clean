@@ -59,14 +59,23 @@ fun FileManagerErrorToastEffect(
     }
 }
 
+/**
+ * 权限齐备后触发首次加载。
+ *
+ * 权限未授予或页面正在离开时什么都不做；权限状态从 false 变成 true 后
+ * 会自动补触发一次，避免“先扫描、后报权限失败”。
+ *
+ * @param permissionState 流程权限状态。
+ * @param onStartIfNeeded 触发加载的回调。
+ */
 @Composable
 fun FileManagerStartEffect(
     permissionState: FileManagerPermissionState,
     onStartIfNeeded: () -> Unit,
 ) {
     val latestStartIfNeeded by rememberUpdatedState(onStartIfNeeded)
-    LaunchedEffect(permissionState.leavingPage) {
-        if (permissionState.leavingPage) return@LaunchedEffect
+    LaunchedEffect(permissionState.granted, permissionState.leavingPage) {
+        if (!permissionState.granted || permissionState.leavingPage) return@LaunchedEffect
         latestStartIfNeeded()
     }
 }

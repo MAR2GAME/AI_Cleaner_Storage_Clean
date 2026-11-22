@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
-import com.aicleanerstorage.spaceclean.domain.whatsapp.port.WhatsAppCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppFileBucketModel
+import com.aicleanerstorage.spaceclean.domain.port.WhatsAppCleanerRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -225,14 +225,14 @@ class WhatsAppCleanerViewModel(
         super.onCleared()
     }
 
-    private fun buildScanResultState(buckets: Map<WhatsAppFileBucket, List<ManagedFileModel>>): WhatsAppCleanerUiState {
+    private fun buildScanResultState(buckets: Map<WhatsAppFileBucketModel, List<ManagedFileModel>>): WhatsAppCleanerUiState {
         val groups =
             WhatsAppCleanerGroup.values().map { group ->
                 WhatsAppCleanerGroupItem(
                     group = group,
                     children =
                         WhatsAppCleanerCategory.values().map { category ->
-                            val categoryFiles = buckets[WhatsAppFileBucket(group, category)].orEmpty()
+                            val categoryFiles = buckets[WhatsAppFileBucketModel(group, category)].orEmpty()
                             WhatsAppCleanerSubItem(
                                 group = group,
                                 category = category,

@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
+import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
@@ -27,10 +27,10 @@ data class DuplicateFilesManagerUiState(
     val activeDeleteFileKeys: Set<String>
         get() = pendingDeleteFileKeys ?: selectedFileKeys
 
-    val filesToDelete: List<ManagedFileItem>
+    val filesToDelete: List<DuplicateFileSelectionModel>
         get() = filesMatchingKeys(activeDeleteFileKeys)
 
-    val globalFilesToDelete: List<ManagedFileItem>
+    val globalFilesToDelete: List<DuplicateFileSelectionModel>
         get() = filesMatchingKeys(selectedFileKeys)
 
     val selectedGroupFileKeys: Set<String>
@@ -40,19 +40,21 @@ data class DuplicateFilesManagerUiState(
             return selectedFileKeys.intersect(groupKeys)
         }
 
-    val selectedGroupFilesToDelete: List<ManagedFileItem>
+    val selectedGroupFilesToDelete: List<DuplicateFileSelectionModel>
         get() = filesMatchingKeys(selectedGroupFileKeys)
 
-    val selectedGroupDeleteSize: Long get() = selectedGroupFilesToDelete.sumOf { it.sizeBytes }
+    val selectedGroupDeleteSize: Long get() = selectedGroupFilesToDelete.sumOf { it.file.sizeBytes }
 
-    private fun filesMatchingKeys(keys: Set<String>): List<ManagedFileItem> =
+    private fun filesMatchingKeys(keys: Set<String>): List<DuplicateFileSelectionModel> =
         groups.flatMap { group ->
             group.files
                 .filter { duplicateFileKey(it) in keys }
-                .mapNotNull { it.realFile }
+                .mapNotNull { entry ->
+                    entry.realFile?.let { DuplicateFileSelectionModel(it, group.group) }
+                }
         }
 
-    val selectedDeleteSize: Long get() = filesToDelete.sumOf { it.sizeBytes }
+    val selectedDeleteSize: Long get() = filesToDelete.sumOf { it.file.sizeBytes }
 
     val allSelected: Boolean
         get() = allDeleteFileKeys.isNotEmpty() && selectedFileKeys.containsAll(allDeleteFileKeys)

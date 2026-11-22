@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.base.designsystem.component
 
-import com.aicleanerstorage.spaceclean.base.designsystem.component.AllToolFeatures
-import com.aicleanerstorage.spaceclean.base.designsystem.component.handleToolFeatureBannerClick
-import com.aicleanerstorage.spaceclean.base.designsystem.component.selectRecommendedToolFeatures
+import com.aicleanerstorage.spaceclean.app.view.common.tool.AllToolFeatures
+import com.aicleanerstorage.spaceclean.app.view.common.tool.handleToolFeatureBannerClick
+import com.aicleanerstorage.spaceclean.app.view.common.tool.selectRecommendedToolFeatures
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

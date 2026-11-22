@@ -3,10 +3,10 @@ package com.aicleanerstorage.spaceclean.app.view.audios.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -14,30 +14,30 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 @Composable
 fun AudiosManagerRoute(
     navigator: AppNavigator,
-    viewModel: MediaManagerViewModel,
+    viewModel: AudiosManagerViewModel,
     permissionState: FileManagerPermissionState,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
-    val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
+    val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null
 
     AudiosManagerScreen(
         state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked ->
+                FilePageAction.BackClicked ->
                     viewModel.dispatch(
-                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                        if (permissionState.granted) action else FilePageAction.PermissionRejected,
                     )
-                FileManagerAction.DeleteClicked,
-                FileManagerAction.ContinueManagingClicked,
-                is FileManagerAction.TabChangeRequested,
-                is FileManagerAction.SelectionToggled,
-                is FileManagerAction.VisibleSelectionToggled,
-                is FileManagerAction.DetailClicked,
+                FilePageAction.DeleteClicked,
+                FilePageAction.ContinueManagingClicked,
+                is FilePageAction.TabChangeRequested,
+                is FilePageAction.SelectionToggled,
+                is FilePageAction.VisibleSelectionToggled,
+                is FilePageAction.DetailClicked,
                 -> viewModel.dispatch(action)
-                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
+                is FilePageAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
@@ -45,13 +45,13 @@ fun AudiosManagerRoute(
 
     FileManagerFlowDialogs(
         flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
+        onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
         permissionState = permissionState,
         router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
+        onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
+        onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
+        onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
     )
 }

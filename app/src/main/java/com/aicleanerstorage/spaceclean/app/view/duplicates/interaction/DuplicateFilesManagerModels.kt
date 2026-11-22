@@ -1,8 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.formatManagedFileDate
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileGroupModel
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 
 data class DuplicateFileEntry(
     val id: Int,
@@ -11,7 +12,7 @@ data class DuplicateFileEntry(
     val sizeLabel: String,
     val selected: Boolean,
     val note: String? = null,
-    val realFile: ManagedFileItem? = null,
+    val realFile: ManagedFileModel? = null,
 )
 
 data class DuplicateGroupItem(
@@ -20,22 +21,24 @@ data class DuplicateGroupItem(
     val sizeLabel: String,
     val duplicateCount: Int,
     val files: List<DuplicateFileEntry>,
+    val group: DuplicateFileGroupModel,
 )
 
-fun duplicateFileKey(file: DuplicateFileEntry): String = file.realFile?.uri?.toString() ?: "${file.path}#${file.date}#${file.sizeLabel}"
+fun duplicateFileKey(file: DuplicateFileEntry): String = file.realFile?.uri ?: "${file.path}#${file.date}#${file.sizeLabel}"
 
-fun mapDuplicateGroups(groups: List<List<ManagedFileItem>>): List<DuplicateGroupItem> =
+fun mapDuplicateGroups(groups: List<DuplicateFileGroupModel>): List<DuplicateGroupItem> =
     groups
-        .filter { it.isNotEmpty() }
-        .mapIndexed { groupIndex, files ->
-            val first = files.first()
+        .filter { it.files.isNotEmpty() }
+        .mapIndexed { groupIndex, group ->
+            val first = group.files.first()
             DuplicateGroupItem(
                 id = groupIndex + 1,
                 name = first.name,
                 sizeLabel = FormatUtil.formatSize(first.sizeBytes),
-                duplicateCount = files.size,
+                duplicateCount = group.files.size,
+                group = group,
                 files =
-                    files.mapIndexed { index, file ->
+                    group.files.mapIndexed { index, file ->
                         DuplicateFileEntry(
                             id = index + 1,
                             path = file.path ?: file.name,

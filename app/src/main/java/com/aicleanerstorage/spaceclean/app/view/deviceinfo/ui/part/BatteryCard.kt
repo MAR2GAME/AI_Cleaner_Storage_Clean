@@ -3,12 +3,12 @@ package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.currentBatteryCapacityMah
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryCapacityMah
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryTemperature
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryVoltage
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.currentBatteryCapacityMah
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryCapacityMah
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryTemperature
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryVoltage
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.orPlaceholder
 
 @Composable
 internal fun BatteryCard(uiState: DeviceInfoUiState) {

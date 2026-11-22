@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.ViewModelStore
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.testsupport.InMemorySettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.testsupport.InMemoryAppSettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,24 +97,25 @@ class HomeViewModelTest {
 
     private class FakeHomeSettings(
         private var lastPrompt: Long,
-    ) : SettingsRepository by InMemorySettingsRepository() {
+    ) : AppSettingsRepository by InMemoryAppSettingsRepository() {
         var promptCount = 0
             private set
 
         override fun readTemperatureUnit() = "C"
 
-        override fun saveTemperatureUnit(unit: String) = Unit
+        override fun saveTemperatureUnit(unit: String): Result<Unit> = Result.success(Unit)
 
         override fun readLastAutoRatePromptAt() = lastPrompt
 
-        override fun saveLastAutoRatePromptAt(timestampMillis: Long) {
+        override fun saveLastAutoRatePromptAt(timestampMillis: Long): Result<Unit> {
             lastPrompt = timestampMillis
             promptCount++
+            return Result.success(Unit)
         }
 
         override fun hasShownNotificationCleanerExitPrompt() = false
 
-        override fun saveNotificationCleanerExitPromptShown() = Unit
+        override fun saveNotificationCleanerExitPromptShown(): Result<Unit> = Result.success(Unit)
     }
 
     // Summary jobs remain queued on the test dispatcher; this test exercises synchronous navigation inputs.

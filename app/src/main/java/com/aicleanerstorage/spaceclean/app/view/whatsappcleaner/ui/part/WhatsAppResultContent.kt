@@ -21,7 +21,7 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.What
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedText
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultCheckIcon
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultContent
+import com.aicleanerstorage.spaceclean.app.view.common.tool.CommonResultContent
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 

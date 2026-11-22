@@ -34,14 +34,14 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
 internal fun OnboardingResultContent(
     rows: List<DeviceScanRow>,
-    storageInfo: StorageInfo,
+    storageInfo: CapacityInfoModel,
     onGetStarted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -76,7 +76,7 @@ private val OnboardingMuted = Color(0xFF999999)
 private val OnboardingProgressTrack = Color(0xFFEEF4F9)
 
 @Composable
-private fun StorageCard(storageInfo: StorageInfo) {
+private fun StorageCard(storageInfo: CapacityInfoModel) {
     val usedText = compactStorageSize(FormatUtil.formatSize(storageInfo.usedBytes))
     val totalText = " / ${compactStorageSize(FormatUtil.formatSize(storageInfo.totalBytes))}"
     val textMeasurer = rememberTextMeasurer()

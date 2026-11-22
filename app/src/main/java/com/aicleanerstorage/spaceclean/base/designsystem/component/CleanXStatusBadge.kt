@@ -11,12 +11,6 @@ import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.RotatingRingAnimation
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXBlue
 
-enum class CleanXStatusBadgeState {
-    Inactive,
-    Active,
-    Complete,
-}
-
 @Composable
 fun CleanXStatusBadge(
     state: CleanXStatusBadgeState,

@@ -12,8 +12,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayStyle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerUiState
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesUiState
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListView
@@ -24,18 +24,18 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperati
 
 @Composable
 fun LargeFilesManagerScreen(
-    state: FileListManagerUiState,
-    onAction: (FileManagerAction) -> Unit,
+    state: LargeFilesUiState,
+    onAction: (FilePageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
     val scrollState = scrollStates.getOrPut(state.selectedTabIndex) { ScrollState(0) }
-    val visibleItems = state.visibleDisplayItems
+    val visibleItems = state.visibleListItems
     val isDetailMode = state.detailStartIndex != null
-    BackHandler { onAction(FileManagerAction.BackClicked) }
+    BackHandler { onAction(FilePageAction.BackClicked) }
     FileManagerScaffold(
         title = stringResource(R.string.nav_large_files),
-        onBack = { onAction(FileManagerAction.BackClicked) },
+        onBack = { onAction(FilePageAction.BackClicked) },
         bottomBar = {
             if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
@@ -45,7 +45,7 @@ fun LargeFilesManagerScreen(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
                     keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
-                    onClick = { onAction(FileManagerAction.DeleteClicked) },
+                    onClick = { onAction(FilePageAction.DeleteClicked) },
                 )
             }
         },
@@ -59,13 +59,13 @@ fun LargeFilesManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
-                onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
+                onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
+                onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(
                         tabs = state.tabs,
                         selectedTabIndex = state.selectedTabIndex,
-                        onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
+                        onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
                     )
                 },
             ) {
@@ -77,13 +77,12 @@ fun LargeFilesManagerScreen(
                     allSelected = state.allSelected,
                     scrollState = scrollState,
                     style = FileListDisplayStyle.Default,
-                    onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
-                    onToggleAll = { onAction(FileManagerAction.VisibleItemsToggled) },
-                    onSelect = { onAction(FileManagerAction.SelectionToggled(it)) },
-                    leadingIconRes = R.drawable.ic_file_yellow,
+                    onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
+                    onToggleAll = { onAction(FilePageAction.VisibleItemsToggled) },
+                    onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
                     onOpenDetail = { item ->
                         val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
-                        onAction(FileManagerAction.DetailClicked(index))
+                        onAction(FilePageAction.DetailClicked(index))
                     },
                 )
             }

@@ -18,12 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.orPlaceholder
 
 @Composable
-internal fun ScreenCard(hardware: DeviceHardwareInfo) {
+internal fun ScreenCard(hardware: DeviceHardwareInfoModel) {
     InfoSection(
         title = stringResource(R.string.device_screen),
         rows =

@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.networkkit.model.NetworkTransport
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkTransport
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState

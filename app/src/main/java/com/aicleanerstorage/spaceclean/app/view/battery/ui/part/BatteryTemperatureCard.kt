@@ -40,10 +40,10 @@ import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurre
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryOneMinuteWindowEnd
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryTemperatureAxisBounds
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.downsampleBatteryChartPoints
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.displayBatteryTemperatureValue
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.formatBatteryTemperature
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentRange
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.displayBatteryTemperatureValue
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryTemperature
 import java.util.Locale
 import kotlin.math.max
 

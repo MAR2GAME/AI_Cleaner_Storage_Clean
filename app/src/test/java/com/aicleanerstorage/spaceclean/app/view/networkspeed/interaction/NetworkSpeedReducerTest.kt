@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkSpeed
-import com.aicleanerstorage.networkkit.model.SpeedTestPhase
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import org.junit.Assert.assertEquals
@@ -14,7 +14,7 @@ class NetworkSpeedReducerTest {
             NetworkSpeedReducer.testStarted(
                 NetworkSpeedUiState(
                     phase = NetworkSpeedPhase.Result,
-                    speed = NetworkSpeed(downloadMbps = 9.0),
+                    speed = NetworkSpeedModel(downloadMbps = 9.0),
                 ),
             )
 
@@ -29,16 +29,16 @@ class NetworkSpeedReducerTest {
         val testing = NetworkSpeedUiState(phase = NetworkSpeedPhase.Testing)
         assertEquals(
             12.0,
-            NetworkSpeedReducer.progressUpdated(testing, NetworkSpeed(downloadMbps = 12.0)).speed.downloadMbps,
+            NetworkSpeedReducer.progressUpdated(testing, NetworkSpeedModel(downloadMbps = 12.0)).speed.downloadMbps,
         )
 
         val idle = NetworkSpeedUiState(phase = NetworkSpeedPhase.Idle)
-        assertEquals(idle, NetworkSpeedReducer.progressUpdated(idle, NetworkSpeed(downloadMbps = 12.0)))
+        assertEquals(idle, NetworkSpeedReducer.progressUpdated(idle, NetworkSpeedModel(downloadMbps = 12.0)))
     }
 
     @Test
     fun `test completed only moves from testing to completing`() {
-        val result = NetworkSpeed(downloadMbps = 10.0, uploadMbps = 5.0)
+        val result = NetworkSpeedModel(downloadMbps = 10.0, uploadMbps = 5.0)
         val completed =
             NetworkSpeedReducer.testCompleted(NetworkSpeedUiState(phase = NetworkSpeedPhase.Testing), result)
         assertEquals(NetworkSpeedPhase.Completing, completed.phase)
@@ -73,12 +73,12 @@ class NetworkSpeedReducerTest {
             NetworkSpeedReducer.testStopped(
                 NetworkSpeedUiState(
                     phase = NetworkSpeedPhase.Testing,
-                    speed = NetworkSpeed(downloadMbps = 10.0),
+                    speed = NetworkSpeedModel(downloadMbps = 10.0),
                 ),
             )
 
         assertEquals(NetworkSpeedPhase.Idle, stopped.phase)
-        assertEquals(NetworkSpeed(), stopped.speed)
+        assertEquals(NetworkSpeedModel(), stopped.speed)
         assertEquals(null, stopped.error)
     }
 }

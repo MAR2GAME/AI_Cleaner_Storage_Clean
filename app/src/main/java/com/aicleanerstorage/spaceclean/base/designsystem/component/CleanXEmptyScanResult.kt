@@ -49,7 +49,7 @@ fun CleanXEmptyScanResult(
             )
             Text(
                 text = message,
-                color = FileManagerTextColor,
+                color = CleanXTextColor,
                 fontSize = 18.sp,
                 lineHeight = 21.sp,
                 textAlign = TextAlign.Center,

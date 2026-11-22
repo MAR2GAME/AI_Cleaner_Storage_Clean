@@ -475,4 +475,6 @@
     <string name="cleanup_stopped_summary">중지되었습니다. %1$d개 파일을 삭제했습니다(%2$s).</string>
     <string name="available_memory_increase">정리하는 동안 사용 가능한 메모리가 %1$s 증가했습니다.</string>
     <string name="settings_post_notifications">알림</string>
+    <string name="settings_media_location_permission">사진 위치</string>
+    <string name="permission_media_location_desc">위치 정보가 포함된 사진을 찾으려면 사진 위치 접근을 허용하세요.</string>
 </resources>

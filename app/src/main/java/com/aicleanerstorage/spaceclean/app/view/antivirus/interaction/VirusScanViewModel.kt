@@ -2,11 +2,11 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.security.port.VirusScanner
-import com.aicleanerstorage.spaceclean.domain.security.port.VirusSecurityRepository
-import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanErrorKind
-import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanItemModel
-import com.aicleanerstorage.spaceclean.domain.security.model.VirusScanMode
+import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
+import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.domain.error.VirusScanError
+import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanItemModel
+import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -165,12 +165,7 @@ class VirusScanViewModel(
         refreshAdbRisk()
         startTerminalTimeout(mode, generation)
 
-        runCatching {
-            val listener = createScanListener(mode, generation)
-            scanEngine.startScan(mode, listener)
-        }.onFailure {
-            handleStartFailure(mode, generation)
-        }
+        scanEngine.startScan(mode, createScanListener(mode, generation))
     }
 
     private fun resetScanState() {
@@ -241,11 +236,7 @@ class VirusScanViewModel(
                 }
             }
 
-            override fun onScanError(
-                code: Int,
-                message: String?,
-                kind: VirusScanErrorKind,
-            ) {
+            override fun onScanError(error: VirusScanError) {
                 viewModelScope.launch {
                     if (!canAcceptSdkCallback(generation)) return@launch
                     handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
@@ -387,14 +378,6 @@ class VirusScanViewModel(
     private fun cancelAdbRiskCheck() {
         adbRiskJob?.cancel()
         adbRiskJob = null
-    }
-
-    private fun handleStartFailure(
-        mode: VirusScanMode,
-        generation: Int,
-    ) {
-        if (generation != scanGeneration) return
-        handleSdkTerminal(mode, generation, ScanTerminalState.Failure)
     }
 
     private fun handleSdkTerminal(

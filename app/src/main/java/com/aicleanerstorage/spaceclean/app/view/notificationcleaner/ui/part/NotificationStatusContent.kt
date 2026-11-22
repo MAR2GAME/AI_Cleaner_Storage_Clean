@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.PackageAppIcon
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.BlockedNotificationModel
 import java.util.Date
 
 @Composable

@@ -478,4 +478,6 @@
     <string name="cleanup_stopped_summary">Interrompido. %1$d arquivos removidos (%2$s).</string>
     <string name="available_memory_increase">A memória disponível aumentou %1$s durante a limpeza.</string>
     <string name="settings_post_notifications">Notificações</string>
+    <string name="settings_media_location_permission">Localização das fotos</string>
+    <string name="permission_media_location_desc">Para encontrar fotos com dados de localização, permita o acesso à localização das fotos.</string>
 </resources>

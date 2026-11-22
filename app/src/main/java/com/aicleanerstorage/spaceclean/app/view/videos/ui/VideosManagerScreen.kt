@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerUiState
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosUiState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMediaGridView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
@@ -23,18 +23,18 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperati
 
 @Composable
 fun VideosManagerScreen(
-    state: MediaManagerUiState,
-    onAction: (FileManagerAction) -> Unit,
+    state: VideosUiState,
+    onAction: (FilePageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollStates = remember { mutableMapOf<Int, ScrollState>() }
     val scrollState = scrollStates.getOrPut(state.selectedTabIndex) { ScrollState(0) }
     val visibleItems = state.visibleDisplayItems
     val isDetailMode = state.detailStartIndex != null
-    BackHandler { onAction(FileManagerAction.BackClicked) }
+    BackHandler { onAction(FilePageAction.BackClicked) }
     FileManagerScaffold(
         title = stringResource(R.string.nav_videos),
-        onBack = { onAction(FileManagerAction.BackClicked) },
+        onBack = { onAction(FilePageAction.BackClicked) },
         bottomBar = {
             if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
@@ -44,7 +44,7 @@ fun VideosManagerScreen(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
                     keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
-                    onClick = { onAction(FileManagerAction.DeleteClicked) },
+                    onClick = { onAction(FilePageAction.DeleteClicked) },
                 )
             }
         },
@@ -58,13 +58,13 @@ fun VideosManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
-                onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
+                onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
+                onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
                 noResultsContent = {
                     FileManagerNoResultsContent(
                         tabs = state.tabs,
                         selectedTabIndex = state.selectedTabIndex,
-                        onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
+                        onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
                     )
                 },
             ) {
@@ -72,14 +72,14 @@ fun VideosManagerScreen(
                     tabs = state.tabs,
                     items = state.displayItems,
                     selectedTabIndex = state.selectedTabIndex,
-                    onTabSelected = { onAction(FileManagerAction.TabChangeRequested(it)) },
+                    onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
                     scrollState = scrollState,
                     selectedIds = state.selectedIds,
-                    onSelect = { onAction(FileManagerAction.SelectionToggled(it)) },
-                    onToggleVisibleItems = { onAction(FileManagerAction.VisibleSelectionToggled(it)) },
+                    onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
+                    onToggleVisibleItems = { onAction(FilePageAction.VisibleSelectionToggled(it)) },
                     onOpenDetail = { item ->
                         val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
-                        onAction(FileManagerAction.DetailClicked(index))
+                        onAction(FilePageAction.DetailClicked(index))
                     },
                 )
             }

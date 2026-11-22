@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
@@ -23,16 +23,16 @@ import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.Simila
 @Composable
 fun SimilarPhotosManagerScreen(
     state: SimilarPhotosManagerUiState,
-    onAction: (FileManagerAction) -> Unit,
+    onAction: (SimilarPhotosAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = remember { ScrollState(0) }
     val displayItems = state.displayItems
     val isDetailMode = state.detailStartIndex != null
-    BackHandler { onAction(FileManagerAction.BackClicked) }
+    BackHandler { onAction(SimilarPhotosAction.BackClicked) }
     FileManagerScaffold(
         title = stringResource(R.string.nav_similar_photos),
-        onBack = { onAction(FileManagerAction.BackClicked) },
+        onBack = { onAction(SimilarPhotosAction.BackClicked) },
         bottomBar = {
             if (state.permissionGranted &&
                 (state.phase == FileOperationPhase.Browsing || state.phase == FileOperationPhase.NoResults) &&
@@ -42,7 +42,7 @@ fun SimilarPhotosManagerScreen(
                     enabled = state.selectedIds.isNotEmpty(),
                     selectedSizeBytes = state.selectedSizeBytes,
                     keepActiveAppearance = state.phase == FileOperationPhase.NoResults,
-                    onClick = { onAction(FileManagerAction.DeleteClicked) },
+                    onClick = { onAction(SimilarPhotosAction.DeleteClicked) },
                 )
             }
         },
@@ -59,8 +59,8 @@ fun SimilarPhotosManagerScreen(
                 resultAmount = result.first,
                 resultUnit = result.second,
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = { destination -> onAction(FileManagerAction.NavigationRequested(destination)) },
-                onContinue = { onAction(FileManagerAction.ContinueManagingClicked) },
+                onNavigateTool = { destination -> onAction(SimilarPhotosAction.NavigationRequested(destination)) },
+                onContinue = { onAction(SimilarPhotosAction.ContinueManagingClicked) },
             ) {
                 FileManagerSimilarPhotosView(
                     groups = state.displayGroups,
@@ -69,19 +69,19 @@ fun SimilarPhotosManagerScreen(
                     selectedIds = state.selectedIds,
                     allSelected = state.allSelected,
                     scrollState = scrollState,
-                    onToggleAll = { onAction(FileManagerAction.VisibleItemsToggled) },
+                    onToggleAll = { onAction(SimilarPhotosAction.VisibleItemsToggled) },
                     onToggleGroup = { group ->
                         val bulkSelectableIds =
                             group.items
                                 .filterNot { it.bestPhoto }
                                 .map { it.id }
                                 .toSet()
-                        onAction(FileManagerAction.GroupItemsToggled(bulkSelectableIds))
+                        onAction(SimilarPhotosAction.GroupItemsToggled(bulkSelectableIds))
                     },
-                    onSelect = { onAction(FileManagerAction.SelectionToggled(it)) },
+                    onSelect = { onAction(SimilarPhotosAction.SelectionToggled(it)) },
                     onOpenDetail = { item ->
                         val index = displayItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
-                        onAction(FileManagerAction.DetailClicked(index))
+                        onAction(SimilarPhotosAction.DetailClicked(index))
                     },
                 )
             }

@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
-import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 
 data class OnboardingUiState(
     val deviceModel: String = "",
@@ -8,7 +8,7 @@ data class OnboardingUiState(
     val screenSize: String = "",
     val batteryHealth: String = "",
     val batteryStatusText: String = "",
-    val storageInfo: StorageInfo = StorageInfo(0, 0),
+    val storageInfo: CapacityInfoModel = CapacityInfoModel(0, 0),
     val completedStep: Int = 0,
 ) {
     val complete: Boolean get() = completedStep > ONBOARDING_SCAN_ROW_COUNT

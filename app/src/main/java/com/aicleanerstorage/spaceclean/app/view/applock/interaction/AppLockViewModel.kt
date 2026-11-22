@@ -2,9 +2,9 @@ package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.applock.rule.AppLockPinRule
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.applock.model.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -127,6 +127,14 @@ class AppLockViewModel(
 
     private fun togglePackage(packageName: String) {
         val current = currentState
+        val target = current.apps.firstOrNull { it.packageName == packageName } ?: return
+        if (!target.isLocked &&
+            current.page in setOf(AppLockPage.Manage, AppLockPage.Search) &&
+            current.missingPermissions.isNotEmpty()
+        ) {
+            sendEvent(AppLockEvent.OpenPermissionSettings(current.missingPermissions.first()))
+            return
+        }
         val updatedApps =
             current.apps.map { app ->
                 if (app.packageName == packageName) app.copy(isLocked = !app.isLocked) else app
@@ -142,6 +150,10 @@ class AppLockViewModel(
 
     private fun toggleAllApps() {
         val lock = !currentState.allAppsLocked
+        if (lock && currentState.missingPermissions.isNotEmpty()) {
+            sendEvent(AppLockEvent.OpenPermissionSettings(currentState.missingPermissions.first()))
+            return
+        }
         val updatedApps = currentState.apps.map { it.copy(isLocked = lock) }
         setState { it.copy(apps = updatedApps) }
         if (currentState.page == AppLockPage.Manage) {
@@ -152,6 +164,11 @@ class AppLockViewModel(
 
     private fun beginCreatePin() {
         if (!currentState.hasSelectedApps) return
+        val missing = currentState.missingPermissions.firstOrNull()
+        if (missing != null) {
+            sendEvent(AppLockEvent.OpenPermissionSettings(missing))
+            return
+        }
         cancelCompletePinJob()
         setState {
             it.copy(

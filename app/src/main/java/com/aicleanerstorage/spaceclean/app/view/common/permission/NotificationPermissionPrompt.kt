@@ -14,7 +14,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.PostNotific
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import org.koin.compose.koinInject
 import java.util.Calendar
 
@@ -24,7 +24,7 @@ import java.util.Calendar
 @Composable
 fun NotificationPermissionPrompt(onActiveChanged: (Boolean) -> Unit = {}) {
     val context = LocalContext.current
-    val preferences: SettingsRepository = koinInject()
+    val preferences: AppSettingsRepository = koinInject()
     var enabled by remember { mutableStateOf(notificationsEnabled(context)) }
     var entered by rememberSaveable { mutableStateOf(false) }
     var showExplain by remember { mutableStateOf(false) }

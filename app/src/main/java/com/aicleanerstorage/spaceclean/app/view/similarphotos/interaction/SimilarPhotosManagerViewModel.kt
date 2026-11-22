@@ -2,18 +2,18 @@ package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.similarphotos.port.SimilarPhotoRepository
+import com.aicleanerstorage.spaceclean.domain.port.SimilarPhotoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -23,7 +23,7 @@ class SimilarPhotosManagerViewModel(
     private val scanDelayMillis: Long = 900L,
     private val deleteDelayMillis: Long = FILE_DELETE_ANIMATION_MIN_MILLIS,
     private val completeDelayMillis: Long = 800L,
-) : MviViewModel<SimilarPhotosManagerUiState, FileManagerAction, FileManagerEvent>(SimilarPhotosManagerUiState()) {
+) : MviViewModel<SimilarPhotosManagerUiState, SimilarPhotosAction, FileManagerEvent>(SimilarPhotosManagerUiState()) {
     private val operations =
         FileOperations(viewModelScope, ioDispatcher) {
             val groups = mapSimilarPhotoGroups(repository.loadGroups())
@@ -42,34 +42,34 @@ class SimilarPhotosManagerViewModel(
         sendEvent(FileManagerEvent.Exit(home))
     }
 
-    override fun onAction(intent: FileManagerAction) {
+    override fun onAction(intent: SimilarPhotosAction) {
         if (exitRequested) return
         when (intent) {
-            is FileManagerAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
-            FileManagerAction.PermissionRejected -> exit(home = false)
-            FileManagerAction.BackClicked -> handleBack()
-            FileManagerAction.DetailBackClicked -> {
+            is SimilarPhotosAction.NavigationRequested -> sendEvent(FileManagerEvent.Navigate(intent.destination, intent.reset))
+            SimilarPhotosAction.PermissionRejected -> exit(home = false)
+            SimilarPhotosAction.BackClicked -> handleBack()
+            SimilarPhotosAction.DetailBackClicked -> {
                 closeDetail()
                 sendEvent(FileManagerEvent.NavigateBack)
             }
 
-            FileManagerAction.StopDismissed -> dismissStopDialog()
-            FileManagerAction.OperationCancellationRequested -> cancelActiveOperation()
-            FileManagerAction.InitialLoadRequested -> startIfNeeded()
-            FileManagerAction.RefreshRequested -> refresh()
-            is FileManagerAction.SelectionToggled -> toggleSelection(intent.id)
-            FileManagerAction.VisibleItemsToggled -> toggleVisibleItems()
-            is FileManagerAction.GroupToggled -> toggleGroup(intent.ids)
-            is FileManagerAction.DetailClicked -> {
+            SimilarPhotosAction.StopDismissed -> dismissStopDialog()
+            SimilarPhotosAction.OperationCancellationRequested -> cancelActiveOperation()
+            SimilarPhotosAction.InitialLoadRequested -> startIfNeeded()
+            SimilarPhotosAction.RefreshRequested -> refresh()
+            is SimilarPhotosAction.SelectionToggled -> toggleSelection(intent.id)
+            SimilarPhotosAction.VisibleItemsToggled -> toggleVisibleItems()
+            is SimilarPhotosAction.GroupToggled -> toggleGroup(intent.ids)
+            is SimilarPhotosAction.GroupItemsToggled -> toggleGroup(intent.ids)
+            is SimilarPhotosAction.DetailClicked -> {
                 openDetail(intent.index)
                 sendEvent(FileManagerEvent.Navigate(AppDestination.SimilarPhotosDetail(intent.index), reset = false))
             }
-            FileManagerAction.DeleteClicked -> requestDelete()
-            FileManagerAction.DeleteDismissed -> cancelDelete()
-            FileManagerAction.ErrorDismissed -> clearError()
-            FileManagerAction.DeleteConfirmed -> deleteSelectedFiles()
-            FileManagerAction.ContinueManagingClicked -> continueManaging()
-            else -> Unit
+            SimilarPhotosAction.DeleteClicked -> requestDelete()
+            SimilarPhotosAction.DeleteDismissed -> cancelDelete()
+            SimilarPhotosAction.ErrorDismissed -> clearError()
+            SimilarPhotosAction.DeleteConfirmed -> deleteSelectedFiles()
+            SimilarPhotosAction.ContinueManagingClicked -> continueManaging()
         }
     }
 
@@ -106,7 +106,7 @@ class SimilarPhotosManagerViewModel(
             onStart = { setState { SimilarPhotosManagerUiState(phase = FileOperationPhase.Scanning) } },
             onLoaded = { loaded -> setState { loaded } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = FileOperationError.ScanFailed.toUiText()) }
+                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText()) }
             },
         )
     }
@@ -173,7 +173,7 @@ class SimilarPhotosManagerViewModel(
             },
             onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.Browsing, error = FileOperationError.DeletionFailed.toUiText()) }
+                setState { it.copy(phase = FileOperationPhase.Browsing, error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText()) }
             },
         )
     }

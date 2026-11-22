@@ -61,9 +61,6 @@ ktlint {
 }
 
 dependencies {
-    implementation(project(":cleaner-kit"))
-    implementation(project(":network-kit"))
-    implementation(project(":device-kit"))
     implementation(project(":junkcc"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation.layout)

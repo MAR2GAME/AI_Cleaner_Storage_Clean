@@ -11,16 +11,13 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -39,7 +36,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 val CleanXBackground = Color(0xFFF7FAFD)
 val CleanXText = Color(0xFF2D3748)
@@ -66,11 +62,6 @@ val CleanXLineBody = 20.sp
 val CleanXLineCaption = 18.sp
 val CleanXPillShape = RoundedCornerShape(50)
 val CleanXTileShape = RoundedCornerShape(12.dp)
-
-data class CleanXTabItem(
-    val title: String,
-    val value: String? = null,
-)
 
 fun Modifier.cleanXDebouncedClick(
     enabled: Boolean = true,
@@ -222,35 +213,6 @@ fun CleanXBottomActionBar(
             cornerRadius = buttonCornerRadius,
             fontSize = buttonFontSize,
         )
-    }
-}
-
-@Composable
-fun CommonResultContent(
-    onNavigateTool: (AppDestination) -> Unit,
-    modifier: Modifier = Modifier,
-    excludedToolDestinations: Set<AppDestination> = emptySet(),
-    completionContent: @Composable () -> Unit,
-) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .stableNavigationBarsPadding()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            completionContent()
-            Spacer(modifier = Modifier.height(24.dp))
-            ToolFeatureBanners(
-                onNavigateTool = onNavigateTool,
-                excludedDestinations = excludedToolDestinations,
-            )
-        }
     }
 }
 

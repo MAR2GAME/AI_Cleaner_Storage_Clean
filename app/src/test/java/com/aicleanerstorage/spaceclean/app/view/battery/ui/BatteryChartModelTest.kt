@@ -4,8 +4,8 @@ import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryChart
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentAxisBounds
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.batteryCurrentChartPoints
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.downsampleBatteryChartPoints
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentSample
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentRange
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentSample
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

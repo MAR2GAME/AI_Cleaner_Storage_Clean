@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultCheckIcon
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CommonResultContent
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerMutedTextColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.tool.CommonResultContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMutedTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXPrimaryButton
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 

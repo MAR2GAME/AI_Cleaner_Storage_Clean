@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.networkkit.NetworkRepository
-import com.aicleanerstorage.networkkit.model.NetworkInfo
-import com.aicleanerstorage.networkkit.model.NetworkScanResult
-import com.aicleanerstorage.networkkit.model.NetworkSpeed
-import com.aicleanerstorage.networkkit.model.NetworkUsageInfo
-import com.aicleanerstorage.networkkit.model.SpeedTestPhase
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import kotlinx.coroutines.Dispatchers
@@ -102,11 +102,11 @@ class NetworkSpeedViewModelTest {
         private val hasNetwork: Boolean = true,
         private val failure: Throwable? = null,
     ) : NetworkRepository {
-        private val lastScanFlow = MutableStateFlow<NetworkScanResult?>(null)
+        private val lastScanFlow = MutableStateFlow<NetworkScanResultModel?>(null)
 
-        override val lastScan: StateFlow<NetworkScanResult?> = lastScanFlow
+        override val lastScan: StateFlow<NetworkScanResultModel?> = lastScanFlow
 
-        override fun readNetworkInfo(): NetworkInfo = NetworkInfo()
+        override fun readNetworkInfo(): NetworkInfoModel = NetworkInfoModel()
 
         override fun isNetworkAvailable(): Boolean = hasNetwork
 
@@ -114,8 +114,8 @@ class NetworkSpeedViewModelTest {
 
         override fun hasNetworkUsageAccess(): Boolean = false
 
-        override suspend fun readNetworkUsage(): NetworkUsageInfo =
-            NetworkUsageInfo(
+        override suspend fun readNetworkUsage(): NetworkUsageInfoModel =
+            NetworkUsageInfoModel(
                 wifiRxBytes = 0L,
                 wifiTxBytes = 0L,
                 cellularRxBytes = 0L,
@@ -124,10 +124,10 @@ class NetworkSpeedViewModelTest {
                 needsUsageAccess = false,
             )
 
-        override suspend fun runSpeedTest(onProgress: (NetworkSpeed) -> Unit): NetworkSpeed {
+        override suspend fun runSpeedTest(onProgress: (NetworkSpeedModel) -> Unit): NetworkSpeedModel {
             failure?.let { throw it }
             val result =
-                NetworkSpeed(
+                NetworkSpeedModel(
                     downloadMbps = 10.0,
                     uploadMbps = 5.0,
                     latencyMs = 20L,
@@ -138,11 +138,9 @@ class NetworkSpeedViewModelTest {
             return result
         }
 
-        override suspend fun scanWifi(): NetworkScanResult =
-            NetworkScanResult(
+        override suspend fun scanWifi(): NetworkScanResultModel =
+            NetworkScanResultModel(
                 ssid = null,
-                gatewayIp = null,
-                dnsIp = null,
                 deviceIp = null,
                 devices = emptyList(),
                 hasWifi = hasNetwork,

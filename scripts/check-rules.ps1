@@ -103,9 +103,6 @@ if (Test-CheckEnabled 'dataVisibility' -and (Test-Path -LiteralPath $dataDir)) {
     }
 }
 
-# 2d. domain never depends on the first-party kit modules.
-Run-FilePatternCheck 'domainKitIsolation' $domainDir @('^import com\.aicleanerstorage\.(cleanerkit|devicekit|networkkit)\.') 'domain must not import kit modules'
-
 # 2e. data holds implementations only: contracts belong to domain.
 if (Test-CheckEnabled 'dataContracts' -and (Test-Path -LiteralPath $dataDir)) {
     $bad = Get-KotlinFiles $dataDir | Select-String -Pattern '^interface '
@@ -218,6 +215,75 @@ if (Test-CheckEnabled 'localeParity') {
         }
     }
     if ($missingTotal -eq 0) { Add-Pass 'localeParity' }
+}
+
+# 11. domain models: data class under domain/model/** must be <Concept>Model.
+if (Test-CheckEnabled 'domainModelNaming' -and (Test-Path -LiteralPath (Join-Path $domainDir 'model'))) {
+    $bad = @()
+    foreach ($file in Get-KotlinFiles (Join-Path $domainDir 'model')) {
+        $text = Get-Content -LiteralPath $file.FullName -Raw
+        foreach ($type in [regex]::Matches($text, '(?m)^(?:(?:public|internal) )?data class (\w+)')) {
+            $name = $type.Groups[1].Value
+            if ($name -cnotmatch 'Model$' -or $name -cne $file.BaseName) {
+                $bad += ("{0}: model data class must be <Concept>Model and match the file" -f (RelativePath $file.FullName))
+            }
+        }
+    }
+    if ($bad.Count -eq 0) { Add-Pass 'domainModelNaming' } else {
+        $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'domainModelNaming' $_ }
+    }
+}
+
+# 12. every error branch in domain/error documents when it happens.
+if (Test-CheckEnabled 'errorComments' -and (Test-Path -LiteralPath (Join-Path $domainDir 'error'))) {
+    $missing = @()
+    foreach ($file in Get-KotlinFiles (Join-Path $domainDir 'error')) {
+        $lines = Get-Content -LiteralPath $file.FullName
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -notmatch '^\s*data (object|class)\s+\w+') { continue }
+            $previous = $i - 1
+            while ($previous -ge 0 -and $lines[$previous].Trim() -eq '') { $previous-- }
+            if ($previous -lt 0) { continue }
+            if ($lines[$previous].Trim() -notmatch '^(\/\*\*|\*|\/\/)') {
+                $missing += ("{0}:{1}" -f (RelativePath $file.FullName), ($i + 1))
+            }
+        }
+    }
+    if ($missing.Count -eq 0) { Add-Pass 'errorComments' } else {
+        $missing | Select-Object -First 20 | ForEach-Object { Add-Failure 'errorComments' $_ }
+    }
+}
+
+# 13. one top-level public type per file (shared exceptions, not profile values).
+if (Test-CheckEnabled 'publicTypes') {
+    $exceptions = '(Contract|ErrorText|Previews|Reducer|Models)\.kt$'
+    $exact = @('PreviewFixtures.kt', 'Theme.kt', 'AppThemeTokens.kt', 'AppModule.kt',
+        'CollectEffects.kt', 'AppDestination.kt', 'BatteryChartModels.kt', 'VirusAndroidEffects.kt')
+    $bad = Get-KotlinFiles $src | Where-Object {
+        $_.Name -notmatch $exceptions -and $_.Name -notin $exact
+    } | ForEach-Object {
+        $text = Get-Content -LiteralPath $_.FullName -Raw
+        $types = [regex]::Matches($text, '(?m)^(?:public )?(?:(?:data|sealed|enum|value|abstract|open) )*(?:class|interface|object) (\w+)')
+        if ($types.Count -gt 1 -or ($types.Count -eq 1 -and $types[0].Groups[1].Value -cne $_.BaseName)) {
+            "{0}: public type/file mismatch or multiple public types" -f (RelativePath $_.FullName)
+        }
+    }
+    if ($bad.Count -eq 0) { Add-Pass 'publicTypes' } else {
+        $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'publicTypes' $_ }
+    }
+}
+
+# 14. naming: Impl suffix only on <Port>Impl; const val in UPPER_SNAKE_CASE.
+if (Test-CheckEnabled 'naming') {
+    $bad = Get-KotlinFiles $src | Select-String -CaseSensitive -Pattern `
+        '^(internal |)(abstract |open |sealed |)(class|interface|object) (?!\w*RepositoryImpl\b)\w+Impl\b|^\s*(private )?const val (?!([A-Z][A-Z0-9_]*)\b)'
+    if ($bad) {
+        $bad | Select-Object -First 20 | ForEach-Object {
+            Add-Failure 'naming' ("{0}:{1}: {2}" -f (RelativePath $_.Path), $_.LineNumber, $_.Line.Trim())
+        }
+    } else {
+        Add-Pass 'naming'
+    }
 }
 
 if ($failures -gt 0) {

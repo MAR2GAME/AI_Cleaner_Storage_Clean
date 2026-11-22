@@ -1,81 +1,113 @@
 package com.aicleanerstorage.spaceclean.app.di
 
 import android.content.ComponentName
-import com.aicleanerstorage.cleanerkit.CleanerConfig
-import com.aicleanerstorage.cleanerkit.CleanerKit
-import com.aicleanerstorage.cleanerkit.clean.CleanRepository
-import com.aicleanerstorage.cleanerkit.files.FileRepository
-import com.aicleanerstorage.devicekit.DeviceInfoRepository
-import com.aicleanerstorage.devicekit.DeviceKit
-import com.aicleanerstorage.networkkit.NetworkKit
-import com.aicleanerstorage.networkkit.NetworkRepository
+import com.aicleanerstorage.spaceclean.data.local.files.DirectoryFileDataSource
+import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedEndpoints
+import com.aicleanerstorage.spaceclean.data.local.whatsapp.WhatsAppFileDataSource
 import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
-import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionHost
-import com.aicleanerstorage.spaceclean.base.storage.PreferencesUtil
-import com.aicleanerstorage.spaceclean.base.toolkit.antivirus.TrustlookVirusScanner
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.data.applock.internal.AppLockRepositoryImpl
-import com.aicleanerstorage.spaceclean.domain.appusage.port.AppUsageRepository
-import com.aicleanerstorage.spaceclean.data.appusage.internal.AppUsageRepositoryImpl
-import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.battery.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.data.battery.BatteryHistorySampler
-import com.aicleanerstorage.spaceclean.data.battery.internal.BatteryHistoryRepositoryImpl
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.port.NotificationCleanerRepository
-import com.aicleanerstorage.spaceclean.data.notificationcleaner.internal.NotificationCleanerRepositoryImpl
-import com.aicleanerstorage.spaceclean.data.repository.SettingsRepositoryImpl
-import com.aicleanerstorage.spaceclean.data.repository.notificationcleaner.StorageCleanNotificationListener
-import com.aicleanerstorage.spaceclean.domain.security.port.VirusScanner
-import com.aicleanerstorage.spaceclean.domain.security.port.VirusSecurityRepository
-import com.aicleanerstorage.spaceclean.data.security.internal.VirusSecurityRepositoryImpl
-import com.aicleanerstorage.spaceclean.data.similarphotos.internal.SimilarPhotoRepositoryImpl
-import com.aicleanerstorage.spaceclean.data.whatsapp.internal.WhatsAppCleanerRepositoryImpl
-import com.aicleanerstorage.spaceclean.domain.similarphotos.port.SimilarPhotoRepository
-import com.aicleanerstorage.spaceclean.domain.whatsapp.port.WhatsAppCleanerRepository
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
-import com.aicleanerstorage.spaceclean.domain.battery.usecase.SyncBackgroundBatterySamplingUseCase
+import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
+import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionRequester
+import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
+import com.aicleanerstorage.spaceclean.data.local.security.TrustlookVirusScanner
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultAppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultAppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
+import com.aicleanerstorage.spaceclean.data.repository.DefaultBatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.data.local.battery.BatteryHistorySampler
+import com.aicleanerstorage.spaceclean.data.repository.DefaultAppSettingsRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultDeviceInfoRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultNotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.data.local.notificationcleaner.StorageCleanNotificationListener
+import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
+import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultVirusSecurityRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultSimilarPhotoRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultWhatsAppCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.port.SimilarPhotoRepository
+import com.aicleanerstorage.spaceclean.domain.port.WhatsAppCleanerRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultManagedFileRepository
+import com.aicleanerstorage.spaceclean.data.local.files.FileDeletionDataSource
+import com.aicleanerstorage.spaceclean.data.local.storage.MediaDeletionAuthorization
+import com.aicleanerstorage.spaceclean.data.repository.DefaultJunkCleanRepository
+import com.aicleanerstorage.spaceclean.data.repository.DefaultNetworkRepository
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
+import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.app.background.BatterySamplingSync
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+
+private const val APPLICATION_SCOPE = "applicationScope"
 
 val dataModule: Module =
     module {
-        single {
-            CleanerKit.create(
-                context = androidContext(),
-                config = CleanerConfig(authorizeMediaDeletion = MediaDeletionHost::authorize),
-            )
-        }
-        single { PreferencesUtil(androidContext()) }
+        single { PreferencesDataSource(androidContext()) }
+        single(named("applock")) { PreferencesDataSource(androidContext(), "phone_cleaner_sp") }
+        single(named("notification")) { PreferencesDataSource(androidContext(), "notification_blocker") }
+        single { MediaDeletionAuthorization() }
+        single { ActivityMediaDeletionRequester() }
+        single<MediaDeletionRequester> { get<ActivityMediaDeletionRequester>() }
+        single(named(APPLICATION_SCOPE)) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
         single {
             val context = androidContext()
-            val settingsRepository = get<SettingsRepository>()
+            DefaultManagedFileRepository(
+                context = context,
+                deletion = FileDeletionDataSource(context, get<MediaDeletionRequester>(), get()),
+            )
+        }
+        single<ManagedFileRepository> { get<DefaultManagedFileRepository>() }
+        single {
+            DefaultJunkCleanRepository(androidContext(), get<MediaDeletionRequester>(), get())
+        }
+        single<JunkCleanRepository> { get<DefaultJunkCleanRepository>() }
+        single<BatterySamplingControl> {
+            val context = androidContext()
+            val settingsRepository = get<AppSettingsRepository>()
             val appLockRepository = get<AppLockRepository>()
-            SyncBackgroundBatterySamplingUseCase(
+            BatterySamplingSync(
                 settingsRepository = settingsRepository,
                 syncRuntime = { AppRuntimeService.reconcile(context, appLockRepository, settingsRepository) },
             )
         }
-        single<DeviceInfoRepository> { DeviceKit.create(androidContext()) }
+        single { DefaultDeviceInfoRepository(androidContext(), Dispatchers.IO) }
+        single<DeviceInfoRepository> { get<DefaultDeviceInfoRepository>() }
         single<VirusScanner> { TrustlookVirusScanner(androidContext(), com.aicleanerstorage.spaceclean.BuildConfig.TRUSTLOOK_API_KEY) }
-        single<VirusSecurityRepository> { VirusSecurityRepositoryImpl(androidContext()) }
-        single<AppLockRepository> { AppLockRepositoryImpl(androidContext()) }
-        single<AppUsageRepository> { AppUsageRepositoryImpl(androidContext()) }
-        single<NetworkRepository> { NetworkKit.create(androidContext()) }
-        single<FileRepository> { get<CleanerKit>().files }
-        single<WhatsAppCleanerRepository> { WhatsAppCleanerRepositoryImpl(get()) }
-        single<SimilarPhotoRepository> { SimilarPhotoRepositoryImpl(get()) }
-        single<CleanRepository> { get<CleanerKit>().clean }
-        single<SettingsRepository> { SettingsRepositoryImpl(get()) }
+        single<VirusSecurityRepository> { DefaultVirusSecurityRepository(androidContext(), get()) }
+        single<AppLockRepository> { DefaultAppLockRepository(androidContext(), get(named("applock"))) }
+        single<AppUsageRepository> { DefaultAppUsageRepository(androidContext()) }
+        single { DefaultNetworkRepository(androidContext(), NetworkSpeedEndpoints()) }
+        single<NetworkRepository> { get<DefaultNetworkRepository>() }
+        single { DirectoryFileDataSource(androidContext()) }
+        single { WhatsAppFileDataSource(get()) }
+        single<WhatsAppCleanerRepository> {
+            DefaultWhatsAppCleanerRepository(
+                source = get(),
+                files = get<ManagedFileRepository>(),
+            )
+        }
+        single<SimilarPhotoRepository> { DefaultSimilarPhotoRepository(get()) }
+        single<AppSettingsRepository> { DefaultAppSettingsRepository(get()) }
         single<NotificationCleanerRepository> {
             val context = androidContext()
-            NotificationCleanerRepositoryImpl(
+            DefaultNotificationCleanerRepository(
                 context = context,
                 listener = ComponentName(context, StorageCleanNotificationListener::class.java),
                 retainContent = false,
+                preferences = get(named("notification")),
             )
         }
-        single<BatteryHistoryRepository> { BatteryHistoryRepositoryImpl(androidContext()) }
+        single<BatteryHistoryRepository> { DefaultBatteryHistoryRepository(androidContext()) }
         single<BatteryHistoryRecorder> { BatteryHistorySampler(get(), get(), Dispatchers.IO) }
     }

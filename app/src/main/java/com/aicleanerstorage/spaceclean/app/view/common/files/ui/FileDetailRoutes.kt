@@ -4,14 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteConfirmDialog
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
@@ -23,7 +26,7 @@ fun PhotosFileDetailRoute(
     permissionState: FileManagerPermissionState,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileDetailRoute(
+    FilePageDetailRoute(
         navigator = navigator,
         permissionState = permissionState,
         uiState =
@@ -69,7 +72,7 @@ fun ScreenshotsFileDetailRoute(
     permissionState: FileManagerPermissionState,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileDetailRoute(
+    FilePageDetailRoute(
         navigator = navigator,
         permissionState = permissionState,
         uiState =
@@ -85,14 +88,14 @@ fun ScreenshotsFileDetailRoute(
 }
 
 @Composable
-fun MediaFileDetailRoute(
+fun AudiosFileDetailRoute(
     navigator: AppNavigator,
-    viewModel: MediaManagerViewModel,
+    viewModel: AudiosManagerViewModel,
     initialIndex: Int,
     permissionState: FileManagerPermissionState,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileDetailRoute(
+    FilePageDetailRoute(
         navigator = navigator,
         permissionState = permissionState,
         uiState =
@@ -108,14 +111,14 @@ fun MediaFileDetailRoute(
 }
 
 @Composable
-fun FileListDetailRoute(
+fun VideosFileDetailRoute(
     navigator: AppNavigator,
-    viewModel: FileListManagerViewModel,
+    viewModel: VideosManagerViewModel,
     initialIndex: Int,
     permissionState: FileManagerPermissionState,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileDetailRoute(
+    FilePageDetailRoute(
         navigator = navigator,
         permissionState = permissionState,
         uiState =
@@ -127,6 +130,76 @@ fun FileListDetailRoute(
                 confirmDeleteVisible = uiState.phase == FileOperationPhase.ConfirmDelete,
             ),
         dispatch = viewModel::dispatch,
+    )
+}
+
+@Composable
+fun DocumentsFileDetailRoute(
+    navigator: AppNavigator,
+    viewModel: DocumentsManagerViewModel,
+    initialIndex: Int,
+    permissionState: FileManagerPermissionState,
+) {
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FilePageDetailRoute(
+        navigator = navigator,
+        permissionState = permissionState,
+        uiState =
+            FileDetailUiState(
+                items = uiState.visibleListItems.map { it.toFileDetailDisplayItem() },
+                initialIndex = uiState.detailStartIndex ?: initialIndex,
+                selectedIds = uiState.selectedIds,
+                selectedSizeBytes = uiState.selectedSizeBytes,
+                confirmDeleteVisible = uiState.phase == FileOperationPhase.ConfirmDelete,
+            ),
+        dispatch = viewModel::dispatch,
+    )
+}
+
+@Composable
+fun LargeFilesFileDetailRoute(
+    navigator: AppNavigator,
+    viewModel: LargeFilesManagerViewModel,
+    initialIndex: Int,
+    permissionState: FileManagerPermissionState,
+) {
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FilePageDetailRoute(
+        navigator = navigator,
+        permissionState = permissionState,
+        uiState =
+            FileDetailUiState(
+                items = uiState.visibleListItems.map { it.toFileDetailDisplayItem() },
+                initialIndex = uiState.detailStartIndex ?: initialIndex,
+                selectedIds = uiState.selectedIds,
+                selectedSizeBytes = uiState.selectedSizeBytes,
+                confirmDeleteVisible = uiState.phase == FileOperationPhase.ConfirmDelete,
+            ),
+        dispatch = viewModel::dispatch,
+    )
+}
+
+@Composable
+private fun FilePageDetailRoute(
+    navigator: AppNavigator,
+    permissionState: FileManagerPermissionState,
+    uiState: FileDetailUiState,
+    dispatch: (FilePageAction) -> Unit,
+) {
+    FileDetailScreen(
+        state = uiState,
+        onAction = dispatch,
+    )
+
+    FileManagerDeleteConfirmDialog(
+        visible = uiState.confirmDeleteVisible,
+        permissionGranted = permissionState.granted,
+        ownerState = permissionState,
+        onCancel = { dispatch(FilePageAction.DeleteDismissed) },
+        onDeleteReady = {
+            dispatch(FilePageAction.DeleteConfirmed)
+            dispatch(FilePageAction.DetailBackClicked)
+        },
     )
 }
 
@@ -135,16 +208,15 @@ private fun FileDetailRoute(
     navigator: AppNavigator,
     permissionState: FileManagerPermissionState,
     uiState: FileDetailUiState,
-    dispatch: (FileManagerAction) -> Unit,
+    dispatch: (SimilarPhotosAction) -> Unit,
 ) {
     FileDetailScreen(
         state = uiState,
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked -> dispatch(FileManagerAction.DetailBackClicked)
-                FileManagerAction.DeleteClicked,
-                is FileManagerAction.SelectionToggled,
-                -> dispatch(action)
+                FilePageAction.BackClicked -> dispatch(SimilarPhotosAction.DetailBackClicked)
+                FilePageAction.DeleteClicked -> dispatch(SimilarPhotosAction.DeleteClicked)
+                is FilePageAction.SelectionToggled -> dispatch(SimilarPhotosAction.SelectionToggled(action.id))
                 else -> Unit
             }
         },
@@ -154,10 +226,10 @@ private fun FileDetailRoute(
         visible = uiState.confirmDeleteVisible,
         permissionGranted = permissionState.granted,
         ownerState = permissionState,
-        onCancel = { dispatch(FileManagerAction.DeleteDismissed) },
+        onCancel = { dispatch(SimilarPhotosAction.DeleteDismissed) },
         onDeleteReady = {
-            dispatch(FileManagerAction.DeleteConfirmed)
-            dispatch(FileManagerAction.DetailBackClicked)
+            dispatch(SimilarPhotosAction.DeleteConfirmed)
+            dispatch(SimilarPhotosAction.DetailBackClicked)
         },
     )
 }

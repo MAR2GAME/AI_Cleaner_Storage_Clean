@@ -7,7 +7,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.managed
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 
 data class SimilarPhotoItem(
     val id: Int,

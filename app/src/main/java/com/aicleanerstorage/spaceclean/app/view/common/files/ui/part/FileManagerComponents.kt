@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerBackgroundColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerCardBackgroundColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerDividerLineColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerMutedTextColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGradient
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTextColor
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTitleColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBackgroundColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerCardBackgroundColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDividerLineColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMutedTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGradient
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTitleColor
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXGradientBottomActionBar
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
@@ -77,6 +77,7 @@ fun FileManagerBottomActionBar(
             enabled = enabled,
             text = text,
             onClick = onClick,
+            gradient = FileManagerPrimaryGradient,
         )
         return
     }

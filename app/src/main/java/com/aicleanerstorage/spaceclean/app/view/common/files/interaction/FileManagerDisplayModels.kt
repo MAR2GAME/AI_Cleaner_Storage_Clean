@@ -1,25 +1,24 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 
-import com.aicleanerstorage.cleanerkit.files.model.FileUri
-import com.aicleanerstorage.cleanerkit.files.model.ManagedFileItem
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
-import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 data class IndexedFileItem(
     val id: Int,
-    val file: ManagedFileItem,
+    val file: ManagedFileModel,
 ) {
-    fun toImageDisplayItem(): FileImageDisplayItem = managedFileToImageDisplayItem(id, file)
+    fun toImageDisplayItem(): FileImageDisplayItem = managedFileModelToImageDisplayItem(id, file)
 }
 
-fun List<ManagedFileItem>.withSelectionIds(): List<IndexedFileItem> = mapIndexed { index, file -> IndexedFileItem(index + 1, file) }
+fun List<ManagedFileModel>.withSelectionIds(): List<IndexedFileItem> = mapIndexed { index, file -> IndexedFileItem(index + 1, file) }
 
 data class FileManagerTabDisplayItem(
     val title: String,
     val sizeLabel: String = "",
+    val itemIds: Set<Int>? = null,
 )
 
 data class FileImageDisplayItem(
@@ -28,7 +27,7 @@ data class FileImageDisplayItem(
     val meta: String,
     val sizeLabel: String,
     val paletteIndex: Int,
-    val uri: FileUri?,
+    val uri: String?,
     val bucketName: String?,
     val path: String?,
     val bestPhoto: Boolean = false,
@@ -100,23 +99,6 @@ fun FileListDisplayItem.toFileDetailDisplayItem(): FileDetailDisplayItem =
         preview = FileDetailDisplayPreview.FileIconPreview(iconKind),
     )
 
-fun managedFileToImageDisplayItem(
-    id: Int,
-    file: ManagedFileItem,
-    bestPhoto: Boolean = false,
-): FileImageDisplayItem =
-    FileImageDisplayItem(
-        id = id,
-        name = file.name,
-        meta = managedFileMeta(file),
-        sizeLabel = FormatUtil.formatSize(file.sizeBytes),
-        paletteIndex = id - 1,
-        uri = file.uri,
-        bucketName = file.bucketName,
-        path = file.path,
-        bestPhoto = bestPhoto,
-    )
-
 fun managedFileModelToImageDisplayItem(
     id: Int,
     file: ManagedFileModel,
@@ -128,7 +110,7 @@ fun managedFileModelToImageDisplayItem(
         meta = "${formatManagedFileDate(file.modifiedSeconds)} ${FormatUtil.formatSize(file.sizeBytes)}",
         sizeLabel = FormatUtil.formatSize(file.sizeBytes),
         paletteIndex = id - 1,
-        uri = FileUri(file.uri),
+        uri = file.uri,
         bucketName = file.bucketName,
         path = file.path,
         bestPhoto = bestPhoto,
@@ -136,7 +118,7 @@ fun managedFileModelToImageDisplayItem(
 
 fun managedFileToListDisplayItem(
     id: Int,
-    file: ManagedFileItem,
+    file: ManagedFileModel,
     iconKind: FileListIconKind,
 ): FileListDisplayItem =
     FileListDisplayItem(
@@ -178,9 +160,9 @@ fun formatManagedFileDate(modifiedSeconds: Long): String {
     return SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US).format(Date(millis))
 }
 
-fun managedFileMeta(file: ManagedFileItem): String =
+fun managedFileMeta(file: ManagedFileModel): String =
     "${formatManagedFileDate(file.modifiedSeconds)} ${FormatUtil.formatSize(file.sizeBytes)}"
 
-fun totalSizeLabel(files: List<ManagedFileItem>): String = FormatUtil.formatSize(files.sumOf { it.sizeBytes })
+fun totalSizeLabel(files: List<ManagedFileModel>): String = FormatUtil.formatSize(files.sumOf { it.sizeBytes })
 
 fun String.splitFileSizeLabel(): Pair<String, String> = substringBefore(" ") to substringAfter(" ", "B")

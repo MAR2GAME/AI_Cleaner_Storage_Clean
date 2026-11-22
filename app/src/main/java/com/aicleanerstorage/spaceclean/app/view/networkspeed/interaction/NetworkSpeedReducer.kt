@@ -1,18 +1,18 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkSpeed
-import com.aicleanerstorage.networkkit.model.SpeedTestPhase
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 
 internal object NetworkSpeedReducer {
     fun testStarted(state: NetworkSpeedUiState): NetworkSpeedUiState =
         state.copy(
             phase = NetworkSpeedPhase.Testing,
-            speed = NetworkSpeed(phase = SpeedTestPhase.Latency),
+            speed = NetworkSpeedModel(phase = SpeedTestPhase.Latency),
         )
 
     fun progressUpdated(
         state: NetworkSpeedUiState,
-        progress: NetworkSpeed,
+        progress: NetworkSpeedModel,
     ): NetworkSpeedUiState =
         if (state.phase == NetworkSpeedPhase.Testing) {
             state.copy(speed = progress)
@@ -22,7 +22,7 @@ internal object NetworkSpeedReducer {
 
     fun testCompleted(
         state: NetworkSpeedUiState,
-        result: NetworkSpeed,
+        result: NetworkSpeedModel,
     ): NetworkSpeedUiState =
         if (state.phase != NetworkSpeedPhase.Testing) {
             state
@@ -52,6 +52,6 @@ internal object NetworkSpeedReducer {
     fun testStopped(state: NetworkSpeedUiState): NetworkSpeedUiState =
         state.copy(
             phase = NetworkSpeedPhase.Idle,
-            speed = NetworkSpeed(),
+            speed = NetworkSpeedModel(),
         )
 }

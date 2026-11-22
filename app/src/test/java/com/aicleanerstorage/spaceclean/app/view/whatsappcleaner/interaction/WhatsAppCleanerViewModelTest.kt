@@ -2,13 +2,13 @@ package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.files.model.FileDeleteSummaryModel
-import com.aicleanerstorage.spaceclean.domain.files.model.FileKind
-import com.aicleanerstorage.spaceclean.domain.files.model.ManagedFileModel
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerCategory
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppCleanerGroup
-import com.aicleanerstorage.spaceclean.domain.whatsapp.model.WhatsAppFileBucket
-import com.aicleanerstorage.spaceclean.domain.whatsapp.port.WhatsAppCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerCategory
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerGroup
+import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppFileBucketModel
+import com.aicleanerstorage.spaceclean.domain.port.WhatsAppCleanerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -125,11 +125,11 @@ class WhatsAppCleanerViewModelTest {
     private class FakeWhatsAppCleanerRepository(
         private val files: List<ManagedFileModel>,
     ) : WhatsAppCleanerRepository {
-        override suspend fun loadGroups(): Map<WhatsAppFileBucket, List<ManagedFileModel>> =
+        override suspend fun loadGroups(): Map<WhatsAppFileBucketModel, List<ManagedFileModel>> =
             if (files.isEmpty()) {
                 emptyMap()
             } else {
-                mapOf(WhatsAppFileBucket(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images) to files)
+                mapOf(WhatsAppFileBucketModel(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images) to files)
             }
 
         override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =

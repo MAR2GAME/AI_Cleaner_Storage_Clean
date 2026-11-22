@@ -24,14 +24,18 @@ import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewM
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.AppUsageRoute
+import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.audios.ui.AudiosManagerRoute
+import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryInfoRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileListDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.AudiosFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.DocumentsFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowHost
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.MediaFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.LargeFilesFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.VideosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.PhotosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.ScreenshotsFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.SimilarPhotosFileDetailRoute
@@ -64,17 +68,22 @@ import com.aicleanerstorage.spaceclean.app.view.photos.ui.PhotosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.screenshots.ui.ScreenshotsManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.settings.ui.SettingsRoute
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.ui.SimilarPhotosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.splash.ui.SplashRoute
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.videos.ui.VideosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerRoute
-import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolFeatureBanners
+import com.aicleanerstorage.spaceclean.app.view.common.tool.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigatorImpl
+import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.MAIN_TAB_REQUEST
 import com.aicleanerstorage.spaceclean.base.navigation.MainTab
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.qualifier.named
 
@@ -84,7 +93,7 @@ internal fun AppNavHost(
     splashPaused: Boolean,
     notificationPermissionUiActive: Boolean,
 ) {
-    val navigator = remember(navController) { AppNavigatorImpl(navController) }
+    val navigator = remember(navController) { NavControllerAppNavigator(navController) }
 
     NavHost(
         navController = navController,
@@ -302,7 +311,9 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 PhotosManagerRoute(
                     navigator = navigator,
@@ -319,7 +330,9 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 PhotosFileDetailRoute(
                     navigator = navigator,
@@ -338,6 +351,8 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
+                initialLoad = SimilarPhotosAction.InitialLoadRequested,
+                dismissError = SimilarPhotosAction.ErrorDismissed,
                 error = { it.error },
             ) { permissionState ->
                 SimilarPhotosManagerRoute(
@@ -355,6 +370,8 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
+                initialLoad = SimilarPhotosAction.InitialLoadRequested,
+                dismissError = SimilarPhotosAction.ErrorDismissed,
                 error = { it.error },
             ) { permissionState ->
                 SimilarPhotosFileDetailRoute(
@@ -374,7 +391,11 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
+                initialLoad = PhotoPrivacyAction.InitialLoadRequested,
+                dismissError = PhotoPrivacyAction.ErrorDismissed,
                 error = { it.error },
+                requiredPermissions = setOf(AppPermission.StorageFiles, AppPermission.MediaLocation),
+                requestPermissions = false,
             ) { permissionState ->
                 PhotoPrivacyManagerRoute(
                     navigator = navigator,
@@ -392,7 +413,9 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 ScreenshotsManagerRoute(
                     navigator = navigator,
@@ -409,7 +432,9 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 ScreenshotsFileDetailRoute(
                     navigator = navigator,
@@ -422,17 +447,15 @@ internal fun AppNavHost(
 
         composable<AppDestination.VideosManager> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.VideosManager>() }
-            val viewModel: MediaManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.VideosManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 VideosManagerRoute(
                     navigator = navigator,
@@ -443,19 +466,17 @@ internal fun AppNavHost(
         }
         composable<AppDestination.VideosDetail> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.VideosManager>() }
-            val viewModel: MediaManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.VideosManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: VideosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
-                MediaFileDetailRoute(
+                VideosFileDetailRoute(
                     navigator = navigator,
                     viewModel = viewModel,
                     initialIndex = entry.toRoute<AppDestination.VideosDetail>().initialIndex.coerceAtLeast(0),
@@ -466,17 +487,15 @@ internal fun AppNavHost(
 
         composable<AppDestination.AudiosManager> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AudiosManager>() }
-            val viewModel: MediaManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.AudiosManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 AudiosManagerRoute(
                     navigator = navigator,
@@ -487,19 +506,17 @@ internal fun AppNavHost(
         }
         composable<AppDestination.AudiosDetail> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.AudiosManager>() }
-            val viewModel: MediaManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.AudiosManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: AudiosManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
-                MediaFileDetailRoute(
+                AudiosFileDetailRoute(
                     navigator = navigator,
                     viewModel = viewModel,
                     initialIndex = entry.toRoute<AppDestination.AudiosDetail>().initialIndex.coerceAtLeast(0),
@@ -510,17 +527,15 @@ internal fun AppNavHost(
 
         composable<AppDestination.LargeFilesManager> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.LargeFilesManager>() }
-            val viewModel: FileListManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.LargeFilesManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 LargeFilesManagerRoute(
                     navigator = navigator,
@@ -531,19 +546,17 @@ internal fun AppNavHost(
         }
         composable<AppDestination.LargeFilesDetail> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.LargeFilesManager>() }
-            val viewModel: FileListManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.LargeFilesManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: LargeFilesManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
-                FileListDetailRoute(
+                LargeFilesFileDetailRoute(
                     navigator = navigator,
                     viewModel = viewModel,
                     initialIndex = entry.toRoute<AppDestination.LargeFilesDetail>().initialIndex.coerceAtLeast(0),
@@ -559,6 +572,8 @@ internal fun AppNavHost(
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
+                initialLoad = DuplicateFilesAction.InitialLoadRequested,
+                dismissError = DuplicateFilesAction.ErrorDismissed,
                 error = { it.error },
             ) { permissionState ->
                 DuplicateFilesManagerRoute(
@@ -571,17 +586,15 @@ internal fun AppNavHost(
 
         composable<AppDestination.DocumentsManager> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.DocumentsManager>() }
-            val viewModel: FileListManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.DocumentsManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
                 DocumentsManagerRoute(
                     navigator = navigator,
@@ -592,19 +605,17 @@ internal fun AppNavHost(
         }
         composable<AppDestination.DocumentsDetail> { entry ->
             val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.DocumentsManager>() }
-            val viewModel: FileListManagerViewModel =
-                koinViewModel(
-                    qualifier = named<AppDestination.DocumentsManager>(),
-                    viewModelStoreOwner = rootEntry,
-                )
+            val viewModel: DocumentsManagerViewModel = koinViewModel(viewModelStoreOwner = rootEntry)
             FileManagerFlowHost(
                 rootEntry = rootEntry,
                 currentEntry = entry,
                 navigator = navigator,
                 viewModel = viewModel,
-                error = { it.error },
+                initialLoad = FilePageAction.InitialLoadRequested,
+                dismissError = FilePageAction.ErrorDismissed,
+                error = { it.page.error },
             ) { permissionState ->
-                FileListDetailRoute(
+                DocumentsFileDetailRoute(
                     navigator = navigator,
                     viewModel = viewModel,
                     initialIndex = entry.toRoute<AppDestination.DocumentsDetail>().initialIndex.coerceAtLeast(0),

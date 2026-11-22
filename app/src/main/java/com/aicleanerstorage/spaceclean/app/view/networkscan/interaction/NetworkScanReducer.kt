@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkScanResult
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 
 internal object NetworkScanReducer {
     fun scanStarted(state: NetworkScanUiState): NetworkScanUiState =
@@ -13,7 +13,7 @@ internal object NetworkScanReducer {
 
     fun scanCompleted(
         state: NetworkScanUiState,
-        scan: NetworkScanResult,
+        scan: NetworkScanResultModel,
         time: String,
     ): NetworkScanUiState =
         if (state.phase != NetworkScanPhase.Scanning) {

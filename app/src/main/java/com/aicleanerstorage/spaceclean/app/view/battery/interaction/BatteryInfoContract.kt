@@ -1,6 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.BatteryCurrentRange
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.BatteryCurrentRange
 
 sealed interface BatteryInfoAction {
     data object Resumed : BatteryInfoAction

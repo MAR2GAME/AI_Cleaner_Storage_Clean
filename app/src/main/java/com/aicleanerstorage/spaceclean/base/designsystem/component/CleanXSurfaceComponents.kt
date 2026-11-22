@@ -50,14 +50,14 @@ fun CleanXPillTabs(
                         .height(42.dp)
                         .wrapContentWidth()
                         .clip(RoundedCornerShape(22.dp))
-                        .background(if (selected) FileManagerPrimaryGreen else Color.White)
+                        .background(if (selected) CleanXAccentGreen else Color.White)
                         .clickable { onSelected(index) }
                         .padding(horizontal = 10.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = item.title,
-                    color = if (selected) Color.White else FileManagerTextColor,
+                    color = if (selected) Color.White else CleanXTextColor,
                     fontSize = 18.sp,
                     lineHeight = 22.sp,
                     fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,

@@ -44,7 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.devicekit.model.StorageInfo
+import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
@@ -117,7 +117,7 @@ private val StorageHighStyle = StorageCardStyle(Color(0xFFF9582B))
 
 @Composable
 private fun StorageCard(
-    storageInfo: StorageInfo,
+    storageInfo: CapacityInfoModel,
     onClick: () -> Unit,
 ) {
     val style = storageCardStyle(storageInfo.usagePercent)
@@ -145,7 +145,7 @@ private fun StorageCard(
 
 @Composable
 private fun StorageCardBody(
-    storageInfo: StorageInfo,
+    storageInfo: CapacityInfoModel,
     style: StorageCardStyle,
     onClick: () -> Unit,
 ) {
@@ -178,7 +178,7 @@ private fun StorageCardBody(
 }
 
 @Composable
-private fun StorageMeta(storageInfo: StorageInfo) {
+private fun StorageMeta(storageInfo: CapacityInfoModel) {
     val usedText = FormatUtil.formatSize(storageInfo.usedBytes).withoutSpaces()
     val totalText = "/ ${FormatUtil.formatSize(storageInfo.totalBytes).withoutSpaces()}"
     val textMeasurer = rememberTextMeasurer()

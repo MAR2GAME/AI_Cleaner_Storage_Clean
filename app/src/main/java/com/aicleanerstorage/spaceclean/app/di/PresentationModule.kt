@@ -1,14 +1,14 @@
 package com.aicleanerstorage.spaceclean.app.di
 
-import com.aicleanerstorage.cleanerkit.files.FileRepository
 import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.MediaManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildListTabs
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildMediaTabs
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildPhotoTabs
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
@@ -24,11 +24,15 @@ import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManager
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsViewModel
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.domain.applock.port.AppLockRepository
-import com.aicleanerstorage.spaceclean.domain.settings.port.SettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -61,51 +65,19 @@ val presentationModule =
         viewModel { SplashViewModel(get()) }
         viewModel { PhotosManagerViewModel(get(), Dispatchers.IO) }
         viewModel { ScreenshotsManagerViewModel(get(), Dispatchers.IO) }
-        viewModel(named<AppDestination.VideosManager>()) {
-            MediaManagerViewModel(
-                repository = get(),
-                loadFiles = FileRepository::loadVideos,
-                defaultTabs = listOf("All", "DCIM", "Download"),
-                detailDestination = { AppDestination.VideosDetail(it) },
-                ioDispatcher = Dispatchers.IO,
-            )
-        }
-        viewModel(named<AppDestination.AudiosManager>()) {
-            MediaManagerViewModel(
-                repository = get(),
-                loadFiles = FileRepository::loadAudios,
-                defaultTabs = listOf("All", "Music"),
-                detailDestination = { AppDestination.AudiosDetail(it) },
-                ioDispatcher = Dispatchers.IO,
-            )
-        }
+        viewModel { VideosManagerViewModel(get(), Dispatchers.IO) }
+        viewModel { AudiosManagerViewModel(get(), Dispatchers.IO) }
         viewModel { SimilarPhotosManagerViewModel(get(), Dispatchers.IO) }
         viewModel { PhotoPrivacyManagerViewModel(get(), Dispatchers.IO) }
-        viewModel(named<AppDestination.LargeFilesManager>()) {
-            FileListManagerViewModel(
-                repository = get(),
-                loadFiles = FileRepository::loadLargeFiles,
-                iconKind = FileListIconKind.LargeVideo,
-                detailDestination = { AppDestination.LargeFilesDetail(it) },
-                ioDispatcher = Dispatchers.IO,
-            )
-        }
-        viewModel(named<AppDestination.DocumentsManager>()) {
-            FileListManagerViewModel(
-                repository = get(),
-                loadFiles = FileRepository::loadDocuments,
-                iconKind = FileListIconKind.Document,
-                detailDestination = { AppDestination.DocumentsDetail(it) },
-                ioDispatcher = Dispatchers.IO,
-            )
-        }
+        viewModel { LargeFilesManagerViewModel(get(), Dispatchers.IO) }
+        viewModel { DocumentsManagerViewModel(get(), Dispatchers.IO) }
         viewModel { DuplicateFilesManagerViewModel(get(), get(), Dispatchers.IO) }
         viewModel { VirusScanViewModel(get(), get()) }
         viewModel { ManagePermissionsViewModel() }
         viewModel { SettingsViewModel(get()) }
         viewModel {
             val repository = get<AppLockRepository>()
-            val settingsRepository = get<SettingsRepository>()
+            val settingsRepository = get<AppSettingsRepository>()
             val context = androidContext()
             AppLockViewModel(
                 repository = repository,

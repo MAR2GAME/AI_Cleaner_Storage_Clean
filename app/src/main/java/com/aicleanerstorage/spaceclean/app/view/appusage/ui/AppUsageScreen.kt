@@ -20,7 +20,7 @@ import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.AppUsageRangeTo
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.PieChartCard
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.UsageDataCard
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
-import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolboxScanningContent
+import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
 
 @Composable

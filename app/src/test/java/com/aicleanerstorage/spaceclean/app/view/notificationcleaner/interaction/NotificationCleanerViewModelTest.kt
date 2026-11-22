@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction
 
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.port.NotificationCleanerRepository
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockableNotificationAppModel
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.BlockedNotificationModel
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.NotificationCleanerSnapshotModel
-import com.aicleanerstorage.spaceclean.domain.notificationcleaner.model.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.BlockedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.NotificationCleanerSnapshotModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.PostedNotificationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList

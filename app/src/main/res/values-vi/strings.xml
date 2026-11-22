@@ -475,4 +475,6 @@
     <string name="cleanup_stopped_summary">Đã dừng. Đã xóa %1$d tệp (%2$s).</string>
     <string name="available_memory_increase">Bộ nhớ khả dụng tăng %1$s trong quá trình dọn dẹp.</string>
     <string name="settings_post_notifications">Thông báo</string>
+    <string name="settings_media_location_permission">Vị trí ảnh</string>
+    <string name="permission_media_location_desc">Để tìm ảnh có dữ liệu vị trí, vui lòng cấp quyền truy cập vị trí ảnh.</string>
 </resources>

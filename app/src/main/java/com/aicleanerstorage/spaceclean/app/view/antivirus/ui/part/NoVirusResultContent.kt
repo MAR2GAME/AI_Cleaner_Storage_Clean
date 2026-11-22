@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolFeatureBanners
+import com.aicleanerstorage.spaceclean.app.view.common.tool.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable

@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedText
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
 
 @Composable
 internal fun JunkCleanErrorView(message: String) {

@@ -1,7 +1,9 @@
 # MVI 与分层架构规范
 
-本文是当前 MVI 规范。权限和广告采用 `refactor-sample.md` 第 3、4 节的职责划分；与示例不同的业务和生命周期规则以本文为准。
-当前为单 `:app` 模块 + 包分层，另有 `:cleaner-kit`、`:device-kit`、`:network-kit`、`:junkcc` 四个独立 Gradle 模块。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost、权限 Gate 与广告实现。旧 feature 模块已合并回 `:app`，不保留兼容别名。
+本文是 MVI 与页面数据流规范。硬规则、优先级、代码风格与例外登记以 [AGENTS.md](../AGENTS.md) 为准；本文只保留数据流、页面结构和权限执行链路等细节。权限职责划分参考 [历史样例](history/refactor-sample.md) 第 3 节；与示例不同的业务和生命周期规则以本文为准。
+当前为单 `:app` 模块 + 包分层，另有 `:junkcc` 资源模块；原 `cleaner-kit`、`device-kit`、`network-kit` 已全部并入 `data`，不再有独立 kit 包。所有业务页面 ViewModel 使用 MviViewModel；app 统一装配 Koin、类型化 NavHost 与权限 Gate。旧 feature 模块已合并回 `:app`，不保留兼容别名。
+
+> 历史说明：当前仓库没有广告实现。文中提到的广告、AdInterceptor、AdvertiseAdDriver、冷启动/插屏链路仅保留历史参考，不作为现状。
 
 ## 包职责
 
@@ -10,24 +12,23 @@
 | 包 | 内容 | 依赖约束 |
 | --- | --- | --- |
 | app | Application、MainActivity、root/、di/、view/<page>/{interaction,ui}、background/ | 唯一装配 data 实现与 kit 端口实现的包 |
-| base | designsystem/、mvi/、navigation/、permission/、storage/、toolkit/、util/ | 技术支撑；不得依赖 data 或 app |
-| data | <feature>/internal 实现、repository 实现、介质适配与 mapper | 允许 domain、base、kit；不得依赖 app |
-| domain | <feature>/{model,port,rule,usecase,error} | 纯 Kotlin；只依赖自身与 Kotlin/JDK |
-| cleanerkit / devicekit / networkkit | 独立能力模块（文件、清理、设备、网络） | 不依赖 app、domain、base |
+| base | designsystem/、mvi/、navigation/、permission/、util/ | 技术支撑；不得依赖 data 或 app |
+| data | `repository/` 端口实现、`local/` 平台适配与删除授权 | 允许 domain、base；不得依赖 app |
+| domain | `model/<concept>/`、`port/`、`rule/`、`error/` | 纯 Kotlin；只依赖自身与 Kotlin/JDK |
 
-**业务优先**：`domain/<feature>`、`data/<feature>`、`app/view/<feature>` 同名，一个业务能力在四层里使用同一个包名。跨 feature 的契约归其归属 feature（例如 `SettingsRepository` 在 `domain/settings/port`），不建 `shared` 包。
+**层优先（layer-first）**：`domain` 按职责分为 `model / port / rule / error`，`data` 分为 `repository / local`；同类文件集中，业务概念用 `model/<concept>` 与 `local/<capability>` 表达。跨 feature 的契约放 `domain/port`（例如 `AppSettingsRepository`），不建 `shared` 包。真出现跨多个 repository 的编排时再建 `domain/usecase/`。
 
 依赖方向（允许列表，由 `scripts/check-rules.ps1` 逐条检查）：
 
-- `domain` 只依赖自身与 Kotlin/JDK；不得 import `base`、`data`、`app` 或三个 kit。
-- `data` 允许 `domain`、`base`、kit；不得 import `app`。
+- `domain` 只依赖自身与 Kotlin/JDK；不得 import `base`、`data`、`app`。
+- `data` 允许 `domain`、`base`；不得 import `app`。
 - `app/view` 允许 `base`、`domain`；不得 import `data`。
-- `app/di` 是唯一装配 data 实现与 base/toolkit 端口实现的包。
-- `base` 不得依赖 `data` 或 `app`；`base/toolkit` 可以实现 `domain` 端口。
+- `app/di` 是唯一装配 data 实现的包。
+- `base` 不得依赖 `data` 或 `app`。
 
 `CleanItem`、`CategoryCleanGroup` 属于 presentation 模型，平铺在 `junkclean/interaction/`。`CleanItem.isChecked` 不可变，修改选择时复制数据。
 仓库接收 `List<JunkFile>`，由 ViewModel 筛选选中项，仓库不认识 UI 选择模型。
-`CleanSessionStore` 保存业务结果，不提供第二套页面状态。`SharedScanState` 属于 data.session。
+`JunkScanSessionStore` 保存业务结果，不提供第二套页面状态；它属于 `data/local/junkclean`。
 不增加无使用者的 shared 包、转发式 UseCase、通用业务 Job 管理器或 Coordinator。
 
 领域层顶层业务数据类统一使用 `Model` 后缀，每个公开类型放在同名 Kotlin 文件中。枚举、值类及密封类型的嵌套分支保留业务名称。
@@ -124,11 +125,11 @@ ViewModel 清理时取消队列、丢弃未消费事件；之后发送不再入�
 
 ## 检查和验证状态
 
-`scripts/check-rules.ps1` + `profiles/android-compose-mvi.json` 是本仓库 MVI 规则的唯一门禁，覆盖：domain 纯净、分层方向、view 不依赖 root、`ui/part` 无状态、错误走 `UiText`、事件走 `CollectEffects`、返回键 dispatch、package/目录一致、语言包 key 对齐。
+`scripts/check-rules.ps1` + `profiles/android-compose-mvi.json` 是本仓库 MVI 规则的唯一门禁，覆盖：domain 纯净、分层方向、data 可见性/契约、view 不 import data、view 不依赖 root、`ui/part` 无状态、错误走 `UiText`、事件走 `CollectEffects`、返回键 dispatch、package/目录一致、语言包 key 对齐。
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-rules.ps1
 ```
 
 改动上述区域后必须运行；单测用 `.\gradlew.bat :app:testDebugUnitTest`，构建验证用 `.\gradlew.bat :app:assembleDebug`。CI（`.github/workflows/ci.yml`）把这三步串在一起，本地等价命令是 `scripts\ci.ps1`，详见 [CI](ci.md)。
-旧脚本 `check-mvi-boundaries.ps1` / `check-permission-ad-boundaries.ps1` 已不再维护，历史记录见 [多模块迁移记录](multi-module-migration.md)。
+旧脚本 `check-mvi-boundaries.ps1` / `check-permission-ad-boundaries.ps1` 已不再维护，历史记录见 [多模块迁移记录](history/multi-module-migration.md)。

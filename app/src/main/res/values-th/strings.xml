@@ -475,4 +475,6 @@
     <string name="cleanup_stopped_summary">หยุดแล้ว ลบไฟล์ไป %1$d ไฟล์ (%2$s)</string>
     <string name="available_memory_increase">หน่วยความจำว่างเพิ่มขึ้น %1$s ระหว่างการล้างข้อมูล</string>
     <string name="settings_post_notifications">การแจ้งเตือน</string>
+    <string name="settings_media_location_permission">ตำแหน่งรูปภาพ</string>
+    <string name="permission_media_location_desc">เพื่อค้นหารูปภาพที่มีข้อมูลตำแหน่ง โปรดอนุญาตการเข้าถึงตำแหน่งรูปภาพ</string>
 </resources>

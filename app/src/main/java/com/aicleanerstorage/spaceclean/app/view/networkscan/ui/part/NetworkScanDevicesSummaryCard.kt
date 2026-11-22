@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.networkkit.model.NetworkDeviceInfo
-import com.aicleanerstorage.networkkit.model.NetworkScanResult
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkDeviceModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
@@ -37,7 +37,7 @@ import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanN
 
 @Composable
 internal fun NetworkScanDevicesSummaryCard(
-    scan: NetworkScanResult,
+    scan: NetworkScanResultModel,
     onDevicesClick: () -> Unit,
 ) {
     val devices = scan.devices
@@ -83,7 +83,7 @@ internal fun NetworkScanDevicesSummaryCard(
 }
 
 @Composable
-internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceInfo) {
+internal fun NetworkScanDeviceSummaryRow(device: NetworkDeviceModel) {
     Row(
         modifier =
             Modifier

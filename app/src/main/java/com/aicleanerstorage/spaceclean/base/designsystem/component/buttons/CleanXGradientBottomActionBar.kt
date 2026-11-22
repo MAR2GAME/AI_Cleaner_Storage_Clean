@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
@@ -21,8 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGradient
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPrimaryGradient
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTextColor
 import com.aicleanerstorage.spaceclean.base.designsystem.component.cleanXPressFeedback
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 
@@ -36,7 +37,8 @@ fun CleanXGradientBottomActionBar(
     height: Dp = 52.dp,
     cornerRadius: Dp = 26.dp,
     fontSize: TextUnit = 20.sp,
-    contentColor: Color = FileManagerTextColor,
+    contentColor: Color = CleanXTextColor,
+    gradient: Brush = CleanXPrimaryGradient,
 ) {
     Box(
         modifier =
@@ -53,7 +55,7 @@ fun CleanXGradientBottomActionBar(
                     .fillMaxWidth()
                     .height(height)
                     .clip(RoundedCornerShape(cornerRadius))
-                    .background(FileManagerPrimaryGradient)
+                    .background(gradient)
                     .graphicsLayer(alpha = if (enabled) 1f else 0.45f)
                     .cleanXPressFeedback(
                         interactionSource = interactionSource,

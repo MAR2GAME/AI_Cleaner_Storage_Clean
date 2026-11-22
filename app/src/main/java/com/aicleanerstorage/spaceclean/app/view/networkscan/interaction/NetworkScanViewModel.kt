@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.networkkit.NetworkRepository
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher

@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.screenshots.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerAction
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
@@ -19,24 +19,24 @@ fun ScreenshotsManagerRoute(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
-    val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
+    val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null
 
     ScreenshotsManagerScreen(
         state = displayState.copy(permissionGranted = permissionState.granted),
         onAction = { action ->
             when (action) {
-                FileManagerAction.BackClicked ->
+                FilePageAction.BackClicked ->
                     viewModel.dispatch(
-                        if (permissionState.granted) action else FileManagerAction.PermissionRejected,
+                        if (permissionState.granted) action else FilePageAction.PermissionRejected,
                     )
-                FileManagerAction.VisibleItemsToggled,
-                FileManagerAction.DeleteClicked,
-                FileManagerAction.ContinueManagingClicked,
-                is FileManagerAction.SelectionToggled,
-                is FileManagerAction.DetailClicked,
+                FilePageAction.VisibleItemsToggled,
+                FilePageAction.DeleteClicked,
+                FilePageAction.ContinueManagingClicked,
+                is FilePageAction.SelectionToggled,
+                is FilePageAction.DetailClicked,
                 -> viewModel.dispatch(action)
-                is FileManagerAction.NavigationRequested -> viewModel.dispatch(action)
+                is FilePageAction.NavigationRequested -> viewModel.dispatch(action)
                 else -> Unit
             }
         },
@@ -44,13 +44,13 @@ fun ScreenshotsManagerRoute(
 
     FileManagerFlowDialogs(
         flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FileManagerAction.StopDismissed) },
+        onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
         permissionState = permissionState,
         router = navigator,
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(FileManagerAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FileManagerAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FileManagerAction.DeleteConfirmed) },
+        onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
+        onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
+        onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
     )
 }

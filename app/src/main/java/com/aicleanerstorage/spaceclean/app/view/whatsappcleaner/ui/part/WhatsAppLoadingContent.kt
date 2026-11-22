@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolboxScanningContent
+import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 
 @Composable
 internal fun WhatsAppLoadingContent() {

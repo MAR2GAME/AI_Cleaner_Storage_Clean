@@ -475,4 +475,6 @@
     <string name="cleanup_stopped_summary">停止しました。%1$d 個のファイルを削除しました（%2$s）。</string>
     <string name="available_memory_increase">クリーンアップ中に空きメモリが %1$s 増加しました。</string>
     <string name="settings_post_notifications">通知</string>
+    <string name="settings_media_location_permission">写真の位置情報</string>
+    <string name="permission_media_location_desc">位置情報を含む写真を検索するには、写真の位置情報へのアクセスを許可してください。</string>
 </resources>

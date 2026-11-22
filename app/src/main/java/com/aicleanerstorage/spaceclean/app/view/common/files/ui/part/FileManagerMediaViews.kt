@@ -64,8 +64,8 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCi
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.localizedFileManagerTabTitle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillTabs
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTabItem
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.base.designsystem.component.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -76,11 +76,6 @@ import android.util.Size as AndroidSize
 private const val FILE_MANAGER_GRID_THUMBNAIL_PX = 512
 private const val FILE_MANAGER_MAX_DETAIL_IMAGE_PX = 2048
 private const val FILE_MANAGER_BITMAP_CACHE_KB = 24 * 1024
-
-enum class FileManagerImageQuality {
-    Grid,
-    Detail,
-}
 
 private data class FileManagerBitmapCacheKey(
     val uri: String,
@@ -691,7 +686,7 @@ fun FileManagerRealImage(
             }
         }
     val bitmap by produceState<Bitmap?>(initialValue = null, item.uri, quality, targetSizePx) {
-        val uri = item.uri?.let { Uri.parse(it.value) }
+        val uri = item.uri?.let { Uri.parse(it) }
         value =
             if (uri == null) {
                 null

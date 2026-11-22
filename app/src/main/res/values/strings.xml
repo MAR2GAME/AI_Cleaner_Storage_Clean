@@ -463,4 +463,6 @@
     <string name="available_memory_increase">Available memory increased by %1$s during cleanup.</string>
     <string name="network_speed_estimated">Estimated speed</string>
     <string name="settings_post_notifications">Notifications</string>
+    <string name="settings_media_location_permission">Photo Location</string>
+    <string name="permission_media_location_desc">To find photos that contain location data, please grant photo location access.</string>
 </resources>

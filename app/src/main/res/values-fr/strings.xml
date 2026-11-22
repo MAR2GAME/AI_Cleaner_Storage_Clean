@@ -475,4 +475,6 @@
     <string name="cleanup_stopped_summary">Arrêté. %1$d fichiers supprimés (%2$s).</string>
     <string name="available_memory_increase">La mémoire disponible a augmenté de %1$s pendant le nettoyage.</string>
     <string name="settings_post_notifications">Notifications</string>
+    <string name="settings_media_location_permission">Localisation des photos</string>
+    <string name="permission_media_location_desc">Pour trouver les photos contenant des données de localisation, autorisez l\'accès à la localisation des photos.</string>
 </resources>

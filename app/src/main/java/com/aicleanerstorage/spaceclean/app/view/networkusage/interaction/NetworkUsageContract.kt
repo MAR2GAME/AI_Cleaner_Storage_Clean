@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkUsageApp
-import com.aicleanerstorage.networkkit.model.NetworkUsageInfo
-import com.aicleanerstorage.networkkit.model.TrafficSource
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.TrafficSource
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
 enum class NetworkUsageTab {
@@ -19,7 +19,7 @@ data class NetworkUsageDisplayItem(
     val isAggregate: Boolean = false,
 ) {
     companion object {
-        fun fromApp(app: NetworkUsageApp): NetworkUsageDisplayItem {
+        fun fromApp(app: NetworkUsageAppModel): NetworkUsageDisplayItem {
             val source = app.source as? TrafficSource.App ?: return systemTraffic(app.totalBytes)
             return NetworkUsageDisplayItem(
                 appName = source.appName,
@@ -45,7 +45,7 @@ data class NetworkUsageDisplayItem(
 data class NetworkUsageUiState(
     val selectedTab: NetworkUsageTab = NetworkUsageTab.Wifi,
     val hasAccess: Boolean = false,
-    val usage: NetworkUsageInfo? = null,
+    val usage: NetworkUsageInfoModel? = null,
     val isLoading: Boolean = true,
     val error: UiText? = null,
     val isScanning: Boolean = false,
@@ -76,7 +76,7 @@ data class NetworkUsageUiState(
 
     fun totalBytes(tab: NetworkUsageTab): Long = rxBytes(tab) + txBytes(tab)
 
-    fun apps(tab: NetworkUsageTab): List<NetworkUsageApp> =
+    fun apps(tab: NetworkUsageTab): List<NetworkUsageAppModel> =
         usage
             ?.let {
                 when {

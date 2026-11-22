@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.DeviceInfoUiState
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoAction
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part.BatteryCard
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part.CpuCard
@@ -20,7 +20,7 @@ import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part.ScreenCard
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part.SensorsCard
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part.StateInfoCard
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
-import com.aicleanerstorage.spaceclean.base.designsystem.component.ToolboxScanningContent
+import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 

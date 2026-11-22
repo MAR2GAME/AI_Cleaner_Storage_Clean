@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.cleanerkit.clean.model.JunkCategory
-import com.aicleanerstorage.cleanerkit.clean.model.JunkFile
-import com.aicleanerstorage.cleanerkit.clean.model.ScanResult
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.domain.junkclean.error.JunkError
-import com.aicleanerstorage.spaceclean.domain.junkclean.model.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
 
 sealed interface JunkCleanPhase {
     data object Idle : JunkCleanPhase
@@ -19,8 +19,6 @@ sealed interface JunkCleanPhase {
     data object Preview : JunkCleanPhase
 
     data object Cleaning : JunkCleanPhase
-
-    data object AwaitingAuthorization : JunkCleanPhase
 
     data object CompleteAnimation : JunkCleanPhase
 
@@ -54,7 +52,6 @@ data class JunkCleanUiState(
     val selectedSummary: SelectionSummary = SelectionSummary(),
     val stoppedSummary: CleanupSummaryModel? = null,
     val cleanResult: CleanupSummaryModel = CleanupSummaryModel(),
-    val pendingAuthorizationCount: Int = 0,
     val error: UiText? = null,
     val showStopDialog: Boolean = false,
     val stopDialogPhase: JunkCleanPhase? = null,
@@ -91,10 +88,6 @@ sealed interface JunkCleanAction {
         val request: JunkOperation,
         val granted: Boolean,
     ) : JunkCleanAction
-
-    data class DeleteAuthorizationResultReceived(
-        val deletedIds: Set<String>,
-    ) : JunkCleanAction
 }
 
 internal data class JunkPermissionCheckStarted(
@@ -124,22 +117,16 @@ internal data class JunkScanProgressUpdated(
 ) : JunkCleanAction.ReducerOnly
 
 internal data class JunkScanCompleted(
-    val result: ScanResult,
+    val result: JunkScanResultModel,
 ) : JunkCleanAction.ReducerOnly
 
 internal data class JunkPreviewLoaded(
-    val result: ScanResult,
+    val result: JunkScanResultModel,
 ) : JunkCleanAction.ReducerOnly
 
 internal data object JunkPreviewLoadFailed : JunkCleanAction.ReducerOnly
 
 internal data object JunkCleaningRequested : JunkCleanAction.ReducerOnly
-
-internal data class JunkDeleteAuthorizationRequested(
-    val count: Int,
-) : JunkCleanAction.ReducerOnly
-
-internal data object JunkDeleteAuthorizationHandled : JunkCleanAction.ReducerOnly
 
 internal data class JunkCleaningCompleted(
     val summary: CleanupSummaryModel,
@@ -157,13 +144,10 @@ internal data object JunkResultAnimationCompleted : JunkCleanAction.ReducerOnly
 internal data object JunkActiveOperationCancelled : JunkCleanAction.ReducerOnly
 
 internal data class JunkCleaningStopped(
-    val remaining: ScanResult,
-    val selected: Set<JunkFile>,
+    val remaining: JunkScanResultModel,
+    val selected: Set<JunkFileModel>,
     val summary: CleanupSummaryModel,
 ) : JunkCleanAction.ReducerOnly
-
-internal data object JunkCleaningCancelled : JunkCleanAction.ReducerOnly
-
 internal data class JunkStopDialogShown(
     val phase: JunkCleanPhase,
 ) : JunkCleanAction.ReducerOnly
@@ -178,9 +162,5 @@ enum class JunkExitTarget {
 sealed interface JunkCleanEvent {
     data class Exit(
         val target: JunkExitTarget = JunkExitTarget.Back,
-    ) : JunkCleanEvent
-
-    data class RequestDeleteAuthorization(
-        val ids: List<String>,
     ) : JunkCleanEvent
 }

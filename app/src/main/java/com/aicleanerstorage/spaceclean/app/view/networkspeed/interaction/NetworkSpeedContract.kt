@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.networkkit.model.NetworkInfo
-import com.aicleanerstorage.networkkit.model.NetworkSpeed
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -16,10 +16,10 @@ enum class NetworkSpeedPhase {
 }
 
 data class NetworkSpeedUiState(
-    val networkInfo: NetworkInfo = NetworkInfo(),
+    val networkInfo: NetworkInfoModel = NetworkInfoModel(),
     val hasNetwork: Boolean = false,
     val phase: NetworkSpeedPhase = NetworkSpeedPhase.Idle,
-    val speed: NetworkSpeed = NetworkSpeed(),
+    val speed: NetworkSpeedModel = NetworkSpeedModel(),
 ) {
     /** 单一真相：错误文案由 phase 派生。 */
     val error: UiText?

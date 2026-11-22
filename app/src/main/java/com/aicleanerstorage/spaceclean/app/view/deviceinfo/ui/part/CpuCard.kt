@@ -2,12 +2,12 @@ package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.aicleanerstorage.devicekit.model.DeviceHardwareInfo
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.toolbox.interaction.orPlaceholder
+import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.orPlaceholder
 
 @Composable
-internal fun CpuCard(hardware: DeviceHardwareInfo) {
+internal fun CpuCard(hardware: DeviceHardwareInfoModel) {
     val cpuCoreCount =
         hardware.cpu.cores
             .takeIf { it > 0 }
