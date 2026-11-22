@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.di
 
 import android.content.ComponentName
+import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
 import com.aicleanerstorage.spaceclean.app.background.BatterySamplingSync
 import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
@@ -41,15 +42,11 @@ import com.aicleanerstorage.spaceclean.domain.port.SimilarPhotoRepository
 import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
 import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.domain.port.WhatsAppCleanerRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-
-private const val APPLICATION_SCOPE = "applicationScope"
 
 val dataModule: Module =
     module {
@@ -59,7 +56,6 @@ val dataModule: Module =
         single { MediaDeletionAuthorization() }
         single { ActivityMediaDeletionRequester() }
         single<MediaDeletionRequester> { get<ActivityMediaDeletionRequester>() }
-        single(named(APPLICATION_SCOPE)) { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
         single {
             val context = androidContext()
             DefaultManagedFileRepository(
@@ -83,7 +79,7 @@ val dataModule: Module =
         }
         single { DefaultDeviceInfoRepository(androidContext(), Dispatchers.IO) }
         single<DeviceInfoRepository> { get<DefaultDeviceInfoRepository>() }
-        single<VirusScanner> { TrustlookVirusScanner(androidContext(), com.aicleanerstorage.spaceclean.BuildConfig.TRUSTLOOK_API_KEY) }
+        single<VirusScanner> { TrustlookVirusScanner(androidContext(), BuildConfig.TRUSTLOOK_API_KEY) }
         single<VirusSecurityRepository> { DefaultVirusSecurityRepository(androidContext(), get()) }
         single<AppLockRepository> { DefaultAppLockRepository(androidContext(), get(named("applock"))) }
         single<AppUsageRepository> { DefaultAppUsageRepository(androidContext()) }
