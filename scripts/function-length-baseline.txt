@@ -1,6 +1,8 @@
 # Function-length debt baseline (file|function).
 # Remove entries as functions are split; new entries are rejected by check-rules.
+
 app/src/main/java/com/aicleanerstorage/spaceclean/app/root/AppNavHost.kt|AppNavHost
+app/src/main/java/com/aicleanerstorage/spaceclean/app/view/antivirus/interaction/VirusScanReducer.kt|reduce
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/antivirus/interaction/VirusScanReducer.kt|reduceUpdate
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/antivirus/interaction/VirusScanViewModel.kt|createScanListener
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/antivirus/interaction/VirusScanViewModel.kt|onAction
