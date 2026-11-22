@@ -1,13 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 
 data class OnboardingUiState(
     val deviceModel: String = "",
     val androidVersion: String = "",
     val screenSize: String = "",
-    val batteryHealth: String = "",
-    val batteryStatusText: String = "",
+    val batteryHealth: BatteryHealth = BatteryHealth.Unknown,
+    val batteryStatus: BatteryStatus = BatteryStatus.Unknown,
     val storageInfo: CapacityInfoModel = CapacityInfoModel(0, 0),
     val completedStep: Int = 0,
 ) {

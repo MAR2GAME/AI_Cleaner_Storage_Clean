@@ -25,10 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 
 @Composable
 internal fun BatteryTopCard(
-    statusText: String,
+    status: BatteryStatus,
     capacityText: String,
 ) {
     Surface(
@@ -56,7 +57,7 @@ internal fun BatteryTopCard(
             ) {
                 BatterySummaryLine(
                     label = stringResource(R.string.battery_status),
-                    value = localizedBatteryStatus(statusText),
+                    value = localizedBatteryStatus(status),
                 )
                 BatterySummaryLine(
                     label = stringResource(R.string.battery_capacity),
@@ -109,11 +110,11 @@ private fun BatterySummaryLine(
 }
 
 @Composable
-private fun localizedBatteryStatus(status: String): String =
+private fun localizedBatteryStatus(status: BatteryStatus): String =
     when (status) {
-        "Charging" -> stringResource(R.string.battery_charging)
-        "Discharging" -> stringResource(R.string.battery_discharging)
-        "Full" -> stringResource(R.string.battery_full)
-        "Not Charging" -> stringResource(R.string.battery_not_charging)
-        else -> stringResource(R.string.device_unknown)
+        BatteryStatus.Charging -> stringResource(R.string.battery_charging)
+        BatteryStatus.Discharging -> stringResource(R.string.battery_discharging)
+        BatteryStatus.Full -> stringResource(R.string.battery_full)
+        BatteryStatus.NotCharging -> stringResource(R.string.battery_not_charging)
+        BatteryStatus.Unknown -> stringResource(R.string.device_unknown)
     }

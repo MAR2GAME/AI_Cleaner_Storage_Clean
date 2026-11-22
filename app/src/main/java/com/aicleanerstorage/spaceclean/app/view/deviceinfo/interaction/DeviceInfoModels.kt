@@ -72,8 +72,8 @@ data class DeviceInfoUiState(
     val batteryCapacityText: String
         get() = battery.levelPercent.takeIf { it >= 0 }?.let { "$it%" } ?: "--"
 
-    val batteryLifeText: String
-        get() = battery.availableTime.takeIf { it.isNotBlank() && it != UNKNOWN } ?: "--"
+    val batteryAvailableTimeMinutes: Int?
+        get() = battery.availableTimeMinutes
 
     val selectedCurrentSamples: List<BatteryCurrentSample>
         get() =
@@ -152,7 +152,7 @@ internal fun averageTemperature(
 
 internal const val UNKNOWN = "Unknown"
 internal const val TEMPERATURE_UNIT_CELSIUS = "C"
-internal val EMPTY_BATTERY_INFO = BatteryInfoModel(-1, UNKNOWN, 0f, -1, UNKNOWN, 0, UNKNOWN)
+internal val EMPTY_BATTERY_INFO = BatteryInfoModel(-1)
 internal val EMPTY_MEMORY_INFO = CapacityInfoModel(0L, 0L)
 internal val EMPTY_STORAGE_INFO = CapacityInfoModel(0L, 0L)
 internal val EMPTY_HARDWARE_INFO =

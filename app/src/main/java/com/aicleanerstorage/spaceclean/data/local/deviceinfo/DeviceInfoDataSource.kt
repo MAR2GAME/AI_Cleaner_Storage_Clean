@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
 import com.aicleanerstorage.spaceclean.domain.model.device.BatteryInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import java.lang.reflect.Method
 
@@ -14,7 +16,7 @@ internal object DeviceInfoDataSource {
     fun getBatteryInfo(context: Context): BatteryInfoModel {
         val intent =
             getBatteryStatusIntent(context)
-                ?: return BatteryInfoModel(-1, "Unknown", 0f, -1, "Unknown", 0, "Unknown")
+                ?: return BatteryInfoModel(-1, BatteryHealth.Unknown, 0f, -1, "Unknown", 0)
 
         val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1)
@@ -27,13 +29,13 @@ internal object DeviceInfoDataSource {
 
         val health =
             when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
-                BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-                BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-                BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Overvoltage"
-                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Failure"
-                else -> "Unknown"
+                BatteryManager.BATTERY_HEALTH_COLD -> BatteryHealth.Cold
+                BatteryManager.BATTERY_HEALTH_DEAD -> BatteryHealth.Dead
+                BatteryManager.BATTERY_HEALTH_GOOD -> BatteryHealth.Good
+                BatteryManager.BATTERY_HEALTH_OVERHEAT -> BatteryHealth.Overheat
+                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> BatteryHealth.Overvoltage
+                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> BatteryHealth.Failure
+                else -> BatteryHealth.Unknown
             }
 
         val tempRaw = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
@@ -50,13 +52,13 @@ internal object DeviceInfoDataSource {
             voltage = voltage,
             technology = technology,
             capacity = capacity,
-            availableTime = estimateAvailableTime(levelPercent),
-            statusText = when (status) {
-                BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
-                BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
-                BatteryManager.BATTERY_STATUS_FULL -> "Full"
-                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
-                else -> "Unknown"
+            availableTimeMinutes = estimateAvailableTime(levelPercent),
+            status = when (status) {
+                BatteryManager.BATTERY_STATUS_CHARGING -> BatteryStatus.Charging
+                BatteryManager.BATTERY_STATUS_DISCHARGING -> BatteryStatus.Discharging
+                BatteryManager.BATTERY_STATUS_FULL -> BatteryStatus.Full
+                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> BatteryStatus.NotCharging
+                else -> BatteryStatus.Unknown
             },
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING,
         )
@@ -123,13 +125,10 @@ internal object DeviceInfoDataSource {
             powerProfileClass.getMethod("getAveragePower", String::class.java)
         }
 
-    private fun estimateAvailableTime(levelPercent: Int): String {
+    private fun estimateAvailableTime(levelPercent: Int): Int? {
         val validLevel = levelPercent.coerceIn(0, 100)
-        if (validLevel <= 0) return "0m"
-        val totalMinutes = ((validLevel / ASSUMED_HOURLY_DRAIN) * 60f).toInt().coerceAtLeast(0)
-        val hours = totalMinutes / 60
-        val mins = totalMinutes % 60
-        return if (hours > 0) "${hours}h${mins}m" else "${mins}m"
+        if (validLevel <= 0) return 0
+        return ((validLevel / ASSUMED_HOURLY_DRAIN) * 60f).toInt().coerceAtLeast(0)
     }
 
     private const val ASSUMED_HOURLY_DRAIN = 18.5f

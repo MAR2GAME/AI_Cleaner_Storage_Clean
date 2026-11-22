@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.displayBatteryTemperatureValue
 import java.util.Locale
@@ -66,7 +67,7 @@ internal fun BatteryInformationCard(uiState: DeviceInfoUiState) {
             BatteryMetricUi(
                 iconRes = R.drawable.life,
                 label = stringResource(R.string.battery_life),
-                value = uiState.batteryLifeText,
+                value = availableTimeText(uiState.batteryAvailableTimeMinutes),
             ),
         )
 
@@ -185,13 +186,25 @@ internal fun BatterySectionHeader(text: String) {
 }
 
 @Composable
-private fun localizedBatteryHealth(health: String): String =
+private fun localizedBatteryHealth(health: BatteryHealth): String =
     when (health) {
-        "Good" -> stringResource(R.string.battery_health_good)
-        "Cold" -> stringResource(R.string.battery_health_cold)
-        "Dead" -> stringResource(R.string.battery_health_dead)
-        "Overheat" -> stringResource(R.string.battery_health_overheat)
-        "Overvoltage" -> stringResource(R.string.battery_health_overvoltage)
-        "Failure" -> stringResource(R.string.battery_health_failure)
-        else -> stringResource(R.string.device_unknown)
+        BatteryHealth.Good -> stringResource(R.string.battery_health_good)
+        BatteryHealth.Cold -> stringResource(R.string.battery_health_cold)
+        BatteryHealth.Dead -> stringResource(R.string.battery_health_dead)
+        BatteryHealth.Overheat -> stringResource(R.string.battery_health_overheat)
+        BatteryHealth.Overvoltage -> stringResource(R.string.battery_health_overvoltage)
+        BatteryHealth.Failure -> stringResource(R.string.battery_health_failure)
+        BatteryHealth.Unknown -> stringResource(R.string.device_unknown)
     }
+
+@Composable
+private fun availableTimeText(minutes: Int?): String {
+    if (minutes == null) return "--"
+    val hours = minutes / 60
+    val remainingMinutes = minutes % 60
+    return if (hours > 0) {
+        stringResource(R.string.duration_hours_minutes, hours, remainingMinutes)
+    } else {
+        stringResource(R.string.duration_minutes, remainingMinutes)
+    }
+}

@@ -45,7 +45,7 @@ fun BatteryInfoScreen(
             )
         } else {
             BatteryTopCard(
-                statusText = state.battery.statusText,
+                status = state.battery.status,
                 capacityText = state.batteryCapacityText,
             )
             Spacer(modifier = Modifier.height(16.dp))

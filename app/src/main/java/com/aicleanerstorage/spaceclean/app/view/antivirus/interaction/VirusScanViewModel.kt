@@ -296,14 +296,14 @@ class VirusScanViewModel(
     ) {
         val packageName = item.packageName?.takeIf { it.isNotBlank() }
         if (packageName != null) {
-            if (item.score >= 6) addThreat(item, isFile = false, generation = generation)
+            if (item.isThreat) addThreat(item, isFile = false, generation = generation)
             display?.enqueueApp(packageName)
             return
         }
 
         if (mode == VirusScanMode.Deep) {
             val path = item.apkPath?.takeIf { it.isNotBlank() }
-            if (item.score >= 6) addThreat(item, isFile = true, generation = generation)
+            if (item.isThreat) addThreat(item, isFile = true, generation = generation)
             if (path != null) display?.enqueuePath(path)
         }
     }

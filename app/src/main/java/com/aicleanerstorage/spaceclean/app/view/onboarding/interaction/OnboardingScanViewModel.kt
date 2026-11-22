@@ -39,7 +39,7 @@ class OnboardingScanViewModel(
                         androidVersion = hardware.androidVersion,
                         screenSize = hardware.screenSize,
                         batteryHealth = battery.health,
-                        batteryStatusText = battery.statusText,
+                        batteryStatus = battery.status,
                         storageInfo = storage,
                     ),
                 ),

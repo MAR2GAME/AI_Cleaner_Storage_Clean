@@ -33,6 +33,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -355,13 +357,13 @@ internal fun onboardingDeviceRows(state: OnboardingUiState): List<DeviceScanRow>
         ),
         DeviceScanRow(
             label = stringResource(R.string.battery_health_status),
-            value = if (completedStep > 4) localizedOnboardingDeviceValue(state.batteryHealth) else "--",
+            value = if (completedStep > 4) localizedBatteryHealth(state.batteryHealth) else "--",
             complete = completedStep > 4,
             active = completedStep == 4,
         ),
         DeviceScanRow(
             label = stringResource(R.string.battery_status),
-            value = if (completedStep > 5) state.batteryStatusText else "--",
+            value = if (completedStep > 5) localizedBatteryStatus(state.batteryStatus) else "--",
             complete = completedStep > 5,
             active = completedStep == 5,
         ),
@@ -375,14 +377,23 @@ internal fun onboardingDeviceRows(state: OnboardingUiState): List<DeviceScanRow>
 }
 
 @Composable
-private fun localizedOnboardingDeviceValue(value: String): String =
-    when (value) {
-        "Good" -> stringResource(R.string.battery_health_good)
-        "Cold" -> stringResource(R.string.battery_health_cold)
-        "Dead" -> stringResource(R.string.battery_health_dead)
-        "Overheat" -> stringResource(R.string.battery_health_overheat)
-        "Overvoltage" -> stringResource(R.string.battery_health_overvoltage)
-        "Failure" -> stringResource(R.string.battery_health_failure)
-        "Unknown" -> stringResource(R.string.device_unknown)
-        else -> value
+private fun localizedBatteryHealth(health: BatteryHealth): String =
+    when (health) {
+        BatteryHealth.Good -> stringResource(R.string.battery_health_good)
+        BatteryHealth.Cold -> stringResource(R.string.battery_health_cold)
+        BatteryHealth.Dead -> stringResource(R.string.battery_health_dead)
+        BatteryHealth.Overheat -> stringResource(R.string.battery_health_overheat)
+        BatteryHealth.Overvoltage -> stringResource(R.string.battery_health_overvoltage)
+        BatteryHealth.Failure -> stringResource(R.string.battery_health_failure)
+        BatteryHealth.Unknown -> stringResource(R.string.device_unknown)
+    }
+
+@Composable
+private fun localizedBatteryStatus(status: BatteryStatus): String =
+    when (status) {
+        BatteryStatus.Charging -> stringResource(R.string.battery_charging)
+        BatteryStatus.Discharging -> stringResource(R.string.battery_discharging)
+        BatteryStatus.Full -> stringResource(R.string.battery_full)
+        BatteryStatus.NotCharging -> stringResource(R.string.battery_not_charging)
+        BatteryStatus.Unknown -> stringResource(R.string.device_unknown)
     }

@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.data.local.security
 
 import android.content.Context
 import com.aicleanerstorage.spaceclean.domain.error.VirusScanError
+import com.aicleanerstorage.spaceclean.domain.model.security.VirusRiskLevel
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
@@ -99,17 +100,20 @@ internal class TrustlookVirusScanner(
         cloudScanClient = null
     }
 
-    private fun AppInfo.toVirusScanItem(): VirusScanItemModel =
-        VirusScanItemModel(
+    private fun AppInfo.toVirusScanItem(): VirusScanItemModel {
+        val summaryLines = summary?.filterNotNull()
+        return VirusScanItemModel(
+            appName = appName,
             packageName = packageName,
             apkPath = apkPath,
-            appName = appName,
-            virusName = virusName,
-            summary = summary?.filterNotNull(),
-            score = score,
+            threatName = virusName,
+            description = summaryLines?.getOrNull(1)?.takeIf { it.isNotBlank() } ?: virusName,
+            riskLevel = if (score >= THREAT_SCORE) VirusRiskLevel.Threat else VirusRiskLevel.Safe,
         )
+    }
 
     private companion object {
         const val UNKNOWN_ERROR_CODE = -1
+        const val THREAT_SCORE = 6
     }
 }

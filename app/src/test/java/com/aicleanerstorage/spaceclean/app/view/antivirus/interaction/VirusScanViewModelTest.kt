@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.domain.port.VirusScanner
 import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
+import com.aicleanerstorage.spaceclean.domain.model.security.VirusRiskLevel
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusThreatModel
@@ -116,7 +117,7 @@ class VirusScanViewModelTest {
         main.runCurrent()
     }
 
-    private val item = VirusScanItemModel("pkg", null, null, null, null, 8)
+    private val item = VirusScanItemModel("App", "pkg", null, "Test threat", "Test description", VirusRiskLevel.Threat)
 
     private class FakeScanEngine : VirusScanner {
         lateinit var listener: VirusScanner.Listener

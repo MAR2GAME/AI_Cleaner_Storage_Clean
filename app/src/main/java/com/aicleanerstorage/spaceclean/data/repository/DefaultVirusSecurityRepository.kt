@@ -114,7 +114,7 @@ private fun VirusScanItemModel.toThreat(isFile: Boolean): VirusThreatModel {
             id = "file:${path ?: description}",
             packageName = packageName,
             apkPath = path,
-            title = path?.let { File(it).name } ?: virusName.orEmpty(),
+            title = path?.let { File(it).name } ?: threatName.orEmpty(),
             description = description,
             isFile = true,
             icon = null,
@@ -132,15 +132,10 @@ private fun VirusScanItemModel.toThreat(isFile: Boolean): VirusThreatModel {
     }
 }
 
-private fun VirusScanItemModel.threatDescription(): String {
-    val summaryText =
-        runCatching {
-            if (summary != null && summary.size > 1) summary[1] else null
-        }.getOrNull()
-    return summaryText?.takeIf { it.isNotBlank() }
-        ?: virusName?.takeIf { it.isNotBlank() }
+private fun VirusScanItemModel.threatDescription(): String =
+    description?.takeIf { it.isNotBlank() }
+        ?: threatName?.takeIf { it.isNotBlank() }
         ?: ""
-}
 
 private const val KEY_VIRUS_SCAN_NOTICE_ACCEPTED = "virus_scan_notice_accepted"
 private const val KEY_VIRUS_INSTALLED_APPS_ACCESS_FAILED_ONCE = "virus_installed_apps_access_failed_once"

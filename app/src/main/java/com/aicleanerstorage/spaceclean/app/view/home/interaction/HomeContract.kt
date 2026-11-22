@@ -6,7 +6,7 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 data class HomeSummaryUiState(
     val storageInfo: CapacityInfoModel = CapacityInfoModel(0, 0),
-    val batteryInfo: BatteryInfoModel = BatteryInfoModel(-1, "Unknown", 0f, -1, "Unknown", 0, "Unknown"),
+    val batteryInfo: BatteryInfoModel = BatteryInfoModel(-1),
     val deviceModel: String = "Unknown",
     val androidVersion: String = "Android --",
     val lockedAppCount: Int = 0,
