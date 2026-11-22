@@ -197,9 +197,7 @@ class FilePageViewModelsTest {
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
             Result.failure(UnsupportedOperationException())
 
-        override suspend fun deleteDuplicates(
-            selections: List<DuplicateFileSelectionModel>,
-        ): Result<FileDeleteSummaryModel> =
+        override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
             Result.failure(UnsupportedOperationException())
 
         override suspend fun removeLocationData(files: List<ManagedFileModel>): Result<Int> = Result.success(0)

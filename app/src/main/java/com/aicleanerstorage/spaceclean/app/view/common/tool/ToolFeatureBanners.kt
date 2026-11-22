@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.common.tool
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -16,7 +16,10 @@ internal data class PendingMediaDelete(
     val recovery: IntentSender?,
 )
 
-internal fun inspectMedia(resolver: ContentResolver, item: PendingMediaDelete): DeleteStatus? {
+internal fun inspectMedia(
+    resolver: ContentResolver,
+    item: PendingMediaDelete,
+): DeleteStatus? {
     val projection = arrayOf(MediaStore.MediaColumns.SIZE, MediaStore.MediaColumns.DATE_MODIFIED)
     return try {
         val cursor = resolver.query(item.uri, projection, null, null, null) ?: return DeleteStatus.Unknown
@@ -44,11 +47,12 @@ internal suspend fun authorizePendingMedia(
     for (batch in items.distinctBy { it.uri }.chunked(if (modern) 200 else 1)) {
         currentCoroutineContext().ensureActive()
         if (shouldStop()) break
-        val ready = batch.filter { item ->
-            val status = inspectMedia(resolver, item)
-            if (status != null) results[item.uri] = status
-            status == null
-        }
+        val ready =
+            batch.filter { item ->
+                val status = inspectMedia(resolver, item)
+                if (status != null) results[item.uri] = status
+                status == null
+            }
         if (ready.isEmpty()) continue
         val sender = createMediaDeleteSender(resolver, ready)
         if (shouldStop()) break
@@ -85,7 +89,12 @@ internal fun finishAuthorizedMediaDelete(
     }
 }
 
-internal fun createMediaDeleteSender(resolver: ContentResolver, items: List<PendingMediaDelete>): IntentSender? =
+internal fun createMediaDeleteSender(
+    resolver: ContentResolver,
+    items: List<PendingMediaDelete>,
+): IntentSender? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         runCatching { MediaStore.createDeleteRequest(resolver, items.map { it.uri }).intentSender }.getOrNull()
-    } else items.single().recovery
+    } else {
+        items.single().recovery
+    }

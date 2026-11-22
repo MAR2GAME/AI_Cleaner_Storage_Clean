@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.domain.rule
 
 import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 class FileClassificationRuleTest {
     @Test

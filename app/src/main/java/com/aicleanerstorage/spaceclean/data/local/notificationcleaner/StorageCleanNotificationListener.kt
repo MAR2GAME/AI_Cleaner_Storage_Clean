@@ -3,8 +3,8 @@ package com.aicleanerstorage.spaceclean.data.local.notificationcleaner
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 import com.aicleanerstorage.spaceclean.domain.model.notification.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 import org.koin.android.ext.android.inject
 
 class StorageCleanNotificationListener : NotificationListenerService() {

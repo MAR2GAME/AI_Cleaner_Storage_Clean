@@ -5,9 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.aicleanerstorage.spaceclean.BuildConfig
+import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
 import com.aicleanerstorage.spaceclean.app.root.AppRootView
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.StorageCleanAppTheme
-import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
 import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
 import org.koin.android.ext.android.inject
 

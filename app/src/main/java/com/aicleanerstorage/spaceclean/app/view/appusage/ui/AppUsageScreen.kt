@@ -19,8 +19,8 @@ import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageUiS
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.AppUsageRangeToolbar
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.PieChartCard
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.part.UsageDataCard
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
 
 @Composable

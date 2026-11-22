@@ -101,6 +101,7 @@ class WhatsAppCleanerViewModelTest {
             advanceUntilIdle()
             assertEquals(WhatsAppCleanerPhase.Error, viewModel.state.value.phase)
         }
+
     @Test
     fun `back exits the page`() =
         runTest(dispatcher) {
@@ -154,5 +155,3 @@ class WhatsAppCleanerViewModelTest {
             deleteResult ?: Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
     }
 }
-
-

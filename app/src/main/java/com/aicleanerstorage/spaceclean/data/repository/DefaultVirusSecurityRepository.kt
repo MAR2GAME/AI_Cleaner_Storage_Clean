@@ -7,9 +7,9 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.content.edit
 import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
-import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanItemModel
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusThreatModel
+import com.aicleanerstorage.spaceclean.domain.port.VirusSecurityRepository
 import java.io.File
 
 /** 用 PackageManager 与偏好存储实现病毒扫描记录和拦截状态。 */

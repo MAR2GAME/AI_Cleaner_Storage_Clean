@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBottomActionBar
@@ -17,8 +16,9 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerUiState
 
 @Composable
@@ -46,28 +46,26 @@ fun PhotoPrivacyManagerScreen(
     ) {
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
-            FileOperationPhaseParams(
-                phase = state.phase,
-                scanningText = stringResource(R.string.file_scanning_photo_privacy),
-                deletingText = stringResource(R.string.file_removing_location_data_progress),
-                completeText = stringResource(R.string.file_location_data_removed),
-                resultAmount = state.removedLocationCount.toString(),
-                resultUnit = stringResource(R.string.file_photos),
-                resultCaption = stringResource(R.string.file_location_data_removed),
-                onNavigateTool = { destination -> onAction(PhotoPrivacyAction.NavigationRequested(destination)) },
-                onContinue = { onAction(PhotoPrivacyAction.ContinueManagingClicked) },
-            
-            ),
-        ) {
+                FileOperationPhaseParams(
+                    phase = state.phase,
+                    scanningText = stringResource(R.string.file_scanning_photo_privacy),
+                    deletingText = stringResource(R.string.file_removing_location_data_progress),
+                    completeText = stringResource(R.string.file_location_data_removed),
+                    resultAmount = state.removedLocationCount.toString(),
+                    resultUnit = stringResource(R.string.file_photos),
+                    resultCaption = stringResource(R.string.file_location_data_removed),
+                    onNavigateTool = { destination -> onAction(PhotoPrivacyAction.NavigationRequested(destination)) },
+                    onContinue = { onAction(PhotoPrivacyAction.ContinueManagingClicked) },
+                ),
+            ) {
                 FileManagerPhotoPrivacyView(
                     FileManagerPhotoPrivacyParams(
-                    groups = state.displayGroups,
-                    selectedIds = state.selectedIds,
-                    allSelected = state.allSelected,
-                    onToggleAll = { onAction(PhotoPrivacyAction.VisibleItemsToggled) },
-                    onToggleGroup = { ids -> onAction(PhotoPrivacyAction.VisibleSelectionToggled(ids)) },
-                    onSelect = { onAction(PhotoPrivacyAction.SelectionToggled(it)) },
-                
+                        groups = state.displayGroups,
+                        selectedIds = state.selectedIds,
+                        allSelected = state.allSelected,
+                        onToggleAll = { onAction(PhotoPrivacyAction.VisibleItemsToggled) },
+                        onToggleGroup = { ids -> onAction(PhotoPrivacyAction.VisibleSelectionToggled(ids)) },
+                        onSelect = { onAction(PhotoPrivacyAction.SelectionToggled(it)) },
                     ),
                 )
             }
@@ -83,5 +81,3 @@ fun PhotoPrivacyManagerScreen(
         )
     }
 }
-
-

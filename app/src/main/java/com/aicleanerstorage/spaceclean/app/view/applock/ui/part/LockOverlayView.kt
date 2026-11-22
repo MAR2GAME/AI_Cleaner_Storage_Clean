@@ -18,8 +18,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
@@ -14,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleI
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -101,7 +101,12 @@ class PhotoPrivacyManagerViewModel(
             onStart = { setState { PhotoPrivacyManagerUiState(phase = FileOperationPhase.Scanning) } },
             onLoaded = { loaded -> setState { loaded } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText()) }
+                setState {
+                    it.copy(
+                        phase = FileOperationPhase.NoResults,
+                        error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
+                    )
+                }
             },
         )
     }
@@ -163,7 +168,10 @@ class PhotoPrivacyManagerViewModel(
             onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
                 setState {
-                    it.copy(phase = FileOperationPhase.Browsing, error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText())
+                    it.copy(
+                        phase = FileOperationPhase.Browsing,
+                        error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
+                    )
                 }
             },
         )

@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.LockOverlayView
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
+import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

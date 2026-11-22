@@ -1,11 +1,10 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
+import android.content.Context
 import com.aicleanerstorage.spaceclean.data.local.network.AndroidNetworkInfoReader
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedEndpoints
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedProbe
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkToolboxDataSource
-
-import android.content.Context
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
@@ -23,6 +22,7 @@ internal class DefaultNetworkRepository(
     private val appContext = context.applicationContext
 
     private val infoReader = AndroidNetworkInfoReader(appContext)
+
     override fun readNetworkInfo(): NetworkInfoModel = infoReader.read()
 
     override fun isNetworkAvailable(): Boolean = NetworkToolboxDataSource.isNetworkAvailable(appContext)
@@ -31,8 +31,7 @@ internal class DefaultNetworkRepository(
 
     override fun hasNetworkUsageAccess(): Boolean = NetworkToolboxDataSource.hasUsageAccess(appContext)
 
-    override suspend fun readNetworkUsage(): NetworkUsageResultModel =
-        NetworkToolboxDataSource.readUsage(appContext)
+    override suspend fun readNetworkUsage(): NetworkUsageResultModel = NetworkToolboxDataSource.readUsage(appContext)
 
     override suspend fun runSpeedTest(onProgress: (NetworkSpeedModel) -> Unit): NetworkSpeedModel =
         withContext(Dispatchers.IO) {
@@ -58,8 +57,5 @@ internal class DefaultNetworkRepository(
             model
         }
 
-    override suspend fun scanWifi(): NetworkScanResultModel =
-        NetworkToolboxDataSource.scanWifi(appContext)
+    override suspend fun scanWifi(): NetworkScanResultModel = NetworkToolboxDataSource.scanWifi(appContext)
 }
-
-

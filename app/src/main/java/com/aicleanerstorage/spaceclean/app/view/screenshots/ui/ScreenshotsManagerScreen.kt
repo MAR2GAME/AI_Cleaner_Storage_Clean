@@ -11,15 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScreenshotGridParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScreenshotGridView
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsUiState
 
 @Composable
@@ -52,36 +52,32 @@ fun ScreenshotsManagerScreen(
         val result = state.resultSize
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
-            FileOperationPhaseParams(
-                phase = state.phase,
-                scanningText = stringResource(R.string.file_scanning_screenshots),
-                deletingText = stringResource(R.string.file_deleting_files),
-                resultAmount = result.first,
-                resultUnit = result.second,
-                resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
-                onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
-            
-            ),
-        ) {
+                FileOperationPhaseParams(
+                    phase = state.phase,
+                    scanningText = stringResource(R.string.file_scanning_screenshots),
+                    deletingText = stringResource(R.string.file_deleting_files),
+                    resultAmount = result.first,
+                    resultUnit = result.second,
+                    resultCaption = stringResource(R.string.file_deleted_in_cleanup),
+                    onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
+                    onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
+                ),
+            ) {
                 FileManagerScreenshotGridView(
                     FileManagerScreenshotGridParams(
-                    items = displayItems,
-                    selectedIds = state.selectedIds,
-                    allSelected = state.allSelected,
-                    scrollState = scrollState,
-                    onToggleAll = { onAction(FilePageAction.VisibleItemsToggled) },
-                    onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
-                    onOpenDetail = { item ->
-                        val index = displayItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
-                        onAction(FilePageAction.DetailClicked(index))
-                    },
-                
+                        items = displayItems,
+                        selectedIds = state.selectedIds,
+                        allSelected = state.allSelected,
+                        scrollState = scrollState,
+                        onToggleAll = { onAction(FilePageAction.VisibleItemsToggled) },
+                        onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
+                        onOpenDetail = { item ->
+                            val index = displayItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
+                            onAction(FilePageAction.DetailClicked(index))
+                        },
                     ),
                 )
             }
         }
     }
 }
-
-

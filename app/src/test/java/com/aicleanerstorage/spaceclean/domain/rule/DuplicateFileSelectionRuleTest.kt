@@ -14,7 +14,11 @@ class DuplicateFileSelectionRuleTest {
     fun `scan evidence supports keeping any unselected verified copy`() {
         val group = DuplicateFileSelectionRule.buildGroups(listOf(file(1), file(2), file(3))) { "hash" }.single()
         val first = group.files.first()
-        val selected = group.files.take(2).map { it.uri }.toSet()
+        val selected =
+            group.files
+                .take(2)
+                .map { it.uri }
+                .toSet()
         assertEquals("hash", group.hash)
         assertTrue(
             DuplicateFileSelectionRule.canDelete(
@@ -60,15 +64,16 @@ class DuplicateFileSelectionRuleTest {
         )
     }
 
-    private fun file(id: Long) = ManagedFileModel(
-        id = id,
-        uri = ("content://media/external/file/$id"),
-        path = null,
-        name = "same.pdf",
-        sizeBytes = 10L,
-        modifiedSeconds = 0L,
-        mimeType = "application/pdf",
-        bucketName = null,
-        kind = FileKind.Document,
-    )
+    private fun file(id: Long) =
+        ManagedFileModel(
+            id = id,
+            uri = ("content://media/external/file/$id"),
+            path = null,
+            name = "same.pdf",
+            sizeBytes = 10L,
+            modifiedSeconds = 0L,
+            mimeType = "application/pdf",
+            bucketName = null,
+            kind = FileKind.Document,
+        )
 }

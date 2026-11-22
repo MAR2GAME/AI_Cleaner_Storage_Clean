@@ -1,8 +1,8 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
+import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -218,5 +218,3 @@ class AppLockViewModelTest {
         override fun handlePackageAdded(packageName: String) = Unit
     }
 }
-
-

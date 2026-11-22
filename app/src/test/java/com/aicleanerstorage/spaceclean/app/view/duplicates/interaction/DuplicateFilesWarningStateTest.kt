@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileGroupModel
 import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
 import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
@@ -112,9 +112,8 @@ class DuplicateFilesWarningStateTest {
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
             Result.success(FileDeleteSummaryModel(deletedCount = 0, freedBytes = 0L))
 
-        override suspend fun deleteDuplicates(
-            selections: List<DuplicateFileSelectionModel>,
-        ): Result<FileDeleteSummaryModel> = Result.failure(UnsupportedOperationException())
+        override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
+            Result.failure(UnsupportedOperationException())
 
         override suspend fun removeLocationData(files: List<ManagedFileModel>): Result<Int> = Result.success(0)
     }

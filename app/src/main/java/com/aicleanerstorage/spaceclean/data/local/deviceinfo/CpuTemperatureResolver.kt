@@ -34,8 +34,7 @@ internal object CpuTemperatureResolver {
             .mapNotNull(::normalizeTemperatureC)
             .maxOrNull()
 
-    fun normalizeTemperatureC(rawTemperature: String): Float? =
-        rawTemperature.trim().toFloatOrNull()?.let(::normalizeTemperatureC)
+    fun normalizeTemperatureC(rawTemperature: String): Float? = rawTemperature.trim().toFloatOrNull()?.let(::normalizeTemperatureC)
 
     fun normalizeTemperatureC(rawTemperature: Float): Float? {
         if (!rawTemperature.isFinite()) return null
@@ -117,4 +116,3 @@ internal object CpuTemperatureResolver {
             "display",
         )
 }
-

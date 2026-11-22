@@ -10,7 +10,10 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 internal object FileLocationMetadata {
-    fun hasGpsLocation(context: Context, item: ManagedFileModel): Boolean =
+    fun hasGpsLocation(
+        context: Context,
+        item: ManagedFileModel,
+    ): Boolean =
         runCatching {
             val path = item.path
             if (!path.isNullOrBlank()) {
@@ -39,7 +42,10 @@ internal object FileLocationMetadata {
         ).forEach { exif.setAttribute(it, null) }
     }
 
-    suspend fun removeLocationData(context: Context, items: List<ManagedFileModel>): Int =
+    suspend fun removeLocationData(
+        context: Context,
+        items: List<ManagedFileModel>,
+    ): Int =
         withContext(Dispatchers.IO) {
             var changed = 0
             items.forEach { item ->
@@ -58,5 +64,4 @@ internal object FileLocationMetadata {
             }
             changed
         }
-
 }

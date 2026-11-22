@@ -21,17 +21,23 @@ sealed interface DuplicateFilesAction {
 
     data object RefreshRequested : DuplicateFilesAction
 
-    data class GroupClicked(val group: DuplicateGroupItem) : DuplicateFilesAction
+    data class GroupClicked(
+        val group: DuplicateGroupItem,
+    ) : DuplicateFilesAction
 
     data object SelectAllClicked : DuplicateFilesAction
 
     data object WarningConfirmed : DuplicateFilesAction
 
-    data class FileToggled(val file: DuplicateFileEntry) : DuplicateFilesAction
+    data class FileToggled(
+        val file: DuplicateFileEntry,
+    ) : DuplicateFilesAction
 
     data object AutoSelectClicked : DuplicateFilesAction
 
-    data class GroupSelectionToggled(val group: DuplicateGroupItem) : DuplicateFilesAction
+    data class GroupSelectionToggled(
+        val group: DuplicateGroupItem,
+    ) : DuplicateFilesAction
 
     data object DeleteClicked : DuplicateFilesAction
 

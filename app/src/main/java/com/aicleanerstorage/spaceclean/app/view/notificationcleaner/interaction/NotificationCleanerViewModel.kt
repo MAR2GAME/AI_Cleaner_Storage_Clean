@@ -5,9 +5,9 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.NotificationCleanerSnapshotModel
+import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -358,6 +358,7 @@ class NotificationCleanerViewModel(
             )
         }
     }
+
     private fun finishScanIfReady(scanGeneration: Long) {
         val state = currentState
         if (
@@ -470,5 +471,3 @@ private data class NotificationAppsSnapshot(
     val apps: List<BlockableNotificationAppModel>,
     val selectedPackages: Set<String>,
 )
-
-

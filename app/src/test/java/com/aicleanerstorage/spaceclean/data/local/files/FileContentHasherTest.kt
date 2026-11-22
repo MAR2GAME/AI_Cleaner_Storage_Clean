@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.data.local.files
 
-import java.io.ByteArrayInputStream
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.ByteArrayInputStream
 
 class FileContentHasherTest {
     @Test

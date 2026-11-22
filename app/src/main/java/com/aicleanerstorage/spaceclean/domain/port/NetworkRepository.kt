@@ -43,9 +43,4 @@ interface NetworkRepository {
      * 鎵弿褰撳墠灞€鍩熺綉璁惧銆?     *
      * @return 鎵弿缁撴灉锛涙棤缃戠粶鎴栨湭鎺堟潈鏃惰繑鍥炵┖缁撴灉銆?     */
     suspend fun scanWifi(): NetworkScanResultModel
-
 }
-
-
-
-

@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.data.local.deviceinfo
 
-import java.io.File
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.File
+import kotlin.math.roundToInt
 
 internal class ProcCpuUsageReader(
     private val ioDispatcher: CoroutineDispatcher,
@@ -106,8 +106,7 @@ private fun readFirstCpuFrequency(
         }.firstOrNull()
         ?: 0L
 
-private fun Float.toCpuUsagePercent(): Int =
-    roundToInt().coerceIn(MIN_REPORTED_CPU_USAGE_PERCENT, 100)
+private fun Float.toCpuUsagePercent(): Int = roundToInt().coerceIn(MIN_REPORTED_CPU_USAGE_PERCENT, 100)
 
 private const val PROC_STAT_PATH = "/proc/stat"
 private const val CPU_USAGE_SAMPLE_DELAY_MILLIS = 360L
@@ -118,4 +117,3 @@ private const val MIN_REPORTED_CPU_USAGE_PERCENT = 1
 private val CPU_CORE_NAME_REGEX = Regex("cpu\\d+")
 private val CPU_CURRENT_FREQUENCY_FILES = listOf("scaling_cur_freq", "cpuinfo_cur_freq")
 private val CPU_MAX_FREQUENCY_FILES = listOf("cpuinfo_max_freq", "scaling_max_freq")
-

@@ -33,8 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
-import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -48,6 +46,8 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.RotatingRingAnimation
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 
 @Composable
 internal fun OnboardingScanningContent(
@@ -296,7 +296,15 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawBottomLeftCorne
 
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawBottomRightCorner(g: ScanCornerGeometry) {
     drawLine(g.color, Offset(g.right, g.bottom - g.radius - g.leg), Offset(g.right, g.bottom - g.radius), g.stroke, StrokeCap.Round)
-    drawArc(g.color, 0f, 90f, false, Offset(g.right - g.radius * 2f, g.bottom - g.radius * 2f), g.arcSize, style = Stroke(g.stroke, cap = StrokeCap.Round))
+    drawArc(
+        g.color,
+        0f,
+        90f,
+        false,
+        Offset(g.right - g.radius * 2f, g.bottom - g.radius * 2f),
+        g.arcSize,
+        style = Stroke(g.stroke, cap = StrokeCap.Round),
+    )
     drawLine(g.color, Offset(g.right - g.radius, g.bottom), Offset(g.right - g.radius - g.leg, g.bottom), g.stroke, StrokeCap.Round)
 }
 
@@ -412,5 +420,3 @@ private fun localizedBatteryStatus(status: BatteryStatus): String =
         BatteryStatus.NotCharging -> stringResource(R.string.battery_not_charging)
         BatteryStatus.Unknown -> stringResource(R.string.device_unknown)
     }
-
-

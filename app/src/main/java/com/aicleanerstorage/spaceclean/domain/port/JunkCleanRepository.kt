@@ -20,9 +20,7 @@ interface JunkCleanRepository {
      * @param onProgress 扫描进度回调；实现可能在 IO 线程调用。
      * @return 扫描结果；failure 表示扫描未能开始或扫描会话异常。
      */
-    suspend fun scan(
-        onProgress: (JunkScanProgressModel) -> Unit = {},
-    ): Result<JunkScanResultModel>
+    suspend fun scan(onProgress: (JunkScanProgressModel) -> Unit = {}): Result<JunkScanResultModel>
 
     /**
      * 执行内存清理。

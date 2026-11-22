@@ -23,15 +23,23 @@ sealed interface SimilarPhotosAction {
 
     data object RefreshRequested : SimilarPhotosAction
 
-    data class SelectionToggled(val id: Int) : SimilarPhotosAction
+    data class SelectionToggled(
+        val id: Int,
+    ) : SimilarPhotosAction
 
     data object VisibleItemsToggled : SimilarPhotosAction
 
-    data class GroupToggled(val ids: Set<Int>) : SimilarPhotosAction
+    data class GroupToggled(
+        val ids: Set<Int>,
+    ) : SimilarPhotosAction
 
-    data class GroupItemsToggled(val ids: Set<Int>) : SimilarPhotosAction
+    data class GroupItemsToggled(
+        val ids: Set<Int>,
+    ) : SimilarPhotosAction
 
-    data class DetailClicked(val index: Int) : SimilarPhotosAction
+    data class DetailClicked(
+        val index: Int,
+    ) : SimilarPhotosAction
 
     data object DeleteClicked : SimilarPhotosAction
 

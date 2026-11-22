@@ -2,15 +2,14 @@ package com.aicleanerstorage.spaceclean.app.view.largefiles.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.IndexedFileItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.buildListTabs
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileOperationError
@@ -25,9 +24,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 /**
- * 视频�?ViewModel�? *
- * 只负责视频的加载、tab、选择和删除状态；异步流程复用 [FileOperations]�? *
- * @param repository 视频查询与删除端口�? * @param ioDispatcher 扫描/删除使用的调度器�? */
+ * 大文件页 ViewModel。
+ *
+ * 只负责大文件的加载、tab、选择和删除状态；异步流程复用 [FileOperations]。
+ *
+ * @param repository 大文件查询与删除端口。
+ * @param ioDispatcher 扫描/删除使用的调度器。
+ */
 class LargeFilesManagerViewModel(
     private val repository: ManagedFileRepository,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -116,10 +119,11 @@ class LargeFilesManagerViewModel(
             onLoaded = { snapshot ->
                 setState {
                     it.copy(
-                        page = FilePageState(
-                            phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
-                            items = snapshot.items,
-                        ),
+                        page =
+                            FilePageState(
+                                phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+                                items = snapshot.items,
+                            ),
                         tabs = buildListTabs(snapshot.items, FileListIconKind.LargeVideo),
                     )
                 }
@@ -127,10 +131,11 @@ class LargeFilesManagerViewModel(
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.NoResults,
-                            error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.NoResults,
+                                error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
+                            ),
                     )
                 }
             },
@@ -198,13 +203,14 @@ class LargeFilesManagerViewModel(
             onCompleteAnimation = { outcome, snapshot ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.CompleteAnimation,
-                            items = snapshot.items,
-                            selectedIds = emptySet(),
-                            detailStartIndex = null,
-                            deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.CompleteAnimation,
+                                items = snapshot.items,
+                                selectedIds = emptySet(),
+                                detailStartIndex = null,
+                                deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
+                            ),
                         tabs = buildListTabs(snapshot.items, FileListIconKind.LargeVideo),
                     )
                 }
@@ -213,10 +219,11 @@ class LargeFilesManagerViewModel(
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.Browsing,
-                            error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.Browsing,
+                                error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
+                            ),
                     )
                 }
             },
@@ -240,4 +247,3 @@ class LargeFilesManagerViewModel(
         val items: List<IndexedFileItem>,
     )
 }
-

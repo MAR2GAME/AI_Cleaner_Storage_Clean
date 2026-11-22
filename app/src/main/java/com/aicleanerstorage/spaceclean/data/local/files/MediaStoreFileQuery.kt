@@ -5,11 +5,11 @@ import android.content.ContentUris
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.domain.rule.FileClassificationRule
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.CoroutineContext
 
 internal object MediaStoreFileQuery {
     fun queryMedia(
@@ -18,17 +18,19 @@ internal object MediaStoreFileQuery {
         type: FileKind,
         coroutineContext: CoroutineContext,
     ): List<ManagedFileModel> {
-        val projection = arrayOf(
-            MediaStore.MediaColumns._ID,
-            MediaStore.MediaColumns.DISPLAY_NAME,
-            MediaStore.MediaColumns.SIZE,
-            MediaStore.MediaColumns.DATE_MODIFIED,
-            MediaStore.MediaColumns.MIME_TYPE,
-            MediaStore.MediaColumns.DATA,
-            MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
-        )
+        val projection =
+            arrayOf(
+                MediaStore.MediaColumns._ID,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.SIZE,
+                MediaStore.MediaColumns.DATE_MODIFIED,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.DATA,
+                MediaStore.MediaColumns.BUCKET_DISPLAY_NAME,
+            )
         return runCatching {
-            resolver.query(collection, projection, null, null, "${MediaStore.MediaColumns.DATE_MODIFIED} DESC")
+            resolver
+                .query(collection, projection, null, null, "${MediaStore.MediaColumns.DATE_MODIFIED} DESC")
                 ?.use { cursor ->
                     val idCol = cursor.getColumnIndex(MediaStore.MediaColumns._ID)
                     val nameCol = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
@@ -67,7 +69,10 @@ internal object MediaStoreFileQuery {
         }
     }
 
-    fun queryFiles(resolver: ContentResolver, coroutineContext: CoroutineContext): List<ManagedFileModel> {
+    fun queryFiles(
+        resolver: ContentResolver,
+        coroutineContext: CoroutineContext,
+    ): List<ManagedFileModel> {
         val collection = MediaStore.Files.getContentUri("external")
         return runCatching {
             resolver
@@ -158,7 +163,8 @@ internal object MediaStoreFileQuery {
         )
 
     private fun Cursor.stringOrNull(index: Int): String? = if (index >= 0 && !isNull(index)) getString(index) else null
+
     private fun Cursor.longOrZero(index: Int): Long = if (index >= 0 && !isNull(index)) getLong(index) else 0L
+
     private fun Cursor.intOrZero(index: Int): Int = if (index >= 0 && !isNull(index)) getInt(index) else 0
 }
-

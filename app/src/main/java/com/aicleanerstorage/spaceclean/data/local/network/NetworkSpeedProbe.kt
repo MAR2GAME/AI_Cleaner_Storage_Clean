@@ -2,14 +2,18 @@ package com.aicleanerstorage.spaceclean.data.local.network
 
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.math.max
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 internal object NetworkSpeedProbe {
-    fun measuredSpeed(download: Double?, upload: Double?, latency: Long?): NetworkSpeedModel? =
+    fun measuredSpeed(
+        download: Double?,
+        upload: Double?,
+        latency: Long?,
+    ): NetworkSpeedModel? =
         if (download == null && upload == null) {
             null
         } else {

@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDateGroupDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.IndexedFileItem
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

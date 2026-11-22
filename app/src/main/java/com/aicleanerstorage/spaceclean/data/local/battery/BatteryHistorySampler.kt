@@ -1,10 +1,10 @@
 ﻿package com.aicleanerstorage.spaceclean.data.local.battery
 
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,4 +90,3 @@ internal class BatteryHistorySampler(
 }
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
-

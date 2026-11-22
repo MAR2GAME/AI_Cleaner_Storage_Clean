@@ -23,13 +23,14 @@ internal object DuplicateFileSelectionRule {
         contentHash: (ManagedFileModel) -> String?,
     ): List<DuplicateFileGroupModel> {
         val hashes = mutableMapOf<String, String?>()
-        return DuplicateFileRule.group(
-            candidates = files.map(::candidate),
-            contentHash = { item -> contentHash(item).also { hashes[fileIdentity(item)] = it } },
-        ).mapNotNull { group ->
-            val hash = hashes.getValue(fileIdentity(group.first())) ?: return@mapNotNull null
-            DuplicateFileGroupModel(hash = hash, files = group)
-        }
+        return DuplicateFileRule
+            .group(
+                candidates = files.map(::candidate),
+                contentHash = { item -> contentHash(item).also { hashes[fileIdentity(item)] = it } },
+            ).mapNotNull { group ->
+                val hash = hashes.getValue(fileIdentity(group.first())) ?: return@mapNotNull null
+                DuplicateFileGroupModel(hash = hash, files = group)
+            }
     }
 
     /**
@@ -62,6 +63,5 @@ internal object DuplicateFileSelectionRule {
             modifiedMillis = item.modifiedSeconds * 1_000L,
         )
 
-    private fun fileIdentity(item: ManagedFileModel): String =
-        FileClassificationRule.identity(item.path, item.uri)
+    private fun fileIdentity(item: ManagedFileModel): String = FileClassificationRule.identity(item.path, item.uri)
 }

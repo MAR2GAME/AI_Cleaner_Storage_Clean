@@ -16,10 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanSpiralAnimation
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 
 @Composable
 internal fun JunkScanLoading(uiState: JunkCleanUiState) {

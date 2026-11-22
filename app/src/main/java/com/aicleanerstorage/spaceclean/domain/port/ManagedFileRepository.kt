@@ -83,9 +83,7 @@ interface ManagedFileRepository {
      * @param selections 文件与所属分组的配对；每组至少保留一个文件。
      * @return 删除汇总；failure 表示整批未开始或安全校验失败。
      */
-    suspend fun deleteDuplicates(
-        selections: List<DuplicateFileSelectionModel>,
-    ): Result<FileDeleteSummaryModel>
+    suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel>
 
     /**
      * 移除图片的位置元数据。

@@ -8,14 +8,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -77,19 +77,15 @@ fun LargeFilesManagerRoute(
 
     FileManagerFlowDialogs(
         FileManagerFlowDialogParams(
-        flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
-        permissionState = permissionState,
-        onExitConfirmed = { permissionState.leaveBack(navigator) },
-        phase = displayState.phase,
-        deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
-    
+            flowState = flowState,
+            onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
+            permissionState = permissionState,
+            onExitConfirmed = { permissionState.leaveBack(navigator) },
+            phase = displayState.phase,
+            deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
+            onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
+            onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
+            onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
         ),
     )
 }
-
-
-

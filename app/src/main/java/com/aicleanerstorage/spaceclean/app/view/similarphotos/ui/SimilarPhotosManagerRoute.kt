@@ -3,13 +3,13 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
@@ -47,19 +47,15 @@ fun SimilarPhotosManagerRoute(
 
     FileManagerFlowDialogs(
         FileManagerFlowDialogParams(
-        flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(SimilarPhotosAction.StopDismissed) },
-        permissionState = permissionState,
-        onExitConfirmed = { permissionState.leaveBack(navigator) },
-        phase = displayState.phase,
-        deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(SimilarPhotosAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(SimilarPhotosAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(SimilarPhotosAction.DeleteConfirmed) },
-    
+            flowState = flowState,
+            onDismissStopDialog = { viewModel.dispatch(SimilarPhotosAction.StopDismissed) },
+            permissionState = permissionState,
+            onExitConfirmed = { permissionState.leaveBack(navigator) },
+            phase = displayState.phase,
+            deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
+            onCancelActiveOperation = { viewModel.dispatch(SimilarPhotosAction.OperationCancellationRequested) },
+            onCancelDelete = { viewModel.dispatch(SimilarPhotosAction.DeleteDismissed) },
+            onDeleteReady = { viewModel.dispatch(SimilarPhotosAction.DeleteConfirmed) },
         ),
     )
 }
-
-
-

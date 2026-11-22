@@ -19,7 +19,10 @@ internal object FileClassificationRule {
      * @param mimeType 平台返回的 MIME；为空时只按扩展名判断。
      * @return 图片、视频或音频返回 true。
      */
-    fun isMediaFile(name: String, mimeType: String?): Boolean {
+    fun isMediaFile(
+        name: String,
+        mimeType: String?,
+    ): Boolean {
         val extension = name.lowercase(Locale.US).substringAfterLast('.', missingDelimiterValue = "")
         val mime = mimeType.orEmpty().lowercase(Locale.US)
         return extension in MEDIA_EXTENSIONS ||
@@ -35,7 +38,10 @@ internal object FileClassificationRule {
      * @param mimeType 平台返回的 MIME；为空时按扩展名或文档关键词判断。
      * @return 非媒体且属于文档集合时返回 true。
      */
-    fun isDocumentFile(name: String, mimeType: String?): Boolean {
+    fun isDocumentFile(
+        name: String,
+        mimeType: String?,
+    ): Boolean {
         if (isMediaFile(name, mimeType)) return false
         val extension = name.lowercase(Locale.US).substringAfterLast('.', missingDelimiterValue = "")
         val mime = mimeType.orEmpty().lowercase(Locale.US)
@@ -67,7 +73,10 @@ internal object FileClassificationRule {
      * @param name 文件名。
      * @return 需要跳过返回 true。
      */
-    fun shouldSkipPath(path: String?, name: String): Boolean {
+    fun shouldSkipPath(
+        path: String?,
+        name: String,
+    ): Boolean {
         val lowerName = name.lowercase(Locale.US)
         val lowerPath = path?.lowercase(Locale.US).orEmpty()
         if (lowerName.startsWith(".") || lowerName == "lost+found") return true
@@ -84,7 +93,10 @@ internal object FileClassificationRule {
      * @param uri 平台 URI，作为兜底身份。
      * @return 稳定的文件身份字符串。
      */
-    fun identity(path: String?, uri: String): String =
+    fun identity(
+        path: String?,
+        uri: String,
+    ): String =
         path
             ?.takeIf(String::isNotBlank)
             ?.let { runCatching { File(it).canonicalPath }.getOrDefault(it) }
@@ -92,32 +104,167 @@ internal object FileClassificationRule {
 
     private val DOCUMENT_EXTENSIONS =
         setOf(
-            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "xml", "json",
-            "md", "markdown", "epub", "mobi", "azw", "azw3", "fb2", "zip", "rar", "7z", "tar", "gz",
-            "tgz", "bz2", "xz", "odt", "ods", "odp", "ott", "ots", "otp", "wps", "et", "dps", "pages",
-            "numbers", "key", "xps", "log", "ini", "conf", "cfg", "yaml", "yml", "toml", "properties", "sql",
-            "db", "sqlite", "sqlite3", "kt", "kts", "java", "js", "ts", "html", "htm", "css", "py", "sh",
-            "bat", "gradle", "c", "cpp", "h", "hpp", "cs", "go", "rs", "php", "rb", "swift",
+            "pdf",
+            "doc",
+            "docx",
+            "xls",
+            "xlsx",
+            "ppt",
+            "pptx",
+            "txt",
+            "csv",
+            "rtf",
+            "xml",
+            "json",
+            "md",
+            "markdown",
+            "epub",
+            "mobi",
+            "azw",
+            "azw3",
+            "fb2",
+            "zip",
+            "rar",
+            "7z",
+            "tar",
+            "gz",
+            "tgz",
+            "bz2",
+            "xz",
+            "odt",
+            "ods",
+            "odp",
+            "ott",
+            "ots",
+            "otp",
+            "wps",
+            "et",
+            "dps",
+            "pages",
+            "numbers",
+            "key",
+            "xps",
+            "log",
+            "ini",
+            "conf",
+            "cfg",
+            "yaml",
+            "yml",
+            "toml",
+            "properties",
+            "sql",
+            "db",
+            "sqlite",
+            "sqlite3",
+            "kt",
+            "kts",
+            "java",
+            "js",
+            "ts",
+            "html",
+            "htm",
+            "css",
+            "py",
+            "sh",
+            "bat",
+            "gradle",
+            "c",
+            "cpp",
+            "h",
+            "hpp",
+            "cs",
+            "go",
+            "rs",
+            "php",
+            "rb",
+            "swift",
         )
 
     private val DOCUMENT_MIME_KEYWORDS =
         listOf(
-            "pdf", "document", "spreadsheet", "presentation", "msword", "officedocument", "opendocument", "word",
-            "excel", "powerpoint", "wps", "csv", "rtf", "epub", "ebook", "markdown", "javascript", "xhtml",
-            "html", "yaml", "json", "xml", "sqlite", "database", "archive", "compressed", "gzip", "tar", "zip",
-            "rar", "7z",
+            "pdf",
+            "document",
+            "spreadsheet",
+            "presentation",
+            "msword",
+            "officedocument",
+            "opendocument",
+            "word",
+            "excel",
+            "powerpoint",
+            "wps",
+            "csv",
+            "rtf",
+            "epub",
+            "ebook",
+            "markdown",
+            "javascript",
+            "xhtml",
+            "html",
+            "yaml",
+            "json",
+            "xml",
+            "sqlite",
+            "database",
+            "archive",
+            "compressed",
+            "gzip",
+            "tar",
+            "zip",
+            "rar",
+            "7z",
         )
 
     private val MEDIA_EXTENSIONS =
         setOf(
-            "jpg", "jpeg", "png", "gif", "webp", "bmp", "heic", "heif", "tif", "tiff", "svg", "mp4", "mkv",
-            "mov", "avi", "webm", "3gp", "m4v", "wmv", "flv", "mpeg", "mpg", "mp3", "wav", "m4a", "aac",
-            "ogg", "oga", "flac", "amr", "wma", "opus",
+            "jpg",
+            "jpeg",
+            "png",
+            "gif",
+            "webp",
+            "bmp",
+            "heic",
+            "heif",
+            "tif",
+            "tiff",
+            "svg",
+            "mp4",
+            "mkv",
+            "mov",
+            "avi",
+            "webm",
+            "3gp",
+            "m4v",
+            "wmv",
+            "flv",
+            "mpeg",
+            "mpg",
+            "mp3",
+            "wav",
+            "m4a",
+            "aac",
+            "ogg",
+            "oga",
+            "flac",
+            "amr",
+            "wma",
+            "opus",
         )
 
     private val SYSTEM_DIRECTORIES =
         listOf(
-            "/system", "/lost+found", "/preload", "/vendor", "/mnt", "/proc", "/sys", "/acct", "/dev",
-            "/config", "/oem", "/firmware", "/cache",
+            "/system",
+            "/lost+found",
+            "/preload",
+            "/vendor",
+            "/mnt",
+            "/proc",
+            "/sys",
+            "/acct",
+            "/dev",
+            "/config",
+            "/oem",
+            "/firmware",
+            "/cache",
         )
 }

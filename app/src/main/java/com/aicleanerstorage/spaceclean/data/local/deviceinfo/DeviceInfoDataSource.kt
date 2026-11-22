@@ -136,5 +136,3 @@ internal object DeviceInfoDataSource {
 
     private const val ASSUMED_HOURLY_DRAIN = 18.5f
 }
-
-

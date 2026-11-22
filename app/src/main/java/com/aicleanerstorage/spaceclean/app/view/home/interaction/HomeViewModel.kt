@@ -1,11 +1,11 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -181,4 +181,3 @@ class HomeViewModel(
         super.onCleared()
     }
 }
-

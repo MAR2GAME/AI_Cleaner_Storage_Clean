@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.architecture
 
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 class MotherTemplateBoundaryTest {
     private val root =
@@ -12,8 +12,7 @@ class MotherTemplateBoundaryTest {
             .map(File::getCanonicalFile)
             .first { File(it, "settings.gradle.kts").exists() }
 
-    private fun sources(): Sequence<File> =
-        File(root, "app/src/main/java").walkTopDown().filter { it.extension == "kt" }
+    private fun sources(): Sequence<File> = File(root, "app/src/main/java").walkTopDown().filter { it.extension == "kt" }
 
     @Test
     fun `manifest component classes exist`() {

@@ -45,13 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CategoryCleanGroup
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.SelectionSummary
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -440,4 +440,3 @@ private fun mergeDisplayGroup(
                 groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
             },
     )
-

@@ -99,4 +99,3 @@ interface AppLockRepository {
      * @param packageName 鏂板畨瑁呭簲鐢ㄥ寘鍚嶏紱鑷姩閿佸畾鍏抽棴鏃跺簲蹇界暐銆?     */
     fun handlePackageAdded(packageName: String)
 }
-

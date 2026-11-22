@@ -5,10 +5,10 @@ import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -238,7 +238,8 @@ internal class DeviceInfoStateController(
 
     private fun shouldForceBatterySample(timestampMillis: Long): Boolean {
         val latestSample =
-            batteryHistoryRepository.loadRecent()
+            batteryHistoryRepository
+                .loadRecent()
                 .lastOrNull()
                 ?: batteryHistoryRepository.loadRecent(timestampMillis).lastOrNull()
                 ?: return true

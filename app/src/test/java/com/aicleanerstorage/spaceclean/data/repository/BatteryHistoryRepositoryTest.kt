@@ -28,4 +28,3 @@ class BatteryHistoryRepositoryTest {
         assertEquals(repository.loadRecent(now), DefaultBatteryHistoryRepository(file).loadRecent(now))
     }
 }
-

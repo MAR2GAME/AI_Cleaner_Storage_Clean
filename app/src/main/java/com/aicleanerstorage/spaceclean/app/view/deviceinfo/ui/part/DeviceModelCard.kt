@@ -3,7 +3,6 @@
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,17 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.orPlaceholder
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.CleanXMutedText
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 
 @Composable
 internal fun DeviceModelCard(hardware: DeviceHardwareInfoModel) {
@@ -52,7 +49,9 @@ internal fun DeviceModelCard(hardware: DeviceHardwareInfoModel) {
             DeviceModelTextColumn(hardware)
             Spacer(Modifier.weight(1.0f))
             androidx.compose.foundation.Image(
-                painter = androidx.compose.ui.res.painterResource(R.drawable.device_model),
+                painter =
+                    androidx.compose.ui.res
+                        .painterResource(R.drawable.device_model),
                 contentDescription = null,
                 modifier = Modifier.height(96.dp),
             )
@@ -116,4 +115,3 @@ private fun deviceModelName(model: String): String {
         "$manufacturer-$resolvedModel"
     }
 }
-

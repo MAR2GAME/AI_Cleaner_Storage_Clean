@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.background
 
-import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
 
 /**
  * 应用级电池采样同步。

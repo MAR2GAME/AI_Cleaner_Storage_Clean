@@ -8,13 +8,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
@@ -67,19 +67,15 @@ fun DuplicateFilesManagerRoute(
 
     FileManagerFlowDialogs(
         FileManagerFlowDialogParams(
-        flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(DuplicateFilesAction.StopDismissed) },
-        permissionState = permissionState,
-        onExitConfirmed = { permissionState.leaveBack(navigator) },
-        phase = displayState.phase,
-        deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete,
-        onCancelActiveOperation = { viewModel.dispatch(DuplicateFilesAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(DuplicateFilesAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
-    
+            flowState = flowState,
+            onDismissStopDialog = { viewModel.dispatch(DuplicateFilesAction.StopDismissed) },
+            permissionState = permissionState,
+            onExitConfirmed = { permissionState.leaveBack(navigator) },
+            phase = displayState.phase,
+            deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete,
+            onCancelActiveOperation = { viewModel.dispatch(DuplicateFilesAction.OperationCancellationRequested) },
+            onCancelDelete = { viewModel.dispatch(DuplicateFilesAction.DeleteDismissed) },
+            onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
         ),
     )
 }
-
-
-

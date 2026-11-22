@@ -1,11 +1,11 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.error.JunkError
 import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 
 sealed interface JunkCleanPhase {
     data object Idle : JunkCleanPhase
@@ -148,6 +148,7 @@ internal data class JunkCleaningStopped(
     val selected: Set<JunkFileModel>,
     val summary: CleanupSummaryModel,
 ) : JunkCleanAction.ReducerOnly
+
 internal data class JunkStopDialogShown(
     val phase: JunkCleanPhase,
 ) : JunkCleanAction.ReducerOnly

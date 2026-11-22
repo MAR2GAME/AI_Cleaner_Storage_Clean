@@ -1,8 +1,7 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part
-
-import androidx.annotation.StringRes
+﻿package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part
 
 import android.text.format.DateFormat
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -156,6 +155,7 @@ private fun BlockedNotificationGroups(groups: List<BlockedNotificationGroup>) {
         if (groupIndex != groups.lastIndex) Spacer(modifier = Modifier.height(20.dp))
     }
 }
+
 internal val CardBg = Color.White
 
 private val NotificationStatusCardRadius = 12.dp
@@ -283,4 +283,3 @@ private data class BlockedNotificationGroup(
     val app: BlockableNotificationAppModel,
     val items: List<BlockedNotificationModel>,
 )
-

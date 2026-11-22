@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 
 @Composable
 internal fun NetworkSpeedTestingContent(uiState: NetworkSpeedUiState) {

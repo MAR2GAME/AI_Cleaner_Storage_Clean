@@ -1,15 +1,15 @@
 package com.aicleanerstorage.spaceclean.app.view.battery.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoMode
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoStateController
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

@@ -1,14 +1,14 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -145,6 +145,3 @@ class NetworkSpeedViewModelTest {
             )
     }
 }
-
-
-

@@ -15,16 +15,14 @@ internal class DefaultAppSettingsRepository(
 ) : AppSettingsRepository {
     override fun readTemperatureUnit(): String = preferences.getString(KEY_TEMPERATURE_UNIT, "C")
 
-    override fun saveTemperatureUnit(unit: String): Result<Unit> =
-        save { putString(KEY_TEMPERATURE_UNIT, unit) }
+    override fun saveTemperatureUnit(unit: String): Result<Unit> = save { putString(KEY_TEMPERATURE_UNIT, unit) }
 
     override fun readLastAutoRatePromptAt(): Long = preferences.getLong(KEY_LAST_AUTO_RATE_PROMPT_AT, 0L)
 
     override fun saveLastAutoRatePromptAt(timestampMillis: Long): Result<Unit> =
         save { putLong(KEY_LAST_AUTO_RATE_PROMPT_AT, timestampMillis) }
 
-    override fun readLastNotificationPermissionPromptAt(): Long =
-        preferences.getLong(KEY_LAST_NOTIFICATION_PERMISSION_PROMPT_AT, 0L)
+    override fun readLastNotificationPermissionPromptAt(): Long = preferences.getLong(KEY_LAST_NOTIFICATION_PERMISSION_PROMPT_AT, 0L)
 
     override fun saveLastNotificationPermissionPromptAt(timestampMillis: Long): Result<Unit> =
         save { putLong(KEY_LAST_NOTIFICATION_PERMISSION_PROMPT_AT, timestampMillis) }
@@ -37,19 +35,15 @@ internal class DefaultAppSettingsRepository(
 
     override fun isOnboardingScanCompleted(): Boolean = preferences.getBoolean(KEY_ONBOARDING_SCAN_COMPLETED, false)
 
-    override fun markOnboardingScanCompleted(): Result<Unit> =
-        save { putBoolean(KEY_ONBOARDING_SCAN_COMPLETED, true) }
+    override fun markOnboardingScanCompleted(): Result<Unit> = save { putBoolean(KEY_ONBOARDING_SCAN_COMPLETED, true) }
 
     override fun isDuplicateFilesWarningAccepted(): Boolean = preferences.getBoolean(KEY_DUPLICATE_FILES_WARNING_ACCEPTED, false)
 
-    override fun acceptDuplicateFilesWarning(): Result<Unit> =
-        save { putBoolean(KEY_DUPLICATE_FILES_WARNING_ACCEPTED, true) }
+    override fun acceptDuplicateFilesWarning(): Result<Unit> = save { putBoolean(KEY_DUPLICATE_FILES_WARNING_ACCEPTED, true) }
 
-    override fun isBackgroundBatterySamplingEnabled(): Boolean =
-        preferences.getBoolean(KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED, false)
+    override fun isBackgroundBatterySamplingEnabled(): Boolean = preferences.getBoolean(KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED, false)
 
-    override fun enableBackgroundBatterySampling(): Result<Unit> =
-        save { putBoolean(KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED, true) }
+    override fun enableBackgroundBatterySampling(): Result<Unit> = save { putBoolean(KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED, true) }
 
     private fun save(action: SharedPreferences.Editor.() -> Unit): Result<Unit> =
         if (preferences.editAndCommit(action)) {

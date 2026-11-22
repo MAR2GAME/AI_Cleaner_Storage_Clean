@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.CleanItem
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
@@ -18,6 +17,7 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperat
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBackground
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.base.mvi.asString
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 
 @Composable
 internal fun JunkCleanContent(

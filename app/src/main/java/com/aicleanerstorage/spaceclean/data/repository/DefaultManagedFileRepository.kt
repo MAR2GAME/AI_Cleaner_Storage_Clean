@@ -103,9 +103,7 @@ internal class DefaultManagedFileRepository(
             deletion.delete(files).toSummary()
         }
 
-    override suspend fun deleteDuplicates(
-        selections: List<DuplicateFileSelectionModel>,
-    ): Result<FileDeleteSummaryModel> =
+    override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
         catching {
             deletion.deleteDuplicates(selections).toSummary()
         }

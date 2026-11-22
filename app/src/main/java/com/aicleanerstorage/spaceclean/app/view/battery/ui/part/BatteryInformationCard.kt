@@ -25,9 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.displayBatteryTemperatureValue
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
 import java.util.Locale
 
 @Composable
@@ -221,4 +221,3 @@ private fun availableTimeText(minutes: Int?): String {
         stringResource(R.string.duration_minutes, remainingMinutes)
     }
 }
-

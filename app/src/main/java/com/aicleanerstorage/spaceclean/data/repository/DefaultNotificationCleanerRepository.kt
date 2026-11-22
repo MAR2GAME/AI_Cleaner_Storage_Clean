@@ -1,14 +1,13 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
-import com.aicleanerstorage.spaceclean.data.local.notificationcleaner.NotificationCleanerDataSource
-import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
-
 import android.content.ComponentName
 import android.content.Context
-import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
+import com.aicleanerstorage.spaceclean.data.local.notificationcleaner.NotificationCleanerDataSource
+import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.NotificationCleanerSnapshotModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 
 /** 用通知监听服务与偏好存储实现通知拦截、记录和会话快照。 */
 internal class DefaultNotificationCleanerRepository(
@@ -32,8 +31,7 @@ internal class DefaultNotificationCleanerRepository(
             if (retainContent) posted else posted.copy(title = "", text = ""),
         )
 
-    override fun hasNotificationListenerAccess(): Boolean =
-        dataSource.hasNotificationListenerAccess(appContext, listener)
+    override fun hasNotificationListenerAccess(): Boolean = dataSource.hasNotificationListenerAccess(appContext, listener)
 
     override fun notificationSnapshot(includeApps: Boolean): NotificationCleanerSnapshotModel {
         val hasAccess = hasNotificationListenerAccess()

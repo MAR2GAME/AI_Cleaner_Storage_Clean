@@ -36,12 +36,12 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDivider
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListBottomPadding
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.duplicateFileKey
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable

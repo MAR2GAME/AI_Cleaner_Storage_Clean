@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
 
 data class DuplicateFilesManagerUiState(
     val permissionGranted: Boolean = false,

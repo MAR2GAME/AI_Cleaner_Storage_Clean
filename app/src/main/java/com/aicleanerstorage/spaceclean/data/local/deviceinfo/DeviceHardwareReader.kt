@@ -13,7 +13,9 @@ import com.aicleanerstorage.spaceclean.domain.model.device.DeviceSensorInfoModel
 import java.io.File
 import java.util.Locale
 
-internal class DeviceHardwareReader(private val appContext: Context) {
+internal class DeviceHardwareReader(
+    private val appContext: Context,
+) {
     fun hardwareInfo(): DeviceHardwareInfoModel {
         val metrics = appContext.resources.displayMetrics
         val packageManager = appContext.packageManager
@@ -154,5 +156,4 @@ internal class DeviceHardwareReader(private val appContext: Context) {
     }
 }
 
-private fun File.readTrimmedText(): String =
-    runCatching { readText().trim() }.getOrDefault("")
+private fun File.readTrimmedText(): String = runCatching { readText().trim() }.getOrDefault("")

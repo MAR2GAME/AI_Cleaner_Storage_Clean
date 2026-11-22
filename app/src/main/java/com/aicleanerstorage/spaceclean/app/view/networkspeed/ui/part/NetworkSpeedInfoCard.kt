@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkTransport
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedUiState
@@ -27,6 +26,7 @@ import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpee
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedDivider
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavy
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.part.NetworkSpeedNavyMuted
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkTransport
 
 @Composable
 internal fun NetworkSpeedInfoCard(uiState: NetworkSpeedUiState) {

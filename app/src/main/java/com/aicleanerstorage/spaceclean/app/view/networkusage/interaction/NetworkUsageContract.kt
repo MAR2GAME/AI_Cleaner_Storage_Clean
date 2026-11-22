@@ -1,9 +1,9 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.TrafficSource
-import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
 enum class NetworkUsageTab {
     Cellular,
@@ -129,4 +129,3 @@ sealed interface NetworkUsageAction {
         val index: Int,
     ) : NetworkUsageAction
 }
-

@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
-import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

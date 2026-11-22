@@ -1,8 +1,8 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -115,4 +115,3 @@ class NetworkScanViewModel(
         private const val NETWORK_REFRESH_RETRY_DELAY_MILLIS = 500L
     }
 }
-

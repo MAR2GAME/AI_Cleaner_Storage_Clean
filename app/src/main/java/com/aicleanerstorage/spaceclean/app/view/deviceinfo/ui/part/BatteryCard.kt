@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
-import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
-import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.currentBatteryCapacityMah
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryCapacityMah
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryTemperature
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.formatBatteryVoltage
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.orPlaceholder
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 
 @Composable
 internal fun BatteryCard(uiState: DeviceInfoUiState) {

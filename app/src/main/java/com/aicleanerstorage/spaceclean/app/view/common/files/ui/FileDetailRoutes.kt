@@ -4,19 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
-import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileDetailDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteConfirmDialog
+import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.screenshots.interaction.ScreenshotsManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable

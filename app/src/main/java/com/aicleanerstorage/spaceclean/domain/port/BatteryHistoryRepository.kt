@@ -4,8 +4,11 @@ import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySample
 import kotlinx.coroutines.flow.Flow
 
 /**
- * 鐢垫睜鍘嗗彶鏍锋湰鐨勮鍙栦笌杩藉姞濂戠害銆? *
- * 鍙繚鐣欐渶杩?[WINDOW_MILLIS] 鍐呯殑鏍锋湰锛涙煡璇㈢粨鏋滄寜鏃堕棿鍗囧簭锛? * 瀛樺偍灞傝礋璐ｄ涪寮冭繃鏃ф垨鏃堕棿鏄庢樉瓒呭墠鐨勬牱鏈€? */
+ * 电池历史采样的读取与追加契约。
+ *
+ * 只保留最近 [WINDOW_MILLIS] 内的样本；查询结果按时间升序；
+ * 存储层负责丢弃过旧或时间明显超前的样本。
+ */
 interface BatteryHistoryRepository {
     /**
      * 观察当前窗口内的采样列表。
@@ -22,13 +25,20 @@ interface BatteryHistoryRepository {
     fun latestSample(): BatteryHistorySampleModel?
 
     /**
-     * 璇诲彇鏈€杩戠獥鍙ｅ唴鐨勬牱鏈€?     *
-     * @param nowMillis 褰撳墠鏃堕棿锛涙祴璇曞彲娉ㄥ叆鍥哄畾鍊笺€?     * @return 鎸夋椂闂村崌搴忕殑鏍锋湰鍒楄〃锛涙病鏈夋暟鎹椂涓虹┖鍒楄〃銆?     */
+     * 读取最近窗口内的样本。
+     *
+     * @param nowMillis 当前时间；测试可注入固定值。
+     * @return 按时间升序的样本列表；没有数据时为空列表。
+     */
     fun loadRecent(nowMillis: Long = System.currentTimeMillis()): List<BatteryHistorySampleModel>
 
     /**
-     * 杩藉姞涓€鏉￠噰鏍峰苟杩斿洖鏇存柊鍚庣殑绐楀彛銆?     *
-     * @param sample 寰呰拷鍔犳牱鏈€?     * @param nowMillis 褰撳墠鏃堕棿锛涚敤浜庤繃婊よ繃鏃у拰鏈潵鏍锋湰銆?     * @return 鏇存柊鍚庣殑鎸夋椂闂村崌搴忔牱鏈垪琛ㄣ€?     */
+     * 追加一条采样并返回更新后的窗口。
+     *
+     * @param sample 待追加样本。
+     * @param nowMillis 当前时间；用于过滤过旧和未来样本。
+     * @return 更新后的按时间升序样本列表。
+     */
     fun append(
         sample: BatteryHistorySampleModel,
         nowMillis: Long = System.currentTimeMillis(),
@@ -41,4 +51,3 @@ interface BatteryHistoryRepository {
         const val FUTURE_TOLERANCE_MILLIS = 60_000L
     }
 }
-

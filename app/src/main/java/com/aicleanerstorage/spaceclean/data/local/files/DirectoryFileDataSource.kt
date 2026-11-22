@@ -6,11 +6,11 @@ import com.aicleanerstorage.spaceclean.base.permission.requireGranted
 import com.aicleanerstorage.spaceclean.data.local.storage.DirectoryFileScanner
 import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.domain.rule.FileClassificationRule
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import java.io.File
 
 /**
  * 指定目录下的文件查询数据源。
@@ -37,7 +37,8 @@ internal class DirectoryFileDataSource(
         withContext(Dispatchers.IO) {
             require(
                 relativeDirectories.all { path ->
-                    path.isNotBlank() && !File(path).isAbsolute &&
+                    path.isNotBlank() &&
+                        !File(path).isAbsolute &&
                         path.split('/').none { it.isEmpty() || it == "." || it == ".." }
                 },
             ) { "Expected relative directory paths below external storage" }
@@ -59,6 +60,5 @@ internal class DirectoryFileDataSource(
     private suspend fun queryFiles(): List<ManagedFileModel> =
         MediaStoreFileQuery.queryFiles(context.contentResolver, currentCoroutineContext())
 
-    private fun fileIdentity(item: ManagedFileModel): String =
-        FileClassificationRule.identity(item.path, item.uri)
+    private fun fileIdentity(item: ManagedFileModel): String = FileClassificationRule.identity(item.path, item.uri)
 }

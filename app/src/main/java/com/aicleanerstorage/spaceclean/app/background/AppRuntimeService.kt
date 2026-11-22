@@ -6,12 +6,12 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
+import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

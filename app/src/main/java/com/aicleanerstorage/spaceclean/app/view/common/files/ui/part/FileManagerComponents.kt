@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBackgroundColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerCardBackgroundColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDividerLineColor
@@ -31,6 +30,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTitleColor
+import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.buttons.CleanXGradientBottomActionBar
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil

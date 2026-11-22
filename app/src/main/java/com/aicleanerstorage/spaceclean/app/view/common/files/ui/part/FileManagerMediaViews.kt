@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.util.LruCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,12 +59,12 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileIma
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileImageGroupDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListBottomPadding
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.localizedFileManagerTabTitle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillTabs
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTabItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -167,7 +166,11 @@ fun FileManagerSimilarPhotosView(params: FileManagerSimilarPhotosParams) {
 private fun SimilarPhotoGroupList(params: FileManagerSimilarPhotosParams) {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         params.groups.forEach { group ->
-            val groupIds = group.items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+            val groupIds =
+                group.items
+                    .filterNot { it.bestPhoto }
+                    .map { it.id }
+                    .toSet()
             FileManagerSimilarPhotoGroupCard(
                 group = group,
                 selectedIds = params.selectedIds,
@@ -804,11 +807,3 @@ private fun calculateInSampleSize(
     }
     return sampleSize
 }
-
-
-
-
-
-
-
-

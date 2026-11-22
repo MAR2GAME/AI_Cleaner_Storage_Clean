@@ -12,8 +12,6 @@ import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -158,9 +156,7 @@ class JunkCleanViewModelTest {
         private val failure: Throwable? = null,
         private val outcomes: List<JunkDeleteOutcomeModel> = emptyList(),
     ) : JunkCleanRepository {
-        override suspend fun scan(
-            onProgress: (JunkScanProgressModel) -> Unit,
-        ): Result<JunkScanResultModel> =
+        override suspend fun scan(onProgress: (JunkScanProgressModel) -> Unit): Result<JunkScanResultModel> =
             failure?.let { Result.failure(it) } ?: run {
                 onProgress(JunkScanProgressModel.IDLE)
                 Result.success(result)
@@ -174,5 +170,3 @@ class JunkCleanViewModelTest {
         ): Result<List<JunkDeleteOutcomeModel>> = Result.success(outcomes)
     }
 }
-
-

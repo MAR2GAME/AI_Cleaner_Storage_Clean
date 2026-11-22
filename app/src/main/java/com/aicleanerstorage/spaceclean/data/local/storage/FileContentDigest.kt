@@ -10,24 +10,28 @@ internal object FileContentDigest {
         file: File,
         maxBytes: Long = Long.MAX_VALUE,
         checkCancellation: () -> Unit = {},
-    ): String? = try {
-        checkCancellation()
-        val size = file.length()
-        val modified = file.lastModified()
-        if (!file.isFile || size <= 0L || size > maxBytes) {
-            null
-        } else {
-            val hash = file.inputStream().use { sha256(it, checkCancellation) }
+    ): String? =
+        try {
             checkCancellation()
-            hash.takeIf { file.isFile && file.length() == size && file.lastModified() == modified }
+            val size = file.length()
+            val modified = file.lastModified()
+            if (!file.isFile || size <= 0L || size > maxBytes) {
+                null
+            } else {
+                val hash = file.inputStream().use { sha256(it, checkCancellation) }
+                checkCancellation()
+                hash.takeIf { file.isFile && file.length() == size && file.lastModified() == modified }
+            }
+        } catch (error: CancellationException) {
+            throw error
+        } catch (_: Exception) {
+            null
         }
-    } catch (error: CancellationException) {
-        throw error
-    } catch (_: Exception) {
-        null
-    }
 
-    fun sha256(input: InputStream, checkCancellation: () -> Unit = {}): String {
+    fun sha256(
+        input: InputStream,
+        checkCancellation: () -> Unit = {},
+    ): String {
         val digest = MessageDigest.getInstance("SHA-256")
         val buffer = ByteArray(64 * 1024)
         while (true) {
@@ -38,5 +42,4 @@ internal object FileContentDigest {
         }
         return digest.digest().joinToString("") { "%02x".format(it) }
     }
-
 }

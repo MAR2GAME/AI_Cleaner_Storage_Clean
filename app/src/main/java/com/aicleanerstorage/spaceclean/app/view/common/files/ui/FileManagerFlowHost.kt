@@ -26,10 +26,14 @@ import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 
 /**
- * 鏂囦欢绠＄悊娴佺▼鐨勬潈闄愮姸鎬佸涓汇€? *
- * 鐘舵€佹寕鍦ㄦ祦绋嬫牴 entry 鐨?ViewModel 涓婏紝鍒楄〃椤典笌璇︽儏椤靛叡鐢ㄥ悓涓€涓疄渚嬶紱
- * [onCleared] 鏃舵爣璁扮寮€锛岄伩鍏嶈繑鍥炶繃绋嬩腑鐨勮繜鍒颁簨浠跺啀娆″鑸€? *
- * @param requiredPermissions 鏈祦绋嬮渶瑕佺殑鏉冮檺闆嗗悎銆? * @param initialGranted 鍒涘缓鏃舵牴鎹郴缁熺姸鎬佺畻鍑虹殑鍒濆鍊笺€? */
+ * 文件管理流程的权限状态宿主。
+ *
+ * 状态挂在流程根 entry 的 ViewModel 上，列表页与详情页共用同一个实例；
+ * [onCleared] 时标记离开，避免返回过程中的迟到事件再次导航。
+ *
+ * @param requiredPermissions 本流程需要的权限集合。
+ * @param initialGranted 创建时根据系统状态算出的初始值。
+ */
 internal class FileManagerOwnerState(
     requiredPermissions: Set<AppPermission>,
     initialGranted: Boolean,
@@ -43,8 +47,12 @@ internal class FileManagerOwnerState(
 }
 
 /**
- * 鍙栧緱锛堟垨鍒涘缓锛夋枃浠剁鐞嗘祦绋嬬殑鏉冮檺鐘舵€併€? *
- * @param ownerEntry 娴佺▼鏍?destination 鐨?back stack entry銆? * @param requiredPermissions 鏈祦绋嬮渶瑕佺殑鏉冮檺闆嗗悎銆? * @return 鎸傚湪 [ownerEntry] 涓娿€佸垪琛ㄩ〉涓庤鎯呴〉鍏变韩鐨勬潈闄愮姸鎬併€? */
+ * 取得（或创建）文件管理流程的权限状态。
+ *
+ * @param ownerEntry 流程根 destination 的 back stack entry。
+ * @param requiredPermissions 本流程需要的权限集合。
+ * @return 挂在 [ownerEntry] 上、列表页与详情页共享的权限状态。
+ */
 @Composable
 internal fun rememberFileManagerOwnerState(
     ownerEntry: NavBackStackEntry,
@@ -56,8 +64,7 @@ internal fun rememberFileManagerOwnerState(
         remember(granted, requiredPermissions) {
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    FileManagerOwnerState(requiredPermissions, granted) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>): T = FileManagerOwnerState(requiredPermissions, granted) as T
             }
         }
     val holder: FileManagerOwnerState = viewModel(viewModelStoreOwner = ownerEntry, factory = factory)
@@ -65,10 +72,20 @@ internal fun rememberFileManagerOwnerState(
 }
 
 /**
- * 鏂囦欢绠＄悊娴佺▼瀹夸富锛氬垪琛ㄩ〉涓庤鎯呴〉鍚勮嚜鎸傝浇涓€浠斤紝浣嗗彧鏈夊浜?RESUMED 鐨勫綋鍓嶉〉浼氭敹闆? * [MviViewModel.event]锛屽洜姝ゆ祦绋嬬骇 effect 鍦ㄤ换鎰忔椂鍒诲彧鏈変竴涓秷璐硅€呫€? *
- * 杩涘叆椤甸潰鍜屼粠绯荤粺璁剧疆杩斿洖鏃堕兘浼氶噸鏂版煡璇?[requiredPermissions]锛涙潈闄愰綈澶囧悗
- * [FileManagerFlowEffects] 鎵嶄細瑙﹀彂棣栨鍔犺浇锛岄伩鍏嶁€滃厛鎵弿銆佸悗鎶ユ潈闄愬け璐モ€濄€? *
- * @param rootEntry 娴佺▼鏍?destination 鐨?entry锛屾潈闄愮姸鎬佹寕鍦ㄥ畠涓婇潰銆? * @param currentEntry 褰撳墠椤甸潰鐨?entry锛岀敤浜庡垽鏂槸鍚?RESUMED銆? * @param navigator 搴旂敤瀵艰埅鍣紝鐢?effect 鎵ц璺宠浆銆? * @param viewModel 鏈祦绋嬪叡浜殑 MVI ViewModel銆? * @param error 浠庨〉闈㈢姸鎬佷腑鍙栭敊璇枃妗堬紱涓?null 鏃朵笉鎻愮ず銆? * @param requiredPermissions 鏈祦绋嬮渶瑕佺殑鏉冮檺闆嗗悎锛岄粯璁ゅ彧瑕佹眰瀛樺偍鏉冮檺銆? * @param content 椤甸潰鍐呭锛涘弬鏁版槸鍏变韩鐨勬潈闄愮姸鎬併€? */
+ * 文件管理流程宿主：列表页与详情页各自挂载一份，但只有处于 RESUMED 的当前页会收集
+ * [MviViewModel.event]，因此流程级 effect 在任意时刻只有一个消费者。
+ *
+ * 进入页面和从系统设置返回时都会重新查询 [requiredPermissions]；权限齐备后
+ * [FileManagerFlowEffects] 才会触发首次加载，避免“先扫描、后报权限失败”。
+ *
+ * @param rootEntry 流程根 destination 的 entry，权限状态挂在它上面。
+ * @param currentEntry 当前页面的 entry，用于判断是否 RESUMED。
+ * @param navigator 应用导航器，由 effect 执行跳转。
+ * @param viewModel 本流程共享的 MVI ViewModel。
+ * @param error 从页面状态中取错误文案；为 null 时不提示。
+ * @param requiredPermissions 本流程需要的权限集合，默认只要求存储权限。
+ * @param content 页面内容；参数是共享的权限状态。
+ */
 @Composable
 internal fun <S : Any, A : Any> FileManagerFlowHost(
     rootEntry: NavBackStackEntry,
@@ -135,5 +152,3 @@ internal fun <S : Any, A : Any> FileManagerFlowHost(
     }
     content(permissionState)
 }
-
-

@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.domain.model.device.BatteryInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 data class HomeSummaryUiState(
     val storageInfo: CapacityInfoModel = CapacityInfoModel(0, 0),

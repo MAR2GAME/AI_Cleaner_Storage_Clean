@@ -2,8 +2,8 @@ package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 
 @Composable
 internal fun SensorsCard(hardware: DeviceHardwareInfoModel) {

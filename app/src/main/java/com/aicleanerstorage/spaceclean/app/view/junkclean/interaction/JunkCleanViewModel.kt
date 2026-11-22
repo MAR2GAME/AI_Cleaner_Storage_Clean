@@ -1,14 +1,13 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
+package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkDeleteOutcomeModel
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.domain.error.JunkError
 import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
+import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -37,7 +36,7 @@ class JunkCleanViewModel(
         val memoryResult: JunkMemoryCleanModel? = null,
     )
 
-    private val FINISHING_ANIMATION_MILLIS = 800L
+    private val finishingAnimationMillis = 800L
 
     private var scanJob: Job? = null
 
@@ -142,28 +141,28 @@ class JunkCleanViewModel(
         scanJob =
             viewModelScope.launch {
                 try {
-                                        val scanStartedAt = System.currentTimeMillis()
+                    val scanStartedAt = System.currentTimeMillis()
                     dispatch(JunkScanStarted)
                     val result =
                         withContext(ioDispatcher) {
-                        cleanRepository.scan { progress ->
-                            if (currentState.phase == JunkCleanPhase.Scanning) {
-                                reduce(
-                                    JunkScanProgressUpdated(
-                                        progress = progress.percent,
-                                        currentCategory = progress.currentCategory,
-                                        foundItemCount = progress.foundCount,
-                                        foundTotalSize = progress.foundSize,
-                                    ),
-                                )
+                            cleanRepository.scan { progress ->
+                                if (currentState.phase == JunkCleanPhase.Scanning) {
+                                    reduce(
+                                        JunkScanProgressUpdated(
+                                            progress = progress.percent,
+                                            currentCategory = progress.currentCategory,
+                                            foundItemCount = progress.foundCount,
+                                            foundTotalSize = progress.foundSize,
+                                        ),
+                                    )
+                                }
                             }
-                        }
-                    }.getOrElse {
-                                                dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                        }.getOrElse {
+                            dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
                             return@launch
                         }
                     currentCoroutineContext().ensureActive()
-                                lastScanResult = result
+                    lastScanResult = result
                     dispatch(JunkScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
                     loadPreview(result)
@@ -171,7 +170,7 @@ class JunkCleanViewModel(
                     throw error
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
-                                dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                    dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
                 }
             }
     }
@@ -325,13 +324,14 @@ class JunkCleanViewModel(
                 memoryFreedBytes = memoryResult?.freedBytes ?: 0L,
             )
 
-        lastScanResult = lastScanResult?.let { result ->
-            result.copy(files = result.files.filterNot { it in cleanedFiles })
-        }
+        lastScanResult =
+            lastScanResult?.let { result ->
+                result.copy(files = result.files.filterNot { it in cleanedFiles })
+            }
 
         cleaningExecutionState = CleaningExecutionState()
         dispatch(JunkCleaningCompleted(summary))
-        delay(FINISHING_ANIMATION_MILLIS)
+        delay(finishingAnimationMillis)
         if (currentState.phase == JunkCleanPhase.CompleteAnimation) {
             dispatch(JunkResultAnimationCompleted)
         }
@@ -353,6 +353,3 @@ class JunkCleanViewModel(
         super.onCleared()
     }
 }
-
-
-

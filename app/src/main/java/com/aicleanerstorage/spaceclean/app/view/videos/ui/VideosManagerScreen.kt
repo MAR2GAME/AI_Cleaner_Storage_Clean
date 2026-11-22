@@ -11,17 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosUiState
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMediaGridParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMediaGridView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
+import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosUiState
 
 @Composable
 fun VideosManagerScreen(
@@ -54,45 +54,41 @@ fun VideosManagerScreen(
         val result = state.resultSize
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
-            FileOperationPhaseParams(
-                phase = state.phase,
-                scanningText = stringResource(R.string.file_scanning_videos),
-                deletingText = stringResource(R.string.file_deleting_files),
-                resultAmount = result.first,
-                resultUnit = result.second,
-                resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-                onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
-                onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
-                noResultsContent = {
-                    FileManagerNoResultsContent(
-                        tabs = state.tabs,
-                        selectedTabIndex = state.selectedTabIndex,
-                        onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
-                    )
-                },
-            
-            ),
-        ) {
+                FileOperationPhaseParams(
+                    phase = state.phase,
+                    scanningText = stringResource(R.string.file_scanning_videos),
+                    deletingText = stringResource(R.string.file_deleting_files),
+                    resultAmount = result.first,
+                    resultUnit = result.second,
+                    resultCaption = stringResource(R.string.file_deleted_in_cleanup),
+                    onNavigateTool = { destination -> onAction(FilePageAction.NavigationRequested(destination)) },
+                    onContinue = { onAction(FilePageAction.ContinueManagingClicked) },
+                    noResultsContent = {
+                        FileManagerNoResultsContent(
+                            tabs = state.tabs,
+                            selectedTabIndex = state.selectedTabIndex,
+                            onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
+                        )
+                    },
+                ),
+            ) {
                 FileManagerMediaGridView(
                     FileManagerMediaGridParams(
-                    tabs = state.tabs,
-                    items = state.displayItems,
-                    selectedTabIndex = state.selectedTabIndex,
-                    onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
-                    scrollState = scrollState,
-                    selectedIds = state.selectedIds,
-                    onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
-                    onToggleVisibleItems = { onAction(FilePageAction.VisibleSelectionToggled(it)) },
-                    onOpenDetail = { item ->
-                        val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
-                        onAction(FilePageAction.DetailClicked(index))
-                    },
-                
+                        tabs = state.tabs,
+                        items = state.displayItems,
+                        selectedTabIndex = state.selectedTabIndex,
+                        onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
+                        scrollState = scrollState,
+                        selectedIds = state.selectedIds,
+                        onSelect = { onAction(FilePageAction.SelectionToggled(it)) },
+                        onToggleVisibleItems = { onAction(FilePageAction.VisibleSelectionToggled(it)) },
+                        onOpenDetail = { item ->
+                            val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
+                            onAction(FilePageAction.DetailClicked(index))
+                        },
                     ),
                 )
             }
         }
     }
 }
-
-

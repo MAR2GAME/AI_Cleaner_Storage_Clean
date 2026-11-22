@@ -26,8 +26,6 @@ import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageVie
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.AppUsageRoute
 import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.audios.ui.AudiosManagerRoute
-import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.interaction.BatteryInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.BatteryInfoRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
@@ -35,19 +33,23 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.AudiosFileDetail
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.DocumentsFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowHost
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.LargeFilesFileDetailRoute
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.VideosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.PhotosFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.ScreenshotsFileDetailRoute
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.SimilarPhotosFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.VideosFileDetailRoute
+import com.aicleanerstorage.spaceclean.app.view.common.tool.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoViewModel
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.DeviceInfoRoute
+import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.documents.ui.DocumentsManagerRoute
+import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.duplicates.ui.DuplicateFilesManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
 import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeRoute
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
 import com.aicleanerstorage.spaceclean.app.view.junkclean.ui.JunkCleanRoute
+import com.aicleanerstorage.spaceclean.app.view.largefiles.interaction.LargeFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.largefiles.ui.LargeFilesManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanRoute
@@ -61,6 +63,7 @@ import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.Onboardin
 import com.aicleanerstorage.spaceclean.app.view.onboarding.ui.OnboardingRoute
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.app.view.permissions.ui.ManagePermissionsRoute
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui.PhotoPrivacyManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
@@ -70,22 +73,18 @@ import com.aicleanerstorage.spaceclean.app.view.screenshots.ui.ScreenshotsManage
 import com.aicleanerstorage.spaceclean.app.view.settings.ui.SettingsRoute
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
-import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesAction
-import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.ui.SimilarPhotosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.splash.ui.SplashRoute
 import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.videos.ui.VideosManagerRoute
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerRoute
-import com.aicleanerstorage.spaceclean.app.view.common.tool.ToolFeatureBanners
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.MAIN_TAB_REQUEST
 import com.aicleanerstorage.spaceclean.base.navigation.MainTab
+import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.qualifier.named
 
 @Composable
 internal fun AppNavHost(
@@ -383,7 +382,7 @@ internal fun AppNavHost(
             }
         }
 
-        // 鐓х墖闅愮�?閲嶅鏂囦欢鏄嫭绔嬪崟椤碉紝entry 鑷韩鍗虫祦绋嬫牴锛屽悓鏍风敤瀹夸富鎵樼娴佺▼绾?effect�?
+// 照片隐私、重复文件是独立单页，entry 自身即流程根，同样用宿主托管流程级 effect。
         composable<AppDestination.PhotoPrivacyManager> { entry ->
             val viewModel: PhotoPrivacyManagerViewModel = koinViewModel(viewModelStoreOwner = entry)
             FileManagerFlowHost(

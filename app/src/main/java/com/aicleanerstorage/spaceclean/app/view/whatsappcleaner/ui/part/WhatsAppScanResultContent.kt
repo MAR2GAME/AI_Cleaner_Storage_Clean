@@ -401,4 +401,3 @@ internal fun splitSizeLabel(bytes: Long): SizeLabel {
 }
 
 internal fun compactSizeLabel(bytes: Long): String = FormatUtil.formatSize(bytes).replace(" ", "")
-

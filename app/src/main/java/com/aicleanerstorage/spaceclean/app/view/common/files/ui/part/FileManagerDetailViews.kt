@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailDisplayPreview
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBackgroundColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerImageQuality
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerItemTypeIcon
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerRealImage
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBackgroundColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 

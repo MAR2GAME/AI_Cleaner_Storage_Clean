@@ -100,7 +100,9 @@ class SimilarPhotosSelectionTest {
             val viewModel = viewModel(deleteResult = Result.failure(IllegalStateException("delete failed")))
             viewModel.dispatch(SimilarPhotosAction.RefreshRequested)
             advanceUntilIdle()
-            val item = viewModel.state.value.items.first()
+            val item =
+                viewModel.state.value.items
+                    .first()
             viewModel.dispatch(SimilarPhotosAction.SelectionToggled(item.id))
             viewModel.dispatch(SimilarPhotosAction.DeleteClicked)
             advanceUntilIdle()
@@ -110,9 +112,8 @@ class SimilarPhotosSelectionTest {
             assertEquals(FileOperationPhase.Browsing, viewModel.state.value.phase)
             assertNotNull(viewModel.state.value.error)
         }
-    private fun viewModel(
-        deleteResult: Result<FileDeleteSummaryModel>? = null,
-    ): SimilarPhotosManagerViewModel =
+
+    private fun viewModel(deleteResult: Result<FileDeleteSummaryModel>? = null): SimilarPhotosManagerViewModel =
         SimilarPhotosManagerViewModel(
             repository = FakeSimilarPhotoRepository(deleteResult),
             ioDispatcher = dispatcher,
@@ -145,5 +146,3 @@ class SimilarPhotosSelectionTest {
             )
     }
 }
-
-

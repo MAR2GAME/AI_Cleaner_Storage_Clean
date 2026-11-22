@@ -16,13 +16,13 @@ import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelection
 import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.domain.rule.DuplicateFileSelectionRule
 import com.aicleanerstorage.spaceclean.domain.rule.FileClassificationRule
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.File
 
 /**
  * 文件删除的平台数据源。
@@ -150,9 +150,10 @@ internal class FileDeletionDataSource(
                 }
             }
         val confirmed =
-            requester?.let { active ->
-                authorizePendingMedia(resolver, pending.values.toList(), active::request)
-            }.orEmpty()
+            requester
+                ?.let { active ->
+                    authorizePendingMedia(resolver, pending.values.toList(), active::request)
+                }.orEmpty()
         val final =
             outcomes.map { outcome ->
                 val request = pending[outcome.item]
@@ -161,6 +162,5 @@ internal class FileDeletionDataSource(
         return FileDeleteResult(final)
     }
 
-    private fun fileIdentity(item: ManagedFileModel): String =
-        FileClassificationRule.identity(item.path, item.uri)
+    private fun fileIdentity(item: ManagedFileModel): String = FileClassificationRule.identity(item.path, item.uri)
 }

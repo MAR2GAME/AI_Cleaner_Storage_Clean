@@ -379,4 +379,3 @@ private fun DrawScope.drawChartValueLabel(
 }
 
 private const val TEMPERATURE_CHART_WINDOW_MILLIS = 60_000L
-

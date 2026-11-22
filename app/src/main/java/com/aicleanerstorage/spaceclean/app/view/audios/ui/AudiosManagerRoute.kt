@@ -3,10 +3,10 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
+import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
@@ -47,19 +47,15 @@ fun AudiosManagerRoute(
 
     FileManagerFlowDialogs(
         FileManagerFlowDialogParams(
-        flowState = flowState,
-        onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
-        permissionState = permissionState,
-        onExitConfirmed = { permissionState.leaveBack(navigator) },
-        phase = displayState.phase,
-        deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
-        onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
-        onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
-        onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
-    
+            flowState = flowState,
+            onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
+            permissionState = permissionState,
+            onExitConfirmed = { permissionState.leaveBack(navigator) },
+            phase = displayState.phase,
+            deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
+            onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
+            onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
+            onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
         ),
     )
 }
-
-
-

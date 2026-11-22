@@ -1,12 +1,12 @@
 package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
+import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

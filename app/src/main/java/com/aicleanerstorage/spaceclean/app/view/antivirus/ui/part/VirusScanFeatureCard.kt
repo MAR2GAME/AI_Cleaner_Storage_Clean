@@ -93,4 +93,3 @@ private fun VirusFeatureDivider() {
 }
 
 val VirusFigmaText = Color(0xFF282927)
-

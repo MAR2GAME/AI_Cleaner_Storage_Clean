@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

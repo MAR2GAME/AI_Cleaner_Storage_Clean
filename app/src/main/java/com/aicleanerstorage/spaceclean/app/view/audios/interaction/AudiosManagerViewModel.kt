@@ -3,7 +3,6 @@ package com.aicleanerstorage.spaceclean.app.view.audios.interaction
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
@@ -119,10 +118,11 @@ class AudiosManagerViewModel(
             onLoaded = { snapshot ->
                 setState {
                     it.copy(
-                        page = FilePageState(
-                            phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
-                            items = snapshot.items,
-                        ),
+                        page =
+                            FilePageState(
+                                phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+                                items = snapshot.items,
+                            ),
                         tabs = buildMediaTabs(TAB_TITLES, snapshot.items),
                     )
                 }
@@ -130,10 +130,11 @@ class AudiosManagerViewModel(
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.NoResults,
-                            error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.NoResults,
+                                error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
+                            ),
                     )
                 }
             },
@@ -201,13 +202,14 @@ class AudiosManagerViewModel(
             onCompleteAnimation = { outcome, snapshot ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.CompleteAnimation,
-                            items = snapshot.items,
-                            selectedIds = emptySet(),
-                            detailStartIndex = null,
-                            deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.CompleteAnimation,
+                                items = snapshot.items,
+                                selectedIds = emptySet(),
+                                detailStartIndex = null,
+                                deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
+                            ),
                         tabs = buildMediaTabs(TAB_TITLES, snapshot.items),
                     )
                 }
@@ -216,10 +218,11 @@ class AudiosManagerViewModel(
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.Browsing,
-                            error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.Browsing,
+                                error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
+                            ),
                     )
                 }
             },

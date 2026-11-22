@@ -106,7 +106,12 @@ class SimilarPhotosManagerViewModel(
             onStart = { setState { SimilarPhotosManagerUiState(phase = FileOperationPhase.Scanning) } },
             onLoaded = { loaded -> setState { loaded } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText()) }
+                setState {
+                    it.copy(
+                        phase = FileOperationPhase.NoResults,
+                        error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
+                    )
+                }
             },
         )
     }
@@ -173,7 +178,12 @@ class SimilarPhotosManagerViewModel(
             },
             onResult = { setState { it.copy(phase = FileOperationPhase.Result) } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.Browsing, error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText()) }
+                setState {
+                    it.copy(
+                        phase = FileOperationPhase.Browsing,
+                        error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
+                    )
+                }
             },
         )
     }

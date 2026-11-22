@@ -13,8 +13,8 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
@@ -45,15 +45,14 @@ internal fun DuplicateFilesManagerContent(
     ) {
         FileOperationPhaseContent(
             FileOperationPhaseParams(
-            phase = uiState.phase,
-            scanningText = stringResource(R.string.file_scanning_duplicate_files),
-            deletingText = stringResource(R.string.file_deleting_duplicate_files),
-            resultAmount = result.first,
-            resultUnit = result.second,
-            resultCaption = stringResource(R.string.file_deleted_in_cleanup),
-            onNavigateTool = onNavigateTool,
-            onContinue = onContinue,
-        
+                phase = uiState.phase,
+                scanningText = stringResource(R.string.file_scanning_duplicate_files),
+                deletingText = stringResource(R.string.file_deleting_duplicate_files),
+                resultAmount = result.first,
+                resultUnit = result.second,
+                resultCaption = stringResource(R.string.file_deleted_in_cleanup),
+                onNavigateTool = onNavigateTool,
+                onContinue = onContinue,
             ),
         ) {
             if (uiState.phase == FileOperationPhase.Browsing || uiState.phase == FileOperationPhase.ConfirmDelete) {
@@ -84,4 +83,3 @@ internal fun DuplicateFilesManagerContent(
         }
     }
 }
-

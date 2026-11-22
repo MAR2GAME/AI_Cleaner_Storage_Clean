@@ -1,12 +1,11 @@
-﻿package com.aicleanerstorage.spaceclean.data.repository
-
-import com.aicleanerstorage.spaceclean.data.local.battery.BatteryHistoryFileStore
+package com.aicleanerstorage.spaceclean.data.repository
 
 import android.content.Context
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
+import com.aicleanerstorage.spaceclean.data.local.battery.BatteryHistoryFileStore
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 
@@ -20,13 +19,13 @@ internal class DefaultBatteryHistoryRepository(
 
     private val store = BatteryHistoryFileStore(historyFile)
     private val lock = Any()
-    private val _samples = MutableStateFlow<List<BatteryHistorySampleModel>>(emptyList())
+    private val samplesFlow = MutableStateFlow<List<BatteryHistorySampleModel>>(emptyList())
     private var loaded = false
     private var lastCompactAtMillis = 0L
 
-    override fun observeSamples(): Flow<List<BatteryHistorySampleModel>> = _samples.asStateFlow()
+    override fun observeSamples(): Flow<List<BatteryHistorySampleModel>> = samplesFlow.asStateFlow()
 
-    override fun latestSample(): BatteryHistorySampleModel? = _samples.value.lastOrNull()
+    override fun latestSample(): BatteryHistorySampleModel? = samplesFlow.value.lastOrNull()
 
     override fun loadRecent(nowMillis: Long): List<BatteryHistorySampleModel> =
         synchronized(lock) {
@@ -38,7 +37,7 @@ internal class DefaultBatteryHistoryRepository(
         nowMillis: Long,
     ): List<BatteryHistorySampleModel> =
         synchronized(lock) {
-            val current = if (loaded) _samples.value else loadRecentLocked(nowMillis, compact = false)
+            val current = if (loaded) samplesFlow.value else loadRecentLocked(nowMillis, compact = false)
             if (!sample.isUsable()) {
                 return@synchronized current
             }
@@ -51,7 +50,7 @@ internal class DefaultBatteryHistoryRepository(
             if (sample.timestampMillis >= nowMillis - BatteryHistoryRepository.WINDOW_MILLIS) {
                 store.appendRecord(sample)
             }
-            _samples.value = next
+            samplesFlow.value = next
 
             if (shouldCompact(nowMillis, next.size)) {
                 store.rewrite(next)
@@ -67,7 +66,7 @@ internal class DefaultBatteryHistoryRepository(
         val raw = store.readAllRecords()
         val recent = normalize(raw, nowMillis)
         loaded = true
-        _samples.value = recent
+        samplesFlow.value = recent
         if (compact && (raw.size != recent.size || shouldCompact(nowMillis, recent.size))) {
             store.rewrite(recent)
             lastCompactAtMillis = nowMillis
@@ -112,4 +111,3 @@ private fun BatteryHistorySampleModel.isUsable(): Boolean =
         currentMa?.isFiniteValue() != false
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
-

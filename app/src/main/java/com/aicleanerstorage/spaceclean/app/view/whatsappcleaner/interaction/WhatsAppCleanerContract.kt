@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerCategory
 import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerGroup
 

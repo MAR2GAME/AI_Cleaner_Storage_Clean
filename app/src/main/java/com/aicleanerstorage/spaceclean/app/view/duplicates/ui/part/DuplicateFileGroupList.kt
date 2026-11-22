@@ -44,11 +44,11 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListBottomPadding
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMutedNavy
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNavy
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.SelectionCircle
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateGroupItem
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.duplicateFileKey
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerTextColor
 
 @Composable
 internal fun DuplicateFileGroupList(

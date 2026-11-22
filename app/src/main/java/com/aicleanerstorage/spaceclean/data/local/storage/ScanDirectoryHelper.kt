@@ -24,5 +24,4 @@ internal object ScanDirectoryHelper {
     fun externalStorageDirectoryOrNull(): File? = runCatching { Environment.getExternalStorageDirectory() }.getOrNull()
 
     fun File.isReadableDirectory(): Boolean = runCatching { exists() && isDirectory && canRead() }.getOrDefault(false)
-
 }

@@ -106,20 +106,22 @@ class ScreenshotsManagerViewModel(
             onLoaded = { snapshot ->
                 setState {
                     it.copy(
-                        page = FilePageState(
-                            phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
-                            items = snapshot.items,
-                        ),
+                        page =
+                            FilePageState(
+                                phase = if (snapshot.items.isEmpty()) FileOperationPhase.NoResults else FileOperationPhase.Browsing,
+                                items = snapshot.items,
+                            ),
                     )
                 }
             },
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.NoResults,
-                            error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.NoResults,
+                                error = error.toFileOperationError(FileOperationError.ScanFailed).toUiText(),
+                            ),
                     )
                 }
             },
@@ -178,13 +180,14 @@ class ScreenshotsManagerViewModel(
             onCompleteAnimation = { outcome, snapshot ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.CompleteAnimation,
-                            items = snapshot.items,
-                            selectedIds = emptySet(),
-                            detailStartIndex = null,
-                            deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.CompleteAnimation,
+                                items = snapshot.items,
+                                selectedIds = emptySet(),
+                                detailStartIndex = null,
+                                deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
+                            ),
                     )
                 }
             },
@@ -192,10 +195,11 @@ class ScreenshotsManagerViewModel(
             onFailure = { error ->
                 setState {
                     it.copy(
-                        page = it.page.copy(
-                            phase = FileOperationPhase.Browsing,
-                            error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
-                        ),
+                        page =
+                            it.page.copy(
+                                phase = FileOperationPhase.Browsing,
+                                error = error.toFileOperationError(FileOperationError.DeletionFailed).toUiText(),
+                            ),
                     )
                 }
             },

@@ -1,8 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.withSelectionIds
+import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileGroupModel
 import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelectionModel
 import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
@@ -144,9 +144,8 @@ class PhotoPrivacySelectionTest {
 
         override suspend fun loadDuplicateGroups(): List<DuplicateFileGroupModel> = emptyList()
 
-        override suspend fun deleteDuplicates(
-            selections: List<DuplicateFileSelectionModel>,
-        ): Result<FileDeleteSummaryModel> = Result.failure(UnsupportedOperationException())
+        override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
+            Result.failure(UnsupportedOperationException())
 
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
             Result.success(FileDeleteSummaryModel(deletedCount = 0, freedBytes = 0L))

@@ -7,9 +7,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import androidx.core.content.edit
+import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockedNotificationModel
-import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
 import com.aicleanerstorage.spaceclean.domain.model.notification.PostedNotificationModel
 import java.util.Base64
 import java.util.UUID
@@ -17,31 +17,31 @@ import java.util.UUID
 internal class NotificationCleanerDataSource(
     private val preferences: PreferencesDataSource,
 ) {
-    private val KEY_ENABLED = "enabled"
-    private val KEY_BLOCKED_COUNT = "blocked_count"
-    private val KEY_BLOCKED_COUNTS_BY_PACKAGE = "blocked_counts_by_package"
-    private val KEY_BLOCKED_NOTIFICATIONS = "blocked_notifications"
-    private val KEY_SELECTED_PACKAGES = "selected_packages"
-    private val DEFAULT_PACKAGES =
+    private val keyEnabled = "enabled"
+    private val keyBlockedCount = "blocked_count"
+    private val keyBlockedCountsByPackage = "blocked_counts_by_package"
+    private val keyBlockedNotifications = "blocked_notifications"
+    private val keySelectedPackages = "selected_packages"
+    private val defaultPackages =
         listOf("com.tencent.wemeet.app", "com.google.android.youtube", "com.spotify.music")
 
     fun isEnabled(
         context: Context,
         listener: ComponentName?,
-    ): Boolean = preferences.getBoolean(KEY_ENABLED, false) && hasNotificationListenerAccess(context, listener)
+    ): Boolean = preferences.getBoolean(keyEnabled, false) && hasNotificationListenerAccess(context, listener)
 
     fun setEnabled(
         context: Context,
         enabled: Boolean,
     ) {
         preferences.edit {
-            putBoolean(KEY_ENABLED, enabled)
+            putBoolean(keyEnabled, enabled)
         }
     }
 
     fun blockedNotifications(context: Context): List<BlockedNotificationModel> =
         BlockedNotificationCodec
-            .decode(preferences.getString(KEY_BLOCKED_NOTIFICATIONS, ""))
+            .decode(preferences.getString(keyBlockedNotifications, ""))
             .filterNot { it.packageName == context.packageName }
 
     fun recordBlockedNotification(
@@ -67,9 +67,9 @@ internal class NotificationCleanerDataSource(
     fun clearBlockedNotifications(context: Context): Int {
         val entries = blockedNotifications(context)
         preferences.edit {
-            remove(KEY_BLOCKED_NOTIFICATIONS)
-            remove(KEY_BLOCKED_COUNT)
-            remove(KEY_BLOCKED_COUNTS_BY_PACKAGE)
+            remove(keyBlockedNotifications)
+            remove(keyBlockedCount)
+            remove(keyBlockedCountsByPackage)
         }
         return entries.size
     }
@@ -79,13 +79,13 @@ internal class NotificationCleanerDataSource(
         val entries = blockedNotifications(context)
         if (entries.any { it.title.isNotEmpty() || it.text.isNotEmpty() }) {
             val redacted = entries.map { it.copy(title = "", text = "") }
-            preferences.edit { putString(KEY_BLOCKED_NOTIFICATIONS, BlockedNotificationCodec.encode(redacted)) }
+            preferences.edit { putString(keyBlockedNotifications, BlockedNotificationCodec.encode(redacted)) }
         }
     }
 
     fun selectedPackages(context: Context): Set<String> =
         preferences
-            .getStringSet(KEY_SELECTED_PACKAGES, DEFAULT_PACKAGES.toSet())
+            .getStringSet(keySelectedPackages, defaultPackages.toSet())
             .orEmpty()
             .filterNot { it == context.packageName }
             .toSet()
@@ -98,14 +98,14 @@ internal class NotificationCleanerDataSource(
         if (packageName == context.packageName) return
         val current = selectedPackages(context).toMutableSet()
         if (selected) current += packageName else current -= packageName
-        preferences.edit { putStringSet(KEY_SELECTED_PACKAGES, current) }
+        preferences.edit { putStringSet(keySelectedPackages, current) }
     }
 
     fun apps(context: Context): List<BlockableNotificationAppModel> {
         val selected = selectedPackages(context)
         return launcherApps(context)
             .sortedWith(
-                compareByDescending<BlockableNotificationAppModel> { it.packageName in DEFAULT_PACKAGES }
+                compareByDescending<BlockableNotificationAppModel> { it.packageName in defaultPackages }
                     .thenByDescending { it.packageName in selected }
                     .thenBy { it.appName.lowercase() },
             ).ifEmpty {
@@ -139,9 +139,9 @@ internal class NotificationCleanerDataSource(
     ) {
         val updated = listOf(entry) + blockedNotifications(context)
         preferences.edit {
-            putString(KEY_BLOCKED_NOTIFICATIONS, BlockedNotificationCodec.encode(updated))
-            remove(KEY_BLOCKED_COUNT)
-            remove(KEY_BLOCKED_COUNTS_BY_PACKAGE)
+            putString(keyBlockedNotifications, BlockedNotificationCodec.encode(updated))
+            remove(keyBlockedCount)
+            remove(keyBlockedCountsByPackage)
         }
     }
 
@@ -187,8 +187,6 @@ internal class NotificationCleanerDataSource(
                 )
             }.toList()
     }
-
-    
 }
 
 private object BlockedNotificationCodec {

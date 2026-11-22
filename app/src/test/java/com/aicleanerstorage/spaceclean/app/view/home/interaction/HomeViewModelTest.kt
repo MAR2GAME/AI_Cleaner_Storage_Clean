@@ -68,7 +68,7 @@ class HomeViewModelTest {
                                 object : AppLockRepository by unusedRepository<AppLockRepository>() {
                                     override fun observeLockedAppCount(): Flow<Int> = MutableStateFlow(0)
 
-                    override fun currentLockedAppCount(): Int = 0
+                                    override fun currentLockedAppCount(): Int = 0
                                 },
                             settingsRepository = settings,
                             ioDispatcher = StandardTestDispatcher(TestCoroutineScheduler()),
@@ -127,5 +127,3 @@ class HomeViewModelTest {
             error("Unexpected summary call: ${method.name}")
         } as T
 }
-
-

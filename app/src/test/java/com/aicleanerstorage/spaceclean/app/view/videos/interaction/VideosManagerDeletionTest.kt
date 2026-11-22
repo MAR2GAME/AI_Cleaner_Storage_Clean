@@ -1,9 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.videos.interaction
 
 import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
@@ -184,9 +184,8 @@ class VideosManagerDeletionTest {
 
         override suspend fun loadDuplicateGroups(): List<DuplicateFileGroupModel> = emptyList()
 
-        override suspend fun deleteDuplicates(
-            selections: List<DuplicateFileSelectionModel>,
-        ): Result<FileDeleteSummaryModel> = Result.failure(UnsupportedOperationException())
+        override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
+            Result.failure(UnsupportedOperationException())
 
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> {
             if (deleteStatus == DeleteStatus.Deleted) videos = emptyList()

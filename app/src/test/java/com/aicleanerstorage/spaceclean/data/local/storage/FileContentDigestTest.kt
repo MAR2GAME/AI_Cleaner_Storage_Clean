@@ -1,14 +1,14 @@
 package com.aicleanerstorage.spaceclean.data.local.storage
 
 import com.aicleanerstorage.spaceclean.domain.rule.DuplicateFileRule
-import java.io.RandomAccessFile
-import java.util.concurrent.CancellationException
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.RandomAccessFile
+import java.util.concurrent.CancellationException
 
 class FileContentDigestTest {
     @get:Rule val directory = TemporaryFolder()
@@ -18,10 +18,15 @@ class FileContentDigestTest {
         val candidate = directory.newFile("candidate").apply { writeText("same") }
         val retained = directory.newFile("retained").apply { writeText("same") }
         val expected = FileContentDigest.hashFile(candidate)
-        fun allowed() = DuplicateFileRule.hasVerifiedCopy(
-            candidate, listOf(retained), expected,
-            identity = { it.canonicalPath }, contentHash = { FileContentDigest.hashFile(it) },
-        )
+
+        fun allowed() =
+            DuplicateFileRule.hasVerifiedCopy(
+                candidate,
+                listOf(retained),
+                expected,
+                identity = { it.canonicalPath },
+                contentHash = { FileContentDigest.hashFile(it) },
+            )
         assertTrue(allowed())
         retained.writeText("else")
         assertFalse(allowed())
@@ -36,10 +41,15 @@ class FileContentDigestTest {
         val expected = FileContentDigest.hashFile(candidate)
         candidate.writeText("after!")
         retained.writeText("after!")
-        assertFalse(DuplicateFileRule.hasVerifiedCopy(
-            candidate, listOf(retained), expected,
-            identity = { it.canonicalPath }, contentHash = { FileContentDigest.hashFile(it) },
-        ))
+        assertFalse(
+            DuplicateFileRule.hasVerifiedCopy(
+                candidate,
+                listOf(retained),
+                expected,
+                identity = { it.canonicalPath },
+                contentHash = { FileContentDigest.hashFile(it) },
+            ),
+        )
     }
 
     @Test

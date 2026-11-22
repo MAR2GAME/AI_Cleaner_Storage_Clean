@@ -1,9 +1,8 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
-
 import android.content.Context
 import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionRequester
-import com.aicleanerstorage.spaceclean.data.local.storage.MediaDeletionAuthorization
+import com.aicleanerstorage.spaceclean.data.catching
 import com.aicleanerstorage.spaceclean.data.local.junkclean.JunkFileDeleter
 import com.aicleanerstorage.spaceclean.data.local.junkclean.MemoryCleaner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.ApkScanner
@@ -11,9 +10,9 @@ import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.CacheScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.DuplicateFileScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.JunkScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.TempFileScanner
+import com.aicleanerstorage.spaceclean.data.local.storage.MediaDeletionAuthorization
 import com.aicleanerstorage.spaceclean.data.local.storage.PendingMediaDelete
 import com.aicleanerstorage.spaceclean.data.local.storage.authorizePendingMedia
-import com.aicleanerstorage.spaceclean.data.catching
 import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkDeleteOutcomeModel
@@ -23,7 +22,6 @@ import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanProgressModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
 import com.aicleanerstorage.spaceclean.domain.rule.JunkScanRule
-import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -31,16 +29,17 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicLong
 
 /**
- * 鍨冨溇鎵弿/娓呯悊鐨勫敮涓€瀹炵幇锛岀洿鎺ュ疄鐜?[JunkCleanRepository]銆?
+ * 垃圾扫描/清理的唯一实现，直接实现 [JunkCleanRepository]。
  *
- * 璐熻矗鍗忚皟澶氫釜 scanner銆佷繚瀛樻壂鎻忎細璇濈姸鎬佸拰鎵ц鍒犻櫎锛涗笉鎺у埗椤甸潰鍔ㄧ敾鑺傚锛?
- * 鎵弿椤电殑鏈€鐭睍绀烘椂闂寸敱 presentation 鐨?effect 鍐冲畾銆?
+ * 负责协调多个 scanner、保存扫描会话状态和执行删除；不控制页面动画节奏，
+ * 扫描页的最短展示时间由 presentation 的 effect 决定。
  *
- * @param context 鐢ㄤ簬鎵弿缂撳瓨/APK/鏂囦欢鍜屽唴瀛樻竻鐞嗐€?
- * @param requester 绯荤粺鍒犻櫎鎺堟潈濂戠害锛涗负 null 鏃剁櫥璁板緟鎺堟潈璇锋眰銆?
- * @param authorization 寰呮巿鏉冭姹傜殑鐧昏琛ㄣ€?
+ * @param context 用于扫描缓存/APK/文件和内存清理。
+ * @param requester 系统删除授权契约；为 null 时登记待授权请求。
+ * @param authorization 待授权请求的登记表。
  */
 internal class DefaultJunkCleanRepository(
     private val context: Context,
@@ -66,18 +65,14 @@ internal class DefaultJunkCleanRepository(
     private val work = Mutex()
     private val generation = AtomicLong()
 
-    override suspend fun scan(
-        onProgress: (JunkScanProgressModel) -> Unit,
-    ): Result<JunkScanResultModel> =
+    override suspend fun scan(onProgress: (JunkScanProgressModel) -> Unit): Result<JunkScanResultModel> =
         catching {
             withContext(Dispatchers.IO) {
                 work.withLock { scanInternal(onProgress) }
             }
         }
 
-    private suspend fun scanInternal(
-        onProgress: (JunkScanProgressModel) -> Unit,
-    ): JunkScanResultModel {
+    private suspend fun scanInternal(onProgress: (JunkScanProgressModel) -> Unit): JunkScanResultModel {
         generation.incrementAndGet()
         authorization.invalidate(MediaDeletionAuthorization.Owner.Clean)
         lastScanFiles = emptyList()
@@ -201,6 +196,7 @@ internal class DefaultJunkCleanRepository(
         val removed = files.toHashSet()
         lastScanFiles = lastScanFiles.filterNot { it in removed }
     }
+
     private fun JunkScanResultModel.toScanProgress(
         percent: Float,
         currentCategory: JunkCategory? = null,
@@ -221,4 +217,3 @@ internal class DefaultJunkCleanRepository(
             emptyList()
         }
 }
-

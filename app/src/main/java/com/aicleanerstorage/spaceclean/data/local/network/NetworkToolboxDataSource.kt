@@ -1,7 +1,5 @@
 package com.aicleanerstorage.spaceclean.data.local.network
 
-import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
-
 import android.app.AppOpsManager
 import android.app.usage.NetworkStats
 import android.app.usage.NetworkStatsManager
@@ -21,11 +19,8 @@ import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
+import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.domain.model.network.TrafficSource
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.InetAddress
-import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -33,6 +28,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.InetAddress
+import java.util.Calendar
 
 internal object NetworkToolboxDataSource {
     fun hasUsageAccess(context: Context): Boolean =
@@ -119,7 +118,9 @@ internal object NetworkToolboxDataSource {
                     readArpDevices()
                 }
 
-            NetworkScanResultModel( ssid, currentIp,
+            NetworkScanResultModel(
+                ssid,
+                currentIp,
                 devices.distinctBy { it.ip }.sortedBy { ipSortKey(it.ip) },
                 wifiManager?.isWifiEnabled == true && currentIp != null,
             )
@@ -199,22 +200,24 @@ internal object NetworkToolboxDataSource {
                     }
                 }
 
-        return packageInfosByUid.mapNotNull { (uid, apps) ->
-            runCatching {
-                val summary = queryDetailsForUid(networkType, null, start, end, uid)
-                var rx = 0L
-                var tx = 0L
-                val item = NetworkStats.Bucket()
-                summary.use {
-                    while (it.hasNextBucket()) {
-                        it.getNextBucket(item)
-                        rx += item.rxBytes
-                        tx += item.txBytes
+        return packageInfosByUid
+            .mapNotNull { (uid, apps) ->
+                runCatching {
+                    val summary = queryDetailsForUid(networkType, null, start, end, uid)
+                    var rx = 0L
+                    var tx = 0L
+                    val item = NetworkStats.Bucket()
+                    summary.use {
+                        while (it.hasNextBucket()) {
+                            it.getNextBucket(item)
+                            rx += item.rxBytes
+                            tx += item.txBytes
+                        }
                     }
-                }
-                if (rx + tx <= 0L) null else NetworkUsageAppModel(apps.first(), rx, tx)
-            }.getOrNull()
-        }.sortedByDescending { it.totalBytes }.take(8)
+                    if (rx + tx <= 0L) null else NetworkUsageAppModel(apps.first(), rx, tx)
+                }.getOrNull()
+            }.sortedByDescending { it.totalBytes }
+            .take(8)
     }
 
     fun networkCapabilitiesSpeed(
@@ -274,11 +277,8 @@ internal object NetworkToolboxDataSource {
                     }.toList()
             }
         }.getOrDefault(emptyList())
+
     private fun readMacFromArp(ip: String): String? = readArpDevices().firstOrNull { it.ip == ip }?.macAddress
 
     private fun ipSortKey(ip: String): Long = ip.split('.').fold(0L) { acc, p -> acc * 256 + (p.toLongOrNull() ?: 0L) }
 }
-
-
-
-

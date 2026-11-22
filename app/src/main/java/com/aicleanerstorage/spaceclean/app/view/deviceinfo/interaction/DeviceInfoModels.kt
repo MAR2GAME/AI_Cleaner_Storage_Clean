@@ -1,26 +1,13 @@
 package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
 import androidx.annotation.StringRes
-import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
+import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.model.device.BatteryInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.device.DeviceCpuInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.device.DeviceSensorInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
-import com.aicleanerstorage.spaceclean.R
-import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
-import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder
-import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
-import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
-import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -251,4 +238,3 @@ internal fun String.normalizeTemperatureUnit(): String =
 internal fun celsiusToFahrenheit(value: Float): Float = value * 9f / 5f + 32f
 
 internal const val TEMPERATURE_UNIT_FAHRENHEIT = "F"
-

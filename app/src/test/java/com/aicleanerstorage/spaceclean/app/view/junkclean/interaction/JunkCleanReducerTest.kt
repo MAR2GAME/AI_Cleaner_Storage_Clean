@@ -1,8 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.DefaultResultDisplayCategories
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
@@ -24,6 +21,9 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkStopDi
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.error.JunkError
 import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -259,7 +259,8 @@ class JunkCleanReducerTest {
         val scanning = JunkCleanUiState(phase = JunkCleanPhase.Scanning)
 
         assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleanAction.ItemToggled("missing")))
-        assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleaningRequested))    }
+        assertSame(scanning, JunkCleanReducer.reduce(scanning, JunkCleaningRequested))
+    }
 
     @Test
     fun `failure operation is expressed by the single phase`() {
@@ -302,7 +303,11 @@ class JunkCleanReducerTest {
         val stopped =
             JunkCleanReducer.reduce(
                 JunkCleanUiState(phase = JunkCleanPhase.Cleaning),
-                JunkCleaningStopped(JunkScanResultModel(*remaining.toTypedArray()), setOf(remaining.first()), CleanupSummaryModel(50L, 5, 0, 0L)),
+                JunkCleaningStopped(
+                    JunkScanResultModel(*remaining.toTypedArray()),
+                    setOf(remaining.first()),
+                    CleanupSummaryModel(50L, 5, 0, 0L),
+                ),
             )
         assertEquals(JunkCleanPhase.Preview, stopped.phase)
         assertEquals(5, stopped.stoppedSummary?.cleanedCount)

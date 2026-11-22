@@ -18,4 +18,3 @@ internal object StorageDataSource {
             CapacityInfoModel(0, 0)
         }
 }
-

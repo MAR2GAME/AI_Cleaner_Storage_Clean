@@ -27,13 +27,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkDeviceModel
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardBg
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanCardRadius
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanDivider
 import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.part.NetworkScanNavy
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkDeviceModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 
 @Composable
 internal fun NetworkScanDevicesSummaryCard(
@@ -141,5 +141,3 @@ private fun DeviceHostName(hostName: String?) {
 
 @Composable
 internal fun String?.displayUnknown(): String = this?.takeIf { it.isNotBlank() } ?: stringResource(R.string.unknown)
-
-

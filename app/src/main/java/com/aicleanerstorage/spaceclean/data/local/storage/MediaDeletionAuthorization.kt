@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.data.local.storage
 
-import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
 import com.aicleanerstorage.spaceclean.data.local.storage.PendingMediaDelete
+import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
 
 /**
  * 保存等待系统授权的删除条目；只服务于 data 层的文件/垃圾删除实现。
@@ -18,7 +18,10 @@ internal class MediaDeletionAuthorization {
     private val entries = PendingAuthorizations<Pair<Owner, String>, Entry>()
 
     @Synchronized
-    internal fun invalidate(owner: Owner, key: String? = null) {
+    internal fun invalidate(
+        owner: Owner,
+        key: String? = null,
+    ) {
         entries.invalidate { (entryOwner, entryKey) -> entryOwner == owner && (key == null || entryKey == key) }
     }
 

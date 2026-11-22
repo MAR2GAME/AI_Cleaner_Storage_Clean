@@ -1,10 +1,10 @@
 package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import java.util.Locale
 
 enum class NetworkSpeedPhase {

@@ -37,6 +37,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageUiState
 import com.aicleanerstorage.spaceclean.domain.model.appusage.AppUsageInfoModel
 import java.util.Locale
+
 @Composable
 internal fun PieChartCard(uiState: AppUsageUiState) {
     val chart =
@@ -176,6 +177,7 @@ private fun PieChartRow(
         }
     }
 }
+
 internal val NavyMuted = Color(0xFF999999)
 
 private val OtherColor = Color(0xFF4F75FE)
@@ -286,5 +288,3 @@ private fun formatDurationForCenter(totalMs: Long): String {
         else -> "${minutes}\nmin"
     }
 }
-
-

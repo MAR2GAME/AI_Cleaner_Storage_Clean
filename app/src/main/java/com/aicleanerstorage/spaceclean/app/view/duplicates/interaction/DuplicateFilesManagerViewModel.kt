@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.interaction
 
 import androidx.lifecycle.viewModelScope
-import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FILE_DELETE_ANIMATION_MIN_MILLIS
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationError
@@ -13,6 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleI
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleIds
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -105,7 +105,12 @@ class DuplicateFilesManagerViewModel(
             onStart = { setState { DuplicateFilesManagerUiState(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onLoaded = { loaded -> setState { loaded.copy(showWarning = !settingsRepository.isDuplicateFilesWarningAccepted()) } },
             onFailure = { error ->
-                setState { it.copy(phase = FileOperationPhase.NoResults, error = error.toFileOperationError(FileOperationError.DuplicateScanFailed).toUiText()) }
+                setState {
+                    it.copy(
+                        phase = FileOperationPhase.NoResults,
+                        error = error.toFileOperationError(FileOperationError.DuplicateScanFailed).toUiText(),
+                    )
+                }
             },
         )
     }

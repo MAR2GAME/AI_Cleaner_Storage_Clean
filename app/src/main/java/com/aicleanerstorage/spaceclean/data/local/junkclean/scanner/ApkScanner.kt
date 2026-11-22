@@ -1,7 +1,7 @@
 package com.aicleanerstorage.spaceclean.data.local.junkclean.scanner
 
-import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.data.local.storage.ScanDirectoryHelper
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import java.io.File
 
 internal class ApkScanner : FileSystemJunkScanner() {

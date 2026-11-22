@@ -16,9 +16,9 @@ import com.aicleanerstorage.spaceclean.app.view.battery.ui.part.BatteryElectricC
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.part.BatteryInformationCard
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.part.BatteryTemperatureCard
 import com.aicleanerstorage.spaceclean.app.view.battery.ui.part.BatteryTopCard
+import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.DeviceInfoUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
-import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 

@@ -2,7 +2,6 @@
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,11 +41,10 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileIma
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListDisplayStyle
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileListIconKind
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerTabDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.filterMediaGridItems
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillTabs
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXTabItem
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPrimaryGreen
 
 @Composable
 fun FileManagerTopAction(
@@ -70,7 +68,10 @@ fun FileManagerMediaGridView(params: FileManagerMediaGridParams) {
     val visibleItems =
         remember(params.items, params.selectedTabIndex) {
             filterMediaGridItems(
-                params.tabs.getOrNull(params.selectedTabIndex)?.title.orEmpty(),
+                params.tabs
+                    .getOrNull(params.selectedTabIndex)
+                    ?.title
+                    .orEmpty(),
                 params.items,
             )
         }
@@ -199,7 +200,10 @@ fun FileManagerAudioListView(params: FileManagerAudioListParams) {
     val visibleItems =
         remember(params.items, params.selectedTabIndex) {
             filterMediaGridItems(
-                params.tabs.getOrNull(params.selectedTabIndex)?.title.orEmpty(),
+                params.tabs
+                    .getOrNull(params.selectedTabIndex)
+                    ?.title
+                    .orEmpty(),
                 params.items,
             )
         }
@@ -497,6 +501,3 @@ private fun FileManagerMediaFileRow(
         )
     }
 }
-
-
-

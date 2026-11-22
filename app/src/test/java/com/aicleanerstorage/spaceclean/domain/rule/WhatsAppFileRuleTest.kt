@@ -38,19 +38,21 @@ class WhatsAppFileRuleTest {
         )
     }
 
-    private fun file(path: String) = ManagedFileModel(
-        id = 1L,
-        uri = "content://media/external/file/1",
-        path = path,
-        name = path.substringAfterLast('/'),
-        sizeBytes = 10L,
-        modifiedSeconds = 1L,
-        mimeType = null,
-        bucketName = null,
-        kind = when {
-            path.endsWith(".jpg") -> FileKind.Image
-            path.endsWith(".pdf") -> FileKind.Document
-            else -> FileKind.Document
-        },
-    )
+    private fun file(path: String) =
+        ManagedFileModel(
+            id = 1L,
+            uri = "content://media/external/file/1",
+            path = path,
+            name = path.substringAfterLast('/'),
+            sizeBytes = 10L,
+            modifiedSeconds = 1L,
+            mimeType = null,
+            bucketName = null,
+            kind =
+                when {
+                    path.endsWith(".jpg") -> FileKind.Image
+                    path.endsWith(".pdf") -> FileKind.Document
+                    else -> FileKind.Document
+                },
+        )
 }

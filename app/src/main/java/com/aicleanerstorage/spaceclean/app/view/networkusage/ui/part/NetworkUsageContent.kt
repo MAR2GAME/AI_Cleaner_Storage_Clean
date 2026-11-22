@@ -41,13 +41,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageDisplayItem
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageTab
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXScaffoldPage
 import com.aicleanerstorage.spaceclean.base.designsystem.component.PackageAppIcon
 import com.aicleanerstorage.spaceclean.base.designsystem.component.RoundedProgressBar
-import com.aicleanerstorage.spaceclean.app.view.common.ToolboxScanningContent
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.StopScanDialog
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import kotlinx.coroutines.flow.distinctUntilChanged
