@@ -93,18 +93,11 @@ private val FileManagerBitmapCache =
 
 @Composable
 fun FileManagerScreenshotGridView(params: FileManagerScreenshotGridParams) {
-    val items = params.items
-    val allSelected = params.allSelected
-    val selectedIds = params.selectedIds
-    val scrollState = params.scrollState
-    val onToggleAll = params.onToggleAll
-    val onSelect = params.onSelect
-    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
         Surface(
@@ -117,27 +110,34 @@ fun FileManagerScreenshotGridView(params: FileManagerScreenshotGridParams) {
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 FileManagerGroupHeader(
-                    leading = items.size.toString(),
+                    leading = params.items.size.toString(),
                     trailing = stringResource(R.string.nav_screenshots),
-                    selected = allSelected,
-                    onClick = onToggleAll,
+                    selected = params.allSelected,
+                    onClick = params.onToggleAll,
                 )
-                items.chunked(3).forEach { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        rowItems.forEach { item ->
-                            FileManagerThumbnail(FileManagerThumbnailParams(
-                                item = item,
-                                selected = item.id in selectedIds,
-                                onOpen = { onOpenDetail(item) },
-                                onToggleSelection = { onSelect(item.id) },
-                                modifier = Modifier.weight(1f),
-                            ))
-                        }
-                        repeat(3 - rowItems.size) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-                    }
-                }
+                ScreenshotRows(params)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScreenshotRows(params: FileManagerScreenshotGridParams) {
+    params.items.chunked(3).forEach { rowItems ->
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            rowItems.forEach { item ->
+                FileManagerThumbnail(
+                    FileManagerThumbnailParams(
+                        item = item,
+                        selected = item.id in params.selectedIds,
+                        onOpen = { params.onOpenDetail(item) },
+                        onToggleSelection = { params.onSelect(item.id) },
+                        modifier = Modifier.weight(1f),
+                    ),
+                )
+            }
+            repeat(3 - rowItems.size) {
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
@@ -811,6 +811,7 @@ private fun calculateInSampleSize(
     }
     return sampleSize
 }
+
 
 
 

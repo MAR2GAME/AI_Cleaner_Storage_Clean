@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
@@ -185,6 +185,12 @@ class WhatsAppCleanerViewModel(
             }
     }
 
+    private fun selectedWhatsAppFiles(state: WhatsAppCleanerUiState): List<ManagedFileModel> =
+        state.groups
+            .flatMap { it.children }
+            .filter { it.selected }
+            .flatMap { it.files }
+            .distinctBy { it.path ?: it.uri }
     private suspend fun delayRemainingCleaningAnimation(startedAtMillis: Long) {
         val remainingMillis = CLEANING_ANIMATION_MIN_MILLIS - (System.currentTimeMillis() - startedAtMillis)
         if (remainingMillis > 0L) delay(remainingMillis)
@@ -267,3 +273,4 @@ class WhatsAppCleanerViewModel(
         private const val COMPLETE_ANIMATION_MILLIS = 800L
     }
 }
+

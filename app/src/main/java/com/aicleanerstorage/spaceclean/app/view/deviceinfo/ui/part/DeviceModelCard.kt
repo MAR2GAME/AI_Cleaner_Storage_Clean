@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.ui.part
 
 import android.os.Build
 import androidx.compose.foundation.Image
@@ -49,36 +49,32 @@ internal fun DeviceModelCard(hardware: DeviceHardwareInfoModel) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column(
-                modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),
-                horizontalAlignment = Alignment.Start,
-            ) {
-                SummaryTextLine(
-                    label = stringResource(R.string.home_device_model),
-                    value = deviceModelName(hardware.model),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                SummaryTextLine(
-                    label = stringResource(R.string.home_system_version),
-                    value = hardware.androidVersion.orPlaceholder(),
-                )
-            }
-
+            DeviceModelTextColumn(hardware)
             Spacer(Modifier.weight(1.0f))
-
-            Box(
-                Modifier
-                    .padding(2.72727.dp)
-                    .width(120.dp)
-                    .height(96.dp),
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.device_model),
-                    contentDescription = null,
-                    contentScale = ContentScale.None,
-                )
-            }
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(R.drawable.device_model),
+                contentDescription = null,
+                modifier = Modifier.height(96.dp),
+            )
         }
+    }
+}
+
+@Composable
+private fun DeviceModelTextColumn(hardware: DeviceHardwareInfoModel) {
+    Column(
+        modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        SummaryTextLine(
+            label = stringResource(R.string.home_device_model),
+            value = deviceModelName(hardware.model),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        SummaryTextLine(
+            label = stringResource(R.string.home_system_version),
+            value = hardware.androidVersion.orPlaceholder(),
+        )
     }
 }
 
@@ -120,3 +116,4 @@ private fun deviceModelName(model: String): String {
         "$manufacturer-$resolvedModel"
     }
 }
+
