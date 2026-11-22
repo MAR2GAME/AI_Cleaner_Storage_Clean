@@ -34,8 +34,14 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      - name: Encoding checks
+        run: pwsh -NoProfile -File scripts/check-encoding.ps1
+
       - name: MVI rule checks
         run: pwsh -NoProfile -File scripts/check-rules.ps1
+
+      - name: ktlint
+        run: ./gradlew :app:ktlintCheck
 
       - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest --stacktrace

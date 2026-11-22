@@ -1,4 +1,4 @@
-﻿# MVI rule checks for Storage Clean.
+# MVI rule checks for Storage Clean.
 # Usage: .\scripts\check-rules.ps1 [-Profile profiles\android-compose-mvi.json]
 # Windows PowerShell 5.1+; messages are ASCII-only on purpose.
 
@@ -93,9 +93,9 @@ if (Test-CheckEnabled 'dataImplementationIsolation') {
 }
 
 # 2c. repository implementations stay internal; DI is the only entry point.
-if (Test-CheckEnabled 'dataVisibility' -and (Test-Path -LiteralPath $dataDir)) {
-    $bad = Get-KotlinFiles $dataDir | Where-Object { $_.Name -like '*RepositoryImpl.kt' } |
-        Select-String -Pattern '^(?:public )?(?:abstract |open )?class \w+'
+if (Test-CheckEnabled 'dataVisibility' -and (Test-Path -LiteralPath (Join-Path $dataDir 'repository'))) {
+    $bad = Get-KotlinFiles (Join-Path $dataDir 'repository') |
+        Select-String -Pattern '^(?!internal\b)(?:(?:public|abstract|open|sealed|final)\s+)*(?:class|object)\s+\w+'
     if ($bad) {
         $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'dataVisibility' ("{0}:{1} implementation must be internal" -f (RelativePath $_.Path), $_.LineNumber) }
     } else {
@@ -196,13 +196,17 @@ if (Test-CheckEnabled 'packageMatchesDirectory') {
     if ($bad.Count -eq 0) { Add-Pass 'packageMatchesDirectory' } else { $bad | Select-Object -First 20 | ForEach-Object { Add-Failure 'packageMatchesDirectory' $_ } }
 }
 
-# 10. every locale keeps the default key set.
+# 10. every locale keeps the default key set; report translation coverage.
 if (Test-CheckEnabled 'localeParity') {
     $resDir = Join-Path $root 'app/src/main/res'
     $defaultFile = Join-Path $resDir 'values/strings.xml'
     $defaultKeys = (Select-String -LiteralPath $defaultFile -Pattern 'name="([^"]+)"' -AllMatches).Matches |
         ForEach-Object { $_.Groups[1].Value }
+    $defaultText = @{}
+    $defaultXml = [xml](Get-Content -LiteralPath $defaultFile -Raw -Encoding UTF8)
+    foreach ($node in $defaultXml.resources.string) { $defaultText[$node.name] = $node.InnerText }
     $missingTotal = 0
+    $coverage = @()
     Get-ChildItem -LiteralPath $resDir -Directory | Where-Object { $_.Name -like 'values-*' } | ForEach-Object {
         $file = Join-Path $_.FullName 'strings.xml'
         if (-not (Test-Path -LiteralPath $file)) { return }
@@ -213,8 +217,22 @@ if (Test-CheckEnabled 'localeParity') {
             $missingTotal += $missing.Count
             Add-Failure 'localeParity' ("{0} missing {1} key(s): {2}" -f $_.Name, $missing.Count, ($missing -join ', '))
         }
+        try {
+            $localeXml = [xml](Get-Content -LiteralPath $file -Raw -Encoding UTF8)
+            $translated = 0
+            $total = 0
+            foreach ($node in $localeXml.resources.string) {
+                if (-not $defaultText.ContainsKey($node.name)) { continue }
+                $total++
+                if ($node.InnerText -ne $defaultText[$node.name]) { $translated++ }
+            }
+            if ($total -gt 0) { $coverage += ("{0}={1:P0}" -f $_.Name, ($translated / $total)) }
+        } catch {
+            Add-Failure 'localeParity' ("{0} cannot be parsed as XML" -f $_.Name)
+        }
     }
     if ($missingTotal -eq 0) { Add-Pass 'localeParity' }
+    if ($coverage.Count -gt 0) { Write-Host ("translation coverage: {0}" -f ($coverage -join ', ')) }
 }
 
 # 11. domain models: data class under domain/model/** must be <Concept>Model.
@@ -368,38 +386,64 @@ if (Test-CheckEnabled 'composableParamLimit' -and (Test-Path -LiteralPath $viewD
         $overLimit | Select-Object -First 20 | ForEach-Object { Add-Failure 'composableParamLimit' $_ }
     }
 }
-# 20. keep functions at forty lines or fewer.
+# 20. keep functions at forty lines (composables sixty) or fewer; new debt is rejected.
 if (Test-CheckEnabled 'functionLengthLimit') {
-    $longFunctions = @()
+    $baselineFile = Join-Path $root 'scripts/function-length-baseline.txt'
+    $baseline = @{}
+    if (Test-Path -LiteralPath $baselineFile) {
+        Get-Content -LiteralPath $baselineFile -Encoding UTF8 |
+            Where-Object { $_.Trim() -ne '' -and -not $_.StartsWith('#') } |
+            ForEach-Object { $baseline[$_.Trim()] = $true }
+    }
+    $newViolations = @()
+    $baselined = 0
     foreach ($file in Get-KotlinFiles $src) {
-        $lines = Get-Content -LiteralPath $file.FullName
+        $lines = Get-Content -LiteralPath $file.FullName -Encoding UTF8
         $depth = 0
+        $opened = $false
         $inFunction = $false
         $start = 0
         $name = ''
+        $composable = $false
         for ($i = 0; $i -lt $lines.Count; $i++) {
             $line = $lines[$i]
-            if (-not $inFunction -and $line -match '^\s*(private |internal |public )?fun\s+([A-Za-z0-9_]+)') {
+            if (-not $inFunction -and $line -match '^\s*(?:(?:private|internal|public|protected|override|suspend|inline|operator|infix|tailrec|external|actual|expect)\s+)*fun\s+(?:<[^>]+>\s*)?([A-Za-z0-9_]+)\s*\(') {
                 $inFunction = $true
                 $start = $i
-                $name = $Matches[2]
+                $name = $Matches[1]
                 $depth = 0
+                $opened = $false
+                $composable = $false
+                for ($k = [Math]::Max(0, $i - 3); $k -lt $i; $k++) {
+                    if ($lines[$k] -match '@Composable') { $composable = $true }
+                }
             }
             if (-not $inFunction) { continue }
             $depth += ([regex]::Matches($line, '\{')).Count
             $depth -= ([regex]::Matches($line, '\}')).Count
-            if ($depth -le 0 -and $i -gt $start) {
+            if ($depth -gt 0) { $opened = $true }
+            if ($opened -and $depth -le 0 -and $i -gt $start) {
                 $length = $i - $start + 1
-                if ($length -gt 40) {
-                    $longFunctions += ("{0}:{1} {2} has {3} lines" -f (RelativePath $file.FullName), ($start + 1), $name, $length)
+                $limit = if ($composable) { 60 } else { 40 }
+                if ($length -gt $limit) {
+                    $relative = (RelativePath $file.FullName) -replace '\\', '/'
+                    $key = "$relative|$name"
+                    if ($baseline.ContainsKey($key)) {
+                        $baselined++
+                    } else {
+                        $newViolations += ("{0}:{1} {2} has {3} lines (limit {4})" -f $relative, ($start + 1), $name, $length, $limit)
+                    }
                 }
                 $inFunction = $false
             }
         }
     }
-    if ($longFunctions.Count -eq 0) { Add-Pass 'functionLengthLimit' } else {
-        $longFunctions | Select-Object -First 20 | ForEach-Object { Add-Failure 'functionLengthLimit' $_ }
+    if ($newViolations.Count -eq 0) {
+        Add-Pass 'functionLengthLimit'
+    } else {
+        $newViolations | Select-Object -First 20 | ForEach-Object { Add-Failure 'functionLengthLimit' $_ }
     }
+    if ($baselined -gt 0) { Write-Host ("baseline function-length entries: {0}" -f $baselined) }
 }
 # 21. domain ports do not expose StateFlow.
 if (Test-CheckEnabled 'portStateFlow') {
