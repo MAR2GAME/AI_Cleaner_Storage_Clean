@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.battery.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.battery.ui.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,45 +32,7 @@ import java.util.Locale
 
 @Composable
 internal fun BatteryInformationCard(uiState: DeviceInfoUiState) {
-    val voltageValue =
-        uiState.battery.voltage.takeIf { it > 0 }?.let {
-            String.format(Locale.US, "%.1f", it / 1000f)
-        } ?: "--"
-    val metrics =
-        listOf(
-            BatteryMetricUi(
-                iconRes = R.drawable.temperature,
-                iconSizeDp = 32,
-                label = stringResource(R.string.battery_temperature),
-                value =
-                    String.format(
-                        Locale.US,
-                        "%.1f",
-                        displayBatteryTemperatureValue(
-                            uiState.displayTemperatureC,
-                            uiState.temperatureUnit,
-                        ),
-                    ),
-                unit = "\u00B0${uiState.temperatureUnit}",
-            ),
-            BatteryMetricUi(
-                iconRes = R.drawable.voltage,
-                label = stringResource(R.string.battery_voltage),
-                value = voltageValue,
-                unit = if (voltageValue == "--") null else "V",
-            ),
-            BatteryMetricUi(
-                iconRes = R.drawable.battery_health,
-                label = stringResource(R.string.battery_health),
-                value = localizedBatteryHealth(uiState.battery.health),
-            ),
-            BatteryMetricUi(
-                iconRes = R.drawable.life,
-                label = stringResource(R.string.battery_life),
-                value = availableTimeText(uiState.batteryAvailableTimeMinutes),
-            ),
-        )
-
+    val metrics = batteryMetrics(uiState)
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
@@ -87,15 +49,66 @@ internal fun BatteryInformationCard(uiState: DeviceInfoUiState) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 metrics.forEach { metric ->
-                    BatteryMetricItem(
-                        metric = metric,
-                        modifier = Modifier.weight(1f),
-                    )
+                    BatteryMetricItem(metric = metric, modifier = Modifier.weight(1f))
                 }
             }
         }
     }
 }
+
+@Composable
+private fun batteryMetrics(uiState: DeviceInfoUiState): List<BatteryMetricUi> =
+    listOf(
+        temperatureMetric(uiState),
+        voltageMetric(uiState),
+        healthMetric(uiState),
+        lifeMetric(uiState),
+    )
+
+@Composable
+private fun temperatureMetric(uiState: DeviceInfoUiState): BatteryMetricUi =
+    BatteryMetricUi(
+        iconRes = R.drawable.temperature,
+        iconSizeDp = 32,
+        label = stringResource(R.string.battery_temperature),
+        value =
+            String.format(
+                Locale.US,
+                "%.1f",
+                displayBatteryTemperatureValue(uiState.displayTemperatureC, uiState.temperatureUnit),
+            ),
+        unit = "\u00B0${uiState.temperatureUnit}",
+    )
+
+@Composable
+private fun voltageMetric(uiState: DeviceInfoUiState): BatteryMetricUi {
+    val voltageValue =
+        uiState.battery.voltage.takeIf { it > 0 }?.let {
+            String.format(Locale.US, "%.1f", it / 1000f)
+        } ?: "--"
+    return BatteryMetricUi(
+        iconRes = R.drawable.voltage,
+        label = stringResource(R.string.battery_voltage),
+        value = voltageValue,
+        unit = if (voltageValue == "--") null else "V",
+    )
+}
+
+@Composable
+private fun healthMetric(uiState: DeviceInfoUiState): BatteryMetricUi =
+    BatteryMetricUi(
+        iconRes = R.drawable.battery_health,
+        label = stringResource(R.string.battery_health),
+        value = localizedBatteryHealth(uiState.battery.health),
+    )
+
+@Composable
+private fun lifeMetric(uiState: DeviceInfoUiState): BatteryMetricUi =
+    BatteryMetricUi(
+        iconRes = R.drawable.life,
+        label = stringResource(R.string.battery_life),
+        value = availableTimeText(uiState.batteryAvailableTimeMinutes),
+    )
 
 private val BatteryMetricLabel = Color(0xFF999999)
 
@@ -208,3 +221,4 @@ private fun availableTimeText(minutes: Int?): String {
         stringResource(R.string.duration_minutes, remainingMinutes)
     }
 }
+
