@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
@@ -69,7 +70,7 @@ class AppRuntimeService : Service() {
     private fun sync() {
         appLock.sync()
         syncBatterySampling()
-        if (!shouldRunRuntime(appLockRepository, settingsRepository)) stopSelf()
+        if (!shouldRunRuntime(this, appLockRepository, settingsRepository)) stopSelf()
     }
 
     /**
@@ -98,7 +99,7 @@ class AppRuntimeService : Service() {
             appLockRepository: AppLockRepository,
             settingsRepository: AppSettingsRepository,
         ) {
-            if (shouldRunRuntime(appLockRepository, settingsRepository)) {
+            if (shouldRunRuntime(context, appLockRepository, settingsRepository)) {
                 start(context)
             } else {
                 stop(context)
@@ -120,8 +121,13 @@ class AppRuntimeService : Service() {
 
 /** The only two reasons for the runtime to exist. */
 private fun shouldRunRuntime(
+    context: Context,
     appLockRepository: AppLockRepository,
     settingsRepository: AppSettingsRepository,
 ): Boolean =
-    AppLockMonitoringRule.shouldMonitorApps(appLockRepository) ||
+    AppLockMonitoringRule.shouldMonitorApps(
+        repository = appLockRepository,
+        hasOverlayPermission = AppPermission.Overlay.isGranted(context),
+        hasUsageAccess = AppPermission.UsageAccess.isGranted(context),
+    ) ||
         settingsRepository.isBackgroundBatterySamplingEnabled()

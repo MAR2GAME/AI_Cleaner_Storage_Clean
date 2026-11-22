@@ -132,7 +132,7 @@ class WhatsAppCleanerViewModelTest {
                 mapOf(WhatsAppFileBucketModel(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images) to files)
             }
 
-        override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
-            FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes })
+        override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
+            Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
     }
 }

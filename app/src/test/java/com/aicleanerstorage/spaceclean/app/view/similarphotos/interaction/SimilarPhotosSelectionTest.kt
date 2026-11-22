@@ -104,8 +104,8 @@ class SimilarPhotosSelectionTest {
     private class FakeSimilarPhotoRepository : SimilarPhotoRepository {
         override suspend fun loadGroups(): List<List<ManagedFileModel>> = listOf(listOf(image(1), image(2), image(3)))
 
-        override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
-            FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes })
+        override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
+            Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
     }
 
     private companion object {

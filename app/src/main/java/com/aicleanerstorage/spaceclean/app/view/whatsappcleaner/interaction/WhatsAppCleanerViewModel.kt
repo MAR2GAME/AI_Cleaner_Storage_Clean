@@ -160,7 +160,7 @@ class WhatsAppCleanerViewModel(
         cleanJob =
             viewModelScope.launch(ioDispatcher) {
                 try {
-                    val result = repository.delete(selectedFiles)
+                    val result = repository.delete(selectedFiles).getOrThrow()
                     if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
                     delayRemainingCleaningAnimation(cleaningStartedAt)
                     setState {

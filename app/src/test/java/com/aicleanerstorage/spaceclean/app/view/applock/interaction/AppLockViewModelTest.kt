@@ -213,10 +213,6 @@ class AppLockViewModelTest {
 
         override fun setVibrationEnabled(enabled: Boolean) = Unit
 
-        override fun hasUsageAccess(): Boolean = false
-
-        override fun hasOverlayPermission(): Boolean = false
-
         override fun handlePackageAdded(packageName: String) = Unit
     }
 }

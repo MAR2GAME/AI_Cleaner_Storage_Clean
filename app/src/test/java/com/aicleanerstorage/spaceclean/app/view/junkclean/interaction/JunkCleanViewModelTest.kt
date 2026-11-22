@@ -179,9 +179,6 @@ class JunkCleanViewModelTest {
 
         override suspend fun cleanMemory(): Result<JunkMemoryCleanModel> = Result.success(JunkMemoryCleanModel(freedBytes = 0L))
 
-        override suspend fun deleteFiles(files: List<JunkFileModel>): Result<List<JunkDeleteOutcomeModel>> =
-            Result.success(outcomes)
-
         override suspend fun deleteFiles(
             files: List<JunkFileModel>,
             shouldStop: () -> Boolean,

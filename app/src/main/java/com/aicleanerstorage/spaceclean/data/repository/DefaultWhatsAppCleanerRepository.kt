@@ -21,6 +21,6 @@ internal class DefaultWhatsAppCleanerRepository(
 ) : WhatsAppCleanerRepository {
     override suspend fun loadGroups(): Map<WhatsAppFileBucketModel, List<ManagedFileModel>> = source.loadGroups()
 
-    override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
-        this.files.delete(files).getOrThrow()
+    override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
+        this.files.delete(files)
 }

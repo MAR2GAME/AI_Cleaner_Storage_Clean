@@ -6,7 +6,6 @@ import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSou
 
 import android.content.Context
 import androidx.core.content.edit
-import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
@@ -109,10 +108,6 @@ internal class DefaultAppLockRepository(
     override fun setVibrationEnabled(enabled: Boolean) {
         preferences.edit(commit = true) { putBoolean(KEY_VIBRATE_ON_KEYPAD, enabled) }
     }
-
-    override fun hasUsageAccess(): Boolean = AppPermission.UsageAccess.isGranted(appContext)
-
-    override fun hasOverlayPermission(): Boolean = AppPermission.Overlay.isGranted(appContext)
 
     override fun handlePackageAdded(packageName: String) {
         if (isPinSet() && isAutoLockEnabled() && isLaunchable(packageName)) {

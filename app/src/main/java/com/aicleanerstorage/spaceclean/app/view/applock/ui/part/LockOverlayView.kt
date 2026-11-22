@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +46,7 @@ class LockOverlayView(
 
     fun show(targetPackage: String): Boolean {
         if (root != null) return true
-        if (!repository.hasOverlayPermission()) return false
+        if (!AppPermission.Overlay.isGranted(context)) return false
         val view = LayoutInflater.from(context).inflate(R.layout.layout_lock_screen_pin, null)
         applyImmersiveFlags(view)
         view.findViewById<TextView>(R.id.tv_hint).text = context.getString(R.string.enter_pin_to_use)

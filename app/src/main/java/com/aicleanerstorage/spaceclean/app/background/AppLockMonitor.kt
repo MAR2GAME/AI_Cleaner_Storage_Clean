@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.background
 import android.content.Context
 import android.content.Intent
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.part.LockOverlayView
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.rule.AppLockMonitoringRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppUsageRepository
@@ -31,7 +32,14 @@ class AppLockMonitor(
     private var lastForegroundPackage: String? = null
 
     val isArmed: Boolean
-        get() = runCatching { AppLockMonitoringRule.shouldMonitorApps(repository) }.getOrDefault(false)
+        get() =
+            runCatching {
+                AppLockMonitoringRule.shouldMonitorApps(
+                    repository = repository,
+                    hasOverlayPermission = AppPermission.Overlay.isGranted(context),
+                    hasUsageAccess = AppPermission.UsageAccess.isGranted(context),
+                )
+            }.getOrDefault(false)
 
     fun sync() {
         if (isArmed) startPolling() else stop()

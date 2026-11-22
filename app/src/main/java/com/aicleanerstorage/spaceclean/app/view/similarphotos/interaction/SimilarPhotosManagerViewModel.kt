@@ -159,7 +159,7 @@ class SimilarPhotosManagerViewModel(
             onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, detailStartIndex = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = { repository.delete(selectedFiles) },
+            operation = { repository.delete(selectedFiles).getOrThrow() },
             isSuccessful = { it.deletedCount > 0 },
             onCompleteAnimation = { outcome, loaded ->
                 setState {

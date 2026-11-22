@@ -133,9 +133,6 @@ internal class DefaultJunkCleanRepository(
             }
         }
 
-    override suspend fun deleteFiles(files: List<JunkFileModel>): Result<List<JunkDeleteOutcomeModel>> =
-        deleteFiles(files) { false }
-
     override suspend fun deleteFiles(
         files: List<JunkFileModel>,
         shouldStop: () -> Boolean,

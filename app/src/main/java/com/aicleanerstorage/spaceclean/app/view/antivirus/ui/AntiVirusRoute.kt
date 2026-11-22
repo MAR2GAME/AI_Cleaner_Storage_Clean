@@ -1,6 +1,15 @@
-package com.aicleanerstorage.spaceclean.app.view.antivirus.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.antivirus.ui
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +23,18 @@ import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanA
 import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanViewModel
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.AntiVirusScreen
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AntiVirusRoute(

@@ -1,8 +1,7 @@
-package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.*
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRecorder

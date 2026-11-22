@@ -1,6 +1,5 @@
-package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
-import com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction.*
 
 sealed interface DeviceInfoAction {
     data object Resumed : DeviceInfoAction

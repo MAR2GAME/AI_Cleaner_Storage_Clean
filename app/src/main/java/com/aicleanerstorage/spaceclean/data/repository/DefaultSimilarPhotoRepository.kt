@@ -19,6 +19,6 @@ internal class DefaultSimilarPhotoRepository(
 ) : SimilarPhotoRepository {
     override suspend fun loadGroups(): List<List<ManagedFileModel>> = SimilarPhotoRule.group(repository.loadImages())
 
-    override suspend fun delete(files: List<ManagedFileModel>): FileDeleteSummaryModel =
-        repository.delete(files).getOrThrow()
+    override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
+        repository.delete(files)
 }

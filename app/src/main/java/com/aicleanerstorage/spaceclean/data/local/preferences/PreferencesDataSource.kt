@@ -49,4 +49,13 @@ internal class PreferencesDataSource(
     ) {
         preferences.edit(commit = commit, action = action)
     }
+
+    /**
+     * 同步写入并返回系统提交结果。
+     *
+     * @param action 对编辑器的修改。
+     * @return true 表示写入磁盘成功；false 表示系统拒绝提交。
+     */
+    fun editAndCommit(action: SharedPreferences.Editor.() -> Unit): Boolean =
+        preferences.edit().apply(action).commit()
 }

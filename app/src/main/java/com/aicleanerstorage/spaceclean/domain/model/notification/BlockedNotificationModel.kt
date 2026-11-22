@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.domain.model.notification
 
+/** 一条已被拦截的通知快照。 */
 data class BlockedNotificationModel(
     val id: String,
     val packageName: String,

@@ -1,5 +1,6 @@
 package com.aicleanerstorage.spaceclean.domain.model.notification
 
+/** 通知清理页一次读取的完整状态。 */
 data class NotificationCleanerSnapshotModel(
     val hasAccess: Boolean,
     val enabled: Boolean,
