@@ -1,131 +1,61 @@
-# 项目规则
+﻿# 椤圭洰瑙勫垯
 
-本文件是硬规则、优先级与代码风格的唯一入口。README / `docs/mvi-architecture.md` 只保留产品说明、数据流细节和现状。
+鏈枃浠舵槸纭鍒欍€佷紭鍏堢骇涓庝唬鐮侀鏍肩殑鍞竴鍏ュ彛銆俁EADME / `docs/mvi-architecture.md` 鍙繚鐣欎骇鍝佽鏄庛€佹暟鎹祦缁嗚妭鍜岀幇鐘躲€?
+## 瑙勫垯鍏ュ彛涓?Profile
 
-## 规则入口与 Profile
+- `AGENTS.md` 鏄鍒欏敮涓€鏉ユ簮锛沗profiles/android-compose-mvi.json` 鍙斁椤圭洰宸紓锛歚sourceRoot`銆乣packageRoot`銆侀〉闈€佺洰鐨勫湴銆佽祫婧愬墠缂€銆乣navHost` 鍜?`checks` 寮€鍏炽€?- 浼樺厛绾э細鐢ㄦ埛褰撳墠鏄庣‘鎸囦护 > 鏈枃浠朵笌褰撳墠 profile > Android / Compose 骞冲彴瑙勫垯 > 閫氱敤宸ョ▼瑙勫垯 > 宸ュ叿榛樿琛屼负銆?- 浠ｇ爜涓庤鑼冧笉涓€鑷存椂榛樿浠ｇ爜鏄敊鐨勶紝闄ら潪宸插湪 `docs/rules/exceptions.md` 鐧昏銆?- 妫€鏌ヨ剼鏈笌瑙勮寖涓嶄竴鑷存椂锛屽湪褰撴鍙樻洿閲屽悓鏃舵敼鑴氭湰鎴栬鍒欙紝涓嶅厑璁搁暱鏈熸紓绉汇€?- 瑙勫垯鍐茬獊銆佽鍒欐湭瑕嗙洊銆侀渶瑕佷緥澶栵細鍏堝湪 `docs/rules/exceptions.md` 鐧昏锛屽啀鏀逛唬鐮併€?
+## 瀹氫綅
 
-- `AGENTS.md` 是规则唯一来源；`profiles/android-compose-mvi.json` 只放项目差异：`sourceRoot`、`packageRoot`、页面、目的地、资源前缀、`navHost` 和 `checks` 开关。
-- 优先级：用户当前明确指令 > 本文件与当前 profile > Android / Compose 平台规则 > 通用工程规则 > 工具默认行为。
-- 代码与规范不一致时默认代码是错的，除非已在 `docs/rules/exceptions.md` 登记。
-- 检查脚本与规范不一致时，在当次变更里同时改脚本或规则，不允许长期漂移。
-- 规则冲突、规则未覆盖、需要例外：先在 `docs/rules/exceptions.md` 登记，再改代码。
-
-## 定位
-
-Android 单 Activity + Compose + MVI + Koin + 类型化导航。当前只有 `:app` 和 `:junkcc` 两个 Gradle 模块；原 `cleanerkit`、`devicekit`、`networkkit` 已全部并入 `data`，不再有独立 kit 包。所有页面 ViewModel 使用 `MviViewModel`，app 统一装配 Koin、类型化 NavHost 与权限 Gate。
-
-## 包结构
-
+Android 鍗?Activity + Compose + MVI + Koin + 绫诲瀷鍖栧鑸€傚綋鍓嶅彧鏈?`:app` 鍜?`:junkcc` 涓や釜 Gradle 妯″潡锛涘師 `cleanerkit`銆乣devicekit`銆乣networkkit` 宸插叏閮ㄥ苟鍏?`data`锛屼笉鍐嶆湁鐙珛 kit 鍖呫€傛墍鏈夐〉闈?ViewModel 浣跨敤 `MviViewModel`锛宎pp 缁熶竴瑁呴厤 Koin銆佺被鍨嬪寲 NavHost 涓庢潈闄?Gate銆?
+## 鍖呯粨鏋?
 ```text
 app/src/main/java/com/aicleanerstorage/
-├─ spaceclean/
-│  ├─ app/        组合根：Application、MainActivity、root/、di/、background/、view/<page>/
-│  ├─ base/       designsystem/、mvi/、navigation/、permission/、util/
-│  ├─ data/       repository/ 仓库实现、local/ 平台适配与删除授权
-│  ├─ domain/     model/<concept>/、port/、rule/、error/
-│  └─ app/view/<page>/{interaction,ui}
+鈹溾攢 spaceclean/
+鈹? 鈹溾攢 app/        缁勫悎鏍癸細Application銆丮ainActivity銆乺oot/銆乨i/銆乥ackground/銆乿iew/<page>/
+鈹? 鈹溾攢 base/       designsystem/銆乵vi/銆乶avigation/銆乸ermission/銆乽til/
+鈹? 鈹溾攢 data/       repository/ 浠撳簱瀹炵幇銆乴ocal/ 骞冲彴閫傞厤涓庡垹闄ゆ巿鏉?鈹? 鈹溾攢 domain/     model/<concept>/銆乸ort/銆乺ule/銆乪rror/
+鈹? 鈹斺攢 app/view/<page>/{interaction,ui}
 ```
 
-**层优先（layer-first）**：`domain` 按职责分为 `model / port / rule / error`，同类文件集中；`data` 分为 `repository / local`，仓库实现与平台适配分开。业务概念通过 `model/<concept>` 与 `local/<capability>` 表达，不再给每个 feature 复制一套 `model/port/error` 子包。真出现跨多个 repository 的编排时再建 `domain/usecase/`。
-
-依赖方向（允许列表，由 `scripts/check-rules.ps1` 逐条检查）：
-
-- `domain` 只依赖自身 + Kotlin/JDK（coroutines 例外见 `docs/rules/exceptions.md`）；不得 import `base`、`data`、`app`。
-- `data` 允许 `domain`、`base`；不得 import `app`。
-- `app/view` 允许 `base`、`domain`；不得 import `data`。
-- `app/root` 允许 `app/view`、`base`、`domain`；不得 import `data`。
-- `app/di` 是唯一装配 data 实现的包。
-- `base` 不得依赖 `data` 或 `app`。
-
-目录名 = 包名，全小写；空目录不建。
-
+**灞備紭鍏堬紙layer-first锛?*锛歚domain` 鎸夎亴璐ｅ垎涓?`model / port / rule / error`锛屽悓绫绘枃浠堕泦涓紱`data` 鍒嗕负 `repository / local`锛屼粨搴撳疄鐜颁笌骞冲彴閫傞厤鍒嗗紑銆備笟鍔℃蹇甸€氳繃 `model/<concept>` 涓?`local/<capability>` 琛ㄨ揪锛屼笉鍐嶇粰姣忎釜 feature 澶嶅埗涓€濂?`model/port/error` 瀛愬寘銆傜湡鍑虹幇璺ㄥ涓?repository 鐨勭紪鎺掓椂鍐嶅缓 `domain/usecase/`銆?
+渚濊禆鏂瑰悜锛堝厑璁稿垪琛紝鐢?`scripts/check-rules.ps1` 閫愭潯妫€鏌ワ級锛?
+- `domain` 鍙緷璧栬嚜韬?+ Kotlin/JDK锛坈oroutines 渚嬪瑙?`docs/rules/exceptions.md`锛夛紱涓嶅緱 import `base`銆乣data`銆乣app`銆?- `data` 鍏佽 `domain`銆乣base`锛涗笉寰?import `app`銆?- `app/view` 鍏佽 `base`銆乣domain`锛涗笉寰?import `data`銆?- `app/root` 鍏佽 `app/view`銆乣base`銆乣domain`锛涗笉寰?import `data`銆?- `app/di` 鏄敮涓€瑁呴厤 data 瀹炵幇鐨勫寘銆?- `base` 涓嶅緱渚濊禆 `data` 鎴?`app`銆?
+鐩綍鍚?= 鍖呭悕锛屽叏灏忓啓锛涚┖鐩綍涓嶅缓銆?
 ## domain
 
-- 结构：`domain/model/<concept>/`、`domain/port/`、`domain/rule/`、`domain/error/`；模型按概念分组，端口/规则/错误平铺。真出现跨仓库编排时再建 `domain/usecase/`。
-- 顶层业务数据类统一 `<Concept>Model`，文件名与类型名一致；枚举保留 `Type`、`Mode`、`Sort` 等语义名称。
-- 写操作返回 `kotlin.Result`；读操作直接返回；失败语义写进 KDoc。`suspend` 只表达“可能耗时”，不绑定线程。
-- 端口按业务能力划分，不按介质/实现细节拆分；端口名用业务动作或业务名词，不用 `MediaStore`、`SAF` 这类介质名。
-- 错误定义在 `domain/error/`；每个 `data object` / `data class` 分支必须有 KDoc，写清“何时发生、调用方怎么处理”。
-- 对外提供能力的类型必须有类级 KDoc；公开方法写作用、`@param`、`@return`。
-- 禁止 `android.*`、`androidx.*`、`Context`、`Uri`、`ContentResolver`、`Compose`、`Dispatchers`、资源 id、SQL 字符串、日志实现。
-
+- 缁撴瀯锛歚domain/model/<concept>/`銆乣domain/port/`銆乣domain/rule/`銆乣domain/error/`锛涙ā鍨嬫寜姒傚康鍒嗙粍锛岀鍙?瑙勫垯/閿欒骞抽摵銆傜湡鍑虹幇璺ㄤ粨搴撶紪鎺掓椂鍐嶅缓 `domain/usecase/`銆?- 椤跺眰涓氬姟鏁版嵁绫荤粺涓€ `<Concept>Model`锛屾枃浠跺悕涓庣被鍨嬪悕涓€鑷达紱鏋氫妇淇濈暀 `Type`銆乣Mode`銆乣Sort` 绛夎涔夊悕绉般€?- 鍐欐搷浣滆繑鍥?`kotlin.Result`锛涜鎿嶄綔鐩存帴杩斿洖锛涘け璐ヨ涔夊啓杩?KDoc銆俙suspend` 鍙〃杈锯€滃彲鑳借€楁椂鈥濓紝涓嶇粦瀹氱嚎绋嬨€?- 绔彛鎸変笟鍔¤兘鍔涘垝鍒嗭紝涓嶆寜浠嬭川/瀹炵幇缁嗚妭鎷嗗垎锛涚鍙ｅ悕鐢ㄤ笟鍔″姩浣滄垨涓氬姟鍚嶈瘝锛屼笉鐢?`MediaStore`銆乣SAF` 杩欑被浠嬭川鍚嶃€?- 閿欒瀹氫箟鍦?`domain/error/`锛涙瘡涓?`data object` / `data class` 鍒嗘敮蹇呴』鏈?KDoc锛屽啓娓呪€滀綍鏃跺彂鐢熴€佽皟鐢ㄦ柟鎬庝箞澶勭悊鈥濄€?- 瀵瑰鎻愪緵鑳藉姏鐨勭被鍨嬪繀椤绘湁绫荤骇 KDoc锛涘叕寮€鏂规硶鍐欎綔鐢ㄣ€乣@param`銆乣@return`銆?- 绂佹 `android.*`銆乣androidx.*`銆乣Context`銆乣Uri`銆乣ContentResolver`銆乣Compose`銆乣Dispatchers`銆佽祫婧?id銆丼QL 瀛楃涓层€佹棩蹇楀疄鐜般€?
+- 端口可以返回 `Flow` 或 `suspend`；不得暴露 `StateFlow`，当前状态由 ViewModel 或明确的 app-scoped store 持有。
 ## data
 
-- 只做实现：`repository/` 放端口实现，`local/` 放 MediaStore/SAF/系统服务/文件系统等平台适配；不定义业务规则。
-- 具体实现类默认 `internal`；Android 组件（`Service` / `Receiver` / `Provider` / `Activity`）例外并登记。
-- 命名按角色：聚合仓库 `<概念>Repository`；单介质实现 `<概念><介质>Repository`；端口名被占用时用 `Default<概念>Repository` 或 `<端口名>Impl`；平台机制用机制前缀。
-- 异常在实现层收口成 `Result`；`CancellationException` 必须继续传播。
-- 直接返回 domain 模型；只有出现 Entity/DTO 时才建 `mapper/`，当前不建。
-- `data` 的平台实现必须直接实现 domain 端口；不再新增“转发”的包装类。
+- 鍙仛瀹炵幇锛歚repository/` 鏀剧鍙ｅ疄鐜帮紝`local/` 鏀?MediaStore/SAF/绯荤粺鏈嶅姟/鏂囦欢绯荤粺绛夊钩鍙伴€傞厤锛涗笉瀹氫箟涓氬姟瑙勫垯銆?- 鍏蜂綋瀹炵幇绫婚粯璁?`internal`锛汚ndroid 缁勪欢锛坄Service` / `Receiver` / `Provider` / `Activity`锛変緥澶栧苟鐧昏銆?- 鍛藉悕鎸夎鑹诧細鑱氬悎浠撳簱 `<姒傚康>Repository`锛涘崟浠嬭川瀹炵幇 `<姒傚康><浠嬭川>Repository`锛涚鍙ｅ悕琚崰鐢ㄦ椂鐢?`Default<姒傚康>Repository` 鎴?`<绔彛鍚?Impl`锛涘钩鍙版満鍒剁敤鏈哄埗鍓嶇紑銆?- 寮傚父鍦ㄥ疄鐜板眰鏀跺彛鎴?`Result`锛沗CancellationException` 蹇呴』缁х画浼犳挱銆?- 鐩存帴杩斿洖 domain 妯″瀷锛涘彧鏈夊嚭鐜?Entity/DTO 鏃舵墠寤?`mapper/`锛屽綋鍓嶄笉寤恒€?- `data` 鐨勫钩鍙板疄鐜板繀椤荤洿鎺ュ疄鐜?domain 绔彛锛涗笉鍐嶆柊澧炩€滆浆鍙戔€濈殑鍖呰绫汇€?
+## UI锛圕ompose + MVI锛?
+UI 缁嗚妭浠?`docs/mvi-architecture.md` 涓哄噯锛屾憳瑕侊細
 
-## UI（Compose + MVI）
+- 鐘舵€佸彧鑳界敱 `setState` / Reducer 淇敼锛涘壇浣滅敤鍙嚭鐜板湪 Route / EffectHandler銆?- 浜嬩欢閫氶亾鐢?`base/mvi/CollectEffects` 鍗曟秷璐硅€呮敹闆嗭紝绂佹鎵嬪啓 `LaunchedEffect { viewModel.event.collect { } }`銆?- `ui/part` 鏃犵姸鎬侊細鍙傛暟鏄暟鎹?+ lambda锛屼笉鎺?ViewModel銆佷笉 collect Flow銆佷笉鍋氬鑸€佷笉璇?Koin銆?- `XxxScreen` 鍙傛暟鍙敤 `state`銆乣onAction`銆乣modifier`锛涙彃妲藉拰骞冲彴瀵硅薄鍥炶皟渚嬪銆?- 鐢ㄦ埛鍙鏂囨璧?`strings.xml` / `UiText`锛涢敊璇埌鏂囨鏀跺彛鍦ㄩ〉闈?`interaction/XxxErrorText.kt`銆?- 绯荤粺杩斿洖閿繀椤?dispatch 椤甸潰 Action锛岀敱 Route 娑堣垂 Event 鍐?`back()`銆?
+## 鍙嶈繃搴﹂槻寰?
+- 淇′换灞傞棿濂戠害锛歞ata 宸茬敤 `Result` 鏀跺彛寮傚父锛孷iewModel 鐩存帴 `fold` / `onFailure`锛屼笉鍐?`try-catch` 杞秷鎭€?- `try-catch` 鍙厑璁稿嚭鐜板湪骞冲彴杈圭晫锛坉ata銆乥ase 鐨勫钩鍙板伐鍏凤級锛沗try-finally` 鍙敤浜庢竻鐞嗚祫婧愶紱`CancellationException` 蹇呴』閲嶆姏銆?- 闈炵┖绫诲瀷鍙傛暟涓嶅啓 `?.` / `?: emptyList()` 鍏滃簳锛涘彧鏈変笟鍔′笂纭疄鍙┖鐨勭姸鎬佹墠浣跨敤 nullable銆?- `require` / `check` 鍙斁鍦ㄥ閮ㄨ緭鍏ユ垨鏋勯€犲叆鍙傝竟鐣岋紱鍐呴儴鍑芥暟涓嶉噸澶嶆牎楠屻€?- `UiState` 鍙繚鐣欐覆鏌撳繀椤荤殑瀛楁锛涜兘鐢?`error: UiText?` 鎺ㄥ鐨?`isError` 涓嶅缓銆?- 涓嶅洜涓衡€滀互鍚庡彲鑳芥浛鎹⑩€濆垱寤烘帴鍙ｃ€丗actory 鎴栫┖瀹炵幇锛沝omain port 鏄笟鍔″绾︼紝鎸変笟鍔￠渶瑕佷繚鐣欍€?
+## 浠ｇ爜椋庢牸
 
-UI 细节以 `docs/mvi-architecture.md` 为准，摘要：
+- Kotlin 瀹樻柟椋庢牸锛? 绌烘牸缂╄繘銆佸琛岃皟鐢ㄥ熬閫楀彿銆佹棤閫氶厤 import銆?- 涓€涓枃浠朵竴涓《灞傚叕寮€绫诲瀷锛屾枃浠跺悕涓庣被鍨嬪悕涓€鑷达紱渚嬪锛歚XxxContract.kt`銆乣XxxErrorText.kt`銆乣XxxPreviews.kt`銆乣XxxReducer.kt`銆乣XxxModels.kt`銆乣PreviewFixtures.kt`銆乣Theme.kt`銆乣AppThemeTokens.kt`銆乣AppModule.kt`銆乣CollectEffects.kt`銆乣AppDestination.kt`銆乣BatteryChartModels.kt`銆乣VirusAndroidEffects.kt`銆?- 鎺ュ彛涓嶅姞 `I` 鍓嶇紑锛涢〉闈㈠唴绫诲瀷甯﹂〉闈㈠墠缂€锛歚JunkCleanUiState`銆乣NetworkSpeedUiState`銆?- 缁勪欢缁熶竴 `CleanX` / `App` 鍓嶇紑锛涢€氱敤璁捐缁勪欢鏀?`base/designsystem/component`銆?- `XxxAction` 鏄?UI 涓婃姤鐨勪簨瀹烇紙杩囧幓寮忥級锛沗XxxEvent` 鏄?VM 涓嬪彂鐨勫懡浠わ紙绁堜娇寮忥級銆?- 鏈鍙湁涓€濂楋細`document`銆乣file`銆乣junk`銆乣clean`銆乣scan`銆乣delete`銆乣permission`锛涗唬鐮併€佽祫婧愰敭銆佹枃妗堜竴鑷淬€?- 璧勬簮閿細鏂板椤甸潰鐢?`<page>_<thing>`锛涘瓨閲忛敭淇濈暀鐜版湁鍓嶇紑锛屼笉涓€娆℃€ч噸鍛藉悕锛沗values/` 涓?`values-zh/` 绛夎瑷€鍖呴敭闆嗗悎涓€鑷淬€?- `const val` 涓€寰?UPPER_SNAKE_CASE锛涙櫘閫?`val` 鐢?camelCase锛涘竷灏斿瓧娈电敤 `is` / `has` / `can` / `should` 寮€澶达紱闆嗗悎鐢ㄥ鏁般€?- 鍗曞嚱鏁帮紙涓嶅惈 `when` 鍒嗘敮浣擄級涓嶈秴杩?40 琛岋紱鍙傛暟涓嶈秴杩?5 涓紝鏇村鏃剁敤鍙傛暟瀵硅薄锛涘祵濂椾笉瓒呰繃 3 灞傦紝浼樺厛鏃╄繑鍥炪€?- 缂╁啓鎸夊崟璇嶅ぇ灏忓啓锛歚Api`銆乣Dto`銆乣Id`銆乣Url`銆乣Ui`銆乣Json`锛涗笉鍐?`API`銆乣DTO`銆乣ID`銆乣URL`銆?- 杩斿洖 `Flow` 鐨勫嚱鏁扮敤 `observeXxx`锛涙寕璧峰嚱鏁扮洿鎺ュ姩璇嶏紝涓嶅姞 `Async` 鍚庣紑銆?- KDoc 鐢ㄤ腑鏂囷細鍐欌€滀负浠€涔堚€濆拰瀵瑰濂戠害锛屼笉閫愯澶嶈堪瀹炵幇锛涚函杞戒綋锛圲iState / Action / Event / Reducer锛夐潬鍛藉悕琛ㄨ揪銆?
+## 娴嬭瘯
 
-- 状态只能由 `setState` / Reducer 修改；副作用只出现在 Route / EffectHandler。
-- 事件通道由 `base/mvi/CollectEffects` 单消费者收集，禁止手写 `LaunchedEffect { viewModel.event.collect { } }`。
-- `ui/part` 无状态：参数是数据 + lambda，不接 ViewModel、不 collect Flow、不做导航、不读 Koin。
-- `XxxScreen` 参数只用 `state`、`onAction`、`modifier`；插槽和平台对象回调例外。
-- 用户可见文案走 `strings.xml` / `UiText`；错误到文案收口在页面 `interaction/XxxErrorText.kt`。
-- 系统返回键必须 dispatch 页面 Action，由 Route 消费 Event 再 `back()`。
+- domain 鐢ㄧ函 JVM 娴嬭瘯锛屼笉寮?Robolectric銆?- ViewModel 娴嬭瘯鐢?`runTest`锛涢渶瑕佷富璋冨害鍣ㄦ椂鐢?`Dispatchers.setMain`锛屽閮ㄤ緷璧栫敤 Fake 绔彛瀹炵幇銆?- data 鐨勭鍙ｅ疄鐜版祴璇曠敤鐪熷疄涓存椂鐩綍鎴栧唴瀛樹粙璐紝涓嶄緷璧栬澶囥€?- 鏂囦欢鍚?`<Type>Test.kt`锛涙柟娉曠敤 camelCase 琛屼负鍙ワ紙`nextRequiresSelection`锛夛紝涓嶅啓 `test1` / `should` 鍓嶇紑銆?- 鏇胯韩鐢?`FakeXxx`锛屽す鍏风敤 `XxxFixture`锛屼笉鐢?`Mock` 鍓嶇紑锛岄櫎闈炵湡鐨勫紩浜?mock 妗嗘灦銆?- 淇?bug 鏃惰ˉ涓€鏉¤兘澶嶇幇鐨勭敤渚嬨€?
+## 鎻愪氦
 
-## 反过度防御
-
-- 信任层间契约：data 已用 `Result` 收口异常，ViewModel 直接 `fold` / `onFailure`，不再 `try-catch` 转消息。
-- `try-catch` 只允许出现在平台边界（data、base 的平台工具）；`try-finally` 只用于清理资源；`CancellationException` 必须重抛。
-- 非空类型参数不写 `?.` / `?: emptyList()` 兜底；只有业务上确实可空的状态才使用 nullable。
-- `require` / `check` 只放在外部输入或构造入参边界；内部函数不重复校验。
-- `UiState` 只保留渲染必须的字段；能由 `error: UiText?` 推导的 `isError` 不建。
-- 不因为“以后可能替换”创建接口、Factory 或空实现；domain port 是业务契约，按业务需要保留。
-
-## 代码风格
-
-- Kotlin 官方风格：4 空格缩进、多行调用尾逗号、无通配 import。
-- 一个文件一个顶层公开类型，文件名与类型名一致；例外：`XxxContract.kt`、`XxxErrorText.kt`、`XxxPreviews.kt`、`XxxReducer.kt`、`XxxModels.kt`、`PreviewFixtures.kt`、`Theme.kt`、`AppThemeTokens.kt`、`AppModule.kt`、`CollectEffects.kt`、`AppDestination.kt`、`BatteryChartModels.kt`、`VirusAndroidEffects.kt`。
-- 接口不加 `I` 前缀；页面内类型带页面前缀：`JunkCleanUiState`、`NetworkSpeedUiState`。
-- 组件统一 `CleanX` / `App` 前缀；通用设计组件放 `base/designsystem/component`。
-- `XxxAction` 是 UI 上报的事实（过去式）；`XxxEvent` 是 VM 下发的命令（祈使式）。
-- 术语只有一套：`document`、`file`、`junk`、`clean`、`scan`、`delete`、`permission`；代码、资源键、文案一致。
-- 资源键：新增页面用 `<page>_<thing>`；存量键保留现有前缀，不一次性重命名；`values/` 与 `values-zh/` 等语言包键集合一致。
-- `const val` 一律 UPPER_SNAKE_CASE；普通 `val` 用 camelCase；布尔字段用 `is` / `has` / `can` / `should` 开头；集合用复数。
-- 单函数（不含 `when` 分支体）不超过 40 行；参数不超过 5 个，更多时用参数对象；嵌套不超过 3 层，优先早返回。
-- 缩写按单词大小写：`Api`、`Dto`、`Id`、`Url`、`Ui`、`Json`；不写 `API`、`DTO`、`ID`、`URL`。
-- 返回 `Flow` 的函数用 `observeXxx`；挂起函数直接动词，不加 `Async` 后缀。
-- KDoc 用中文：写“为什么”和对外契约，不逐行复述实现；纯载体（UiState / Action / Event / Reducer）靠命名表达。
-
-## 测试
-
-- domain 用纯 JVM 测试，不引 Robolectric。
-- ViewModel 测试用 `runTest`；需要主调度器时用 `Dispatchers.setMain`，外部依赖用 Fake 端口实现。
-- data 的端口实现测试用真实临时目录或内存介质，不依赖设备。
-- 文件名 `<Type>Test.kt`；方法用 camelCase 行为句（`nextRequiresSelection`），不写 `test1` / `should` 前缀。
-- 替身用 `FakeXxx`，夹具用 `XxxFixture`，不用 `Mock` 前缀，除非真的引了 mock 框架。
-- 修 bug 时补一条能复现的用例。
-
-## 提交
-
-- 一次提交一个主题；信息用 `feat:` / `fix:` / `docs:` / `refactor:` / `test:` / `chore:` 前缀，可带 scope 和中文描述。
-- 提交前至少跑 `.\scripts\check-rules.ps1`；合入前跑 `.\scripts\ci.ps1`（规范 + 编译 + 单测）。
-
-## 不要提前建
-
-| 东西 | 什么时候建 |
+- 涓€娆℃彁浜や竴涓富棰橈紱淇℃伅鐢?`feat:` / `fix:` / `docs:` / `refactor:` / `test:` / `chore:` 鍓嶇紑锛屽彲甯?scope 鍜屼腑鏂囨弿杩般€?- 鎻愪氦鍓嶈嚦灏戣窇 `.\scripts\check-rules.ps1`锛涘悎鍏ュ墠璺?`.\scripts\ci.ps1`锛堣鑼?+ 缂栬瘧 + 鍗曟祴锛夈€?
+## 涓嶈鎻愬墠寤?
+| 涓滆タ | 浠€涔堟椂鍊欏缓 |
 |---|---|
-| `mapper/` | 存储模型 ≠ 领域模型 |
-| 新 usecase | 出现跨多个 repository 或跨域的编排；单端口、只转发的不建 |
-| `data/remote/` | 第一个真实网络调用 |
-| `base/util/` 再拆文件 | 出现可独立复用的职责时，不按文件行数拆分 |
-| `domain/rule/` 新文件 | 出现第一条纯规则时 |
+| `mapper/` | 瀛樺偍妯″瀷 鈮?棰嗗煙妯″瀷 |
+| 鏂?usecase | 鍑虹幇璺ㄥ涓?repository 鎴栬法鍩熺殑缂栨帓锛涘崟绔彛銆佸彧杞彂鐨勪笉寤?|
+| `data/remote/` | 绗竴涓湡瀹炵綉缁滆皟鐢?|
+| `base/util/` 鍐嶆媶鏂囦欢 | 鍑虹幇鍙嫭绔嬪鐢ㄧ殑鑱岃矗鏃讹紝涓嶆寜鏂囦欢琛屾暟鎷嗗垎 |
+| `domain/rule/` 鏂版枃浠?| 鍑虹幇绗竴鏉＄函瑙勫垯鏃?|
 
-判断法：目录里现在放进去的文件数是 0 → 不建；同一调用链上只有单目标、无独立语义的转发层 → 不建；判断不了放哪层 → 看它 import 不 import 平台 API。
-
-## 检查
-
+鍒ゆ柇娉曪細鐩綍閲岀幇鍦ㄦ斁杩涘幓鐨勬枃浠舵暟鏄?0 鈫?涓嶅缓锛涘悓涓€璋冪敤閾句笂鍙湁鍗曠洰鏍囥€佹棤鐙珛璇箟鐨勮浆鍙戝眰 鈫?涓嶅缓锛涘垽鏂笉浜嗘斁鍝眰 鈫?鐪嬪畠 import 涓?import 骞冲彴 API銆?
+## 妫€鏌?
 ```powershell
-.\scripts\check-rules.ps1    # 执行策略允许时
-.\scripts\check-rules.cmd    # 执行策略受限时
-```
+.\scripts\check-rules.ps1    # 鎵ц绛栫暐鍏佽鏃?.\scripts\check-rules.cmd    # 鎵ц绛栫暐鍙楅檺鏃?```
 
-当前门禁覆盖：domain 纯净、分层方向、data 可见性/契约、view 不 import data、domain 模型命名、错误分支 KDoc、单文件公开类型、命名、UiText、CollectEffects、BackHandler、effect 位置、package/目录、语言包 key。任何一项不通过退出码非 0。
-
-新克隆执行一次 `.\scripts\install-hooks.ps1` 启用 `pre-commit`；钩子可被 `git commit --no-verify` 绕过，CI 必须跑同一脚本兜底。
+褰撳墠闂ㄧ瑕嗙洊锛歞omain 绾噣銆佸垎灞傛柟鍚戙€乨ata 鍙鎬?濂戠害銆乿iew 涓?import data銆乨omain 妯″瀷鍛藉悕銆侀敊璇垎鏀?KDoc銆佸崟鏂囦欢鍏紑绫诲瀷銆佸懡鍚嶃€乁iText銆丆ollectEffects銆丅ackHandler銆乪ffect 浣嶇疆銆乸ackage/鐩綍銆佽瑷€鍖?key銆備换浣曚竴椤逛笉閫氳繃閫€鍑虹爜闈?0銆?
+鏂板厠闅嗘墽琛屼竴娆?`.\scripts\install-hooks.ps1` 鍚敤 `pre-commit`锛涢挬瀛愬彲琚?`git commit --no-verify` 缁曡繃锛孋I 蹇呴』璺戝悓涓€鑴氭湰鍏滃簳銆?

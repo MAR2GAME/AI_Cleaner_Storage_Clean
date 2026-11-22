@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -18,10 +18,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /**
- * 设备信息/电池页共用的状态编排器。
+ * 璁惧淇℃伅/鐢垫睜椤靛叡鐢ㄧ殑鐘舵€佺紪鎺掑櫒銆?
  *
- * 负责加载设备信息、推进扫描动画、启停电池采样和把结果写回 UiState；
- * 页面只通过 ViewModel 调用它，不直接持有协程或仓库。
+ * 璐熻矗鍔犺浇璁惧淇℃伅銆佹帹杩涙壂鎻忓姩鐢汇€佸惎鍋滅數姹犻噰鏍峰拰鎶婄粨鏋滃啓鍥?UiState锛?
+ * 椤甸潰鍙€氳繃 ViewModel 璋冪敤瀹冿紝涓嶇洿鎺ユ寔鏈夊崗绋嬫垨浠撳簱銆?
  */
 internal class DeviceInfoStateController(
     private val repository: DeviceInfoRepository,
@@ -168,7 +168,7 @@ internal class DeviceInfoStateController(
             if (mode == DeviceInfoMode.Battery) {
                 batteryHistoryRepository.loadRecent(timestampMillis)
             } else {
-                batteryHistoryRepository.samples.value
+                batteryHistoryRepository.loadRecent()
             }
 
         return DeviceInfoUiState(
@@ -217,7 +217,7 @@ internal class DeviceInfoStateController(
         if (historyCollectionJob?.isActive == true) return
         historyCollectionJob =
             scope.launch(ioDispatcher) {
-                batteryHistoryRepository.samples.collect { samples ->
+                batteryHistoryRepository.observeSamples().collect { samples ->
                     applyHistorySamples(samples, nowMillis())
                 }
             }
@@ -238,7 +238,7 @@ internal class DeviceInfoStateController(
 
     private fun shouldForceBatterySample(timestampMillis: Long): Boolean {
         val latestSample =
-            batteryHistoryRepository.samples.value
+            batteryHistoryRepository.loadRecent()
                 .lastOrNull()
                 ?: batteryHistoryRepository.loadRecent(timestampMillis).lastOrNull()
                 ?: return true

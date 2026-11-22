@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.networkscan.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
@@ -83,7 +83,6 @@ class NetworkScanViewModel(
 
         networkRefreshJob?.cancel()
         scanJob?.cancel()
-        repository.clearLastScan()
         setState { NetworkScanReducer.scanStarted(it) }
         scanJob =
             viewModelScope.launch(ioDispatcher) {
@@ -116,3 +115,4 @@ class NetworkScanViewModel(
         private const val NETWORK_REFRESH_RETRY_DELAY_MILLIS = 500L
     }
 }
+

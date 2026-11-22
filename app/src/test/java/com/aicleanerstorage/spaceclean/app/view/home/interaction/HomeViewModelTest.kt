@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.home.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.ViewModelStore
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
@@ -6,6 +6,7 @@ import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.testsupport.InMemoryAppSettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
@@ -65,7 +66,9 @@ class HomeViewModelTest {
                             repository = unusedRepository(),
                             appLockRepository =
                                 object : AppLockRepository by unusedRepository<AppLockRepository>() {
-                                    override val lockedAppCountFlow = MutableStateFlow(0)
+                                    override fun observeLockedAppCount(): Flow<Int> = MutableStateFlow(0)
+
+                    override fun currentLockedAppCount(): Int = 0
                                 },
                             settingsRepository = settings,
                             ioDispatcher = StandardTestDispatcher(TestCoroutineScheduler()),
@@ -124,3 +127,5 @@ class HomeViewModelTest {
             error("Unexpected summary call: ${method.name}")
         } as T
 }
+
+

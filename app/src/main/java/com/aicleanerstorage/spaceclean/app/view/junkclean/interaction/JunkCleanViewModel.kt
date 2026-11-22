@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
@@ -39,13 +39,13 @@ class JunkCleanViewModel(
 
     private val FINISHING_ANIMATION_MILLIS = 800L
 
-    private var progressJob: Job? = null
     private var scanJob: Job? = null
 
     @Volatile private var stopCleaning = false
     private var cleaningJob: Job? = null
     private var exitEffectSent = false
     private var cleaningExecutionState = CleaningExecutionState()
+    private var lastScanResult: JunkScanResultModel? = null
 
     private var permissionPrevious: JunkCleanUiState? = null
     private var pendingCleanFiles: List<JunkFileModel>? = null
@@ -114,7 +114,6 @@ class JunkCleanViewModel(
         exitEffectSent = true
         scanJob?.cancel()
         cleaningJob?.cancel()
-        progressJob?.cancel()
         sendEvent(JunkCleanEvent.Exit(target))
     }
 
@@ -143,18 +142,28 @@ class JunkCleanViewModel(
         scanJob =
             viewModelScope.launch {
                 try {
-                    cleanRepository.clearSession()
-                    val scanStartedAt = System.currentTimeMillis()
+                                        val scanStartedAt = System.currentTimeMillis()
                     dispatch(JunkScanStarted)
-                    observeProgress()
                     val result =
-                        withContext(ioDispatcher) { cleanRepository.scan() }.getOrElse {
-                            progressJob?.cancel()
-                            dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                        withContext(ioDispatcher) {
+                        cleanRepository.scan { progress ->
+                            if (currentState.phase == JunkCleanPhase.Scanning) {
+                                reduce(
+                                    JunkScanProgressUpdated(
+                                        progress = progress.percent,
+                                        currentCategory = progress.currentCategory,
+                                        foundItemCount = progress.foundCount,
+                                        foundTotalSize = progress.foundSize,
+                                    ),
+                                )
+                            }
+                        }
+                    }.getOrElse {
+                                                dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
                             return@launch
                         }
                     currentCoroutineContext().ensureActive()
-                    progressJob?.cancel()
+                                lastScanResult = result
                     dispatch(JunkScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
                     loadPreview(result)
@@ -162,8 +171,7 @@ class JunkCleanViewModel(
                     throw error
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
-                    progressJob?.cancel()
-                    dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                                dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
                 }
             }
     }
@@ -246,8 +254,6 @@ class JunkCleanViewModel(
     private fun cancelActiveOperation() {
         scanJob?.cancel()
         scanJob = null
-        progressJob?.cancel()
-        progressJob = null
         cleaningJob?.cancel()
         cleaningJob = null
         dispatch(JunkActiveOperationCancelled)
@@ -258,7 +264,7 @@ class JunkCleanViewModel(
         deleted: List<JunkFileModel>,
         bytes: Long,
     ) {
-        val files = cleanRepository.scanResult.value ?: return
+        val files = lastScanResult ?: return
         val selected =
             currentState.groups
                 .flatMap { it.items }
@@ -286,26 +292,6 @@ class JunkCleanViewModel(
         if (resume && stoppedPhase == JunkCleanPhase.Scanning) {
             startScanIfNeeded()
         }
-    }
-
-    private fun observeProgress() {
-        progressJob?.cancel()
-        progressJob =
-            viewModelScope.launch {
-                cleanRepository.scanProgress.collect { progress ->
-                    if (currentState.phase != JunkCleanPhase.Scanning) return@collect
-                    val currentResult = cleanRepository.scanResult.value
-                    val foundSize = currentResult?.totalSize ?: progress.foundSize
-                    reduce(
-                        JunkScanProgressUpdated(
-                            progress = progress.percent,
-                            currentCategory = progress.currentCategory,
-                            foundItemCount = currentResult?.totalCount ?: progress.foundCount,
-                            foundTotalSize = foundSize,
-                        ),
-                    )
-                }
-            }
     }
 
     private fun loadPreview(scanResult: JunkScanResultModel?) {
@@ -339,7 +325,9 @@ class JunkCleanViewModel(
                 memoryFreedBytes = memoryResult?.freedBytes ?: 0L,
             )
 
-        cleanRepository.removeCleanedFiles(cleanedFiles)
+        lastScanResult = lastScanResult?.let { result ->
+            result.copy(files = result.files.filterNot { it in cleanedFiles })
+        }
 
         cleaningExecutionState = CleaningExecutionState()
         dispatch(JunkCleaningCompleted(summary))
@@ -361,8 +349,10 @@ class JunkCleanViewModel(
 
     override fun onCleared() {
         scanJob?.cancel()
-        progressJob?.cancel()
         cleaningJob?.cancel()
         super.onCleared()
     }
 }
+
+
+

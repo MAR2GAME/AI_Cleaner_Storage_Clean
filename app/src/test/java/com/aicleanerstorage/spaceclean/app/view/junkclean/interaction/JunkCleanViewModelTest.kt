@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -158,22 +158,11 @@ class JunkCleanViewModelTest {
         private val failure: Throwable? = null,
         private val outcomes: List<JunkDeleteOutcomeModel> = emptyList(),
     ) : JunkCleanRepository {
-        private val progress = MutableStateFlow(JunkScanProgressModel.IDLE)
-        private val resultFlow = MutableStateFlow<JunkScanResultModel?>(null)
-
-        override val scanProgress: StateFlow<JunkScanProgressModel> = progress
-
-        override val scanResult: StateFlow<JunkScanResultModel?> = resultFlow
-
-        override fun clearSession() {
-            resultFlow.value = null
-        }
-
-        override fun removeCleanedFiles(files: List<JunkFileModel>) = Unit
-
-        override suspend fun scan(): Result<JunkScanResultModel> =
+        override suspend fun scan(
+            onProgress: (JunkScanProgressModel) -> Unit,
+        ): Result<JunkScanResultModel> =
             failure?.let { Result.failure(it) } ?: run {
-                resultFlow.value = result
+                onProgress(JunkScanProgressModel.IDLE)
                 Result.success(result)
             }
 
@@ -185,3 +174,5 @@ class JunkCleanViewModelTest {
         ): Result<List<JunkDeleteOutcomeModel>> = Result.success(outcomes)
     }
 }
+
+

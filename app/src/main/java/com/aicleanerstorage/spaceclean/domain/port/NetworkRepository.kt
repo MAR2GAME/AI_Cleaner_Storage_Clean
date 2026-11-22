@@ -1,14 +1,12 @@
-﻿package com.aicleanerstorage.spaceclean.domain.port
+package com.aicleanerstorage.spaceclean.domain.port
 
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * 缃戠粶鐘舵€併€佸眬鍩熺綉鎵弿銆佹祴閫熶笌娴侀噺缁熻鐨勪笟鍔″绾︺€? *
- * [lastScan] 鐢辨壂鎻忛〉鍜屽眬鍩熺綉璁惧椤靛叡浜紱`runSpeedTest` 鐨?[onProgress]
  * 鍦?IO 绾跨▼鍥炶皟锛孶I 鍙妸瀹冭浆鎴?Action锛屼笉鐩存帴鏀圭姸鎬併€? */
 interface NetworkRepository {
     /**
@@ -41,15 +39,13 @@ interface NetworkRepository {
      * @param onProgress 娴嬮€熼樁娈典笌瀹炴椂閫熷害鍥炶皟锛涘彲鑳藉湪 IO 绾跨▼璋冪敤銆?     * @return 鏈€缁堟祴閫熺粨鏋溿€?     */
     suspend fun runSpeedTest(onProgress: (NetworkSpeedModel) -> Unit): NetworkSpeedModel
 
-    /** 鏈€杩戜竴娆″眬鍩熺綉鎵弿缁撴灉锛涙病鏈夋壂鎻忔椂涓?null銆?*/
-    val lastScan: StateFlow<NetworkScanResultModel?>
-
     /**
      * 鎵弿褰撳墠灞€鍩熺綉璁惧銆?     *
      * @return 鎵弿缁撴灉锛涙棤缃戠粶鎴栨湭鎺堟潈鏃惰繑鍥炵┖缁撴灉銆?     */
     suspend fun scanWifi(): NetworkScanResultModel
 
-    /** 娓呯┖鏈€杩戜竴娆℃壂鎻忕粨鏋溿€?*/
-    fun clearLastScan()
 }
+
+
+
 

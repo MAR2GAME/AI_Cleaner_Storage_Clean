@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.repository
+﻿package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.data.local.battery.BatteryHistoryFileStore
 
@@ -6,11 +6,11 @@ import android.content.Context
 import com.aicleanerstorage.spaceclean.domain.port.BatteryHistoryRepository
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 
-/** 把电池历史样本持久化到应用私有文件，并按窗口读取。 */
+/** 鎶婄數姹犲巻鍙叉牱鏈寔涔呭寲鍒板簲鐢ㄧ鏈夋枃浠讹紝骞舵寜绐楀彛璇诲彇銆?*/
 internal class DefaultBatteryHistoryRepository(
     historyFile: File,
 ) : BatteryHistoryRepository {
@@ -24,7 +24,9 @@ internal class DefaultBatteryHistoryRepository(
     private var loaded = false
     private var lastCompactAtMillis = 0L
 
-    override val samples: StateFlow<List<BatteryHistorySampleModel>> = _samples.asStateFlow()
+    override fun observeSamples(): Flow<List<BatteryHistorySampleModel>> = _samples.asStateFlow()
+
+    override fun latestSample(): BatteryHistorySampleModel? = _samples.value.lastOrNull()
 
     override fun loadRecent(nowMillis: Long): List<BatteryHistorySampleModel> =
         synchronized(lock) {
@@ -110,3 +112,4 @@ private fun BatteryHistorySampleModel.isUsable(): Boolean =
         currentMa?.isFiniteValue() != false
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
+

@@ -126,6 +126,7 @@
                    "uiPartNoNavigator":  true,
                    "screenNoActionEffect":  true,
                    "composableParamLimit":  true,
-                   "functionLengthLimit":  true
+                   "functionLengthLimit":  true,
+                   "portStateFlow":  true
                }
 }

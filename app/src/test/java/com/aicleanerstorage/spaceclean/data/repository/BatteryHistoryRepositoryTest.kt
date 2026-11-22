@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.repository
+﻿package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
 import org.junit.Assert.assertEquals
@@ -24,7 +24,8 @@ class BatteryHistoryRepositoryTest {
         val repository = DefaultBatteryHistoryRepository(file)
         assertEquals(listOf(previous), repository.loadRecent(now))
         repository.append(next, now)
-        assertEquals(listOf(previous, next), repository.samples.value)
-        assertEquals(repository.samples.value, DefaultBatteryHistoryRepository(file).loadRecent(now))
+        assertEquals(listOf(previous, next), repository.loadRecent(now))
+        assertEquals(repository.loadRecent(now), DefaultBatteryHistoryRepository(file).loadRecent(now))
     }
 }
+

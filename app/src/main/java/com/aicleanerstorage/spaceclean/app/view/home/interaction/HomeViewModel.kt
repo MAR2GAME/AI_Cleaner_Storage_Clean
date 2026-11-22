@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.home.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
@@ -32,7 +32,7 @@ class HomeViewModel(
         refreshSummary()
         scheduleAutoRatePrompt()
         viewModelScope.launch {
-            appLockRepository.lockedAppCountFlow.collect { count ->
+            appLockRepository.observeLockedAppCount().collect { count ->
                 setState { it.copy(summary = it.summary.copy(lockedAppCount = count)) }
             }
         }
@@ -128,7 +128,7 @@ class HomeViewModel(
                         batteryInfo = repository.batteryInfo(),
                         deviceModel = hardware.model,
                         androidVersion = hardware.androidVersion,
-                        lockedAppCount = runCatching { appLockRepository.lockedAppCountFlow.value }.getOrDefault(0),
+                        lockedAppCount = runCatching { appLockRepository.currentLockedAppCount() }.getOrDefault(0),
                         isLoading = false,
                     )
                 }.getOrElse {
@@ -181,3 +181,4 @@ class HomeViewModel(
         super.onCleared()
     }
 }
+

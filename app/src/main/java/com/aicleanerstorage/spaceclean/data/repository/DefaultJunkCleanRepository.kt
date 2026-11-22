@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
-import com.aicleanerstorage.spaceclean.data.local.junkclean.JunkScanSessionStore
 
 import android.content.Context
 import com.aicleanerstorage.spaceclean.base.permission.MediaDeletionRequester
@@ -34,14 +33,14 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 /**
- * 垃圾扫描/清理的唯一实现，直接实现 [JunkCleanRepository]。
+ * 鍨冨溇鎵弿/娓呯悊鐨勫敮涓€瀹炵幇锛岀洿鎺ュ疄鐜?[JunkCleanRepository]銆?
  *
- * 负责协调多个 scanner、保存扫描会话状态和执行删除；不控制页面动画节奏，
- * 扫描页的最短展示时间由 presentation 的 effect 决定。
+ * 璐熻矗鍗忚皟澶氫釜 scanner銆佷繚瀛樻壂鎻忎細璇濈姸鎬佸拰鎵ц鍒犻櫎锛涗笉鎺у埗椤甸潰鍔ㄧ敾鑺傚锛?
+ * 鎵弿椤电殑鏈€鐭睍绀烘椂闂寸敱 presentation 鐨?effect 鍐冲畾銆?
  *
- * @param context 用于扫描缓存/APK/文件和内存清理。
- * @param requester 系统删除授权契约；为 null 时登记待授权请求。
- * @param authorization 待授权请求的登记表。
+ * @param context 鐢ㄤ簬鎵弿缂撳瓨/APK/鏂囦欢鍜屽唴瀛樻竻鐞嗐€?
+ * @param requester 绯荤粺鍒犻櫎鎺堟潈濂戠害锛涗负 null 鏃剁櫥璁板緟鎺堟潈璇锋眰銆?
+ * @param authorization 寰呮巿鏉冭姹傜殑鐧昏琛ㄣ€?
  */
 internal class DefaultJunkCleanRepository(
     private val context: Context,
@@ -62,43 +61,35 @@ internal class DefaultJunkCleanRepository(
             duplicateFileScanner,
         )
 
-    private val session = JunkScanSessionStore()
-
-    override val scanProgress get() = session.scanProgress
-    override val scanResult get() = session.scanResult
+    private var lastScanFiles: List<JunkFileModel> = emptyList()
 
     private val work = Mutex()
     private val generation = AtomicLong()
 
-    override fun clearSession() {
-        synchronized(session) {
-            generation.incrementAndGet()
-            session.clear()
-        }
-        authorization.invalidate(MediaDeletionAuthorization.Owner.Clean)
-    }
-
-    override fun removeCleanedFiles(files: List<JunkFileModel>) =
-        synchronized(session) { session.removeCleanedFiles(files) }
-
-    override suspend fun scan(): Result<JunkScanResultModel> =
+    override suspend fun scan(
+        onProgress: (JunkScanProgressModel) -> Unit,
+    ): Result<JunkScanResultModel> =
         catching {
             withContext(Dispatchers.IO) {
-                work.withLock { scanInternal() }
+                work.withLock { scanInternal(onProgress) }
             }
         }
 
-    private suspend fun scanInternal(): JunkScanResultModel {
-        clearSession()
+    private suspend fun scanInternal(
+        onProgress: (JunkScanProgressModel) -> Unit,
+    ): JunkScanResultModel {
+        generation.incrementAndGet()
+        authorization.invalidate(MediaDeletionAuthorization.Owner.Clean)
+        lastScanFiles = emptyList()
         val scanGeneration = generation.get()
         val allJunkFiles = mutableListOf<JunkFileModel>()
         var snapshot = JunkScanResultModel.EMPTY
-        session.setScanProgress(snapshot.toScanProgress(percent = 0f))
+        onProgress(snapshot.toScanProgress(percent = 0f))
 
         val weightPerScanner = 100f / scanners.size
 
         for ((index, scanner) in scanners.withIndex()) {
-            session.setScanProgress(
+            onProgress(
                 snapshot.toScanProgress(
                     percent = index * weightPerScanner,
                     currentCategory = scanner.category,
@@ -109,7 +100,7 @@ internal class DefaultJunkCleanRepository(
             allJunkFiles.addAll(files.map { it.copy(id = it.path) })
 
             snapshot = JunkScanResultModel(JunkScanRule.normalize(allJunkFiles))
-            session.setScanProgress(
+            onProgress(
                 snapshot.toScanProgress(
                     percent = (index + 1) * weightPerScanner,
                     currentCategory = scanner.category,
@@ -117,12 +108,10 @@ internal class DefaultJunkCleanRepository(
             )
         }
 
-        session.setScanProgress(snapshot.toScanProgress(percent = 100f))
+        onProgress(snapshot.toScanProgress(percent = 100f))
+        if (scanGeneration != generation.get()) throw CancellationException("Scan session cleared")
         val result = snapshot
-        synchronized(session) {
-            if (scanGeneration != generation.get()) throw CancellationException("Scan session cleared")
-            session.setScanResult(result)
-        }
+        lastScanFiles = result.files
         return result
     }
 
@@ -149,7 +138,7 @@ internal class DefaultJunkCleanRepository(
     ): List<JunkDeleteOutcomeModel> {
         val coroutineContext = currentCoroutineContext()
         val version = generation.get()
-        val known = scanResult.value?.files.orEmpty().associateBy { it.path }
+        val known = lastScanFiles.associateBy { it.path }
         val paths = selectedFiles.map { it.path }.toSet()
         val automatic = mutableMapOf<String, PendingMediaDelete>()
         val completed = mutableListOf<JunkDeleteOutcomeModel>()
@@ -173,7 +162,7 @@ internal class DefaultJunkCleanRepository(
                                         current = { version == generation.get() },
                                     ) { status ->
                                         if (status == DeleteStatus.Deleted || status == DeleteStatus.AlreadyAbsent) {
-                                            removeCleanedFiles(listOf(item))
+                                            removeFromScanCache(listOf(item))
                                         }
                                     }
                                 JunkDeleteOutcomeModel(item, DeleteStatus.AuthorizationRequired)
@@ -199,16 +188,19 @@ internal class DefaultJunkCleanRepository(
             }
             completed
         } finally {
-            synchronized(session) {
-                if (version == generation.get()) {
-                    session.removeCleanedFiles(
-                        completed.filter { it.deleted || it.status == DeleteStatus.AlreadyAbsent }.map { it.file },
-                    )
-                }
+            if (version == generation.get()) {
+                removeFromScanCache(
+                    completed.filter { it.deleted || it.status == DeleteStatus.AlreadyAbsent }.map { it.file },
+                )
             }
         }
     }
 
+    private fun removeFromScanCache(files: List<JunkFileModel>) {
+        if (files.isEmpty()) return
+        val removed = files.toHashSet()
+        lastScanFiles = lastScanFiles.filterNot { it in removed }
+    }
     private fun JunkScanResultModel.toScanProgress(
         percent: Float,
         currentCategory: JunkCategory? = null,
@@ -229,3 +221,4 @@ internal class DefaultJunkCleanRepository(
             emptyList()
         }
 }
+

@@ -1,12 +1,12 @@
-package com.aicleanerstorage.spaceclean.app.view.applock.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -180,7 +180,9 @@ class AppLockViewModelTest {
     ) : AppLockRepository {
         private val lockedCount = MutableStateFlow(0)
 
-        override val lockedAppCountFlow: StateFlow<Int> = lockedCount
+        override fun observeLockedAppCount(): Flow<Int> = lockedCount
+
+        override fun currentLockedAppCount(): Int = 0
 
         override fun isPinSet(): Boolean = false
 
@@ -216,3 +218,5 @@ class AppLockViewModelTest {
         override fun handlePackageAdded(packageName: String) = Unit
     }
 }
+
+

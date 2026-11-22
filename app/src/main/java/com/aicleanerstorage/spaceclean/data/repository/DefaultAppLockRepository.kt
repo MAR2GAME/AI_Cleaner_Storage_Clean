@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.repository
+﻿package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.data.local.applock.LockableAppQuery
 import com.aicleanerstorage.spaceclean.data.local.applock.PinCredential
@@ -10,10 +10,10 @@ import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 
-/** 用 SharedPreferences 与 PackageManager 实现应用锁配置、PIN 与可锁应用查询。 */
+/** 鐢?SharedPreferences 涓?PackageManager 瀹炵幇搴旂敤閿侀厤缃€丳IN 涓庡彲閿佸簲鐢ㄦ煡璇€?*/
 internal class DefaultAppLockRepository(
     context: Context,
     private val preferences: PreferencesDataSource,
@@ -21,8 +21,10 @@ internal class DefaultAppLockRepository(
     private val appContext = context.applicationContext
     private val lockableAppQuery = LockableAppQuery(appContext)
 
-    private val _lockedAppCountFlow = MutableStateFlow(lockedAppCount())
-    override val lockedAppCountFlow: StateFlow<Int> = _lockedAppCountFlow.asStateFlow()
+    private val _lockedAppCountFlow = MutableStateFlow(computeLockedAppCount())
+    override fun observeLockedAppCount(): Flow<Int> = _lockedAppCountFlow.asStateFlow()
+
+    override fun currentLockedAppCount(): Int = _lockedAppCountFlow.value
 
     override fun isPinSet(): Boolean =
         preferences.getBoolean(KEY_IS_SET_LOCK, false) &&
@@ -37,7 +39,7 @@ internal class DefaultAppLockRepository(
             remove(KEY_PIN)
             putBoolean(KEY_IS_SET_LOCK, true)
         }
-        _lockedAppCountFlow.value = lockedAppCount()
+        _lockedAppCountFlow.value = computeLockedAppCount()
     }
 
     @Synchronized
@@ -52,7 +54,7 @@ internal class DefaultAppLockRepository(
 
     override fun lockedPackages(): Set<String> = decodePackages(preferences.getString(KEY_LOCKED_PACKAGES, ""))
 
-    private fun lockedAppCount(): Int = if (isPinSet() && isMonitoringEnabled()) lockedPackages().size else 0
+    private fun computeLockedAppCount(): Int = if (isPinSet() && isMonitoringEnabled()) lockedPackages().size else 0
 
     override fun isPackageLocked(packageName: String): Boolean = packageName in lockedPackages()
 
@@ -75,7 +77,7 @@ internal class DefaultAppLockRepository(
                 .distinct()
                 .joinToString(",")
         preferences.edit(commit = true) { putString(KEY_LOCKED_PACKAGES, encodedPackages) }
-        _lockedAppCountFlow.value = lockedAppCount()
+        _lockedAppCountFlow.value = computeLockedAppCount()
     }
 
     override suspend fun lockableApps(): List<AppLockAppModel> {
@@ -94,7 +96,7 @@ internal class DefaultAppLockRepository(
 
     override fun setMonitoringEnabled(enabled: Boolean) {
         preferences.edit(commit = true) { putBoolean(KEY_MONITORING_ENABLED, enabled) }
-        _lockedAppCountFlow.value = lockedAppCount()
+        _lockedAppCountFlow.value = computeLockedAppCount()
     }
 
     override fun isAutoLockEnabled(): Boolean = preferences.getBoolean(KEY_AUTO_LOCK, false)
@@ -149,3 +151,4 @@ internal class DefaultAppLockRepository(
             )
     }
 }
+

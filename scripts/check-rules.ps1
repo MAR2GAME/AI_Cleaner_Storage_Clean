@@ -401,12 +401,21 @@ if (Test-CheckEnabled 'functionLengthLimit') {
         $longFunctions | Select-Object -First 20 | ForEach-Object { Add-Failure 'functionLengthLimit' $_ }
     }
 }
+# 21. domain ports do not expose StateFlow.
+if (Test-CheckEnabled 'portStateFlow') {
+    $portFiles = Get-KotlinFiles (Join-Path $domainDir 'port')
+    $stateFlowHits = $portFiles | Select-String -Pattern 'StateFlow'
+    if ($stateFlowHits.Count -eq 0) { Add-Pass 'portStateFlow' } else {
+        $stateFlowHits | Select-Object -First 20 | ForEach-Object { Add-Failure 'portStateFlow' ("{0}:{1} port must not expose StateFlow" -f (RelativePath $_.Path), $_.LineNumber) }
+    }
+}
 if ($failures -gt 0) {
     Write-Host ("{0} failure(s)" -f $failures)
     exit 1
 }
 Write-Host 'all checks passed'
 exit 0
+
 
 
 

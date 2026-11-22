@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction
 
 import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
@@ -11,8 +11,6 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -103,10 +101,6 @@ class NetworkSpeedViewModelTest {
         private val hasNetwork: Boolean = true,
         private val failure: Throwable? = null,
     ) : NetworkRepository {
-        private val lastScanFlow = MutableStateFlow<NetworkScanResultModel?>(null)
-
-        override val lastScan: StateFlow<NetworkScanResultModel?> = lastScanFlow
-
         override fun readNetworkInfo(): NetworkInfoModel = NetworkInfoModel()
 
         override fun isNetworkAvailable(): Boolean = hasNetwork
@@ -149,11 +143,8 @@ class NetworkSpeedViewModelTest {
                 devices = emptyList(),
                 hasWifi = hasNetwork,
             )
-
-        override fun clearLastScan() {
-            lastScanFlow.value = null
-        }
     }
 }
+
 
 

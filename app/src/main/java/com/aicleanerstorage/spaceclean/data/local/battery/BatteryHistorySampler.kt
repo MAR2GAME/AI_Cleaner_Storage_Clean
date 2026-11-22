@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.local.battery
+﻿package com.aicleanerstorage.spaceclean.data.local.battery
 
 import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistoryOwner
@@ -62,7 +62,7 @@ internal class BatteryHistorySampler(
         synchronized(lock) {
             val now = nowMillis()
             val latestSample =
-                historyRepository.samples.value.lastOrNull()
+                historyRepository.latestSample()
                     ?: historyRepository.loadRecent(now).lastOrNull()
             if (!force && latestSample != null && now - latestSample.timestampMillis in 0 until sampleIntervalMillis) {
                 return@synchronized null
@@ -90,3 +90,4 @@ internal class BatteryHistorySampler(
 }
 
 private fun Float.isFiniteValue(): Boolean = !isNaN() && !isInfinite()
+

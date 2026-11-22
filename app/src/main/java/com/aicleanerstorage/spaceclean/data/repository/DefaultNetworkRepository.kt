@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.data.repository
+package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.data.local.network.AndroidNetworkInfoReader
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedEndpoints
@@ -13,9 +13,6 @@ import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultMo
 import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 /** 缃戠粶鐘舵€併€佹壂鎻忋€佹祴閫熶笌娴侀噺缁熻鐨勫敮涓€瀹炵幇锛岀洿鎺ュ疄鐜?domain 绔彛銆?*/
@@ -26,10 +23,6 @@ internal class DefaultNetworkRepository(
     private val appContext = context.applicationContext
 
     private val infoReader = AndroidNetworkInfoReader(appContext)
-    private val mutableLastScan = MutableStateFlow<NetworkScanResultModel?>(null)
-
-    override val lastScan: StateFlow<NetworkScanResultModel?> = mutableLastScan.asStateFlow()
-
     override fun readNetworkInfo(): NetworkInfoModel = infoReader.read()
 
     override fun isNetworkAvailable(): Boolean = NetworkToolboxDataSource.isNetworkAvailable(appContext)
@@ -66,10 +59,7 @@ internal class DefaultNetworkRepository(
         }
 
     override suspend fun scanWifi(): NetworkScanResultModel =
-        NetworkToolboxDataSource.scanWifi(appContext).also { mutableLastScan.value = it }
-
-    override fun clearLastScan() {
-        mutableLastScan.value = null
-    }
+        NetworkToolboxDataSource.scanWifi(appContext)
 }
+
 
