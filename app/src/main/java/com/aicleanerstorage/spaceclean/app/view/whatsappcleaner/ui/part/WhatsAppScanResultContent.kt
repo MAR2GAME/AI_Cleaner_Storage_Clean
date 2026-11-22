@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -120,63 +120,72 @@ private val WhatsAppUnitBottomPadding = 5.dp
 @Composable
 private fun SummaryCard(totalBytes: Long) {
     val sizeLabel = splitSizeLabel(totalBytes)
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        WhatsAppLogo()
+        Spacer(modifier = Modifier.width(22.dp))
+        WhatsAppSizeText(sizeLabel)
+    }
+}
+
+@Composable
+private fun WhatsAppLogo() {
+    Box(
+        modifier =
+            Modifier
+                .size(WhatsAppLogoOuterSize)
+                .clip(CircleShape)
+                .background(Color(0xFFEFFDF2)),
+        contentAlignment = Alignment.Center,
+    ) {
         Box(
             modifier =
                 Modifier
-                    .size(WhatsAppLogoOuterSize)
+                    .size(WhatsAppLogoInnerSize)
                     .clip(CircleShape)
-                    .background(Color(0xFFEFFDF2)),
+                    .background(Color.White),
             contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier =
-                    Modifier
-                        .size(WhatsAppLogoInnerSize)
-                        .clip(CircleShape)
-                        .background(Color.White),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_whats_app_cleaner),
-                    contentDescription = null,
-                    modifier = Modifier.size(WhatsAppLogoSize),
-                )
-            }
-        }
-        Spacer(modifier = Modifier.width(22.dp))
-        Column {
-            Text(
-                text = stringResource(R.string.occupying),
-                color = Color(0xFF5F6876),
-                fontSize = 18.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.Normal,
+            Image(
+                painter = painterResource(R.drawable.ic_whats_app_cleaner),
+                contentDescription = null,
+                modifier = Modifier.size(WhatsAppLogoSize),
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text(
-                    text = sizeLabel.main,
-                    color = Color(0xFF2D2F38),
-                    fontSize = 42.sp,
-                    lineHeight = 42.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = sizeLabel.unit,
-                    color = Color(0xFF2D2F38),
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = WhatsAppUnitBottomPadding),
-                )
-            }
+        }
+    }
+}
+
+@Composable
+private fun WhatsAppSizeText(sizeLabel: SizeLabel) {
+    Column {
+        Text(
+            text = stringResource(R.string.occupying),
+            color = Color(0xFF5F6876),
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Normal,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = sizeLabel.main,
+                color = Color(0xFF2D2F38),
+                fontSize = 42.sp,
+                lineHeight = 42.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = sizeLabel.unit,
+                color = Color(0xFF2D2F38),
+                fontSize = 15.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = WhatsAppUnitBottomPadding),
+            )
         }
     }
 }
@@ -392,3 +401,4 @@ internal fun splitSizeLabel(bytes: Long): SizeLabel {
 }
 
 internal fun compactSizeLabel(bytes: Long): String = FormatUtil.formatSize(bytes).replace(" ", "")
+
