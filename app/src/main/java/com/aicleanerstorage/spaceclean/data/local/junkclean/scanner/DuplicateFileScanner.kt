@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.data.local.junkclean.scanner
 
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkDuplicateMetadataModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
 import com.aicleanerstorage.spaceclean.data.local.storage.DirectoryFileScanner
 import com.aicleanerstorage.spaceclean.data.local.storage.FileContentDigest
@@ -37,8 +38,11 @@ internal class DuplicateFileScanner : JunkScanner {
                     val original = group.first()
                     group.drop(1).map { file ->
                         toJunkFile(file).copy(
-                            duplicateHash = hashes.getValue(file.path),
-                            duplicateOriginalPath = original.path,
+                            duplicate =
+                                JunkDuplicateMetadataModel(
+                                    hash = hashes.getValue(file.path),
+                                    originalPath = original.path,
+                                ),
                         )
                     }
                 }
@@ -96,3 +100,4 @@ internal class DuplicateFileScanner : JunkScanner {
         const val MAX_HASH_FILE_SIZE_BYTES = 100L * 1024 * 1024
     }
 }
+

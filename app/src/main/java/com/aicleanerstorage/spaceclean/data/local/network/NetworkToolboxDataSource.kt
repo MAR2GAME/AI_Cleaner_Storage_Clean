@@ -20,6 +20,7 @@ import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultMod
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.TrafficSource
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -58,7 +59,7 @@ internal object NetworkToolboxDataSource {
 
     fun isWifiConnected(context: Context): Boolean = activeNetworkHasTransport(context, NetworkCapabilities.TRANSPORT_WIFI)
 
-    suspend fun readUsage(context: Context): NetworkUsageInfoModel =
+    suspend fun readUsage(context: Context): NetworkUsageResultModel =
         withContext(Dispatchers.IO) {
             val hasAccess = hasUsageAccess(context)
             val cal =
@@ -78,14 +79,16 @@ internal object NetworkToolboxDataSource {
                     val cellular = stats.readSummary(NetworkCapabilities.TRANSPORT_CELLULAR, start, end)
                     val wifiApps = stats.readPerAppUsage(context, ConnectivityManager.TYPE_WIFI, start, end)
                     val cellularApps = stats.readPerAppUsage(context, ConnectivityManager.TYPE_MOBILE, start, end)
-                    NetworkUsageInfoModel(
-                        wifiRxBytes = wifi.first,
-                        wifiTxBytes = wifi.second,
-                        cellularRxBytes = cellular.first,
-                        cellularTxBytes = cellular.second,
-                        wifiApps = wifiApps,
-                        cellularApps = cellularApps,
-                        fallbackApps = emptyList(),
+                    NetworkUsageResultModel(
+                        usage =
+                            NetworkUsageInfoModel(
+                                wifiRxBytes = wifi.first,
+                                wifiTxBytes = wifi.second,
+                                cellularRxBytes = cellular.first,
+                                cellularTxBytes = cellular.second,
+                                wifiApps = wifiApps,
+                                cellularApps = cellularApps,
+                            ),
                         isToday = true,
                         needsUsageAccess = false,
                     )
@@ -131,7 +134,7 @@ internal object NetworkToolboxDataSource {
         return capabilities.hasTransport(transport)
     }
 
-    private fun trafficStatsUsage(needsUsageAccess: Boolean): NetworkUsageInfoModel {
+    private fun trafficStatsUsage(needsUsageAccess: Boolean): NetworkUsageResultModel {
         val rx = TrafficStats.getTotalRxBytes().takeIf { it != TrafficStats.UNSUPPORTED.toLong() } ?: 0L
         val tx = TrafficStats.getTotalTxBytes().takeIf { it != TrafficStats.UNSUPPORTED.toLong() } ?: 0L
         val fallbackApps =
@@ -146,13 +149,14 @@ internal object NetworkToolboxDataSource {
             } else {
                 emptyList()
             }
-        return NetworkUsageInfoModel(
-            wifiRxBytes = rx,
-            wifiTxBytes = tx,
-            cellularRxBytes = 0L,
-            cellularTxBytes = 0L,
-            wifiApps = emptyList(),
-            cellularApps = emptyList(),
+        return NetworkUsageResultModel(
+            usage =
+                NetworkUsageInfoModel(
+                    wifiRxBytes = rx,
+                    wifiTxBytes = tx,
+                    cellularRxBytes = 0L,
+                    cellularTxBytes = 0L,
+                ),
             fallbackApps = fallbackApps,
             isToday = false,
             needsUsageAccess = needsUsageAccess,
@@ -274,4 +278,7 @@ internal object NetworkToolboxDataSource {
 
     private fun ipSortKey(ip: String): Long = ip.split('.').fold(0L) { acc, p -> acc * 256 + (p.toLongOrNull() ?: 0L) }
 }
+
+
+
 

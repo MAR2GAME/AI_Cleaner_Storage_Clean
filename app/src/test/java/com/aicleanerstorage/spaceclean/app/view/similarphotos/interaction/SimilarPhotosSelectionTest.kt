@@ -1,5 +1,6 @@
-package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction
 
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
 import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
@@ -15,6 +16,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -92,20 +94,40 @@ class SimilarPhotosSelectionTest {
         assertFalse(state.allSelected)
     }
 
-    private fun viewModel(): SimilarPhotosManagerViewModel =
+    @Test
+    fun `delete failure keeps browsing state and reports an error`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel(deleteResult = Result.failure(IllegalStateException("delete failed")))
+            viewModel.dispatch(SimilarPhotosAction.RefreshRequested)
+            advanceUntilIdle()
+            val item = viewModel.state.value.items.first()
+            viewModel.dispatch(SimilarPhotosAction.SelectionToggled(item.id))
+            viewModel.dispatch(SimilarPhotosAction.DeleteClicked)
+            advanceUntilIdle()
+            viewModel.dispatch(SimilarPhotosAction.DeleteConfirmed)
+            advanceUntilIdle()
+
+            assertEquals(FileOperationPhase.Browsing, viewModel.state.value.phase)
+            assertNotNull(viewModel.state.value.error)
+        }
+    private fun viewModel(
+        deleteResult: Result<FileDeleteSummaryModel>? = null,
+    ): SimilarPhotosManagerViewModel =
         SimilarPhotosManagerViewModel(
-            repository = FakeSimilarPhotoRepository(),
+            repository = FakeSimilarPhotoRepository(deleteResult),
             ioDispatcher = dispatcher,
             scanDelayMillis = 0L,
             deleteDelayMillis = 0L,
             completeDelayMillis = 0L,
         )
 
-    private class FakeSimilarPhotoRepository : SimilarPhotoRepository {
+    private class FakeSimilarPhotoRepository(
+        private val deleteResult: Result<FileDeleteSummaryModel>? = null,
+    ) : SimilarPhotoRepository {
         override suspend fun loadGroups(): List<List<ManagedFileModel>> = listOf(listOf(image(1), image(2), image(3)))
 
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
-            Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
+            deleteResult ?: Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
     }
 
     private companion object {
@@ -123,3 +145,5 @@ class SimilarPhotosSelectionTest {
             )
     }
 }
+
+

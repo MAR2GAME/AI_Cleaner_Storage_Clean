@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.local.junkclean
+﻿package com.aicleanerstorage.spaceclean.data.local.junkclean
 
 import android.app.RecoverableSecurityException
 import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
@@ -19,21 +19,21 @@ import com.aicleanerstorage.spaceclean.data.local.storage.FileContentDigest
 import java.io.File
 
 /**
- * 单个垃圾文件的删除器。
+ * 鍗曚釜鍨冨溇鏂囦欢鐨勫垹闄ゅ櫒銆?
  *
- * 负责删除前复核、重复文件保留校验、直接删除或登记 MediaStore 授权；
- * 不负责批量汇总和页面状态。
+ * 璐熻矗鍒犻櫎鍓嶅鏍搞€侀噸澶嶆枃浠朵繚鐣欐牎楠屻€佺洿鎺ュ垹闄ゆ垨鐧昏 MediaStore 鎺堟潈锛?
+ * 涓嶈礋璐ｆ壒閲忔眹鎬诲拰椤甸潰鐘舵€併€?
  */
 internal object JunkFileDeleter {
     /**
-     * 删除一个垃圾文件。
+     * 鍒犻櫎涓€涓瀮鍦炬枃浠躲€?
      *
-     * @param context 用于访问 MediaStore 和系统删除授权。
-     * @param junkFile 待删除文件。
-     * @param selectedPaths 本次批量删除中已选中的路径，用于重复文件保留校验。
-     * @param checkCancellation 取消检查；删除前和授权回调后都会调用。
-     * @param defer 需要系统授权时的回调；返回待授权结果。
-     * @return 单文件删除结果。
+     * @param context 鐢ㄤ簬璁块棶 MediaStore 鍜岀郴缁熷垹闄ゆ巿鏉冦€?
+     * @param junkFile 寰呭垹闄ゆ枃浠躲€?
+     * @param selectedPaths 鏈鎵归噺鍒犻櫎涓凡閫変腑鐨勮矾寰勶紝鐢ㄤ簬閲嶅鏂囦欢淇濈暀鏍￠獙銆?
+     * @param checkCancellation 鍙栨秷妫€鏌ワ紱鍒犻櫎鍓嶅拰鎺堟潈鍥炶皟鍚庨兘浼氳皟鐢ㄣ€?
+     * @param defer 闇€瑕佺郴缁熸巿鏉冩椂鐨勫洖璋冿紱杩斿洖寰呮巿鏉冪粨鏋溿€?
+     * @return 鍗曟枃浠跺垹闄ょ粨鏋溿€?
      */
     fun delete(
         context: Context,
@@ -69,19 +69,19 @@ internal object JunkFileDeleter {
     }
 
     /**
-     * 判断重复文件是否可以删除。
+     * 鍒ゆ柇閲嶅鏂囦欢鏄惁鍙互鍒犻櫎銆?
      *
-     * @param junkFile 待删除文件；必须带 `duplicateHash` 和 `duplicateOriginalPath`。
-     * @param selectedPaths 本次批量删除中已选中的路径。
-     * @param checkCancellation 哈希读取过程中的取消检查。
-     * @return 仍存在未选中的、内容一致的原始文件时返回 true。
+     * @param junkFile 寰呭垹闄ゆ枃浠讹紱蹇呴』甯?`duplicateHash` 鍜?`duplicateOriginalPath`銆?
+     * @param selectedPaths 鏈鎵归噺鍒犻櫎涓凡閫変腑鐨勮矾寰勩€?
+     * @param checkCancellation 鍝堝笇璇诲彇杩囩▼涓殑鍙栨秷妫€鏌ャ€?
+     * @return 浠嶅瓨鍦ㄦ湭閫変腑鐨勩€佸唴瀹逛竴鑷寸殑鍘熷鏂囦欢鏃惰繑鍥?true銆?
      */
     internal fun canDeleteDuplicate(
         junkFile: JunkFileModel,
         selectedPaths: Set<String>,
         checkCancellation: () -> Unit = {},
     ): Boolean {
-        val original = junkFile.duplicateOriginalPath?.let(::File) ?: return false
+        val original = junkFile.duplicate?.originalPath?.let(::File) ?: return false
         val originalPath = runCatching { original.canonicalPath }.getOrNull() ?: return false
         if (selectedPaths.any { selected ->
                 val path = runCatching { File(selected).canonicalPath }.getOrNull() ?: return false
@@ -91,18 +91,18 @@ internal object JunkFileDeleter {
         return DuplicateFileRule.hasVerifiedCopy(
             candidate = File(junkFile.path),
             retainedCandidates = listOf(original),
-            expectedHash = junkFile.duplicateHash,
+            expectedHash = junkFile.duplicate?.hash,
             identity = { it.canonicalPath },
             contentHash = { FileContentDigest.hashFile(it, checkCancellation = checkCancellation) },
         )
     }
 
     /**
-     * 在 MediaStore 中查找文件对应的 URI。
+     * 鍦?MediaStore 涓煡鎵炬枃浠跺搴旂殑 URI銆?
      *
-     * @param contentResolver 用于查询 MediaStore。
-     * @param file 本地文件。
-     * @return 找到时返回 content URI，否则返回 null。
+     * @param contentResolver 鐢ㄤ簬鏌ヨ MediaStore銆?
+     * @param file 鏈湴鏂囦欢銆?
+     * @return 鎵惧埌鏃惰繑鍥?content URI锛屽惁鍒欒繑鍥?null銆?
      */
     fun findMediaUri(
         contentResolver: ContentResolver,
@@ -148,3 +148,4 @@ internal object JunkFileDeleter {
     }
 
 }
+

@@ -1,71 +1,55 @@
-package com.aicleanerstorage.spaceclean.domain.port
+﻿package com.aicleanerstorage.spaceclean.domain.port
 
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * 网络状态、局域网扫描、测速与流量统计的业务契约。
- *
- * [lastScan] 由扫描页和局域网设备页共享；`runSpeedTest` 的 [onProgress]
- * 在 IO 线程回调，UI 只把它转成 Action，不直接改状态。
- */
+ * 缃戠粶鐘舵€併€佸眬鍩熺綉鎵弿銆佹祴閫熶笌娴侀噺缁熻鐨勪笟鍔″绾︺€? *
+ * [lastScan] 鐢辨壂鎻忛〉鍜屽眬鍩熺綉璁惧椤靛叡浜紱`runSpeedTest` 鐨?[onProgress]
+ * 鍦?IO 绾跨▼鍥炶皟锛孶I 鍙妸瀹冭浆鎴?Action锛屼笉鐩存帴鏀圭姸鎬併€? */
 interface NetworkRepository {
     /**
-     * 读取当前网络连接信息。
-     *
-     * @return 网络类型、名称与连接状态。
-     */
+     * 璇诲彇褰撳墠缃戠粶杩炴帴淇℃伅銆?     *
+     * @return 缃戠粶绫诲瀷銆佸悕绉颁笌杩炴帴鐘舵€併€?     */
     fun readNetworkInfo(): NetworkInfoModel
 
     /**
-     * 判断当前是否有可用网络。
-     *
-     * @return true 表示存在已连接网络。
-     */
+     * 鍒ゆ柇褰撳墠鏄惁鏈夊彲鐢ㄧ綉缁溿€?     *
+     * @return true 琛ㄧず瀛樺湪宸茶繛鎺ョ綉缁溿€?     */
     fun isNetworkAvailable(): Boolean
 
     /**
-     * 判断当前是否连接 Wi-Fi。
-     *
-     * @return true 表示 Wi-Fi 已连接。
-     */
+     * 鍒ゆ柇褰撳墠鏄惁杩炴帴 Wi-Fi銆?     *
+     * @return true 琛ㄧず Wi-Fi 宸茶繛鎺ャ€?     */
     fun isWifiConnected(): Boolean
 
     /**
-     * 判断是否拥有使用情况访问权限。
-     *
-     * @return true 表示可以读取流量统计。
-     */
+     * 鍒ゆ柇鏄惁鎷ユ湁浣跨敤鎯呭喌璁块棶鏉冮檺銆?     *
+     * @return true 琛ㄧず鍙互璇诲彇娴侀噺缁熻銆?     */
     fun hasNetworkUsageAccess(): Boolean
 
     /**
-     * 读取流量统计。
-     *
-     * @return 流量汇总与应用明细；无权限时由实现返回降级数据。
-     */
-    suspend fun readNetworkUsage(): NetworkUsageInfoModel
+     * 璇诲彇娴侀噺缁熻銆?     *
+     * @return 娴侀噺姹囨€讳笌搴旂敤鏄庣粏锛涙棤鏉冮檺鏃剁敱瀹炵幇杩斿洖闄嶇骇鏁版嵁銆?     */
+    suspend fun readNetworkUsage(): NetworkUsageResultModel
 
     /**
-     * 执行一次网络测速。
-     *
-     * @param onProgress 测速阶段与实时速度回调；可能在 IO 线程调用。
-     * @return 最终测速结果。
-     */
+     * 鎵ц涓€娆＄綉缁滄祴閫熴€?     *
+     * @param onProgress 娴嬮€熼樁娈典笌瀹炴椂閫熷害鍥炶皟锛涘彲鑳藉湪 IO 绾跨▼璋冪敤銆?     * @return 鏈€缁堟祴閫熺粨鏋溿€?     */
     suspend fun runSpeedTest(onProgress: (NetworkSpeedModel) -> Unit): NetworkSpeedModel
 
-    /** 最近一次局域网扫描结果；没有扫描时为 null。 */
+    /** 鏈€杩戜竴娆″眬鍩熺綉鎵弿缁撴灉锛涙病鏈夋壂鎻忔椂涓?null銆?*/
     val lastScan: StateFlow<NetworkScanResultModel?>
 
     /**
-     * 扫描当前局域网设备。
-     *
-     * @return 扫描结果；无网络或未授权时返回空结果。
-     */
+     * 鎵弿褰撳墠灞€鍩熺綉璁惧銆?     *
+     * @return 鎵弿缁撴灉锛涙棤缃戠粶鎴栨湭鎺堟潈鏃惰繑鍥炵┖缁撴灉銆?     */
     suspend fun scanWifi(): NetworkScanResultModel
 
-    /** 清空最近一次扫描结果。 */
+    /** 娓呯┖鏈€杩戜竴娆℃壂鎻忕粨鏋溿€?*/
     fun clearLastScan()
 }
+

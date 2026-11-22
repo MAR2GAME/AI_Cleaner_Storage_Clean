@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.data.local.junkclean
 
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.DuplicateFileScanner
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkDuplicateMetadataModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
 import com.aicleanerstorage.spaceclean.data.local.storage.FileContentDigest
 import org.junit.Assert.assertEquals
@@ -33,15 +34,16 @@ class DuplicateFileSafetyTest {
         val copy = directory.newFile("copy").apply { writeText("same") }
         val item = JunkFileModel(
             "copy", copy.path, copy.name, copy.length(), JunkCategory.DUPLICATE,
-            duplicateHash = FileContentDigest.hashFile(copy), duplicateOriginalPath = original.path,
+            duplicate = JunkDuplicateMetadataModel(hash = FileContentDigest.hashFile(copy), originalPath = original.path),
         )
         assertTrue(JunkFileDeleter.canDeleteDuplicate(item, setOf(copy.path)))
         assertFalse(JunkFileDeleter.canDeleteDuplicate(item, setOf(copy.path, original.path)))
         assertFalse(JunkFileDeleter.canDeleteDuplicate(item, setOf(directory.root.path)))
-        assertFalse(JunkFileDeleter.canDeleteDuplicate(item.copy(duplicateHash = null), setOf(copy.path)))
+        assertFalse(JunkFileDeleter.canDeleteDuplicate(item.copy(duplicate = item.duplicate?.copy(hash = null)), setOf(copy.path)))
         original.writeText("else")
         assertFalse(JunkFileDeleter.canDeleteDuplicate(item, setOf(copy.path)))
         original.delete()
         assertFalse(JunkFileDeleter.canDeleteDuplicate(item, setOf(copy.path)))
     }
 }
+

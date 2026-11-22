@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.repository
+﻿package com.aicleanerstorage.spaceclean.data.repository
 
 import com.aicleanerstorage.spaceclean.data.local.network.AndroidNetworkInfoReader
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedEndpoints
@@ -9,7 +9,7 @@ import android.content.Context
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.domain.port.NetworkRepository
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
-/** 网络状态、扫描、测速与流量统计的唯一实现，直接实现 domain 端口。 */
+/** 缃戠粶鐘舵€併€佹壂鎻忋€佹祴閫熶笌娴侀噺缁熻鐨勫敮涓€瀹炵幇锛岀洿鎺ュ疄鐜?domain 绔彛銆?*/
 internal class DefaultNetworkRepository(
     context: Context,
     private val endpoints: NetworkSpeedEndpoints,
@@ -38,7 +38,7 @@ internal class DefaultNetworkRepository(
 
     override fun hasNetworkUsageAccess(): Boolean = NetworkToolboxDataSource.hasUsageAccess(appContext)
 
-    override suspend fun readNetworkUsage(): NetworkUsageInfoModel =
+    override suspend fun readNetworkUsage(): NetworkUsageResultModel =
         NetworkToolboxDataSource.readUsage(appContext)
 
     override suspend fun runSpeedTest(onProgress: (NetworkSpeedModel) -> Unit): NetworkSpeedModel =
@@ -72,3 +72,4 @@ internal class DefaultNetworkRepository(
         mutableLastScan.value = null
     }
 }
+

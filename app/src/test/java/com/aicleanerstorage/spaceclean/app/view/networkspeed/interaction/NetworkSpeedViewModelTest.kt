@@ -5,6 +5,7 @@ import com.aicleanerstorage.spaceclean.domain.model.network.NetworkInfoModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.SpeedTestPhase
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -114,12 +115,15 @@ class NetworkSpeedViewModelTest {
 
         override fun hasNetworkUsageAccess(): Boolean = false
 
-        override suspend fun readNetworkUsage(): NetworkUsageInfoModel =
-            NetworkUsageInfoModel(
-                wifiRxBytes = 0L,
-                wifiTxBytes = 0L,
-                cellularRxBytes = 0L,
-                cellularTxBytes = 0L,
+        override suspend fun readNetworkUsage(): NetworkUsageResultModel =
+            NetworkUsageResultModel(
+                usage =
+                    NetworkUsageInfoModel(
+                        wifiRxBytes = 0L,
+                        wifiTxBytes = 0L,
+                        cellularRxBytes = 0L,
+                        cellularTxBytes = 0L,
+                    ),
                 isToday = true,
                 needsUsageAccess = false,
             )
@@ -151,3 +155,5 @@ class NetworkSpeedViewModelTest {
         }
     }
 }
+
+

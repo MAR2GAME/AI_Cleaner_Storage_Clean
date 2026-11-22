@@ -1,7 +1,7 @@
-package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.networkusage.interaction
 
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageAppModel
-import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.network.NetworkUsageResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.TrafficSource
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 
@@ -45,7 +45,7 @@ data class NetworkUsageDisplayItem(
 data class NetworkUsageUiState(
     val selectedTab: NetworkUsageTab = NetworkUsageTab.Wifi,
     val hasAccess: Boolean = false,
-    val usage: NetworkUsageInfoModel? = null,
+    val usage: NetworkUsageResultModel? = null,
     val isLoading: Boolean = true,
     val error: UiText? = null,
     val isScanning: Boolean = false,
@@ -54,23 +54,23 @@ data class NetworkUsageUiState(
 ) {
     val selectedIndex: Int get() = selectedTab.ordinal
 
-    val cellularTotalBytes: Long get() = usage?.cellularTotalBytes ?: 0L
+    val cellularTotalBytes: Long get() = usage?.usage?.cellularTotalBytes ?: 0L
 
-    val wifiTotalBytes: Long get() = usage?.wifiTotalBytes ?: 0L
+    val wifiTotalBytes: Long get() = usage?.usage?.wifiTotalBytes ?: 0L
 
     fun rxBytes(tab: NetworkUsageTab): Long =
         usage?.let {
             when (tab) {
-                NetworkUsageTab.Cellular -> it.cellularRxBytes
-                NetworkUsageTab.Wifi -> it.wifiRxBytes
+                NetworkUsageTab.Cellular -> it.usage.cellularRxBytes
+                NetworkUsageTab.Wifi -> it.usage.wifiRxBytes
             }
         } ?: 0L
 
     fun txBytes(tab: NetworkUsageTab): Long =
         usage?.let {
             when (tab) {
-                NetworkUsageTab.Cellular -> it.cellularTxBytes
-                NetworkUsageTab.Wifi -> it.wifiTxBytes
+                NetworkUsageTab.Cellular -> it.usage.cellularTxBytes
+                NetworkUsageTab.Wifi -> it.usage.wifiTxBytes
             }
         } ?: 0L
 
@@ -80,8 +80,8 @@ data class NetworkUsageUiState(
         usage
             ?.let {
                 when {
-                    tab == NetworkUsageTab.Cellular && it.cellularApps.isNotEmpty() -> it.cellularApps
-                    tab == NetworkUsageTab.Wifi && it.wifiApps.isNotEmpty() -> it.wifiApps
+                    tab == NetworkUsageTab.Cellular && it.usage.cellularApps.isNotEmpty() -> it.usage.cellularApps
+                    tab == NetworkUsageTab.Wifi && it.usage.wifiApps.isNotEmpty() -> it.usage.wifiApps
                     it.fallbackApps.isNotEmpty() -> it.fallbackApps
                     else -> emptyList()
                 }
@@ -129,3 +129,4 @@ sealed interface NetworkUsageAction {
         val index: Int,
     ) : NetworkUsageAction
 }
+
