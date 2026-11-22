@@ -49,17 +49,5 @@ fun FileManagerScanningView(text: String = "Scanning...") {
                 modifier = Modifier.size(100.dp),
             )
         }
-//        Text(
-//            text = text,
-//            color = FileManagerPhaseTextColor,
-//            fontSize = 20.sp,
-//            lineHeight = 24.sp,
-//            fontWeight = FontWeight.Normal,
-//            textAlign = TextAlign.Center,
-//            modifier =
-//                Modifier
-//                    .align(Alignment.TopCenter)
-//                    .padding(top = 458.dp),
-//        )
     }
 }

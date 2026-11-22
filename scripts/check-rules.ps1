@@ -346,10 +346,33 @@ if (Test-CheckEnabled 'screenNoActionEffect' -and (Test-Path -LiteralPath $viewD
     }
 }
 
+# 19. Compose functions keep parameters at five or fewer.
+if (Test-CheckEnabled 'composableParamLimit' -and (Test-Path -LiteralPath $viewDir)) {
+    $overLimit = @()
+    foreach ($file in Get-KotlinFiles $viewDir) {
+        $lines = Get-Content -LiteralPath $file.FullName
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -notmatch '^fun [A-Za-z].*\(') { continue }
+            $params = 0
+            $j = $i
+            while ($j -lt $lines.Count -and $lines[$j] -notmatch '\)\s*(:|\{|=)') {
+                if ($lines[$j] -match '^\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:') { $params++ }
+                $j++
+            }
+            if ($params -gt 5) {
+                $overLimit += ("{0}:{1} has {2} parameters" -f (RelativePath $file.FullName), ($i + 1), $params)
+            }
+        }
+    }
+    if ($overLimit.Count -eq 0) { Add-Pass 'composableParamLimit' } else {
+        $overLimit | Select-Object -First 20 | ForEach-Object { Add-Failure 'composableParamLimit' $_ }
+    }
+}
 if ($failures -gt 0) {
     Write-Host ("{0} failure(s)" -f $failures)
     exit 1
 }
 Write-Host 'all checks passed'
 exit 0
+
 

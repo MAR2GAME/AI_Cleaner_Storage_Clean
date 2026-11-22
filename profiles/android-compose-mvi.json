@@ -124,6 +124,7 @@
                    "domainPublicKdoc":  true,
                    "wildcardImport":  true,
                    "uiPartNoNavigator":  true,
-                   "screenNoActionEffect":  true
+                   "screenNoActionEffect":  true,
+                   "composableParamLimit":  true
                }
 }

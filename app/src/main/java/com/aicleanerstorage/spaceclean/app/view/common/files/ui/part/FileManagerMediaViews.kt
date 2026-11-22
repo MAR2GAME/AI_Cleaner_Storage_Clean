@@ -475,54 +475,54 @@ fun FileManagerGroupHeader(
 
 @Composable
 fun FileManagerThumbnail(params: FileManagerThumbnailParams) {
-    val item = params.item
-    val selected = params.selected
-    val onOpen = params.onOpen
-    val onToggleSelection = params.onToggleSelection
-    val showPlayBadge = params.showPlayBadge
-    val modifier = params.modifier
     Box(
         modifier =
-            modifier
+            params.modifier
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Brush.linearGradient(item.colors))
-                .clickable { onOpen() },
+                .background(Brush.linearGradient(params.item.colors))
+                .clickable { params.onOpen() },
     ) {
-        FileManagerRealImage(item = item)
-        if (item.bestPhoto) {
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomStart)
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .background(Color.Black.copy(alpha = 0.32f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(stringResource(R.string.file_best_photo), color = Color.White, fontSize = 12.sp)
-            }
-        }
-        if (showPlayBadge) {
-            Icon(
-                imageVector = Icons.Default.PlayArrow,
-                contentDescription = null,
-                tint = Color.White,
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .size(31.dp),
-            )
-        }
+        FileManagerRealImage(item = params.item)
+        if (params.item.bestPhoto) BestPhotoBadge()
+        if (params.showPlayBadge) PlayBadge()
         SelectionCircle(
-            selected = selected,
+            selected = params.selected,
             modifier =
                 Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
-                    .clickable { onToggleSelection() },
+                    .clickable { params.onToggleSelection() },
         )
     }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.BestPhotoBadge() {
+    Box(
+        modifier =
+            Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .height(24.dp)
+                .background(Color.Black.copy(alpha = 0.32f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(stringResource(R.string.file_best_photo), color = Color.White, fontSize = 12.sp)
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.PlayBadge() {
+    Icon(
+        imageVector = Icons.Default.PlayArrow,
+        contentDescription = null,
+        tint = Color.White,
+        modifier =
+            Modifier
+                .align(Alignment.Center)
+                .size(31.dp),
+    )
 }
 
 @Composable
@@ -811,4 +811,6 @@ private fun calculateInSampleSize(
     }
     return sampleSize
 }
+
+
 
