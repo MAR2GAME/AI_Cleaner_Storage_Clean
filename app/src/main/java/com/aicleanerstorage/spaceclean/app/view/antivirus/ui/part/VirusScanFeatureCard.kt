@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.antivirus.ui.part
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,6 @@ internal fun VirusScanFeatureCard(modifier: Modifier = Modifier) {
             R.mipmap.ic_malware to R.string.malware,
             R.mipmap.ic_privacy to R.string.privacy,
         )
-
     Row(
         modifier =
             modifier
@@ -45,43 +44,53 @@ internal fun VirusScanFeatureCard(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         features.forEachIndexed { index, feature ->
-            Box(
-                modifier =
-                    Modifier
-                        .width(if (index == 1) 70.dp else 71.dp)
-                        .height(55.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                androidx.compose.foundation.layout.Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Icon(
-                        painter = painterResource(feature.first),
-                        contentDescription = null,
-                        tint = VirusFigmaText,
-                        modifier = Modifier.size(24.dp),
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = stringResource(feature.second),
-                        color = VirusFigmaText,
-                        fontSize = 18.sp,
-                        lineHeight = 21.sp,
-                    )
-                }
-            }
-
-            if (index < features.lastIndex) {
-                Box(
-                    modifier =
-                        Modifier
-                            .width(1.dp)
-                            .height(48.dp)
-                            .background(VirusFigmaText.copy(alpha = 0.15f)),
-                )
-            }
+            VirusFeatureItem(iconRes = feature.first, labelRes = feature.second, wide = index == 1)
+            if (index < features.lastIndex) VirusFeatureDivider()
         }
     }
 }
 
+@Composable
+private fun VirusFeatureItem(
+    iconRes: Int,
+    labelRes: Int,
+    wide: Boolean,
+) {
+    Box(
+        modifier =
+            Modifier
+                .width(if (wide) 70.dp else 71.dp)
+                .height(55.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        androidx.compose.foundation.layout.Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                tint = VirusFigmaText,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = stringResource(labelRes),
+                color = VirusFigmaText,
+                fontSize = 18.sp,
+                lineHeight = 21.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun VirusFeatureDivider() {
+    Box(
+        modifier =
+            Modifier
+                .width(1.dp)
+                .height(48.dp)
+                .background(VirusFigmaText.copy(alpha = 0.15f)),
+    )
+}
+
 val VirusFigmaText = Color(0xFF282927)
+

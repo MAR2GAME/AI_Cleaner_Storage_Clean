@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.junkclean.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.junkclean.ui.part
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -144,59 +144,69 @@ private fun SummaryCard(totalSize: Long) {
         color = ResultCardBg,
         shape = RoundedCornerShape(12.dp),
     ) {
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val illustrationSize = if (maxWidth < 320.dp) 72.dp else 88.dp
-
-            Image(
-                painter = painterResource(id = R.drawable.junk_result_bucket_figma),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier =
-                    Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 8.dp)
-                        .size(illustrationSize),
-            )
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterStart)
-                        .padding(start = 16.dp, end = illustrationSize + 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.occupying).let { if (it.endsWith(":")) it else "$it:" },
-                    color = ResultNavy,
-                    fontSize = 18.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = displayMainSize(totalSize),
-                    color = ResultOrange,
-                    fontSize = 33.85.sp,
-                    lineHeight = 39.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Right,
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = displayUnit(totalSize),
-                    color = ResultNavy,
-                    fontSize = 18.46.sp,
-                    lineHeight = 34.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-            }
+            SummaryIllustration(illustrationSize)
+            SummaryTextRow(totalSize = totalSize, illustrationSize = illustrationSize)
         }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.SummaryIllustration(illustrationSize: androidx.compose.ui.unit.Dp) {
+    Image(
+        painter = painterResource(id = R.drawable.junk_result_bucket_figma),
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        modifier =
+            Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp)
+                .size(illustrationSize),
+    )
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.SummaryTextRow(
+    totalSize: Long,
+    illustrationSize: androidx.compose.ui.unit.Dp,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp, end = illustrationSize + 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.occupying).let { if (it.endsWith(":")) it else "$it:" },
+            color = ResultNavy,
+            fontSize = 18.sp,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = displayMainSize(totalSize),
+            color = ResultOrange,
+            fontSize = 33.85.sp,
+            lineHeight = 39.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Right,
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = displayUnit(totalSize),
+            color = ResultNavy,
+            fontSize = 18.46.sp,
+            lineHeight = 34.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -430,3 +440,4 @@ private fun mergeDisplayGroup(
                 groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
             },
     )
+
