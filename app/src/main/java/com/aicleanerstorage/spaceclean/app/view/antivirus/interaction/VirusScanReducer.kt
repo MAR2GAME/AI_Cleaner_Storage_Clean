@@ -8,7 +8,6 @@ internal object VirusScanReducer {
         action: VirusScanAction,
     ): VirusScanUiState =
         when (action) {
-            is VirusScanUpdate -> reduceUpdate(state, action)
             is VirusScanAction.ScanRequested ->
                 if (state.home.scanRequestPending) {
                     state
@@ -39,6 +38,11 @@ internal object VirusScanReducer {
                 state.withThreats(state.threats.filterNot { it.apkPath == action.path })
             else -> state
         }
+
+    internal fun reduce(
+        state: VirusScanUiState,
+        update: VirusScanUpdate,
+    ): VirusScanUiState = reduceUpdate(state, update)
 
     private fun reduceUpdate(
         state: VirusScanUiState,

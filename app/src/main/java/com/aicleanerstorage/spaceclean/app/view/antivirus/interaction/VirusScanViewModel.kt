@@ -75,12 +75,12 @@ class VirusScanViewModel(
                 threatIds.remove("file:" + action.path)
                 checkEmptyResult()
             }
-            is VirusScanUpdate.AdbRiskChecked -> checkEmptyResult()
+
             is VirusScanAction.ScanStartRequested -> startScan(action.mode)
             VirusScanAction.ScanCancellationRequested -> cancelScan()
             VirusScanAction.Entered -> {
                 if (!securityRepository.isScanNoticeAccepted()) {
-                    dispatch(VirusScanUpdate.ScanNoticeShown)
+                    applyUpdate(VirusScanUpdate.ScanNoticeShown)
                 }
             }
             VirusScanAction.BackClicked -> sendEvent(VirusScanEvent.Exit)
@@ -107,16 +107,21 @@ class VirusScanViewModel(
                     sendEvent(VirusScanEvent.NavigateToScan(mode))
                 }
             }
-            is VirusScanUpdate, VirusScanAction.InstalledAppsDialogDismissed,
+            VirusScanAction.InstalledAppsDialogDismissed,
             VirusScanAction.SettingsLaunchFailed,
             -> Unit
         }
     }
 
+    private fun applyUpdate(update: VirusScanUpdate) {
+        setState { VirusScanReducer.reduce(it, update) }
+        if (update is VirusScanUpdate.AdbRiskChecked) checkEmptyResult()
+    }
+
     private fun requestHomeScan(mode: VirusScanMode) {
         if (currentState.home.scanRequestPending) return
         if (!securityRepository.isScanNoticeAccepted()) {
-            dispatch(VirusScanUpdate.ScanNoticeShown)
+            applyUpdate(VirusScanUpdate.ScanNoticeShown)
             return
         }
         checkInstalledAppsAccess(mode, returningFromSettings = false)
@@ -127,7 +132,7 @@ class VirusScanViewModel(
         returningFromSettings: Boolean,
     ) {
         if (currentState.home.scanRequestPending) return
-        dispatch(VirusScanUpdate.AccessCheckStarted(mode))
+        applyUpdate(VirusScanUpdate.AccessCheckStarted(mode))
         viewModelScope.launch {
             val hadPreviousFailure = securityRepository.hasInstalledAppsAccessFailedBefore()
             val startedAt = System.currentTimeMillis()
@@ -139,7 +144,7 @@ class VirusScanViewModel(
                     !returningFromSettings &&
                     hadPreviousFailure &&
                     elapsed < INSTALLED_APPS_DIALOG_INTERACTION_THRESHOLD_MILLIS
-            dispatch(VirusScanUpdate.AccessCheckFinished(showDialog))
+            applyUpdate(VirusScanUpdate.AccessCheckFinished(showDialog))
             if (hasAccess) {
                 if (mode == VirusScanMode.Deep) {
                     sendEvent(VirusScanEvent.RequestDeepScanPermission(mode))
@@ -182,7 +187,7 @@ class VirusScanViewModel(
         threatIds.clear()
         scanEngine.cancelScan()
         scanStartedAt = 0L
-        dispatch(VirusScanUpdate.ScanReset)
+        applyUpdate(VirusScanUpdate.ScanReset)
     }
 
     private fun refreshAdbRisk() {
@@ -194,7 +199,7 @@ class VirusScanViewModel(
                     withContext(defaultDispatcher) {
                         securityRepository.hasAdbRisk()
                     }
-                if (generation == scanGeneration) dispatch(VirusScanUpdate.AdbRiskChecked(hasRisk))
+                if (generation == scanGeneration) applyUpdate(VirusScanUpdate.AdbRiskChecked(hasRisk))
             }
     }
 
@@ -277,14 +282,14 @@ class VirusScanViewModel(
         if (scanStartedAt == 0L) {
             scanStartedAt = System.currentTimeMillis()
         }
-        dispatch(VirusScanUpdate.ScanStarted(mode))
+        applyUpdate(VirusScanUpdate.ScanStarted(mode))
         if (display == null) {
             display =
                 VirusScanDisplay(
                     scope = viewModelScope,
                     mode = mode,
                     loadAppLabel = { withContext(ioDispatcher) { securityRepository.appLabel(it) } },
-                    onUpdate = { if (generation == scanGeneration) dispatch(it) },
+                    onUpdate = { if (generation == scanGeneration) applyUpdate(it) },
                 ).also { it.start(scanStartedAt) }
         }
     }
@@ -322,7 +327,7 @@ class VirusScanViewModel(
                 if (generation != scanGeneration) return@launch
                 if (!threatIds.add(threat.id)) return@launch
 
-                dispatch(VirusScanUpdate.ThreatFound(threat))
+                applyUpdate(VirusScanUpdate.ThreatFound(threat))
             }
         pendingThreatJobs.add(job)
         job.invokeOnCompletion { pendingThreatJobs.remove(job) }
@@ -345,7 +350,7 @@ class VirusScanViewModel(
                 stopTerminalTimeout()
                 display?.stop()
                 display = null
-                dispatch(VirusScanUpdate.ScanFinished)
+                applyUpdate(VirusScanUpdate.ScanFinished)
                 sendEvent(VirusScanEvent.NavigateToResult(currentState.effectiveThreatCount > 0))
             }
     }

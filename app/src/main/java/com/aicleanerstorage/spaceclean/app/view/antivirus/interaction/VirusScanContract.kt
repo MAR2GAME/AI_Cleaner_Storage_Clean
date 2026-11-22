@@ -3,7 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.antivirus.interaction
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusThreatModel
 
-internal sealed interface VirusScanUpdate : VirusScanAction {
+internal sealed interface VirusScanUpdate {
     data object ScanNoticeShown : VirusScanUpdate
 
     data class AccessCheckStarted(
