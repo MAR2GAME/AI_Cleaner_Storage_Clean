@@ -29,7 +29,7 @@ app/src/main/java/com/aicleanerstorage/
 
 - 鍙仛瀹炵幇锛歚repository/` 鏀剧鍙ｅ疄鐜帮紝`local/` 鏀?MediaStore/SAF/绯荤粺鏈嶅姟/鏂囦欢绯荤粺绛夊钩鍙伴€傞厤锛涗笉瀹氫箟涓氬姟瑙勫垯銆?- 鍏蜂綋瀹炵幇绫婚粯璁?`internal`锛汚ndroid 缁勪欢锛坄Service` / `Receiver` / `Provider` / `Activity`锛変緥澶栧苟鐧昏銆?- 鍛藉悕鎸夎鑹诧細鑱氬悎浠撳簱 `<姒傚康>Repository`锛涘崟浠嬭川瀹炵幇 `<姒傚康><浠嬭川>Repository`锛涚鍙ｅ悕琚崰鐢ㄦ椂鐢?`Default<姒傚康>Repository` 鎴?`<绔彛鍚?Impl`锛涘钩鍙版満鍒剁敤鏈哄埗鍓嶇紑銆?- 寮傚父鍦ㄥ疄鐜板眰鏀跺彛鎴?`Result`锛沗CancellationException` 蹇呴』缁х画浼犳挱銆?- 鐩存帴杩斿洖 domain 妯″瀷锛涘彧鏈夊嚭鐜?Entity/DTO 鏃舵墠寤?`mapper/`锛屽綋鍓嶄笉寤恒€?- `data` 鐨勫钩鍙板疄鐜板繀椤荤洿鎺ュ疄鐜?domain 绔彛锛涗笉鍐嶆柊澧炩€滆浆鍙戔€濈殑鍖呰绫汇€?
 ## UI锛圕ompose + MVI锛?
-UI 缁嗚妭浠?`README.md` 涓哄噯锛屾憳瑕侊細
+UI 缁嗚妭浠?`本文件` 涓哄噯锛屾憳瑕侊細
 
 - 鐘舵€佸彧鑳界敱 `setState` / Reducer 淇敼锛涘壇浣滅敤鍙嚭鐜板湪 Route / EffectHandler銆?- 浜嬩欢閫氶亾鐢?`base/mvi/CollectEffects` 鍗曟秷璐硅€呮敹闆嗭紝绂佹鎵嬪啓 `LaunchedEffect { viewModel.event.collect { } }`銆?- `ui/part` 鏃犵姸鎬侊細鍙傛暟鏄暟鎹?+ lambda锛屼笉鎺?ViewModel銆佷笉 collect Flow銆佷笉鍋氬鑸€佷笉璇?Koin銆?- `XxxScreen` 鍙傛暟鍙敤 `state`銆乣onAction`銆乣modifier`锛涙彃妲藉拰骞冲彴瀵硅薄鍥炶皟渚嬪銆?- 鐢ㄦ埛鍙鏂囨璧?`strings.xml` / `UiText`锛涢敊璇埌鏂囨鏀跺彛鍦ㄩ〉闈?`interaction/XxxErrorText.kt`銆?- 绯荤粺杩斿洖閿繀椤?dispatch 椤甸潰 Action锛岀敱 Route 娑堣垂 Event 鍐?`back()`銆?
 ## 鍙嶈繃搴﹂槻寰?
