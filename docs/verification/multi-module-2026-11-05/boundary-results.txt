@@ -1,7 +1,0 @@
-check-mvi-boundaries.ps1: PASS (521 Kotlin sources)
-check-dependencies.ps1: PASS
-check-permission-ad-boundaries.ps1: PASS (471 production Kotlin files)
-check-variant-boundaries.ps1: PASS
-check-template.ps1: PASS (default product mode)
-check-product-config.ps1: PASS (default product mode)
-check-template.ps1 -WhitePackage: EXPECTED BLOCKED by existing app/google-services.json

@@ -1,9 +1,9 @@
 ﻿# 椤圭洰瑙勫垯
 
-鏈枃浠舵槸纭鍒欍€佷紭鍏堢骇涓庝唬鐮侀鏍肩殑鍞竴鍏ュ彛銆俁EADME / `docs/mvi-architecture.md` 鍙繚鐣欎骇鍝佽鏄庛€佹暟鎹祦缁嗚妭鍜岀幇鐘躲€?
+鏈枃浠舵槸纭鍒欍€佷紭鍏堢骇涓庝唬鐮侀鏍肩殑鍞竴鍏ュ彛銆俁EADME / `README.md` 鍙繚鐣欎骇鍝佽鏄庛€佹暟鎹祦缁嗚妭鍜岀幇鐘躲€?
 ## 瑙勫垯鍏ュ彛涓?Profile
 
-- `AGENTS.md` 鏄鍒欏敮涓€鏉ユ簮锛沗profiles/android-compose-mvi.json` 鍙斁椤圭洰宸紓锛歚sourceRoot`銆乣packageRoot`銆侀〉闈€佺洰鐨勫湴銆佽祫婧愬墠缂€銆乣navHost` 鍜?`checks` 寮€鍏炽€?- 浼樺厛绾э細鐢ㄦ埛褰撳墠鏄庣‘鎸囦护 > 鏈枃浠朵笌褰撳墠 profile > Android / Compose 骞冲彴瑙勫垯 > 閫氱敤宸ョ▼瑙勫垯 > 宸ュ叿榛樿琛屼负銆?- 浠ｇ爜涓庤鑼冧笉涓€鑷存椂榛樿浠ｇ爜鏄敊鐨勶紝闄ら潪宸插湪 `docs/rules/exceptions.md` 鐧昏銆?- 妫€鏌ヨ剼鏈笌瑙勮寖涓嶄竴鑷存椂锛屽湪褰撴鍙樻洿閲屽悓鏃舵敼鑴氭湰鎴栬鍒欙紝涓嶅厑璁搁暱鏈熸紓绉汇€?- 瑙勫垯鍐茬獊銆佽鍒欐湭瑕嗙洊銆侀渶瑕佷緥澶栵細鍏堝湪 `docs/rules/exceptions.md` 鐧昏锛屽啀鏀逛唬鐮併€?
+- `AGENTS.md` 鏄鍒欏敮涓€鏉ユ簮锛沗profiles/android-compose-mvi.json` 鍙斁椤圭洰宸紓锛歚sourceRoot`銆乣packageRoot`銆侀〉闈€佺洰鐨勫湴銆佽祫婧愬墠缂€銆乣navHost` 鍜?`checks` 寮€鍏炽€?- 浼樺厛绾э細鐢ㄦ埛褰撳墠鏄庣‘鎸囦护 > 鏈枃浠朵笌褰撳墠 profile > Android / Compose 骞冲彴瑙勫垯 > 閫氱敤宸ョ▼瑙勫垯 > 宸ュ叿榛樿琛屼负銆?- 浠ｇ爜涓庤鑼冧笉涓€鑷存椂榛樿浠ｇ爜鏄敊鐨勶紝闄ら潪宸插湪 `AGENTS.md` 鐧昏銆?- 妫€鏌ヨ剼鏈笌瑙勮寖涓嶄竴鑷存椂锛屽湪褰撴鍙樻洿閲屽悓鏃舵敼鑴氭湰鎴栬鍒欙紝涓嶅厑璁搁暱鏈熸紓绉汇€?- 瑙勫垯鍐茬獊銆佽鍒欐湭瑕嗙洊銆侀渶瑕佷緥澶栵細鍏堝湪 `AGENTS.md` 鐧昏锛屽啀鏀逛唬鐮併€?
 ## 瀹氫綅
 
 Android 鍗?Activity + Compose + MVI + Koin + 绫诲瀷鍖栧鑸€傚綋鍓嶅彧鏈?`:app` 鍜?`:junkcc` 涓や釜 Gradle 妯″潡锛涘師 `cleanerkit`銆乣devicekit`銆乣networkkit` 宸插叏閮ㄥ苟鍏?`data`锛屼笉鍐嶆湁鐙珛 kit 鍖呫€傛墍鏈夐〉闈?ViewModel 浣跨敤 `MviViewModel`锛宎pp 缁熶竴瑁呴厤 Koin銆佺被鍨嬪寲 NavHost 涓庢潈闄?Gate銆?
@@ -19,7 +19,7 @@ app/src/main/java/com/aicleanerstorage/
 
 **灞備紭鍏堬紙layer-first锛?*锛歚domain` 鎸夎亴璐ｅ垎涓?`model / port / rule / error`锛屽悓绫绘枃浠堕泦涓紱`data` 鍒嗕负 `repository / local`锛屼粨搴撳疄鐜颁笌骞冲彴閫傞厤鍒嗗紑銆備笟鍔℃蹇甸€氳繃 `model/<concept>` 涓?`local/<capability>` 琛ㄨ揪锛屼笉鍐嶇粰姣忎釜 feature 澶嶅埗涓€濂?`model/port/error` 瀛愬寘銆傜湡鍑虹幇璺ㄥ涓?repository 鐨勭紪鎺掓椂鍐嶅缓 `domain/usecase/`銆?
 渚濊禆鏂瑰悜锛堝厑璁稿垪琛紝鐢?`scripts/check-rules.ps1` 閫愭潯妫€鏌ワ級锛?
-- `domain` 鍙緷璧栬嚜韬?+ Kotlin/JDK锛坈oroutines 渚嬪瑙?`docs/rules/exceptions.md`锛夛紱涓嶅緱 import `base`銆乣data`銆乣app`銆?- `data` 鍏佽 `domain`銆乣base`锛涗笉寰?import `app`銆?- `app/view` 鍏佽 `base`銆乣domain`锛涗笉寰?import `data`銆?- `app/root` 鍏佽 `app/view`銆乣base`銆乣domain`锛涗笉寰?import `data`銆?- `app/di` 鏄敮涓€瑁呴厤 data 瀹炵幇鐨勫寘銆?- `base` 涓嶅緱渚濊禆 `data` 鎴?`app`銆?
+- `domain` 鍙緷璧栬嚜韬?+ Kotlin/JDK锛坈oroutines 渚嬪瑙?`AGENTS.md`锛夛紱涓嶅緱 import `base`銆乣data`銆乣app`銆?- `data` 鍏佽 `domain`銆乣base`锛涗笉寰?import `app`銆?- `app/view` 鍏佽 `base`銆乣domain`锛涗笉寰?import `data`銆?- `app/root` 鍏佽 `app/view`銆乣base`銆乣domain`锛涗笉寰?import `data`銆?- `app/di` 鏄敮涓€瑁呴厤 data 瀹炵幇鐨勫寘銆?- `base` 涓嶅緱渚濊禆 `data` 鎴?`app`銆?
 鐩綍鍚?= 鍖呭悕锛屽叏灏忓啓锛涚┖鐩綍涓嶅缓銆?
 ## domain
 
@@ -29,7 +29,7 @@ app/src/main/java/com/aicleanerstorage/
 
 - 鍙仛瀹炵幇锛歚repository/` 鏀剧鍙ｅ疄鐜帮紝`local/` 鏀?MediaStore/SAF/绯荤粺鏈嶅姟/鏂囦欢绯荤粺绛夊钩鍙伴€傞厤锛涗笉瀹氫箟涓氬姟瑙勫垯銆?- 鍏蜂綋瀹炵幇绫婚粯璁?`internal`锛汚ndroid 缁勪欢锛坄Service` / `Receiver` / `Provider` / `Activity`锛変緥澶栧苟鐧昏銆?- 鍛藉悕鎸夎鑹诧細鑱氬悎浠撳簱 `<姒傚康>Repository`锛涘崟浠嬭川瀹炵幇 `<姒傚康><浠嬭川>Repository`锛涚鍙ｅ悕琚崰鐢ㄦ椂鐢?`Default<姒傚康>Repository` 鎴?`<绔彛鍚?Impl`锛涘钩鍙版満鍒剁敤鏈哄埗鍓嶇紑銆?- 寮傚父鍦ㄥ疄鐜板眰鏀跺彛鎴?`Result`锛沗CancellationException` 蹇呴』缁х画浼犳挱銆?- 鐩存帴杩斿洖 domain 妯″瀷锛涘彧鏈夊嚭鐜?Entity/DTO 鏃舵墠寤?`mapper/`锛屽綋鍓嶄笉寤恒€?- `data` 鐨勫钩鍙板疄鐜板繀椤荤洿鎺ュ疄鐜?domain 绔彛锛涗笉鍐嶆柊澧炩€滆浆鍙戔€濈殑鍖呰绫汇€?
 ## UI锛圕ompose + MVI锛?
-UI 缁嗚妭浠?`docs/mvi-architecture.md` 涓哄噯锛屾憳瑕侊細
+UI 缁嗚妭浠?`README.md` 涓哄噯锛屾憳瑕侊細
 
 - 鐘舵€佸彧鑳界敱 `setState` / Reducer 淇敼锛涘壇浣滅敤鍙嚭鐜板湪 Route / EffectHandler銆?- 浜嬩欢閫氶亾鐢?`base/mvi/CollectEffects` 鍗曟秷璐硅€呮敹闆嗭紝绂佹鎵嬪啓 `LaunchedEffect { viewModel.event.collect { } }`銆?- `ui/part` 鏃犵姸鎬侊細鍙傛暟鏄暟鎹?+ lambda锛屼笉鎺?ViewModel銆佷笉 collect Flow銆佷笉鍋氬鑸€佷笉璇?Koin銆?- `XxxScreen` 鍙傛暟鍙敤 `state`銆乣onAction`銆乣modifier`锛涙彃妲藉拰骞冲彴瀵硅薄鍥炶皟渚嬪銆?- 鐢ㄦ埛鍙鏂囨璧?`strings.xml` / `UiText`锛涢敊璇埌鏂囨鏀跺彛鍦ㄩ〉闈?`interaction/XxxErrorText.kt`銆?- 绯荤粺杩斿洖閿繀椤?dispatch 椤甸潰 Action锛岀敱 Route 娑堣垂 Event 鍐?`back()`銆?
 ## 鍙嶈繃搴﹂槻寰?
@@ -59,3 +59,18 @@ UI 缁嗚妭浠?`docs/mvi-architecture.md` 涓哄噯锛屾憳瑕侊細
 
 褰撳墠闂ㄧ瑕嗙洊锛歞omain 绾噣銆佸垎灞傛柟鍚戙€乨ata 鍙鎬?濂戠害銆乿iew 涓?import data銆乨omain 妯″瀷鍛藉悕銆侀敊璇垎鏀?KDoc銆佸崟鏂囦欢鍏紑绫诲瀷銆佸懡鍚嶃€乁iText銆丆ollectEffects銆丅ackHandler銆乪ffect 浣嶇疆銆乸ackage/鐩綍銆佽瑷€鍖?key銆備换浣曚竴椤逛笉閫氳繃閫€鍑虹爜闈?0銆?
 鏂板厠闅嗘墽琛屼竴娆?`.\scripts\install-hooks.ps1` 鍚敤 `pre-commit`锛涢挬瀛愬彲琚?`git commit --no-verify` 缁曡繃锛孋I 蹇呴』璺戝悓涓€鑴氭湰鍏滃簳銆?
+
+## 规则例外
+
+鏈枃浠剁櫥璁颁笌 `AGENTS.md` 瀛楅潰瑙勫垯涓嶄竴鑷淬€佷絾宸茶瘎瀹℃帴鍙楃殑鍋氭硶銆傛柊澧炰緥澶栧繀椤诲啓娓呰寖鍥淬€佸師鍥犲拰閫€鍑烘潯浠讹紱娌℃湁鐧昏鐨勪笉涓€鑷撮粯璁ゆ寜鈥滀唬鐮佹槸閿欑殑鈥濆鐞嗐€?
+## E1：domain 允许使用 `kotlinx.coroutines.flow`
+
+- 范围：`domain/**/port/*.kt` 的 `Flow` 类型。
+- 原因：扫描、网络扫描、电池历史需要跨页面共享的可观察数据；把 Flow 上移到 ViewModel 轮询会增加页面生命周期复杂度，且 `data` 实现天然需要协程。
+- 约束：只允许 flow 类型与 `suspend`；禁止 `StateFlow`、`Dispatchers`、`CoroutineScope`、`androidx.*`。
+- 退出条件：domain 端口改为一次性读取 + 页面自行刷新，或项目引入独立的 `base` 状态存储。
+## E2锛歚VirusAndroidEffects.kt` 鑱氬悎澶氫釜椤跺眰鍏紑绫诲瀷
+
+- 鑼冨洿锛歚app/view/antivirus/ui/effect/VirusAndroidEffects.kt`銆?- 鍘熷洜锛歟ffect 鏂囦欢鍚屾椂鎵胯浇 Composable 瀹夸富涓?`PackageRemovedReceiver`锛屾媶鍒嗗悗 receiver 浠嶅湪 `ui/effect` 鐩綍锛屼細涓?`effectLocation` 鍛藉悕瑙勫垯鍐茬獊銆?- 绾︽潫锛氳鏂囦欢鍙斁 Antivirus 椤电殑骞冲彴鍓綔鐢紝涓嶆斁涓氬姟妯″瀷鎴栬法椤电粍浠躲€?- 閫€鍑烘潯浠讹細Antivirus effect 鎷嗘垚鐙珛鏂囦欢鍜岀嫭绔嬪钩鍙扮粍浠剁洰褰曟椂鍒犻櫎鏈緥澶栥€?
+
+

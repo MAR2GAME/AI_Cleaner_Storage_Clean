@@ -1,2 +1,0 @@
-MVI boundary check passed: 48 scoped Kotlin files; old MVI references checked across all source sets.
-Permission/ad boundaries passed (412 production Kotlin files).

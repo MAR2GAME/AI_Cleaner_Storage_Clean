@@ -1,46 +1,32 @@
-# Storage Clean
+﻿# Storage Clean
 
-Android 单 Activity + Compose + MVI + Koin + 类型化导航的存储清理应用。
+Android 鍗?Activity + Compose + MVI + Koin + 绫诲瀷鍖栧鑸殑瀛樺偍娓呯悊搴旂敤銆?
+## 妯″潡
 
-## 模块
-
-- `:app`：应用、页面、领域与数据实现。
-- `:junkcc`：独立资源模块，不参与业务代码。
-
-## 包结构
-
+- `:app`锛氬簲鐢ㄣ€侀〉闈€侀鍩熶笌鏁版嵁瀹炵幇銆?- `:junkcc`锛氱嫭绔嬭祫婧愭ā鍧楋紝涓嶅弬涓庝笟鍔′唬鐮併€?
+## 鍖呯粨鏋?
 ```text
 com.aicleanerstorage.spaceclean/
-├─ app/       Application、MainActivity、root/、di/、background/、view/<page>/
-├─ base/      designsystem/、mvi/、navigation/、permission/、util/
-├─ data/      repository/ 端口实现、local/ 平台适配
-├─ domain/    model/<concept>/、port/、rule/、error/
-└─ app/view/<page>/{interaction,ui}
+鈹溾攢 app/       Application銆丮ainActivity銆乺oot/銆乨i/銆乥ackground/銆乿iew/<page>/
+鈹溾攢 base/      designsystem/銆乵vi/銆乶avigation/銆乸ermission/銆乽til/
+鈹溾攢 data/      repository/ 绔彛瀹炵幇銆乴ocal/ 骞冲彴閫傞厤
+鈹溾攢 domain/    model/<concept>/銆乸ort/銆乺ule/銆乪rror/
+鈹斺攢 app/view/<page>/{interaction,ui}
 ```
 
-依赖方向：
-
+渚濊禆鏂瑰悜锛?
 ```text
-app/view ──> base + domain
-app/root ──> app/view + base + domain
-app/di   ──> data + domain + base
-data     ──> domain + base
-domain   ──> Kotlin/JDK（coroutines 例外）
-```
+app/view 鈹€鈹€> base + domain
+app/root 鈹€鈹€> app/view + base + domain
+app/di   鈹€鈹€> data + domain + base
+data     鈹€鈹€> domain + base
+domain   鈹€鈹€> Kotlin/JDK锛坈oroutines 渚嬪锛?```
 
-硬规则、命名、代码风格与例外登记以 [AGENTS.md](AGENTS.md) 为准；页面数据流与权限链路见 [docs/mvi-architecture.md](docs/mvi-architecture.md)。
+纭鍒欍€佸懡鍚嶃€佷唬鐮侀鏍间笌渚嬪鐧昏浠?[AGENTS.md](AGENTS.md) 涓哄噯锛涢〉闈㈡暟鎹祦涓庢潈闄愰摼璺 [README.md](README.md)銆?
+## 鍏抽敭瀹炵幇
 
-## 关键实现
-
-- `domain/rule/`：文件分类、重复文件、相似照片、WhatsApp、垃圾扫描等纯策略。
-- `domain/error/`：`JunkError`、`VirusScanError`。
-- `domain/port/`：仓库、扫描器、权限控制等业务契约。
-- `data/local/`：MediaStore、文件系统、SharedPreferences、SDK 适配。
-- `data/repository/`：`Default<概念>Repository`，只做组合和映射。
-- `base/permission/`：`AppPermission`、`PermissionGate`、`PermissionRequestEffect`。
-- `app/view/common/files/`：文件管理共享页面、Action、Effect 与组件。
-
-## 常用命令
+- `domain/rule/`锛氭枃浠跺垎绫汇€侀噸澶嶆枃浠躲€佺浉浼肩収鐗囥€乄hatsApp銆佸瀮鍦炬壂鎻忕瓑绾瓥鐣ャ€?- `domain/error/`锛歚JunkError`銆乣VirusScanError`銆?- `domain/port/`锛氫粨搴撱€佹壂鎻忓櫒銆佹潈闄愭帶鍒剁瓑涓氬姟濂戠害銆?- `data/local/`锛歁ediaStore銆佹枃浠剁郴缁熴€丼haredPreferences銆丼DK 閫傞厤銆?- `data/repository/`锛歚Default<姒傚康>Repository`锛屽彧鍋氱粍鍚堝拰鏄犲皠銆?- `base/permission/`锛歚AppPermission`銆乣PermissionGate`銆乣PermissionRequestEffect`銆?- `app/view/common/files/`锛氭枃浠剁鐞嗗叡浜〉闈€丄ction銆丒ffect 涓庣粍浠躲€?
+## 甯哥敤鍛戒护
 
 ```powershell
 .\scripts\check-rules.ps1
@@ -49,4 +35,5 @@ domain   ──> Kotlin/JDK（coroutines 例外）
 .\scripts\ci.ps1
 ```
 
-首次克隆执行一次 `.\scripts\install-hooks.ps1` 启用 `pre-commit`。
+棣栨鍏嬮殕鎵ц涓€娆?`.\scripts\install-hooks.ps1` 鍚敤 `pre-commit`銆?
+
