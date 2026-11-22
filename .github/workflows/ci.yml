@@ -46,8 +46,14 @@ jobs:
       - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest --stacktrace
 
+      - name: Android lint
+        run: ./gradlew :app:lintDebug --stacktrace
+
       - name: Assemble debug
         run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Assemble release
+        run: ./gradlew :app:assembleRelease --stacktrace
 
       - name: Upload test reports
         if: failure()

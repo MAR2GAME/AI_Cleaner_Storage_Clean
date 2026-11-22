@@ -91,8 +91,8 @@ base      ──> AndroidX / Kotlin（不得依赖 data 或 app）
 
 以下问题已登记在整改方案中，不是“规范允许”的做法：
 
-- APK/缓存/临时文件的分类策略仍在 `data/local/junkclean/scanner`，应按 `AGENTS.md` 收回 `domain/rule`。
-- `JunkCleanViewModel` 与 `VirusScanViewModel` 仍有较多状态字段，应收回 `UiState`。
-- `AppNavHost` 与 `JunkCleanViewModel` 已接近单文件复杂度上限，后续按导航图/状态收口拆分。
+- `JunkCleanViewModel` 与 `VirusScanViewModel` 仍有较多状态字段，应逐步收回 `UiState`。
+- `FileManagerNavGraph` 仍承载 8 个文件流程，后续可按照片/媒体继续拆分。
 - `check-rules.ps1` 的函数长度检查使用 `scripts/function-length-baseline.txt` 管理存量债务；`localeParity` 只对 key 对齐硬性失败，翻译覆盖率目前仅报告。
 - ktlint 的 `filename` 规则按 E3 关闭，文件名/类型一致性由 `publicTypes` 检查兜底。
+- release 产物仍未配置签名，CI 的 release 任务用于验证 R8/资源收缩，不作为发布产物。
