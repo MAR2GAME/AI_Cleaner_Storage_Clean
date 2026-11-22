@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScreenshotGridParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScreenshotGridView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
@@ -64,6 +65,7 @@ fun ScreenshotsManagerScreen(
             ),
         ) {
                 FileManagerScreenshotGridView(
+                    FileManagerScreenshotGridParams(
                     items = displayItems,
                     selectedIds = state.selectedIds,
                     allSelected = state.allSelected,
@@ -74,9 +76,12 @@ fun ScreenshotsManagerScreen(
                         val index = displayItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(FilePageAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 

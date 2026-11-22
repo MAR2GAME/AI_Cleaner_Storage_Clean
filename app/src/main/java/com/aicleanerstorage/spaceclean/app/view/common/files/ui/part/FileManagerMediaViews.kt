@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -92,15 +92,14 @@ private val FileManagerBitmapCache =
     }
 
 @Composable
-fun FileManagerScreenshotGridView(
-    items: List<FileImageDisplayItem>,
-    allSelected: Boolean,
-    selectedIds: Set<Int>,
-    scrollState: ScrollState,
-    onToggleAll: () -> Unit,
-    onSelect: (Int) -> Unit,
-    onOpenDetail: (FileImageDisplayItem) -> Unit,
-) {
+fun FileManagerScreenshotGridView(params: FileManagerScreenshotGridParams) {
+    val items = params.items
+    val allSelected = params.allSelected
+    val selectedIds = params.selectedIds
+    val scrollState = params.scrollState
+    val onToggleAll = params.onToggleAll
+    val onSelect = params.onSelect
+    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
@@ -126,13 +125,13 @@ fun FileManagerScreenshotGridView(
                 items.chunked(3).forEach { rowItems ->
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         rowItems.forEach { item ->
-                            FileManagerThumbnail(
+                            FileManagerThumbnail(FileManagerThumbnailParams(
                                 item = item,
                                 selected = item.id in selectedIds,
                                 onOpen = { onOpenDetail(item) },
                                 onToggleSelection = { onSelect(item.id) },
                                 modifier = Modifier.weight(1f),
-                            )
+                            ))
                         }
                         repeat(3 - rowItems.size) {
                             Spacer(modifier = Modifier.weight(1f))
@@ -145,18 +144,17 @@ fun FileManagerScreenshotGridView(
 }
 
 @Composable
-fun FileManagerSimilarPhotosView(
-    groups: List<FileImageGroupDisplayItem>,
-    totalCount: Int,
-    totalSizeBytes: Long,
-    selectedIds: Set<Int>,
-    allSelected: Boolean,
-    scrollState: ScrollState,
-    onToggleAll: () -> Unit,
-    onToggleGroup: (FileImageGroupDisplayItem) -> Unit,
-    onSelect: (Int) -> Unit,
-    onOpenDetail: (FileImageDisplayItem) -> Unit,
-) {
+fun FileManagerSimilarPhotosView(params: FileManagerSimilarPhotosParams) {
+    val groups = params.groups
+    val totalCount = params.totalCount
+    val totalSizeBytes = params.totalSizeBytes
+    val selectedIds = params.selectedIds
+    val allSelected = params.allSelected
+    val scrollState = params.scrollState
+    val onToggleAll = params.onToggleAll
+    val onToggleGroup = params.onToggleGroup
+    val onSelect = params.onSelect
+    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
@@ -362,14 +360,13 @@ private fun FileManagerSimilarPhotoTile(
 }
 
 @Composable
-fun FileManagerPhotoPrivacyView(
-    groups: List<FileImageDateGroupDisplayItem>,
-    selectedIds: Set<Int>,
-    allSelected: Boolean,
-    onToggleAll: () -> Unit,
-    onToggleGroup: (Set<Int>) -> Unit,
-    onSelect: (Int) -> Unit,
-) {
+fun FileManagerPhotoPrivacyView(params: FileManagerPhotoPrivacyParams) {
+    val groups = params.groups
+    val selectedIds = params.selectedIds
+    val allSelected = params.allSelected
+    val onToggleAll = params.onToggleAll
+    val onToggleGroup = params.onToggleGroup
+    val onSelect = params.onSelect
     val itemCount = groups.sumOf { it.items.size }
     Column(
         modifier =
@@ -433,13 +430,13 @@ fun FileManagerPhotoPrivacyView(
                             group.items.chunked(3).forEach { rowItems ->
                                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                     rowItems.forEach { item ->
-                                        FileManagerThumbnail(
+                                        FileManagerThumbnail(FileManagerThumbnailParams(
                                             item = item,
                                             selected = item.id in selectedIds,
                                             onOpen = { onSelect(item.id) },
                                             onToggleSelection = { onSelect(item.id) },
                                             modifier = Modifier.weight(1f),
-                                        )
+                                        ))
                                     }
                                     repeat(3 - rowItems.size) {
                                         Spacer(modifier = Modifier.weight(1f))
@@ -477,14 +474,13 @@ fun FileManagerGroupHeader(
 }
 
 @Composable
-fun FileManagerThumbnail(
-    item: FileImageDisplayItem,
-    selected: Boolean,
-    onOpen: () -> Unit,
-    onToggleSelection: () -> Unit,
-    showPlayBadge: Boolean = false,
-    modifier: Modifier = Modifier,
-) {
+fun FileManagerThumbnail(params: FileManagerThumbnailParams) {
+    val item = params.item
+    val selected = params.selected
+    val onOpen = params.onOpen
+    val onToggleSelection = params.onToggleSelection
+    val showPlayBadge = params.showPlayBadge
+    val modifier = params.modifier
     Box(
         modifier =
             modifier
@@ -530,17 +526,16 @@ fun FileManagerThumbnail(
 }
 
 @Composable
-fun FileManagerGalleryBrowserView(
-    tabs: List<FileManagerTabDisplayItem>,
-    selectedTabIndex: Int,
-    items: List<FileImageDisplayItem>,
-    selectedIds: Set<Int>,
-    scrollState: ScrollState,
-    onTabSelected: (Int) -> Unit,
-    onSelect: (Int) -> Unit,
-    onSelectAll: () -> Unit,
-    onOpenDetail: (FileImageDisplayItem) -> Unit,
-) {
+fun FileManagerGalleryBrowserView(params: FileManagerGalleryParams) {
+    val tabs = params.tabs
+    val selectedTabIndex = params.selectedTabIndex
+    val items = params.items
+    val selectedIds = params.selectedIds
+    val scrollState = params.scrollState
+    val onTabSelected = params.onTabSelected
+    val onSelect = params.onSelect
+    val onSelectAll = params.onSelectAll
+    val onOpenDetail = params.onOpenDetail
     val allSelected = items.isNotEmpty() && selectedIds.containsAll(items.map { it.id })
     Column(
         modifier =
@@ -816,3 +811,4 @@ private fun calculateInSampleSize(
     }
     return sampleSize
 }
+

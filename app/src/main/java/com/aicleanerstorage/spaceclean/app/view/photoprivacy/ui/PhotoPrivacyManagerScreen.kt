@@ -14,6 +14,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.DeleteConfirmDialog
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerBottomActionBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
@@ -59,12 +60,15 @@ fun PhotoPrivacyManagerScreen(
             ),
         ) {
                 FileManagerPhotoPrivacyView(
+                    FileManagerPhotoPrivacyParams(
                     groups = state.displayGroups,
                     selectedIds = state.selectedIds,
                     allSelected = state.allSelected,
                     onToggleAll = { onAction(PhotoPrivacyAction.VisibleItemsToggled) },
                     onToggleGroup = { ids -> onAction(PhotoPrivacyAction.VisibleSelectionToggled(ids)) },
                     onSelect = { onAction(PhotoPrivacyAction.SelectionToggled(it)) },
+                
+                    ),
                 )
             }
         }
@@ -79,4 +83,5 @@ fun PhotoPrivacyManagerScreen(
         )
     }
 }
+
 

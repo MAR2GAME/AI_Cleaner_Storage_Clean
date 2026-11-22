@@ -1,4 +1,6 @@
-package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.part
+
+import androidx.annotation.StringRes
 
 import android.text.format.DateFormat
 import androidx.compose.foundation.Image
@@ -60,6 +62,15 @@ internal fun NotificationStatusContent(uiState: NotificationCleanerUiState) {
                 }.sortedByDescending { it.items.firstOrNull()?.postTimeMillis ?: 0L }
         }
 
+    NotificationStatusCard(uiState = uiState, showEmptyState = showEmptyState)
+    BlockedNotificationGroups(groups = blockedGroups)
+}
+
+@Composable
+private fun NotificationStatusCard(
+    uiState: NotificationCleanerUiState,
+    showEmptyState: Boolean,
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = CardBg,
@@ -71,76 +82,80 @@ internal fun NotificationStatusContent(uiState: NotificationCleanerUiState) {
         ) {
             BellBadge()
             Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text =
-                    stringResource(
-                        if (showEmptyState) {
-                            R.string.notification_status_empty_title
-                        } else if (uiState.enabled) {
-                            R.string.notification_status_enabled
-                        } else {
-                            R.string.notification_status_disabled
-                        },
-                    ),
-                color = NotificationSettingsText,
-                fontSize = 18.sp,
-                lineHeight = 22.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            if (showEmptyState) {
-                Text(
-                    text = stringResource(R.string.notification_status_empty_message),
-                    color = NotificationSettingsText,
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp,
-                    textAlign = TextAlign.Center,
-                )
-            } else {
-                BlockedCountText(count = uiState.blockedCount)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.notification_showing_limit),
-                color = NotificationSettingsText.copy(alpha = 0.65f),
-                fontSize = 16.sp,
-                lineHeight = 19.sp,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
-
-    if (blockedGroups.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(28.dp))
-        blockedGroups.forEachIndexed { groupIndex, group ->
-            Text(
-                text = group.app.packageName,
-                color = NotificationSettingsText,
-                fontSize = 18.sp,
-                lineHeight = 22.sp,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            group.items.forEachIndexed { itemIndex, entry ->
-                BlockedNotificationRow(
-                    entry = entry,
-                    app = group.app,
-                )
-                if (itemIndex != group.items.lastIndex) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-            }
-            if (groupIndex != blockedGroups.lastIndex) {
-                Spacer(modifier = Modifier.height(20.dp))
-            }
+            StatusCopy(uiState = uiState, showEmptyState = showEmptyState)
         }
     }
 }
 
+@Composable
+private fun StatusCopy(
+    uiState: NotificationCleanerUiState,
+    showEmptyState: Boolean,
+) {
+    Text(
+        text = stringResource(statusTitleRes(showEmptyState, uiState.enabled)),
+        color = NotificationSettingsText,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    if (showEmptyState) {
+        Text(
+            text = stringResource(R.string.notification_status_empty_message),
+            color = NotificationSettingsText,
+            fontSize = 18.sp,
+            lineHeight = 22.sp,
+            textAlign = TextAlign.Center,
+        )
+    } else {
+        BlockedCountText(count = uiState.blockedCount)
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = stringResource(R.string.notification_showing_limit),
+        color = NotificationSettingsText.copy(alpha = 0.65f),
+        fontSize = 16.sp,
+        lineHeight = 19.sp,
+        textAlign = TextAlign.Center,
+    )
+}
+
+@StringRes
+private fun statusTitleRes(
+    showEmptyState: Boolean,
+    enabled: Boolean,
+): Int =
+    when {
+        showEmptyState -> R.string.notification_status_empty_title
+        enabled -> R.string.notification_status_enabled
+        else -> R.string.notification_status_disabled
+    }
+
+@Composable
+private fun BlockedNotificationGroups(groups: List<BlockedNotificationGroup>) {
+    if (groups.isEmpty()) return
+    Spacer(modifier = Modifier.height(28.dp))
+    groups.forEachIndexed { groupIndex, group ->
+        Text(
+            text = group.app.packageName,
+            color = NotificationSettingsText,
+            fontSize = 18.sp,
+            lineHeight = 22.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        group.items.forEachIndexed { itemIndex, entry ->
+            BlockedNotificationRow(entry = entry, app = group.app)
+            if (itemIndex != group.items.lastIndex) Spacer(modifier = Modifier.height(12.dp))
+        }
+        if (groupIndex != groups.lastIndex) Spacer(modifier = Modifier.height(20.dp))
+    }
+}
 internal val CardBg = Color.White
 
 private val NotificationStatusCardRadius = 12.dp
@@ -268,3 +283,4 @@ private data class BlockedNotificationGroup(
     val app: BlockableNotificationAppModel,
     val items: List<BlockedNotificationModel>,
 )
+

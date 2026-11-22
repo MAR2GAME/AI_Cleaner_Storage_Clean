@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerSimilarPhotosParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerSimilarPhotosView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
@@ -67,6 +68,7 @@ fun SimilarPhotosManagerScreen(
             ),
         ) {
                 FileManagerSimilarPhotosView(
+                    FileManagerSimilarPhotosParams(
                     groups = state.displayGroups,
                     totalCount = state.totalPhotoCount,
                     totalSizeBytes = state.totalSizeBytes,
@@ -87,9 +89,12 @@ fun SimilarPhotosManagerScreen(
                         val index = displayItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(SimilarPhotosAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 

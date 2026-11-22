@@ -14,6 +14,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerGalleryParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerGalleryBrowserView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
@@ -73,6 +74,7 @@ fun PhotosManagerScreen(
             ),
         ) {
                 FileManagerGalleryBrowserView(
+                    FileManagerGalleryParams(
                     tabs = state.displayTabs,
                     selectedTabIndex = state.selectedTabIndex,
                     onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
@@ -85,9 +87,12 @@ fun PhotosManagerScreen(
                         val index = currentItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(FilePageAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 
