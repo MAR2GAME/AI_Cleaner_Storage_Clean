@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.data.local.deviceinfo
+﻿package com.aicleanerstorage.spaceclean.data.local.deviceinfo
 
 import android.app.ActivityManager
 import android.content.Context
@@ -17,52 +17,55 @@ internal object DeviceInfoDataSource {
         val intent =
             getBatteryStatusIntent(context)
                 ?: return BatteryInfoModel(-1, BatteryHealth.Unknown, 0f, -1, "Unknown", 0)
-
-        val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-        val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1)
-        val levelPercent =
-            if (level >= 0 && scale > 0) {
-                (level * 100 / scale.toFloat()).toInt().coerceIn(0, 100)
-            } else {
-                -1
-            }
-
-        val health =
-            when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
-                BatteryManager.BATTERY_HEALTH_COLD -> BatteryHealth.Cold
-                BatteryManager.BATTERY_HEALTH_DEAD -> BatteryHealth.Dead
-                BatteryManager.BATTERY_HEALTH_GOOD -> BatteryHealth.Good
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> BatteryHealth.Overheat
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> BatteryHealth.Overvoltage
-                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> BatteryHealth.Failure
-                else -> BatteryHealth.Unknown
-            }
-
-        val tempRaw = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
-        val temperature = if (tempRaw >= 0) tempRaw / 10f else 0f
-        val voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
-        val technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "Unknown"
-        val capacity = getBatteryCapacity(context)
-
+        val levelPercent = readLevelPercent(intent)
         val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN)
         return BatteryInfoModel(
             levelPercent = levelPercent,
-            health = health,
-            temperature = temperature,
-            voltage = voltage,
-            technology = technology,
-            capacity = capacity,
+            health = readHealth(intent),
+            temperature = readTemperature(intent),
+            voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1),
+            technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "Unknown",
+            capacity = getBatteryCapacity(context),
             availableTimeMinutes = estimateAvailableTime(levelPercent),
-            status = when (status) {
-                BatteryManager.BATTERY_STATUS_CHARGING -> BatteryStatus.Charging
-                BatteryManager.BATTERY_STATUS_DISCHARGING -> BatteryStatus.Discharging
-                BatteryManager.BATTERY_STATUS_FULL -> BatteryStatus.Full
-                BatteryManager.BATTERY_STATUS_NOT_CHARGING -> BatteryStatus.NotCharging
-                else -> BatteryStatus.Unknown
-            },
+            status = readStatus(status),
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING,
         )
     }
+
+    private fun readLevelPercent(intent: Intent): Int {
+        val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1)
+        return if (level >= 0 && scale > 0) {
+            (level * 100 / scale.toFloat()).toInt().coerceIn(0, 100)
+        } else {
+            -1
+        }
+    }
+
+    private fun readHealth(intent: Intent): BatteryHealth =
+        when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
+            BatteryManager.BATTERY_HEALTH_COLD -> BatteryHealth.Cold
+            BatteryManager.BATTERY_HEALTH_DEAD -> BatteryHealth.Dead
+            BatteryManager.BATTERY_HEALTH_GOOD -> BatteryHealth.Good
+            BatteryManager.BATTERY_HEALTH_OVERHEAT -> BatteryHealth.Overheat
+            BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> BatteryHealth.Overvoltage
+            BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> BatteryHealth.Failure
+            else -> BatteryHealth.Unknown
+        }
+
+    private fun readTemperature(intent: Intent): Float {
+        val tempRaw = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
+        return if (tempRaw >= 0) tempRaw / 10f else 0f
+    }
+
+    private fun readStatus(status: Int): BatteryStatus =
+        when (status) {
+            BatteryManager.BATTERY_STATUS_CHARGING -> BatteryStatus.Charging
+            BatteryManager.BATTERY_STATUS_DISCHARGING -> BatteryStatus.Discharging
+            BatteryManager.BATTERY_STATUS_FULL -> BatteryStatus.Full
+            BatteryManager.BATTERY_STATUS_NOT_CHARGING -> BatteryStatus.NotCharging
+            else -> BatteryStatus.Unknown
+        }
 
     fun getMemoryInfo(context: Context): CapacityInfoModel {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -133,4 +136,5 @@ internal object DeviceInfoDataSource {
 
     private const val ASSUMED_HOURLY_DRAIN = 18.5f
 }
+
 

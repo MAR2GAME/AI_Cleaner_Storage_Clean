@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.onboarding.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.onboarding.ui.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.component.StorageValueText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 
 @Composable
@@ -77,17 +78,6 @@ private val OnboardingProgressTrack = Color(0xFFEEF4F9)
 
 @Composable
 private fun StorageCard(storageInfo: CapacityInfoModel) {
-    val usedText = compactStorageSize(FormatUtil.formatSize(storageInfo.usedBytes))
-    val totalText = " / ${compactStorageSize(FormatUtil.formatSize(storageInfo.totalBytes))}"
-    val textMeasurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    val totalTextStyle =
-        TextStyle(
-            color = OnboardingMuted,
-            fontSize = 16.sp,
-            lineHeight = 23.sp,
-        )
-
     BoxWithConstraints(
         modifier =
             Modifier
@@ -96,120 +86,100 @@ private fun StorageCard(storageInfo: CapacityInfoModel) {
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color.White),
     ) {
-        val isCompactCard = maxWidth < 340.dp
-        val imageWidth = if (isCompactCard) 76.dp else 88.dp
-        val imageHeight = if (isCompactCard) 65.dp else 75.dp
-        val textEndPadding = if (isCompactCard) 8.dp else 12.dp
+        StorageCardRow(storageInfo = storageInfo, compact = maxWidth < 340.dp)
+    }
+}
 
-        Row(
+@Composable
+private fun StorageCardRow(
+    storageInfo: CapacityInfoModel,
+    compact: Boolean,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        StorageCardTextColumn(storageInfo = storageInfo, compact = compact)
+        Image(
+            painter = painterResource(R.drawable.onboarding_trash_can),
+            contentDescription = null,
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 7.dp),
+                Modifier.size(
+                    width = if (compact) 76.dp else 88.dp,
+                    height = if (compact) 65.dp else 75.dp,
+                ),
+            contentScale = ContentScale.Fit,
+        )
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.RowScope.StorageCardTextColumn(
+    storageInfo: CapacityInfoModel,
+    compact: Boolean,
+) {
+    val usedText = compactStorageSize(FormatUtil.formatSize(storageInfo.usedBytes))
+    val totalText = " / ${compactStorageSize(FormatUtil.formatSize(storageInfo.totalBytes))}"
+    val totalTextStyle =
+        TextStyle(
+            color = OnboardingMuted,
+            fontSize = 16.sp,
+            lineHeight = 23.sp,
+        )
+    Column(
+        modifier =
+            Modifier
+                .weight(1f)
+                .padding(end = if (compact) 8.dp else 12.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(end = textEndPadding),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.home_storage_label),
-                        color = OnboardingText,
-                        fontSize = 16.sp,
-                        lineHeight = 23.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.widthIn(max = 68.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    BoxWithConstraints(modifier = Modifier.weight(1f)) {
-                        val maxWidthPx = with(density) { maxWidth.roundToPx() }
-                        val measuredTotalWidthPx =
-                            remember(totalText, textMeasurer) {
-                                textMeasurer
-                                    .measure(
-                                        text = totalText,
-                                        style = totalTextStyle,
-                                        maxLines = 1,
-                                    ).size.width
-                            }
-                        val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
-                        val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
-                        val usedFontSize =
-                            remember(usedText, usedWidthPx, textMeasurer) {
-                                (24 downTo 16)
-                                    .firstOrNull { size ->
-                                        textMeasurer
-                                            .measure(
-                                                text = usedText,
-                                                style =
-                                                    TextStyle(
-                                                        fontSize = size.sp,
-                                                        fontWeight = FontWeight.SemiBold,
-                                                    ),
-                                                maxLines = 1,
-                                            ).size.width <= usedWidthPx
-                                    }?.sp ?: 16.sp
-                            }
-                        val totalWidth = with(density) { totalWidthPx.toDp() }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = usedText,
-                                color = OnboardingGreen,
-                                fontSize = usedFontSize,
-                                lineHeight = 28.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.weight(1f),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            Text(
-                                text = totalText,
-                                style = totalTextStyle,
-                                modifier = Modifier.width(totalWidth),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(7.dp))
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(16.dp)
-                            .clip(RoundedCornerShape(14.5.dp))
-                            .background(OnboardingProgressTrack),
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth((storageInfo.usagePercent.coerceIn(0, 100)) / 100f)
-                                .height(16.dp)
-                                .clip(RoundedCornerShape(14.5.dp))
-                                .background(OnboardingGreen),
-                    )
-                }
-            }
-            Image(
-                painter = painterResource(R.drawable.onboarding_trash_can),
-                contentDescription = null,
-                modifier = Modifier.size(width = imageWidth, height = imageHeight),
-                contentScale = ContentScale.Fit,
+            Text(
+                text = stringResource(R.string.home_storage_label),
+                color = OnboardingText,
+                fontSize = 16.sp,
+                lineHeight = 23.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.widthIn(max = 68.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            StorageValueText(
+                usedText = usedText,
+                totalText = totalText,
+                totalTextStyle = totalTextStyle,
+                color = OnboardingGreen,
             )
         }
+        Spacer(modifier = Modifier.height(7.dp))
+        StorageProgressBar(storageInfo.usagePercent)
+    }
+}
+
+@Composable
+private fun StorageProgressBar(usagePercent: Int) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+                .clip(RoundedCornerShape(14.5.dp))
+                .background(OnboardingProgressTrack),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth((usagePercent.coerceIn(0, 100)) / 100f)
+                    .height(16.dp)
+                    .clip(RoundedCornerShape(14.5.dp))
+                    .background(OnboardingGreen),
+        )
     }
 }
 
@@ -239,3 +209,7 @@ private fun GetStartedButton(onClick: () -> Unit) {
         )
     }
 }
+
+
+
+

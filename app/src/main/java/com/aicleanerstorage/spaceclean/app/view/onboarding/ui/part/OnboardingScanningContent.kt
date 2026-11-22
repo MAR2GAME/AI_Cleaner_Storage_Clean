@@ -245,53 +245,59 @@ private fun PhoneScanIllustration(
 @Composable
 private fun ScanCornerFrame(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
-        val color = OnboardingGreen
-        val stroke = 3.4.dp.toPx()
-        val radius = 8.dp.toPx()
-        val leg = 13.dp.toPx()
-        val left = 10.dp.toPx()
-        val right = size.width - 10.dp.toPx()
-        val top = 10.dp.toPx()
-        val bottom = size.height - 18.dp.toPx()
-        val arcSize = Size(radius * 2f, radius * 2f)
-
-        fun drawTopLeft() {
-            drawLine(color, Offset(left, top + radius + leg), Offset(left, top + radius), stroke, StrokeCap.Round)
-            drawArc(color, 180f, 90f, false, Offset(left, top), arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-            drawLine(color, Offset(left + radius, top), Offset(left + radius + leg, top), stroke, StrokeCap.Round)
-        }
-
-        fun drawTopRight() {
-            drawLine(color, Offset(right, top + radius + leg), Offset(right, top + radius), stroke, StrokeCap.Round)
-            drawArc(color, 270f, 90f, false, Offset(right - radius * 2f, top), arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-            drawLine(color, Offset(right - radius, top), Offset(right - radius - leg, top), stroke, StrokeCap.Round)
-        }
-
-        fun drawBottomLeft() {
-            drawLine(color, Offset(left, bottom - radius - leg), Offset(left, bottom - radius), stroke, StrokeCap.Round)
-            drawArc(color, 90f, 90f, false, Offset(left, bottom - radius * 2f), arcSize, style = Stroke(stroke, cap = StrokeCap.Round))
-            drawLine(color, Offset(left + radius, bottom), Offset(left + radius + leg, bottom), stroke, StrokeCap.Round)
-        }
-
-        fun drawBottomRight() {
-            drawLine(color, Offset(right, bottom - radius - leg), Offset(right, bottom - radius), stroke, StrokeCap.Round)
-            drawArc(
-                color,
-                0f,
-                90f,
-                false,
-                Offset(right - radius * 2f, bottom - radius * 2f),
-                arcSize,
-                style = Stroke(stroke, cap = StrokeCap.Round),
+        val geometry =
+            ScanCornerGeometry(
+                color = OnboardingGreen,
+                stroke = 3.4.dp.toPx(),
+                radius = 8.dp.toPx(),
+                leg = 13.dp.toPx(),
+                left = 10.dp.toPx(),
+                right = size.width - 10.dp.toPx(),
+                top = 10.dp.toPx(),
+                bottom = size.height - 18.dp.toPx(),
+                arcSize = Size(8.dp.toPx() * 2f, 8.dp.toPx() * 2f),
             )
-            drawLine(color, Offset(right - radius, bottom), Offset(right - radius - leg, bottom), stroke, StrokeCap.Round)
-        }
-
-        drawTopLeft()
-        drawTopRight()
-        drawBottomLeft()
-        drawBottomRight()
+        drawTopLeftCorner(geometry)
+        drawTopRightCorner(geometry)
+        drawBottomLeftCorner(geometry)
+        drawBottomRightCorner(geometry)
     }
+}
+
+private data class ScanCornerGeometry(
+    val color: Color,
+    val stroke: Float,
+    val radius: Float,
+    val leg: Float,
+    val left: Float,
+    val right: Float,
+    val top: Float,
+    val bottom: Float,
+    val arcSize: Size,
+)
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTopLeftCorner(g: ScanCornerGeometry) {
+    drawLine(g.color, Offset(g.left, g.top + g.radius + g.leg), Offset(g.left, g.top + g.radius), g.stroke, StrokeCap.Round)
+    drawArc(g.color, 180f, 90f, false, Offset(g.left, g.top), g.arcSize, style = Stroke(g.stroke, cap = StrokeCap.Round))
+    drawLine(g.color, Offset(g.left + g.radius, g.top), Offset(g.left + g.radius + g.leg, g.top), g.stroke, StrokeCap.Round)
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTopRightCorner(g: ScanCornerGeometry) {
+    drawLine(g.color, Offset(g.right, g.top + g.radius + g.leg), Offset(g.right, g.top + g.radius), g.stroke, StrokeCap.Round)
+    drawArc(g.color, 270f, 90f, false, Offset(g.right - g.radius * 2f, g.top), g.arcSize, style = Stroke(g.stroke, cap = StrokeCap.Round))
+    drawLine(g.color, Offset(g.right - g.radius, g.top), Offset(g.right - g.radius - g.leg, g.top), g.stroke, StrokeCap.Round)
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawBottomLeftCorner(g: ScanCornerGeometry) {
+    drawLine(g.color, Offset(g.left, g.bottom - g.radius - g.leg), Offset(g.left, g.bottom - g.radius), g.stroke, StrokeCap.Round)
+    drawArc(g.color, 90f, 90f, false, Offset(g.left, g.bottom - g.radius * 2f), g.arcSize, style = Stroke(g.stroke, cap = StrokeCap.Round))
+    drawLine(g.color, Offset(g.left + g.radius, g.bottom), Offset(g.left + g.radius + g.leg, g.bottom), g.stroke, StrokeCap.Round)
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawBottomRightCorner(g: ScanCornerGeometry) {
+    drawLine(g.color, Offset(g.right, g.bottom - g.radius - g.leg), Offset(g.right, g.bottom - g.radius), g.stroke, StrokeCap.Round)
+    drawArc(g.color, 0f, 90f, false, Offset(g.right - g.radius * 2f, g.bottom - g.radius * 2f), g.arcSize, style = Stroke(g.stroke, cap = StrokeCap.Round))
+    drawLine(g.color, Offset(g.right - g.radius, g.bottom), Offset(g.right - g.radius - g.leg, g.bottom), g.stroke, StrokeCap.Round)
 }
 
 @Composable
@@ -406,4 +412,5 @@ private fun localizedBatteryStatus(status: BatteryStatus): String =
         BatteryStatus.NotCharging -> stringResource(R.string.battery_not_charging)
         BatteryStatus.Unknown -> stringResource(R.string.device_unknown)
     }
+
 

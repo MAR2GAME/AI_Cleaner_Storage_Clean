@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -67,147 +67,128 @@ fun FileManagerTopAction(
 
 @Composable
 fun FileManagerMediaGridView(params: FileManagerMediaGridParams) {
-    val tabs = params.tabs
-    val items = params.items
-    val selectedIds = params.selectedIds
-    val scrollState = params.scrollState
-    val onToggleVisibleItems = params.onToggleVisibleItems
-    val onSelect = params.onSelect
-    val onOpenDetail = params.onOpenDetail
-    val selectedTabIndex = params.selectedTabIndex
-    val onTabSelected = params.onTabSelected
-    val showPlayBadge = params.showPlayBadge
     val visibleItems =
-        remember(items, selectedTabIndex) {
-            filterMediaGridItems(tabs.getOrNull(selectedTabIndex)?.title.orEmpty(), items)
+        remember(params.items, params.selectedTabIndex) {
+            filterMediaGridItems(
+                params.tabs.getOrNull(params.selectedTabIndex)?.title.orEmpty(),
+                params.items,
+            )
         }
     val visibleIds = remember(visibleItems) { visibleItems.map { it.id }.toSet() }
-    val allSelected = visibleItems.isNotEmpty() && selectedIds.containsAll(visibleItems.map { it.id })
+    val allSelected = visibleItems.isNotEmpty() && params.selectedIds.containsAll(visibleItems.map { it.id })
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
         CleanXPillTabs(
-            items =
-                tabs.map { tab ->
-                    CleanXTabItem(
-                        title = localizedFileManagerTabTitle(tab.title),
-                    )
-                },
-            selectedIndex = selectedTabIndex,
-            onSelected = onTabSelected,
+            items = params.tabs.map { tab -> CleanXTabItem(localizedFileManagerTabTitle(tab.title)) },
+            selectedIndex = params.selectedTabIndex,
+            onSelected = params.onTabSelected,
         )
-
         Spacer(modifier = Modifier.height(18.dp))
+        MediaGridCard(params, visibleItems, visibleIds, allSelected)
+    }
+}
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = FileManagerCardColor,
-            shape = RoundedCornerShape(12.dp),
+@Composable
+private fun MediaGridCard(
+    params: FileManagerMediaGridParams,
+    visibleItems: List<FileImageDisplayItem>,
+    visibleIds: Set<Int>,
+    allSelected: Boolean,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = FileManagerCardColor,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                FileManagerListCardHeader(
-                    count = visibleItems.size,
-                    selected = allSelected,
-                    onToggleAll = { onToggleVisibleItems(visibleIds) },
-                    title = stringResource(R.string.file_items),
+            FileManagerListCardHeader(
+                count = visibleItems.size,
+                selected = allSelected,
+                onToggleAll = { params.onToggleVisibleItems(visibleIds) },
+                title = stringResource(R.string.file_items),
+            )
+            MediaGridRows(params, visibleItems)
+        }
+    }
+}
+
+@Composable
+private fun MediaGridRows(
+    params: FileManagerMediaGridParams,
+    visibleItems: List<FileImageDisplayItem>,
+) {
+    visibleItems.chunked(3).forEach { rowItems ->
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            rowItems.forEach { item ->
+                MediaGridTile(
+                    item = item,
+                    selected = item.id in params.selectedIds,
+                    onOpen = { params.onOpenDetail(item) },
+                    onToggleSelection = { params.onSelect(item.id) },
+                    showPlayBadge = params.showPlayBadge,
+                    modifier = Modifier.weight(1f),
                 )
-                visibleItems.chunked(3).forEach { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        rowItems.forEach { item ->
-                            MediaGridTile(
-                                item = item,
-                                selected = item.id in selectedIds,
-                                onOpen = { onOpenDetail(item) },
-                                onToggleSelection = { onSelect(item.id) },
-                                showPlayBadge = showPlayBadge,
-                                modifier =
-                                    Modifier
-                                        .weight(1f),
-                            )
-                        }
-                        repeat(3 - rowItems.size) {
-                            Spacer(
-                                modifier =
-                                    Modifier
-                                        .weight(1f),
-                            )
-                        }
-                    }
-                }
             }
+            repeat(3 - rowItems.size) { Spacer(modifier = Modifier.weight(1f)) }
         }
     }
 }
 
 @Composable
 fun FileManagerListView(params: FileManagerListParams) {
-    val tabs = params.tabs
-    val items = params.items
-    val selectedTabIndex = params.selectedTabIndex
-    val selectedIds = params.selectedIds
-    val allSelected = params.allSelected
-    val scrollState = params.scrollState
-    val style = params.style
-    val onTabSelected = params.onTabSelected
-    val onToggleAll = params.onToggleAll
-    val onSelect = params.onSelect
-    val leadingIconRes = params.leadingIconRes
-    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
         CleanXPillTabs(
             items =
-                tabs.map { tab ->
-                    CleanXTabItem(
-                        title = localizedFileManagerTabTitle(tab.title),
-                    )
+                params.tabs.map { tab ->
+                    CleanXTabItem(title = localizedFileManagerTabTitle(tab.title))
                 },
-            selectedIndex = selectedTabIndex,
-            onSelected = onTabSelected,
+            selectedIndex = params.selectedTabIndex,
+            onSelected = params.onTabSelected,
         )
-
         Spacer(modifier = Modifier.height(18.dp))
+        FileManagerListCard(params)
+    }
+}
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = FileManagerCardColor,
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                FileManagerListCardHeader(
-                    count = items.size,
-                    selected = allSelected,
-                    onToggleAll = onToggleAll,
-                    title = stringResource(R.string.file_items),
+@Composable
+private fun FileManagerListCard(params: FileManagerListParams) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = FileManagerCardColor,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            FileManagerListCardHeader(
+                count = params.items.size,
+                selected = params.allSelected,
+                onToggleAll = params.onToggleAll,
+                title = stringResource(R.string.file_items),
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            params.items.forEachIndexed { index, item ->
+                FileManagerListRow(
+                    item = item,
+                    selected = item.id in params.selectedIds,
+                    style = params.style,
+                    leadingIconRes = params.leadingIconRes,
+                    onOpen = { params.onOpenDetail(item) },
+                    onToggleSelection = { params.onSelect(item.id) },
                 )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                items.forEachIndexed { index, item ->
-                    FileManagerListRow(
-                        item = item,
-                        selected = item.id in selectedIds,
-                        style = style,
-                        leadingIconRes = leadingIconRes,
-                        onOpen = { onOpenDetail(item) },
-                        onToggleSelection = { onSelect(item.id) },
-                    )
-                    if (index != items.lastIndex) {
-                        FileManagerDivider()
-                    }
-                }
+                if (index != params.items.lastIndex) FileManagerDivider()
             }
         }
     }
@@ -215,69 +196,61 @@ fun FileManagerListView(params: FileManagerListParams) {
 
 @Composable
 fun FileManagerAudioListView(params: FileManagerAudioListParams) {
-    val tabs = params.tabs
-    val items = params.items
-    val selectedIds = params.selectedIds
-    val scrollState = params.scrollState
-    val onToggleVisibleItems = params.onToggleVisibleItems
-    val onSelect = params.onSelect
-    val onOpenDetail = params.onOpenDetail
-    val selectedTabIndex = params.selectedTabIndex
-    val onTabSelected = params.onTabSelected
     val visibleItems =
-        remember(items, selectedTabIndex) {
-            filterMediaGridItems(tabs.getOrNull(selectedTabIndex)?.title.orEmpty(), items)
+        remember(params.items, params.selectedTabIndex) {
+            filterMediaGridItems(
+                params.tabs.getOrNull(params.selectedTabIndex)?.title.orEmpty(),
+                params.items,
+            )
         }
     val visibleIds = remember(visibleItems) { visibleItems.map { it.id }.toSet() }
-    val allSelected = visibleItems.isNotEmpty() && selectedIds.containsAll(visibleIds)
-
+    val allSelected = visibleItems.isNotEmpty() && params.selectedIds.containsAll(visibleIds)
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
         CleanXPillTabs(
-            items =
-                tabs.map { tab ->
-                    CleanXTabItem(
-                        title = localizedFileManagerTabTitle(tab.title),
-                    )
-                },
-            selectedIndex = selectedTabIndex,
-            onSelected = onTabSelected,
+            items = params.tabs.map { tab -> CleanXTabItem(localizedFileManagerTabTitle(tab.title)) },
+            selectedIndex = params.selectedTabIndex,
+            onSelected = params.onTabSelected,
         )
-
         Spacer(modifier = Modifier.height(18.dp))
+        AudioListCard(params, visibleItems, visibleIds, allSelected)
+    }
+}
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = FileManagerCardColor,
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                FileManagerListCardHeader(
-                    count = visibleItems.size,
-                    selected = allSelected,
-                    onToggleAll = { onToggleVisibleItems(visibleIds) },
-                    title = stringResource(R.string.file_items),
+@Composable
+private fun AudioListCard(
+    params: FileManagerAudioListParams,
+    visibleItems: List<FileImageDisplayItem>,
+    visibleIds: Set<Int>,
+    allSelected: Boolean,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = FileManagerCardColor,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            FileManagerListCardHeader(
+                count = visibleItems.size,
+                selected = allSelected,
+                onToggleAll = { params.onToggleVisibleItems(visibleIds) },
+                title = stringResource(R.string.file_items),
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            visibleItems.forEachIndexed { index, item ->
+                FileManagerMediaFileRow(
+                    item = item,
+                    selected = item.id in params.selectedIds,
+                    iconResId = R.drawable.ic_audio_yellow,
+                    onOpen = { params.onOpenDetail(item) },
+                    onToggleSelection = { params.onSelect(item.id) },
                 )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                visibleItems.forEachIndexed { index, item ->
-                    FileManagerMediaFileRow(
-                        item = item,
-                        selected = item.id in selectedIds,
-                        iconResId = R.drawable.ic_audio_yellow,
-                        onOpen = { onOpenDetail(item) },
-                        onToggleSelection = { onSelect(item.id) },
-                    )
-                    if (index != visibleItems.lastIndex) {
-                        FileManagerDivider()
-                    }
-                }
+                if (index != visibleItems.lastIndex) FileManagerDivider()
             }
         }
     }
@@ -524,3 +497,6 @@ private fun FileManagerMediaFileRow(
         )
     }
 }
+
+
+

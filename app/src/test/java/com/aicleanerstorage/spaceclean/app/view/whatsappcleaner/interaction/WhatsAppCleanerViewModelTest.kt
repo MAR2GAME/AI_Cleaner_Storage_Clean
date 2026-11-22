@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
+﻿package com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -88,6 +88,20 @@ class WhatsAppCleanerViewModelTest {
         }
 
     @Test
+    fun `cleaning failure shows the error phase`() =
+        runTest(dispatcher) {
+            val viewModel =
+                viewModel(
+                    files = listOf(cacheItem("a.jpg")),
+                    deleteResult = Result.failure(IllegalStateException("delete failed")),
+                )
+            viewModel.dispatch(WhatsAppCleanerAction.ScanStartRequested)
+            advanceUntilIdle()
+            viewModel.dispatch(WhatsAppCleanerAction.CleanClicked)
+            advanceUntilIdle()
+            assertEquals(WhatsAppCleanerPhase.Error, viewModel.state.value.phase)
+        }
+    @Test
     fun `back exits the page`() =
         runTest(dispatcher) {
             val viewModel = viewModel()
@@ -103,9 +117,12 @@ class WhatsAppCleanerViewModelTest {
             assertTrue(events.any { it is WhatsAppCleanerEvent.Exit })
         }
 
-    private fun viewModel(files: List<ManagedFileModel> = emptyList()): WhatsAppCleanerViewModel =
+    private fun viewModel(
+        files: List<ManagedFileModel> = emptyList(),
+        deleteResult: Result<FileDeleteSummaryModel>? = null,
+    ): WhatsAppCleanerViewModel =
         WhatsAppCleanerViewModel(
-            repository = FakeWhatsAppCleanerRepository(files),
+            repository = FakeWhatsAppCleanerRepository(files, deleteResult),
             ioDispatcher = dispatcher,
         )
 
@@ -124,6 +141,7 @@ class WhatsAppCleanerViewModelTest {
 
     private class FakeWhatsAppCleanerRepository(
         private val files: List<ManagedFileModel>,
+        private val deleteResult: Result<FileDeleteSummaryModel>?,
     ) : WhatsAppCleanerRepository {
         override suspend fun loadGroups(): Map<WhatsAppFileBucketModel, List<ManagedFileModel>> =
             if (files.isEmpty()) {
@@ -133,6 +151,8 @@ class WhatsAppCleanerViewModelTest {
             }
 
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
-            Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
+            deleteResult ?: Result.success(FileDeleteSummaryModel(files.size, files.sumOf { it.sizeBytes }))
     }
 }
+
+

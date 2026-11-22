@@ -146,45 +146,42 @@ class WhatsAppCleanerViewModel(
         val state = currentState
         if (state.phase != WhatsAppCleanerPhase.ScanResult || state.selectedBytes <= 0L) return
 
-        val selectedFiles =
-            state.groups
-                .flatMap { it.children }
-                .filter { it.selected }
-                .flatMap { it.files }
-                .distinctBy { it.path ?: it.uri }
+        val selectedFiles = selectedWhatsAppFiles(state)
         val expectedBytes = selectedFiles.sumOf { it.sizeBytes }
         val cleaningStartedAt = System.currentTimeMillis()
-
         setState { WhatsAppCleanerReducer.cleaningStarted(it, expectedBytes, selectedFiles.size) }
         cleanJob?.cancel()
-        cleanJob =
-            viewModelScope.launch(ioDispatcher) {
-                try {
-                    val result = repository.delete(selectedFiles).getOrThrow()
-                    if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
-                    delayRemainingCleaningAnimation(cleaningStartedAt)
-                    setState {
-                        WhatsAppCleanerUiState(
-                            phase = WhatsAppCleanerPhase.CompleteAnimation,
-                            deletedBytes = result.freedBytes,
-                            deletedCount = result.deletedCount,
-                        )
-                    }
-                    delay(COMPLETE_ANIMATION_MILLIS)
-                    dispatch(WhatsAppCleanerAction.ResultRequested)
-                } catch (error: CancellationException) {
-                    throw error
-                } catch (error: Exception) {
-                    setState {
-                        it.copy(
-                            phase = WhatsAppCleanerPhase.Error,
-                            error = UiText.Res(R.string.whatsapp_clean_unavailable),
-                        )
-                    }
-                }
-            }
+        cleanJob = viewModelScope.launch(ioDispatcher) { runCleaning(selectedFiles, cleaningStartedAt) }
     }
 
+    private suspend fun runCleaning(
+        selectedFiles: List<ManagedFileModel>,
+        cleaningStartedAt: Long,
+    ) {
+        try {
+            val result = repository.delete(selectedFiles).getOrThrow()
+            if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
+            delayRemainingCleaningAnimation(cleaningStartedAt)
+            setState {
+                WhatsAppCleanerUiState(
+                    phase = WhatsAppCleanerPhase.CompleteAnimation,
+                    deletedBytes = result.freedBytes,
+                    deletedCount = result.deletedCount,
+                )
+            }
+            delay(COMPLETE_ANIMATION_MILLIS)
+            dispatch(WhatsAppCleanerAction.ResultRequested)
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            setState {
+                it.copy(
+                    phase = WhatsAppCleanerPhase.Error,
+                    error = UiText.Res(R.string.whatsapp_clean_unavailable),
+                )
+            }
+        }
+    }
     private fun selectedWhatsAppFiles(state: WhatsAppCleanerUiState): List<ManagedFileModel> =
         state.groups
             .flatMap { it.children }
@@ -273,4 +270,5 @@ class WhatsAppCleanerViewModel(
         private const val COMPLETE_ANIMATION_MILLIS = 800L
     }
 }
+
 

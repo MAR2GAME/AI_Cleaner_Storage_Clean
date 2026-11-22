@@ -145,54 +145,37 @@ private fun ScreenshotRows(params: FileManagerScreenshotGridParams) {
 
 @Composable
 fun FileManagerSimilarPhotosView(params: FileManagerSimilarPhotosParams) {
-    val groups = params.groups
-    val totalCount = params.totalCount
-    val totalSizeBytes = params.totalSizeBytes
-    val selectedIds = params.selectedIds
-    val allSelected = params.allSelected
-    val scrollState = params.scrollState
-    val onToggleAll = params.onToggleAll
-    val onToggleGroup = params.onToggleGroup
-    val onSelect = params.onSelect
-    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
-        FileManagerSelectAllAction(
-            selected = allSelected,
-            onClick = onToggleAll,
-        )
-
+        FileManagerSelectAllAction(selected = params.allSelected, onClick = params.onToggleAll)
         Spacer(modifier = Modifier.height(16.dp))
-
         FileManagerSimilarPhotosTotalRow(
-            totalCount = totalCount,
-            totalSizeBytes = totalSizeBytes,
+            totalCount = params.totalCount,
+            totalSizeBytes = params.totalSizeBytes,
         )
-
         Spacer(modifier = Modifier.height(20.dp))
+        SimilarPhotoGroupList(params)
+    }
+}
 
-        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            groups.forEach { group ->
-                val groupIds =
-                    group.items
-                        .filterNot { it.bestPhoto }
-                        .map { it.id }
-                        .toSet()
-                val groupSelected = groupIds.isNotEmpty() && selectedIds.containsAll(groupIds)
-                FileManagerSimilarPhotoGroupCard(
-                    group = group,
-                    selectedIds = selectedIds,
-                    selected = groupSelected,
-                    onToggleGroup = { onToggleGroup(group) },
-                    onSelect = onSelect,
-                    onOpenDetail = onOpenDetail,
-                )
-            }
+@Composable
+private fun SimilarPhotoGroupList(params: FileManagerSimilarPhotosParams) {
+    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        params.groups.forEach { group ->
+            val groupIds = group.items.filterNot { it.bestPhoto }.map { it.id }.toSet()
+            FileManagerSimilarPhotoGroupCard(
+                group = group,
+                selectedIds = params.selectedIds,
+                selected = groupIds.isNotEmpty() && params.selectedIds.containsAll(groupIds),
+                onToggleGroup = { params.onToggleGroup(group) },
+                onSelect = params.onSelect,
+                onOpenDetail = params.onOpenDetail,
+            )
         }
     }
 }
@@ -361,13 +344,7 @@ private fun FileManagerSimilarPhotoTile(
 
 @Composable
 fun FileManagerPhotoPrivacyView(params: FileManagerPhotoPrivacyParams) {
-    val groups = params.groups
-    val selectedIds = params.selectedIds
-    val allSelected = params.allSelected
-    val onToggleAll = params.onToggleAll
-    val onToggleGroup = params.onToggleGroup
-    val onSelect = params.onSelect
-    val itemCount = groups.sumOf { it.items.size }
+    val itemCount = params.groups.sumOf { it.items.size }
     Column(
         modifier =
             Modifier
@@ -388,62 +365,78 @@ fun FileManagerPhotoPrivacyView(params: FileManagerPhotoPrivacyParams) {
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp),
             )
         }
-
         Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(itemCount.toString(), color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(stringResource(R.string.file_photos), color = FileManagerMutedNavy, fontSize = 18.sp)
-            Spacer(modifier = Modifier.weight(1f))
-            FileManagerSelectAllAction(selected = allSelected, onClick = onToggleAll)
-        }
-
+        PrivacySummaryRow(itemCount = itemCount, allSelected = params.allSelected, onToggleAll = params.onToggleAll)
         Spacer(modifier = Modifier.height(16.dp))
+        PrivacyGroupList(params)
+    }
+}
 
+@Composable
+private fun PrivacySummaryRow(
+    itemCount: Int,
+    allSelected: Boolean,
+    onToggleAll: () -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(itemCount.toString(), color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(stringResource(R.string.file_photos), color = FileManagerMutedNavy, fontSize = 18.sp)
+        Spacer(modifier = Modifier.weight(1f))
+        FileManagerSelectAllAction(selected = allSelected, onClick = onToggleAll)
+    }
+}
+
+@Composable
+private fun PrivacyGroupList(params: FileManagerPhotoPrivacyParams) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        params.groups.forEach { group ->
+            val groupIds = group.items.map { it.id }.toSet()
+            PrivacyGroupCard(params, group, groupIds)
+        }
+    }
+}
+
+@Composable
+private fun PrivacyGroupCard(
+    params: FileManagerPhotoPrivacyParams,
+    group: FileImageDateGroupDisplayItem,
+    groupIds: Set<Int>,
+) {
+    val groupSelected = groupIds.isNotEmpty() && params.selectedIds.containsAll(groupIds)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            groups.forEach { group ->
-                val groupIds = group.items.map { it.id }.toSet()
-                val groupSelected = groupIds.isNotEmpty() && selectedIds.containsAll(groupIds)
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = Color.White,
-                    shape = RoundedCornerShape(12.dp),
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Row(
-                            modifier = Modifier.padding(start = 10.dp, top = 16.dp, end = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(group.title, color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
-                            Spacer(modifier = Modifier.weight(1f))
-                            FileManagerSelectAllAction(
-                                selected = groupSelected,
-                                onClick = { onToggleGroup(groupIds) },
-                                compact = true,
+            Row(
+                modifier = Modifier.padding(start = 10.dp, top = 16.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(group.title, color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                Spacer(modifier = Modifier.weight(1f))
+                FileManagerSelectAllAction(
+                    selected = groupSelected,
+                    onClick = { params.onToggleGroup(groupIds) },
+                    compact = true,
+                )
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                group.items.chunked(3).forEach { rowItems ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        rowItems.forEach { item ->
+                            FileManagerThumbnail(
+                                FileManagerThumbnailParams(
+                                    item = item,
+                                    selected = item.id in params.selectedIds,
+                                    onOpen = { params.onSelect(item.id) },
+                                    onToggleSelection = { params.onSelect(item.id) },
+                                    modifier = Modifier.weight(1f),
+                                ),
                             )
                         }
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            group.items.chunked(3).forEach { rowItems ->
-                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    rowItems.forEach { item ->
-                                        FileManagerThumbnail(FileManagerThumbnailParams(
-                                            item = item,
-                                            selected = item.id in selectedIds,
-                                            onOpen = { onSelect(item.id) },
-                                            onToggleSelection = { onSelect(item.id) },
-                                            modifier = Modifier.weight(1f),
-                                        ))
-                                    }
-                                    repeat(3 - rowItems.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                            }
-                        }
+                        repeat(3 - rowItems.size) { Spacer(modifier = Modifier.weight(1f)) }
                     }
                 }
             }
@@ -527,77 +520,77 @@ private fun androidx.compose.foundation.layout.BoxScope.PlayBadge() {
 
 @Composable
 fun FileManagerGalleryBrowserView(params: FileManagerGalleryParams) {
-    val tabs = params.tabs
-    val selectedTabIndex = params.selectedTabIndex
-    val items = params.items
-    val selectedIds = params.selectedIds
-    val scrollState = params.scrollState
-    val onTabSelected = params.onTabSelected
-    val onSelect = params.onSelect
-    val onSelectAll = params.onSelectAll
-    val onOpenDetail = params.onOpenDetail
-    val allSelected = items.isNotEmpty() && selectedIds.containsAll(items.map { it.id })
+    val allSelected =
+        params.items.isNotEmpty() && params.selectedIds.containsAll(params.items.map { it.id })
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(params.scrollState)
                 .padding(bottom = FileManagerListBottomPadding),
     ) {
         CleanXPillTabs(
-            items =
-                tabs.map { tab ->
-                    CleanXTabItem(
-                        title = localizedFileManagerTabTitle(tab.title),
-                    )
-                },
-            selectedIndex = selectedTabIndex,
-            onSelected = onTabSelected,
+            items = params.tabs.map { tab -> CleanXTabItem(localizedFileManagerTabTitle(tab.title)) },
+            selectedIndex = params.selectedTabIndex,
+            onSelected = params.onTabSelected,
         )
-
         Spacer(modifier = Modifier.height(18.dp))
+        GalleryCard(params, allSelected)
+    }
+}
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.White,
-            shape = RoundedCornerShape(12.dp),
+@Composable
+private fun GalleryCard(
+    params: FileManagerGalleryParams,
+    allSelected: Boolean,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                val selectedTab = tabs.getOrNull(selectedTabIndex)
-                val sizeLabel = selectedTab?.sizeLabel?.takeIf { it.isNotBlank() }
-                val headerTitle =
-                    if (selectedTabIndex == 0) {
-                        stringResource(R.string.device_screen)
-                    } else {
-                        localizedFileManagerTabTitle(selectedTab?.title ?: stringResource(R.string.file_photo))
-                    }
-                FileManagerGalleryGroupHeader(
-                    title = headerTitle,
-                    sizeLabel = sizeLabel,
-                    selected = allSelected,
-                    onClick = onSelectAll,
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items.chunked(3).forEach { rowItems ->
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            rowItems.forEach { item ->
-                                FileManagerGalleryTile(
-                                    item = item,
-                                    selected = item.id in selectedIds,
-                                    onOpen = { onOpenDetail(item) },
-                                    onToggleSelection = { onSelect(item.id) },
-                                    modifier = Modifier.weight(1f),
-                                )
-                            }
-                            repeat(3 - rowItems.size) {
-                                Spacer(modifier = Modifier.weight(1f))
-                            }
-                        }
-                    }
+            val selectedTab = params.tabs.getOrNull(params.selectedTabIndex)
+            FileManagerGalleryGroupHeader(
+                title = galleryTitle(params.selectedTabIndex, selectedTab),
+                sizeLabel = selectedTab?.sizeLabel?.takeIf { it.isNotBlank() },
+                selected = allSelected,
+                onClick = params.onSelectAll,
+            )
+            GalleryRows(params)
+        }
+    }
+}
+
+@Composable
+private fun galleryTitle(
+    selectedTabIndex: Int,
+    selectedTab: FileManagerTabDisplayItem?,
+): String =
+    if (selectedTabIndex == 0) {
+        stringResource(R.string.device_screen)
+    } else {
+        localizedFileManagerTabTitle(selectedTab?.title ?: stringResource(R.string.file_photo))
+    }
+
+@Composable
+private fun GalleryRows(params: FileManagerGalleryParams) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        params.items.chunked(3).forEach { rowItems ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                rowItems.forEach { item ->
+                    FileManagerGalleryTile(
+                        item = item,
+                        selected = item.id in params.selectedIds,
+                        onOpen = { params.onOpenDetail(item) },
+                        onToggleSelection = { params.onSelect(item.id) },
+                        modifier = Modifier.weight(1f),
+                    )
                 }
+                repeat(3 - rowItems.size) { Spacer(modifier = Modifier.weight(1f)) }
             }
         }
     }
@@ -811,6 +804,10 @@ private fun calculateInSampleSize(
     }
     return sampleSize
 }
+
+
+
+
 
 
 

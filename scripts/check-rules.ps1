@@ -368,11 +368,45 @@ if (Test-CheckEnabled 'composableParamLimit' -and (Test-Path -LiteralPath $viewD
         $overLimit | Select-Object -First 20 | ForEach-Object { Add-Failure 'composableParamLimit' $_ }
     }
 }
+# 20. keep functions at forty lines or fewer.
+if (Test-CheckEnabled 'functionLengthLimit') {
+    $longFunctions = @()
+    foreach ($file in Get-KotlinFiles $src) {
+        $lines = Get-Content -LiteralPath $file.FullName
+        $depth = 0
+        $inFunction = $false
+        $start = 0
+        $name = ''
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            $line = $lines[$i]
+            if (-not $inFunction -and $line -match '^\s*(private |internal |public )?fun\s+([A-Za-z0-9_]+)') {
+                $inFunction = $true
+                $start = $i
+                $name = $Matches[2]
+                $depth = 0
+            }
+            if (-not $inFunction) { continue }
+            $depth += ([regex]::Matches($line, '\{')).Count
+            $depth -= ([regex]::Matches($line, '\}')).Count
+            if ($depth -le 0 -and $i -gt $start) {
+                $length = $i - $start + 1
+                if ($length -gt 40) {
+                    $longFunctions += ("{0}:{1} {2} has {3} lines" -f (RelativePath $file.FullName), ($start + 1), $name, $length)
+                }
+                $inFunction = $false
+            }
+        }
+    }
+    if ($longFunctions.Count -eq 0) { Add-Pass 'functionLengthLimit' } else {
+        $longFunctions | Select-Object -First 20 | ForEach-Object { Add-Failure 'functionLengthLimit' $_ }
+    }
+}
 if ($failures -gt 0) {
     Write-Host ("{0} failure(s)" -f $failures)
     exit 1
 }
 Write-Host 'all checks passed'
 exit 0
+
 
 

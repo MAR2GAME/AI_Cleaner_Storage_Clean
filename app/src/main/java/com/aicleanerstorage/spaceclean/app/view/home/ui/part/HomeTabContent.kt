@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.home.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.home.ui.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.component.StorageValueText
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeSummaryUiState
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXPillShape
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -181,15 +182,12 @@ private fun StorageCardBody(
 private fun StorageMeta(storageInfo: CapacityInfoModel) {
     val usedText = FormatUtil.formatSize(storageInfo.usedBytes).withoutSpaces()
     val totalText = "/ ${FormatUtil.formatSize(storageInfo.totalBytes).withoutSpaces()}"
-    val textMeasurer = rememberTextMeasurer()
-    val density = LocalDensity.current
     val totalTextStyle =
         TextStyle(
             color = HomeMutedText,
             fontSize = 14.sp,
             lineHeight = 18.sp,
         )
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Bottom,
@@ -205,60 +203,12 @@ private fun StorageMeta(storageInfo: CapacityInfoModel) {
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.width(10.dp))
-        BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            val maxWidthPx = with(density) { maxWidth.roundToPx() }
-            val measuredTotalWidthPx =
-                remember(totalText, textMeasurer) {
-                    textMeasurer
-                        .measure(
-                            text = totalText,
-                            style = totalTextStyle,
-                            maxLines = 1,
-                        ).size.width
-                }
-            val totalWidthPx = measuredTotalWidthPx.coerceAtMost(maxWidthPx)
-            val usedWidthPx = (maxWidthPx - totalWidthPx).coerceAtLeast(0)
-            val usedFontSize =
-                remember(usedText, usedWidthPx, textMeasurer) {
-                    (24 downTo 16)
-                        .firstOrNull { size ->
-                            textMeasurer
-                                .measure(
-                                    text = usedText,
-                                    style =
-                                        TextStyle(
-                                            fontSize = size.sp,
-                                            fontWeight = FontWeight.Bold,
-                                        ),
-                                    maxLines = 1,
-                                ).size.width <= usedWidthPx
-                        }?.sp ?: 16.sp
-                }
-            val totalWidth = with(density) { totalWidthPx.toDp() }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Text(
-                    text = usedText,
-                    color = HomeText,
-                    fontSize = usedFontSize,
-                    lineHeight = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = totalText,
-                    style = totalTextStyle,
-                    modifier = Modifier.width(totalWidth).padding(bottom = 2.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
+        StorageValueText(
+            usedText = usedText,
+            totalText = totalText,
+            totalTextStyle = totalTextStyle,
+            color = HomeText,
+        )
     }
 }
 
@@ -418,3 +368,4 @@ private fun storageCardStyle(usagePercent: Int): StorageCardStyle {
 }
 
 private fun String.withoutSpaces(): String = replace(" ", "")
+

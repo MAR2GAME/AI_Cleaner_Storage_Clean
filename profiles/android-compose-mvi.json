@@ -125,6 +125,7 @@
                    "wildcardImport":  true,
                    "uiPartNoNavigator":  true,
                    "screenNoActionEffect":  true,
-                   "composableParamLimit":  true
+                   "composableParamLimit":  true,
+                   "functionLengthLimit":  true
                }
 }
