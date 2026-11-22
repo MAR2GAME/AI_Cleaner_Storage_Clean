@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.appusage.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.appusage.ui.part
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -37,85 +37,83 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageUiState
 import com.aicleanerstorage.spaceclean.domain.model.appusage.AppUsageInfoModel
 import java.util.Locale
-
 @Composable
 internal fun PieChartCard(uiState: AppUsageUiState) {
-    val allUsages = uiState.usages
+    val chart =
+        buildChartData(
+            uiState = uiState,
+            emptyLabel = stringResource(R.string.no_usage_data_available),
+            otherLabel = stringResource(R.string.other),
+        )
+    PieChartSurface(
+        totalUsageMs = uiState.totalUsageMs,
+        chart = chart,
+    )
+}
+
+private data class PieChartData(
+    val donutItems: List<DonutItem>,
+    val legendItems: List<LegendEntry>,
+)
+
+private fun buildChartData(
+    uiState: AppUsageUiState,
+    emptyLabel: String,
+    otherLabel: String,
+): PieChartData {
     val sortedUsages =
-        allUsages.sortedWith(
+        uiState.usages.sortedWith(
             compareByDescending<AppUsageInfoModel> { it.totalForegroundMs }
                 .thenBy { it.appName.lowercase(Locale.US) }
                 .thenBy { it.packageName },
         )
+    return PieChartData(
+        donutItems = buildDonutItems(sortedUsages, uiState.totalUsageMs),
+        legendItems = buildLegendEntries(sortedUsages, emptyLabel, otherLabel),
+    )
+}
 
+private fun buildDonutItems(
+    sortedUsages: List<AppUsageInfoModel>,
+    totalUsageMs: Long,
+): List<DonutItem> {
     val topItems = sortedUsages.take(3)
     val otherItems = sortedUsages.drop(3)
-
-    val donutItems = mutableListOf<DonutItem>()
+    val items = mutableListOf<DonutItem>()
     topItems.forEachIndexed { index, usage ->
-        val fraction =
-            if (uiState.totalUsageMs > 0) {
-                usage.totalForegroundMs.toFloat() / uiState.totalUsageMs
-            } else {
-                0f
-            }
-        donutItems.add(
-            DonutItem(
-                fraction = fraction.coerceAtLeast(0.02f),
-                color = donutColor(index),
-            ),
-        )
+        val fraction = if (totalUsageMs > 0) usage.totalForegroundMs.toFloat() / totalUsageMs else 0f
+        items += DonutItem(fraction.coerceAtLeast(0.02f), donutColor(index))
     }
     if (otherItems.isNotEmpty()) {
-        val otherTotalMs = otherItems.sumOf { it.totalForegroundMs }
         val otherFraction =
-            if (uiState.totalUsageMs > 0) {
-                otherTotalMs.toFloat() / uiState.totalUsageMs
-            } else {
-                0f
-            }
-        donutItems.add(
-            DonutItem(
-                fraction = otherFraction.coerceAtLeast(0.02f),
-                color = OtherColor,
-            ),
-        )
+            if (totalUsageMs > 0) otherItems.sumOf { it.totalForegroundMs }.toFloat() / totalUsageMs else 0f
+        items += DonutItem(otherFraction.coerceAtLeast(0.02f), OtherColor)
     }
+    if (items.isEmpty()) items += DonutItem(1f, NavyMuted.copy(alpha = 0.2f))
+    return items
+}
 
-    if (donutItems.isEmpty()) {
-        donutItems.add(DonutItem(1f, NavyMuted.copy(alpha = 0.2f)))
+private fun buildLegendEntries(
+    sortedUsages: List<AppUsageInfoModel>,
+    emptyLabel: String,
+    otherLabel: String,
+): List<LegendEntry> {
+    if (sortedUsages.isEmpty()) {
+        return listOf(LegendEntry(NavyMuted.copy(alpha = 0.3f), emptyLabel))
     }
+    val topItems = sortedUsages.take(3)
+    val otherItems = sortedUsages.drop(3)
+    return buildList {
+        topItems.forEachIndexed { index, usage -> add(LegendEntry(donutColor(index), usage.appName)) }
+        if (otherItems.isNotEmpty()) add(LegendEntry(OtherColor, otherLabel))
+    }
+}
 
-    val legendItems =
-        when {
-            allUsages.isEmpty() ->
-                listOf(
-                    LegendEntry(
-                        color = NavyMuted.copy(alpha = 0.3f),
-                        label = stringResource(R.string.no_usage_data_available),
-                    ),
-                )
-            else ->
-                buildList {
-                    topItems.forEachIndexed { index, usage ->
-                        add(
-                            LegendEntry(
-                                color = donutColor(index),
-                                label = usage.appName,
-                            ),
-                        )
-                    }
-                    if (otherItems.isNotEmpty()) {
-                        add(
-                            LegendEntry(
-                                color = OtherColor,
-                                label = stringResource(R.string.other),
-                            ),
-                        )
-                    }
-                }
-        }
-
+@Composable
+private fun PieChartSurface(
+    totalUsageMs: Long,
+    chart: PieChartData,
+) {
     Surface(
         modifier =
             Modifier
@@ -125,63 +123,59 @@ internal fun PieChartCard(uiState: AppUsageUiState) {
         shape = RoundedCornerShape(12.dp),
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val compact = maxWidth < 330.dp
-            val startPadding = if (compact) 20.dp else 35.dp
-            val legendGap = if (compact) 24.dp else 44.dp
-
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(start = startPadding, end = 16.dp, top = 20.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .height(117.dp),
-                    verticalArrangement =
-                        if (legendItems.size > 1) {
-                            Arrangement.SpaceBetween
-                        } else {
-                            Arrangement.Center
-                        },
-                ) {
-                    legendItems.forEach { item ->
-                        LegendItem(
-                            color = item.color,
-                            label = item.label,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(legendGap))
-
-                Box(
-                    modifier = Modifier.size(144.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    DonutChart(
-                        modifier = Modifier.size(144.dp),
-                        items = donutItems,
-                    )
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = formatDurationForCenter(uiState.totalUsageMs),
-                            color = Navy,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
+            PieChartRow(
+                totalUsageMs = totalUsageMs,
+                donutItems = chart.donutItems,
+                legendItems = chart.legendItems,
+                compact = maxWidth < 330.dp,
+            )
         }
     }
 }
 
+@Composable
+private fun PieChartRow(
+    totalUsageMs: Long,
+    donutItems: List<DonutItem>,
+    legendItems: List<LegendEntry>,
+    compact: Boolean,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    start = if (compact) 20.dp else 35.dp,
+                    end = 16.dp,
+                    top = 20.dp,
+                    bottom = 20.dp,
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .height(117.dp),
+            verticalArrangement = if (legendItems.size > 1) Arrangement.SpaceBetween else Arrangement.Center,
+        ) {
+            legendItems.forEach { item ->
+                LegendItem(color = item.color, label = item.label, modifier = Modifier.fillMaxWidth())
+            }
+        }
+        Spacer(modifier = Modifier.width(if (compact) 24.dp else 44.dp))
+        Box(modifier = Modifier.size(144.dp), contentAlignment = Alignment.Center) {
+            DonutChart(modifier = Modifier.size(144.dp), items = donutItems)
+            Text(
+                text = formatDurationForCenter(totalUsageMs),
+                color = Navy,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
 internal val NavyMuted = Color(0xFF999999)
 
 private val OtherColor = Color(0xFF4F75FE)
@@ -292,3 +286,5 @@ private fun formatDurationForCenter(totalMs: Long): String {
         else -> "${minutes}\nmin"
     }
 }
+
+

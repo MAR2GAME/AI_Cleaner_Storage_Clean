@@ -60,6 +60,10 @@ internal class DeviceInfoStateController(
         } else {
             stopBatterySampling()
         }
+        launchLoad(mode)
+    }
+
+    private fun launchLoad(mode: DeviceInfoMode) {
         scope.launch(ioDispatcher) {
             val timestamp = nowMillis()
             val previousState = currentState()

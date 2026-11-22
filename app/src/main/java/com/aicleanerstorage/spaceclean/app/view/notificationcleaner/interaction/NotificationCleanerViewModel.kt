@@ -7,6 +7,7 @@ import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.CoroutineUtil.runSuspendCatching
 import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
+import com.aicleanerstorage.spaceclean.domain.model.notification.NotificationCleanerSnapshotModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -200,29 +201,7 @@ class NotificationCleanerViewModel(
             deferredScanCompletionGeneration = null
             cleaningCompletionPending = false
             postCompletionPage = null
-            setState {
-                it.copy(
-                    hasAccess = false,
-                    enabled = false,
-                    blockedCount = 0,
-                    blockedCountsByPackage = emptyMap(),
-                    blockedNotifications = emptyList(),
-                    apps = emptyList(),
-                    selectedPackages = emptySet(),
-                    appsLoaded = false,
-                    isAppsLoading = false,
-                    page = NotificationCleanerPage.Onboarding,
-                    isLoading = false,
-                    scanInProgress = false,
-                    isInitialized = true,
-                    error = null,
-                    cleanedCount = 0,
-                    cleaningAnimationComplete = false,
-                    completionResultVisible = false,
-                    showStopDialog = false,
-                    stopDialogPage = null,
-                )
-            }
+            resetForNoAccess()
             return
         }
 
@@ -238,6 +217,32 @@ class NotificationCleanerViewModel(
             startAccessScan()
         } else {
             refreshLightState()
+        }
+    }
+
+    private fun resetForNoAccess() {
+        setState {
+            it.copy(
+                hasAccess = false,
+                enabled = false,
+                blockedCount = 0,
+                blockedCountsByPackage = emptyMap(),
+                blockedNotifications = emptyList(),
+                apps = emptyList(),
+                selectedPackages = emptySet(),
+                appsLoaded = false,
+                isAppsLoading = false,
+                page = NotificationCleanerPage.Onboarding,
+                isLoading = false,
+                scanInProgress = false,
+                isInitialized = true,
+                error = null,
+                cleanedCount = 0,
+                cleaningAnimationComplete = false,
+                completionResultVisible = false,
+                showStopDialog = false,
+                stopDialogPage = null,
+            )
         }
     }
 
@@ -283,43 +288,7 @@ class NotificationCleanerViewModel(
                     val remainingMillis = MIN_SCAN_DURATION_MILLIS - (System.currentTimeMillis() - startedAtMillis)
                     if (remainingMillis > 0L) delay(remainingMillis)
                     if (scanGeneration != activeScanGeneration) return@launch
-                    setState { state ->
-                        if (!snapshot.hasAccess) {
-                            state.copy(
-                                hasAccess = false,
-                                enabled = false,
-                                blockedCount = 0,
-                                blockedCountsByPackage = emptyMap(),
-                                blockedNotifications = emptyList(),
-                                apps = emptyList(),
-                                selectedPackages = emptySet(),
-                                appsLoaded = false,
-                                isAppsLoading = false,
-                                page = NotificationCleanerPage.Onboarding,
-                                isLoading = false,
-                                scanInProgress = false,
-                                isInitialized = true,
-                                error = null,
-                            )
-                        } else {
-                            state.copy(
-                                hasAccess = true,
-                                enabled = snapshot.enabled,
-                                blockedCount = snapshot.blockedCount,
-                                blockedCountsByPackage = snapshot.blockedCountsByPackage,
-                                blockedNotifications = snapshot.blockedNotifications,
-                                apps = snapshot.apps,
-                                selectedPackages = snapshot.selectedPackages,
-                                appsLoaded = snapshot.apps.isNotEmpty(),
-                                isAppsLoading = false,
-                                page = NotificationCleanerPage.Scanning,
-                                isLoading = false,
-                                scanInProgress = false,
-                                isInitialized = true,
-                                error = null,
-                            )
-                        }
-                    }
+                    applyScanSnapshot(snapshot)
                     if (scanGeneration != activeScanGeneration) return@launch
                     scanJob = null
                     finishScanIfReady(scanGeneration)
@@ -340,6 +309,55 @@ class NotificationCleanerViewModel(
             }
     }
 
+    private fun applyScanSnapshot(snapshot: NotificationCleanerSnapshotModel) {
+        if (!snapshot.hasAccess) {
+            applyNoAccessSnapshot()
+        } else {
+            applyAccessSnapshot(snapshot)
+        }
+    }
+
+    private fun applyNoAccessSnapshot() {
+        setState {
+            it.copy(
+                hasAccess = false,
+                enabled = false,
+                blockedCount = 0,
+                blockedCountsByPackage = emptyMap(),
+                blockedNotifications = emptyList(),
+                apps = emptyList(),
+                selectedPackages = emptySet(),
+                appsLoaded = false,
+                isAppsLoading = false,
+                page = NotificationCleanerPage.Onboarding,
+                isLoading = false,
+                scanInProgress = false,
+                isInitialized = true,
+                error = null,
+            )
+        }
+    }
+
+    private fun applyAccessSnapshot(snapshot: NotificationCleanerSnapshotModel) {
+        setState {
+            it.copy(
+                hasAccess = true,
+                enabled = snapshot.enabled,
+                blockedCount = snapshot.blockedCount,
+                blockedCountsByPackage = snapshot.blockedCountsByPackage,
+                blockedNotifications = snapshot.blockedNotifications,
+                apps = snapshot.apps,
+                selectedPackages = snapshot.selectedPackages,
+                appsLoaded = snapshot.apps.isNotEmpty(),
+                isAppsLoading = false,
+                page = NotificationCleanerPage.Scanning,
+                isLoading = false,
+                scanInProgress = false,
+                isInitialized = true,
+                error = null,
+            )
+        }
+    }
     private fun finishScanIfReady(scanGeneration: Long) {
         val state = currentState
         if (
@@ -452,3 +470,5 @@ private data class NotificationAppsSnapshot(
     val apps: List<BlockableNotificationAppModel>,
     val selectedPackages: Set<String>,
 )
+
+

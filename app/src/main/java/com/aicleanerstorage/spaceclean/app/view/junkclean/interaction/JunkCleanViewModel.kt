@@ -195,32 +195,13 @@ class JunkCleanViewModel(
                     if (currentState.phase != JunkCleanPhase.Cleaning) return@launch
 
                     val cleaningStartedAt = System.currentTimeMillis()
-                    val outcomes =
-                        withContext(ioDispatcher) { cleanRepository.deleteFiles(files) { stopCleaning } }.getOrElse {
-                            dispatch(JunkFailed(JunkError.CleanFailed))
-                            return@launch
-                        }
-                    currentCoroutineContext().ensureActive()
-                    val deleted = outcomes.filter { it.deleted }
-                    val failed = outcomes.filter { !it.deleted }
-                    val memoryResult =
-                        if (stopCleaning) {
-                            null
-                        } else {
-                            withContext(ioDispatcher) { cleanRepository.cleanMemory() }.getOrNull()
-                        }
-                    currentCoroutineContext().ensureActive()
-
-                    cleaningExecutionState =
-                        CleaningExecutionState(
-                            directCleanedFiles = deleted.map { it.file },
-                            directFailedFiles = failed.map { it.file },
-                            directFreedSpace = deleted.sumOf { it.freedBytes },
-                            memoryResult = memoryResult,
-                        )
-
+                    val execution = executeCleaning(files) ?: return@launch
+                    cleaningExecutionState = execution
                     if (stopCleaning) {
-                        publishStoppedPreview(deleted.map { it.file }, deleted.sumOf { it.freedBytes })
+                        publishStoppedPreview(
+                            execution.directCleanedFiles,
+                            execution.directFreedSpace,
+                        )
                         return@launch
                     }
                     delayRemainingCleaningAnimation(cleaningStartedAt)
@@ -236,6 +217,30 @@ class JunkCleanViewModel(
                     dispatch(JunkFailed(JunkError.CleanFailed))
                 }
             }
+    }
+
+    private suspend fun executeCleaning(files: List<JunkFileModel>): CleaningExecutionState? {
+        val outcomes =
+            withContext(ioDispatcher) { cleanRepository.deleteFiles(files) { stopCleaning } }.getOrElse {
+                dispatch(JunkFailed(JunkError.CleanFailed))
+                return null
+            }
+        currentCoroutineContext().ensureActive()
+        val deleted = outcomes.filter { it.deleted }
+        val failed = outcomes.filter { !it.deleted }
+        val memoryResult =
+            if (stopCleaning) {
+                null
+            } else {
+                withContext(ioDispatcher) { cleanRepository.cleanMemory() }.getOrNull()
+            }
+        currentCoroutineContext().ensureActive()
+        return CleaningExecutionState(
+            directCleanedFiles = deleted.map { it.file },
+            directFailedFiles = failed.map { it.file },
+            directFreedSpace = deleted.sumOf { it.freedBytes },
+            memoryResult = memoryResult,
+        )
     }
 
     private fun cancelActiveOperation() {

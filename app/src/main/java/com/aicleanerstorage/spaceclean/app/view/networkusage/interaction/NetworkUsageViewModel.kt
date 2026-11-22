@@ -86,7 +86,10 @@ class NetworkUsageViewModel(
             return
         }
         if (startScan) startScanDelay()
+        loadUsage()
+    }
 
+    private fun loadUsage() {
         viewModelScope.launch(ioDispatcher) {
             runSuspendCatching {
                 repository.readNetworkUsage()
