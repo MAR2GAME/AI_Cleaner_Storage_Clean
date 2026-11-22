@@ -91,7 +91,7 @@ base      ──> AndroidX / Kotlin（不得依赖 data 或 app）
 
 以下问题已登记在整改方案中，不是“规范允许”的做法：
 
-- `JunkCleanViewModel` 与 `VirusScanViewModel` 仍有较多状态字段，应逐步收回 `UiState`。
+- `VirusScanViewModel` 仍有较多状态字段，应逐步收回 `UiState`；`JunkCleanViewModel` 已收口为 `session` + `Job`/退出标记/权限快照。
 - `FileManagerNavGraph` 仍承载 8 个文件流程，后续可按照片/媒体继续拆分。
 - `check-rules.ps1` 的函数长度检查使用 `scripts/function-length-baseline.txt` 管理存量债务；`localeParity` 只对 key 对齐硬性失败，翻译覆盖率目前仅报告。
 - ktlint 的 `filename` 规则按 E3 关闭，文件名/类型一致性由 `publicTypes` 检查兜底。
