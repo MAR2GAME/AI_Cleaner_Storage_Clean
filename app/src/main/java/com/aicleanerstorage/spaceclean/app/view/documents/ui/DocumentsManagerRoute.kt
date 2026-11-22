@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.documents.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.documents.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePag
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
@@ -77,7 +78,7 @@ fun DocumentsManagerRoute(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
         permissionState = permissionState,
-        router = navigator,
+        onExitConfirmed = { permissionState.leaveBack(navigator) },
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete && !isDetailMode,
         onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
@@ -85,3 +86,5 @@ fun DocumentsManagerRoute(
         onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
     )
 }
+
+

@@ -2,7 +2,6 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
@@ -19,9 +18,6 @@ fun FileDetailScreen(
     onAction: (FilePageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(state.totalCount) {
-        if (state.totalCount == 0) onAction(FilePageAction.BackClicked)
-    }
     if (state.totalCount == 0) return
 
     BackHandler { onAction(FilePageAction.BackClicked) }

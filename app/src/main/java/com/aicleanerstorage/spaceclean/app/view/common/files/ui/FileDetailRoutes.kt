@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileDetailUiState
@@ -186,6 +187,9 @@ private fun FilePageDetailRoute(
     uiState: FileDetailUiState,
     dispatch: (FilePageAction) -> Unit,
 ) {
+    LaunchedEffect(uiState.totalCount) {
+        if (uiState.totalCount == 0) dispatch(FilePageAction.BackClicked)
+    }
     FileDetailScreen(
         state = uiState,
         onAction = dispatch,
@@ -210,6 +214,9 @@ private fun FileDetailRoute(
     uiState: FileDetailUiState,
     dispatch: (SimilarPhotosAction) -> Unit,
 ) {
+    LaunchedEffect(uiState.totalCount) {
+        if (uiState.totalCount == 0) dispatch(SimilarPhotosAction.DetailBackClicked)
+    }
     FileDetailScreen(
         state = uiState,
         onAction = { action ->

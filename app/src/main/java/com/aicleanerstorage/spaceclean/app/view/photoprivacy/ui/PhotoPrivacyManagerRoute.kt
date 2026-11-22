@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -25,24 +26,16 @@ private val PRIVACY_PERMISSIONS =
     )
 
 /**
- * 返回当前仍缺少的隐私页权限。
- *
- * @param context 用于查询系统权限。
- * @return 第一个未授予的权限；全部已授予返回 null。
- */
+ * 杩斿洖褰撳墠浠嶇己灏戠殑闅愮椤垫潈闄愩€? *
+ * @param context 鐢ㄤ簬鏌ヨ绯荤粺鏉冮檺銆? * @return 绗竴涓湭鎺堜簣鐨勬潈闄愶紱鍏ㄩ儴宸叉巿浜堣繑鍥?null銆? */
 private fun nextMissingPermission(context: Context): AppPermission? =
     PRIVACY_PERMISSIONS.firstOrNull { permission -> !permission.isGranted(context) }
 
 /**
- * 隐私图页面。
- *
- * 文件管理流程的通用门禁只要求存储权限；本页额外需要照片位置权限，
- * 因此进入时按 [PRIVACY_PERMISSIONS] 顺序补齐，两个都授予后才允许启动扫描。
- *
- * @param navigator 应用导航器。
- * @param viewModel 页面 ViewModel。
- * @param permissionState 文件管理流程共享的权限状态。
- */
+ * 闅愮鍥鹃〉闈€? *
+ * 鏂囦欢绠＄悊娴佺▼鐨勯€氱敤闂ㄧ鍙姹傚瓨鍌ㄦ潈闄愶紱鏈〉棰濆闇€瑕佺収鐗囦綅缃潈闄愶紝
+ * 鍥犳杩涘叆鏃舵寜 [PRIVACY_PERMISSIONS] 椤哄簭琛ラ綈锛屼袱涓兘鎺堜簣鍚庢墠鍏佽鍚姩鎵弿銆? *
+ * @param navigator 搴旂敤瀵艰埅鍣ㄣ€? * @param viewModel 椤甸潰 ViewModel銆? * @param permissionState 鏂囦欢绠＄悊娴佺▼鍏变韩鐨勬潈闄愮姸鎬併€? */
 @Composable
 fun PhotoPrivacyManagerRoute(
     navigator: AppNavigator,
@@ -93,7 +86,7 @@ fun PhotoPrivacyManagerRoute(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(PhotoPrivacyAction.StopDismissed) },
         permissionState = permissionState,
-        router = navigator,
+        onExitConfirmed = { permissionState.leaveBack(navigator) },
         phase = displayState.phase,
         deleteDialogVisible = false,
         onCancelActiveOperation = { viewModel.dispatch(PhotoPrivacyAction.OperationCancellationRequested) },
@@ -101,3 +94,5 @@ fun PhotoPrivacyManagerRoute(
         onDeleteReady = { viewModel.dispatch(PhotoPrivacyAction.LocationRemovalConfirmed) },
     )
 }
+
+

@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -35,13 +33,13 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.SettingsRateD
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableNavigationBarsPadding
 import com.aicleanerstorage.spaceclean.base.designsystem.component.stableStatusBarsPadding
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     state: HomeUiState,
     onAction: (HomeAction) -> Unit,
+    pagerState: PagerState,
+    onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val summaryState = state.summary
@@ -57,25 +55,13 @@ fun HomeScreen(
         onBack = { onAction(HomeAction.ExitClicked) },
     )
 
-    val scope = rememberCoroutineScope()
     val tabs =
         listOf(
             HomeTab(stringResource(R.string.home_tab_home)),
             HomeTab(stringResource(R.string.home_tab_file_manager)),
             HomeTab(stringResource(R.string.home_tab_toolbox)),
         )
-    val pagerState =
-        rememberPagerState(
-            initialPage = state.selectedTab.coerceIn(0, tabs.lastIndex),
-            pageCount = { tabs.size },
-        )
 
-    androidx.compose.runtime.LaunchedEffect(state.selectedTab) {
-        if (pagerState.currentPage != state.selectedTab) pagerState.scrollToPage(state.selectedTab)
-        snapshotFlow { pagerState.settledPage }.drop(1).collect { page ->
-            if (page != state.selectedTab) onAction(HomeAction.TabSelected(page))
-        }
-    }
     Box(modifier = modifier.fillMaxSize()) {
         HomeBackgroundContent()
         Scaffold(
@@ -99,13 +85,7 @@ fun HomeScreen(
                 HomeTabBar(
                     tabs = tabs.map { it.label },
                     selectedIndex = pagerState.currentPage,
-                    onSelected = { index ->
-                        val fromIndex = pagerState.currentPage
-                        onAction(HomeAction.TabInteracted)
-                        if (fromIndex != index) {
-                            scope.launch { pagerState.animateScrollToPage(index) }
-                        }
-                    },
+                    onSelected = onTabSelected,
                 )
                 Spacer(modifier = Modifier.height(19.dp))
                 HorizontalPager(

@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.duplicates.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.duplicates.ui
 
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -12,6 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.Duplicate
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -67,7 +68,7 @@ fun DuplicateFilesManagerRoute(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(DuplicateFilesAction.StopDismissed) },
         permissionState = permissionState,
-        router = navigator,
+        onExitConfirmed = { permissionState.leaveBack(navigator) },
         phase = displayState.phase,
         deleteDialogVisible = displayState.phase == FileOperationPhase.ConfirmDelete,
         onCancelActiveOperation = { viewModel.dispatch(DuplicateFilesAction.OperationCancellationRequested) },
@@ -75,3 +76,5 @@ fun DuplicateFilesManagerRoute(
         onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
     )
 }
+
+
