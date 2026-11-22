@@ -15,6 +15,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePag
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosUiState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMediaGridParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerMediaGridView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
@@ -73,6 +74,7 @@ fun VideosManagerScreen(
             ),
         ) {
                 FileManagerMediaGridView(
+                    FileManagerMediaGridParams(
                     tabs = state.tabs,
                     items = state.displayItems,
                     selectedTabIndex = state.selectedTabIndex,
@@ -85,9 +87,12 @@ fun VideosManagerScreen(
                         val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(FilePageAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 

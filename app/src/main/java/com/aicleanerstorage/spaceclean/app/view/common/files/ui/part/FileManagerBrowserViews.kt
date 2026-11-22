@@ -66,18 +66,17 @@ fun FileManagerTopAction(
 }
 
 @Composable
-fun FileManagerMediaGridView(
-    tabs: List<FileManagerTabDisplayItem>,
-    items: List<FileImageDisplayItem>,
-    selectedIds: Set<Int>,
-    scrollState: ScrollState,
-    onToggleVisibleItems: (Set<Int>) -> Unit,
-    onSelect: (Int) -> Unit,
-    onOpenDetail: (FileImageDisplayItem) -> Unit,
-    selectedTabIndex: Int = 0,
-    onTabSelected: (Int) -> Unit = {},
-    showPlayBadge: Boolean = true,
-) {
+fun FileManagerMediaGridView(params: FileManagerMediaGridParams) {
+    val tabs = params.tabs
+    val items = params.items
+    val selectedIds = params.selectedIds
+    val scrollState = params.scrollState
+    val onToggleVisibleItems = params.onToggleVisibleItems
+    val onSelect = params.onSelect
+    val onOpenDetail = params.onOpenDetail
+    val selectedTabIndex = params.selectedTabIndex
+    val onTabSelected = params.onTabSelected
+    val showPlayBadge = params.showPlayBadge
     val visibleItems =
         remember(items, selectedTabIndex) {
             filterMediaGridItems(tabs.getOrNull(selectedTabIndex)?.title.orEmpty(), items)
@@ -148,20 +147,19 @@ fun FileManagerMediaGridView(
 }
 
 @Composable
-fun FileManagerListView(
-    tabs: List<FileManagerTabDisplayItem>,
-    items: List<FileListDisplayItem>,
-    selectedTabIndex: Int,
-    selectedIds: Set<Int>,
-    allSelected: Boolean,
-    scrollState: ScrollState,
-    style: FileListDisplayStyle,
-    onTabSelected: (Int) -> Unit,
-    onToggleAll: () -> Unit,
-    onSelect: (Int) -> Unit,
-    @DrawableRes leadingIconRes: Int? = null,
-    onOpenDetail: (FileListDisplayItem) -> Unit = {},
-) {
+fun FileManagerListView(params: FileManagerListParams) {
+    val tabs = params.tabs
+    val items = params.items
+    val selectedTabIndex = params.selectedTabIndex
+    val selectedIds = params.selectedIds
+    val allSelected = params.allSelected
+    val scrollState = params.scrollState
+    val style = params.style
+    val onTabSelected = params.onTabSelected
+    val onToggleAll = params.onToggleAll
+    val onSelect = params.onSelect
+    val leadingIconRes = params.leadingIconRes
+    val onOpenDetail = params.onOpenDetail
     Column(
         modifier =
             Modifier
@@ -216,17 +214,16 @@ fun FileManagerListView(
 }
 
 @Composable
-fun FileManagerAudioListView(
-    tabs: List<FileManagerTabDisplayItem>,
-    items: List<FileImageDisplayItem>,
-    selectedIds: Set<Int>,
-    scrollState: ScrollState,
-    onToggleVisibleItems: (Set<Int>) -> Unit,
-    onSelect: (Int) -> Unit,
-    onOpenDetail: (FileImageDisplayItem) -> Unit,
-    selectedTabIndex: Int = 0,
-    onTabSelected: (Int) -> Unit = {},
-) {
+fun FileManagerAudioListView(params: FileManagerAudioListParams) {
+    val tabs = params.tabs
+    val items = params.items
+    val selectedIds = params.selectedIds
+    val scrollState = params.scrollState
+    val onToggleVisibleItems = params.onToggleVisibleItems
+    val onSelect = params.onSelect
+    val onOpenDetail = params.onOpenDetail
+    val selectedTabIndex = params.selectedTabIndex
+    val onTabSelected = params.onTabSelected
     val visibleItems =
         remember(items, selectedTabIndex) {
             filterMediaGridItems(tabs.getOrNull(selectedTabIndex)?.title.orEmpty(), items)

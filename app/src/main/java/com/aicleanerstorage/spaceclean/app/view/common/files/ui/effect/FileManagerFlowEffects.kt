@@ -1,11 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect
 
 import androidx.compose.runtime.Composable
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
-import com.aicleanerstorage.spaceclean.base.mvi.UiText
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
-import kotlinx.coroutines.flow.Flow
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerFlowEffectsParams
 
 /**
  * 文件管理流程的副作用集合：导航、错误提示、权限齐备后的首次加载。
@@ -18,15 +14,8 @@ import kotlinx.coroutines.flow.Flow
  * @param onStartIfNeeded 权限齐备后触发首次加载的回调。
  */
 @Composable
-fun FileManagerFlowEffects(
-    effects: Flow<FileManagerEvent>,
-    navigator: AppNavigator,
-    permissionState: FileManagerPermissionState,
-    error: UiText?,
-    onClearError: () -> Unit,
-    onStartIfNeeded: () -> Unit,
-) {
-    FileManagerOperationEventsEffect(effects, permissionState, navigator)
-    FileManagerErrorToastEffect(error, onClearError)
-    FileManagerStartEffect(permissionState, onStartIfNeeded)
+fun FileManagerFlowEffects(params: FileManagerFlowEffectsParams) {
+    FileManagerOperationEventsEffect(params.effects, params.permissionState, params.navigator)
+    FileManagerErrorToastEffect(params.error, params.onClearError)
+    FileManagerStartEffect(params.permissionState, params.onStartIfNeeded)
 }

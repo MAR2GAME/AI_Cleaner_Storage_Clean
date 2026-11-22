@@ -14,6 +14,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosUiState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerAudioListParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerAudioListView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
@@ -73,6 +74,7 @@ fun AudiosManagerScreen(
             ),
         ) {
                 FileManagerAudioListView(
+                    FileManagerAudioListParams(
                     tabs = state.tabs,
                     items = state.displayItems,
                     selectedTabIndex = state.selectedTabIndex,
@@ -85,9 +87,12 @@ fun AudiosManagerScreen(
                         val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(FilePageAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 

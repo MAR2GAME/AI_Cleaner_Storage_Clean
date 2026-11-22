@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.documents.interaction.DocumentsU
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerDeleteBottomBar
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerListView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
@@ -74,6 +75,7 @@ fun DocumentsManagerScreen(
             ),
         ) {
                 FileManagerListView(
+                    FileManagerListParams(
                     tabs = state.tabs,
                     items = visibleItems,
                     selectedTabIndex = state.selectedTabIndex,
@@ -88,9 +90,12 @@ fun DocumentsManagerScreen(
                         val index = visibleItems.indexOfFirst { it.id == item.id }.coerceAtLeast(0)
                         onAction(FilePageAction.DetailClicked(index))
                     },
+                
+                    ),
                 )
             }
         }
     }
 }
+
 

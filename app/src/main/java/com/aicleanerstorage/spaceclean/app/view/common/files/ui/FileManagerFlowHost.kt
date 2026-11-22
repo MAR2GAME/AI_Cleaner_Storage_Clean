@@ -141,12 +141,14 @@ internal fun <S : Any, A : Any> FileManagerFlowHost(
 
     if (lifecycleState.isAtLeast(Lifecycle.State.RESUMED)) {
         FileManagerFlowEffects(
-            effects = viewModel.event,
-            navigator = navigator,
-            permissionState = permissionState,
-            error = error(uiState),
-            onClearError = { viewModel.dispatch(dismissError) },
-            onStartIfNeeded = { viewModel.dispatch(initialLoad) },
+            FileManagerFlowEffectsParams(
+                effects = viewModel.event,
+                navigator = navigator,
+                permissionState = permissionState,
+                error = error(uiState),
+                onClearError = { viewModel.dispatch(dismissError) },
+                onStartIfNeeded = { viewModel.dispatch(initialLoad) },
+            ),
         )
     }
     content(permissionState)
