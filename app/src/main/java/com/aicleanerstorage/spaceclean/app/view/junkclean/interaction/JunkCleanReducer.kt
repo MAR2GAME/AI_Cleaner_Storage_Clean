@@ -184,7 +184,6 @@ object JunkCleanReducer {
 
             JunkStopDialogDismissed ->
                 state.copy(showStopDialog = false, stopDialogPhase = null)
-            else -> state
         }
 
     private fun toggleItem(
