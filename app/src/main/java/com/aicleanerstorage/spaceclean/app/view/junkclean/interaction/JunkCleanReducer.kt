@@ -93,10 +93,15 @@ object JunkCleanReducer {
                     foundItemCount = update.result.totalCount,
                     foundTotalSize = update.result.totalSize,
                     formattedFoundSize = FormatUtil.formatSize(update.result.totalSize),
+                    session = state.session.copy(lastScan = update.result),
                     error = null,
                 )
 
-            is JunkPreviewLoaded -> publishPreview(state, buildPreviewGroups(update.result))
+            is JunkPreviewLoaded ->
+                publishPreview(
+                    state.copy(session = state.session.copy(lastScan = update.result)),
+                    buildPreviewGroups(update.result),
+                )
 
             JunkPreviewLoadFailed ->
                 state.copy(
@@ -106,12 +111,24 @@ object JunkCleanReducer {
 
             JunkCleaningRequested -> requestCleaning(state)
 
+            is JunkCleanFilesSelected ->
+                state.copy(session = state.session.copy(pendingCleanFiles = update.files))
+
+            is JunkExecutionUpdated ->
+                state.copy(session = state.session.copy(execution = update.execution))
+
             is JunkCleaningCompleted ->
                 state.copy(
                     phase = JunkCleanPhase.CompleteAnimation,
                     cleanResult = update.summary,
                     showStopDialog = false,
                     stopDialogPhase = null,
+                    session =
+                        state.session.copy(
+                            lastScan = update.remaining,
+                            pendingCleanFiles = emptyList(),
+                            execution = JunkCleanExecution(),
+                        ),
                     error = null,
                 )
 
@@ -125,6 +142,7 @@ object JunkCleanReducer {
                 state.copy(
                     phase = JunkCleanPhase.Idle,
                     cleanResult = CleanupSummaryModel(),
+                    session = JunkCleanSession(),
                 )
 
             JunkResultAnimationCompleted ->
@@ -134,7 +152,15 @@ object JunkCleanReducer {
                     state
                 }
 
-            JunkActiveOperationCancelled -> state.copy(phase = JunkCleanPhase.Idle)
+            JunkActiveOperationCancelled ->
+                state.copy(
+                    phase = JunkCleanPhase.Idle,
+                    session =
+                        state.session.copy(
+                            pendingCleanFiles = emptyList(),
+                            execution = JunkCleanExecution(),
+                        ),
+                )
 
             is JunkCleaningStopped -> {
                 val groups =
@@ -145,6 +171,12 @@ object JunkCleanReducer {
                     stoppedSummary = update.summary,
                     showStopDialog = false,
                     stopDialogPhase = null,
+                    session =
+                        state.session.copy(
+                            lastScan = update.remaining,
+                            pendingCleanFiles = emptyList(),
+                            execution = JunkCleanExecution(),
+                        ),
                 )
             }
             is JunkStopDialogShown ->

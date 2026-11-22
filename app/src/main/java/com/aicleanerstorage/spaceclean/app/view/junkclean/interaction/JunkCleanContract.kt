@@ -5,6 +5,7 @@ import com.aicleanerstorage.spaceclean.domain.error.JunkError
 import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 
 sealed interface JunkCleanPhase {
@@ -40,6 +41,19 @@ data class SelectionSummary(
     val checkedEmptyCategoryCount: Int = 0,
 )
 
+data class JunkCleanExecution(
+    val directCleanedFiles: List<JunkFileModel> = emptyList(),
+    val directFailedFiles: List<JunkFileModel> = emptyList(),
+    val directFreedSpace: Long = 0L,
+    val memoryResult: JunkMemoryCleanModel? = null,
+)
+
+data class JunkCleanSession(
+    val lastScan: JunkScanResultModel? = null,
+    val pendingCleanFiles: List<JunkFileModel> = emptyList(),
+    val execution: JunkCleanExecution = JunkCleanExecution(),
+)
+
 data class JunkCleanUiState(
     val phase: JunkCleanPhase = JunkCleanPhase.Idle,
     val progress: Float = 0f,
@@ -52,6 +66,7 @@ data class JunkCleanUiState(
     val selectedSummary: SelectionSummary = SelectionSummary(),
     val stoppedSummary: CleanupSummaryModel? = null,
     val cleanResult: CleanupSummaryModel = CleanupSummaryModel(),
+    val session: JunkCleanSession = JunkCleanSession(),
     val error: UiText? = null,
     val showStopDialog: Boolean = false,
     val stopDialogPhase: JunkCleanPhase? = null,
@@ -128,8 +143,17 @@ internal data object JunkPreviewLoadFailed : JunkCleanUpdate
 
 internal data object JunkCleaningRequested : JunkCleanUpdate
 
+internal data class JunkCleanFilesSelected(
+    val files: List<JunkFileModel>,
+) : JunkCleanUpdate
+
+internal data class JunkExecutionUpdated(
+    val execution: JunkCleanExecution,
+) : JunkCleanUpdate
+
 internal data class JunkCleaningCompleted(
     val summary: CleanupSummaryModel,
+    val remaining: JunkScanResultModel? = null,
 ) : JunkCleanUpdate
 
 internal data class JunkFailed(
