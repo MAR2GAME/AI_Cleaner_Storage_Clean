@@ -59,9 +59,6 @@ data class JunkCleanUiState(
 )
 
 sealed interface JunkCleanAction {
-    /** Actions the reducer resolves on its own; the ViewModel only forwards them. */
-    sealed interface ReducerOnly : JunkCleanAction
-
     data object Entered : JunkCleanAction
 
     data object ScanRequested : JunkCleanAction
@@ -72,11 +69,11 @@ sealed interface JunkCleanAction {
 
     data class ItemToggled(
         val itemId: String,
-    ) : ReducerOnly
+    ) : JunkCleanAction
 
     data class CategoriesToggled(
         val categories: List<JunkCategory>,
-    ) : ReducerOnly
+    ) : JunkCleanAction
 
     data object ContinueClicked : JunkCleanAction
 
@@ -90,70 +87,73 @@ sealed interface JunkCleanAction {
     ) : JunkCleanAction
 }
 
+/** ViewModel 内部对状态机的更新，不暴露给 UI。 */
+internal sealed interface JunkCleanUpdate
+
 internal data class JunkPermissionCheckStarted(
     val request: JunkOperation,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkPermissionCheckRestored(
     val request: JunkOperation,
     val previous: JunkCleanUiState,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkPermissionDenied(
     val request: JunkOperation,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkPermissionCheckDeferred(
     val request: JunkOperation,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
-internal data object JunkScanStarted : JunkCleanAction.ReducerOnly
+internal data object JunkScanStarted : JunkCleanUpdate
 
 internal data class JunkScanProgressUpdated(
     val progress: Float,
     val currentCategory: JunkCategory?,
     val foundItemCount: Int,
     val foundTotalSize: Long,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkScanCompleted(
     val result: JunkScanResultModel,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkPreviewLoaded(
     val result: JunkScanResultModel,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
-internal data object JunkPreviewLoadFailed : JunkCleanAction.ReducerOnly
+internal data object JunkPreviewLoadFailed : JunkCleanUpdate
 
-internal data object JunkCleaningRequested : JunkCleanAction.ReducerOnly
+internal data object JunkCleaningRequested : JunkCleanUpdate
 
 internal data class JunkCleaningCompleted(
     val summary: CleanupSummaryModel,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkFailed(
     val error: JunkError,
     val duringScan: Boolean = false,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
-internal data object JunkResultCleared : JunkCleanAction.ReducerOnly
+internal data object JunkResultCleared : JunkCleanUpdate
 
-internal data object JunkResultAnimationCompleted : JunkCleanAction.ReducerOnly
+internal data object JunkResultAnimationCompleted : JunkCleanUpdate
 
-internal data object JunkActiveOperationCancelled : JunkCleanAction.ReducerOnly
+internal data object JunkActiveOperationCancelled : JunkCleanUpdate
 
 internal data class JunkCleaningStopped(
     val remaining: JunkScanResultModel,
     val selected: Set<JunkFileModel>,
     val summary: CleanupSummaryModel,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
 internal data class JunkStopDialogShown(
     val phase: JunkCleanPhase,
-) : JunkCleanAction.ReducerOnly
+) : JunkCleanUpdate
 
-internal data object JunkStopDialogDismissed : JunkCleanAction.ReducerOnly
+internal data object JunkStopDialogDismissed : JunkCleanUpdate
 
 enum class JunkExitTarget {
     Back,

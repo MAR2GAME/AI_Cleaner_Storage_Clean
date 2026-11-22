@@ -23,33 +23,48 @@ object JunkCleanReducer {
         action: JunkCleanAction,
     ): JunkCleanUiState =
         when (action) {
+            is JunkCleanAction.ItemToggled -> toggleItem(state, action.itemId)
+            is JunkCleanAction.CategoriesToggled -> toggleCategories(state, action.categories)
+            else -> state
+        }
+
+    internal fun reduce(
+        state: JunkCleanUiState,
+        update: JunkCleanUpdate,
+    ): JunkCleanUiState = reduceUpdate(state, update)
+
+    private fun reduceUpdate(
+        state: JunkCleanUiState,
+        update: JunkCleanUpdate,
+    ): JunkCleanUiState =
+        when (update) {
             is JunkPermissionCheckStarted ->
                 state.copy(
-                    phase = JunkCleanPhase.CheckingPermission(action.request),
-                    progress = if (action.request == JunkOperation.Scan) 0f else state.progress,
-                    currentCategory = if (action.request == JunkOperation.Scan) null else state.currentCategory,
-                    foundItemCount = if (action.request == JunkOperation.Scan) 0 else state.foundItemCount,
-                    foundTotalSize = if (action.request == JunkOperation.Scan) 0L else state.foundTotalSize,
-                    formattedFoundSize = if (action.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
+                    phase = JunkCleanPhase.CheckingPermission(update.request),
+                    progress = if (update.request == JunkOperation.Scan) 0f else state.progress,
+                    currentCategory = if (update.request == JunkOperation.Scan) null else state.currentCategory,
+                    foundItemCount = if (update.request == JunkOperation.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (update.request == JunkOperation.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (update.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
                     error = null,
                 )
 
             is JunkPermissionDenied ->
                 state.copy(
-                    phase = if (action.request == JunkOperation.Scan) JunkCleanPhase.Idle else JunkCleanPhase.Preview,
-                    progress = if (action.request == JunkOperation.Scan) 0f else state.progress,
-                    currentCategory = if (action.request == JunkOperation.Scan) null else state.currentCategory,
-                    foundItemCount = if (action.request == JunkOperation.Scan) 0 else state.foundItemCount,
-                    foundTotalSize = if (action.request == JunkOperation.Scan) 0L else state.foundTotalSize,
-                    formattedFoundSize = if (action.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
+                    phase = if (update.request == JunkOperation.Scan) JunkCleanPhase.Idle else JunkCleanPhase.Preview,
+                    progress = if (update.request == JunkOperation.Scan) 0f else state.progress,
+                    currentCategory = if (update.request == JunkOperation.Scan) null else state.currentCategory,
+                    foundItemCount = if (update.request == JunkOperation.Scan) 0 else state.foundItemCount,
+                    foundTotalSize = if (update.request == JunkOperation.Scan) 0L else state.foundTotalSize,
+                    formattedFoundSize = if (update.request == JunkOperation.Scan) "0 B" else state.formattedFoundSize,
                     error = null,
                     showStopDialog = false,
                     stopDialogPhase = null,
                 )
 
             is JunkPermissionCheckRestored ->
-                if (state.phase == JunkCleanPhase.CheckingPermission(action.request)) {
-                    action.previous
+                if (state.phase == JunkCleanPhase.CheckingPermission(update.request)) {
+                    update.previous
                 } else {
                     state
                 }
@@ -63,11 +78,11 @@ object JunkCleanReducer {
 
             is JunkScanProgressUpdated ->
                 state.takeIf { it.phase == JunkCleanPhase.Scanning }?.copy(
-                    progress = action.progress,
-                    currentCategory = action.currentCategory,
-                    foundItemCount = action.foundItemCount,
-                    foundTotalSize = action.foundTotalSize,
-                    formattedFoundSize = FormatUtil.formatSize(action.foundTotalSize),
+                    progress = update.progress,
+                    currentCategory = update.currentCategory,
+                    foundItemCount = update.foundItemCount,
+                    foundTotalSize = update.foundTotalSize,
+                    formattedFoundSize = FormatUtil.formatSize(update.foundTotalSize),
                     error = null,
                 ) ?: state
 
@@ -75,13 +90,13 @@ object JunkCleanReducer {
                 state.copy(
                     progress = 100f,
                     currentCategory = null,
-                    foundItemCount = action.result.totalCount,
-                    foundTotalSize = action.result.totalSize,
-                    formattedFoundSize = FormatUtil.formatSize(action.result.totalSize),
+                    foundItemCount = update.result.totalCount,
+                    foundTotalSize = update.result.totalSize,
+                    formattedFoundSize = FormatUtil.formatSize(update.result.totalSize),
                     error = null,
                 )
 
-            is JunkPreviewLoaded -> publishPreview(state, buildPreviewGroups(action.result))
+            is JunkPreviewLoaded -> publishPreview(state, buildPreviewGroups(update.result))
 
             JunkPreviewLoadFailed ->
                 state.copy(
@@ -89,14 +104,12 @@ object JunkCleanReducer {
                     error = JunkError.NoData.toUiText(),
                 )
 
-            is JunkCleanAction.ItemToggled -> toggleItem(state, action.itemId)
-            is JunkCleanAction.CategoriesToggled -> toggleCategories(state, action.categories)
             JunkCleaningRequested -> requestCleaning(state)
 
             is JunkCleaningCompleted ->
                 state.copy(
                     phase = JunkCleanPhase.CompleteAnimation,
-                    cleanResult = action.summary,
+                    cleanResult = update.summary,
                     showStopDialog = false,
                     stopDialogPhase = null,
                     error = null,
@@ -104,8 +117,8 @@ object JunkCleanReducer {
 
             is JunkFailed ->
                 state.copy(
-                    phase = JunkCleanPhase.Failed(if (action.duringScan) JunkOperation.Scan else JunkOperation.Clean),
-                    error = action.error.toUiText(),
+                    phase = JunkCleanPhase.Failed(if (update.duringScan) JunkOperation.Scan else JunkOperation.Clean),
+                    error = update.error.toUiText(),
                 )
 
             JunkResultCleared ->
@@ -125,17 +138,17 @@ object JunkCleanReducer {
 
             is JunkCleaningStopped -> {
                 val groups =
-                    buildPreviewGroups(action.remaining).map { group ->
-                        group.copy(items = group.items.map { it.copy(isChecked = it.file in action.selected) })
+                    buildPreviewGroups(update.remaining).map { group ->
+                        group.copy(items = group.items.map { it.copy(isChecked = it.file in update.selected) })
                     }
                 publishPreview(state, groups).copy(
-                    stoppedSummary = action.summary,
+                    stoppedSummary = update.summary,
                     showStopDialog = false,
                     stopDialogPhase = null,
                 )
             }
             is JunkStopDialogShown ->
-                state.copy(showStopDialog = true, stopDialogPhase = action.phase)
+                state.copy(showStopDialog = true, stopDialogPhase = update.phase)
 
             JunkStopDialogDismissed ->
                 state.copy(showStopDialog = false, stopDialogPhase = null)

@@ -10,6 +10,7 @@ import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanProgressModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -18,6 +19,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -135,13 +137,19 @@ class JunkCleanViewModelTest {
     @Test
     fun `back while scanning shows the stop dialog`() =
         runTest(dispatcher) {
-            val viewModel = viewModel()
+            val gate = CompletableDeferred<Unit>()
+            val viewModel = viewModel(FakeCleanRepository(scanGate = gate))
 
-            viewModel.dispatch(JunkScanStarted)
+            viewModel.dispatch(JunkCleanAction.ScanRequested)
+            viewModel.dispatch(JunkCleanAction.PermissionResultReceived(JunkOperation.Scan, granted = true))
+            runCurrent()
+            assertEquals(JunkCleanPhase.Scanning, viewModel.state.value.phase)
+
             viewModel.dispatch(JunkCleanAction.BackClicked)
 
             assertTrue(viewModel.state.value.showStopDialog)
             assertEquals(JunkCleanPhase.Scanning, viewModel.state.value.stopDialogPhase)
+            gate.complete(Unit)
         }
 
     private fun viewModel(repository: JunkCleanRepository = FakeCleanRepository()): JunkCleanViewModel =
@@ -156,9 +164,11 @@ class JunkCleanViewModelTest {
         private val result: JunkScanResultModel = JunkScanResultModel.EMPTY,
         private val failure: Throwable? = null,
         private val outcomes: List<JunkDeleteOutcomeModel> = emptyList(),
+        private val scanGate: CompletableDeferred<Unit>? = null,
     ) : JunkCleanRepository {
         override suspend fun scan(onProgress: (JunkScanProgressModel) -> Unit): Result<JunkScanResultModel> =
             failure?.let { Result.failure(it) } ?: run {
+                scanGate?.await()
                 onProgress(JunkScanProgressModel.IDLE)
                 Result.success(result)
             }

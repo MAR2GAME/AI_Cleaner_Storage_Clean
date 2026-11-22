@@ -74,7 +74,7 @@ class JunkCleanViewModel(
             JunkCleanAction.StopDismissed -> {
                 if (currentState.showStopDialog) dismissStopDialog(resume = true)
             }
-            is JunkCleanAction.ReducerOnly -> reduce(intent)
+            is JunkCleanAction.ItemToggled, is JunkCleanAction.CategoriesToggled -> reduce(intent)
         }
     }
 
@@ -82,12 +82,12 @@ class JunkCleanViewModel(
         val previous = permissionPrevious
         permissionPrevious = null
         if (!action.granted) {
-            dispatch(JunkPermissionDenied(action.request))
+            update(JunkPermissionDenied(action.request))
             requestExit()
             return
         }
         if (previous == null) return
-        dispatch(JunkPermissionCheckRestored(action.request, previous))
+        update(JunkPermissionCheckRestored(action.request, previous))
         when (action.request) {
             JunkOperation.Scan -> runScan()
             JunkOperation.Clean -> {
@@ -120,6 +120,10 @@ class JunkCleanViewModel(
         setState { JunkCleanReducer.reduce(it, action) }
     }
 
+    private fun update(update: JunkCleanUpdate) {
+        setState { JunkCleanReducer.reduce(it, update) }
+    }
+
     private fun startScanIfNeeded() {
         if (currentState.phase != JunkCleanPhase.Idle) return
         startScan()
@@ -134,7 +138,7 @@ class JunkCleanViewModel(
         }
         if (scanJob?.isActive == true) return
         permissionPrevious = currentState
-        dispatch(JunkPermissionCheckStarted(JunkOperation.Scan))
+        update(JunkPermissionCheckStarted(JunkOperation.Scan))
     }
 
     private fun runScan() {
@@ -142,12 +146,12 @@ class JunkCleanViewModel(
             viewModelScope.launch {
                 try {
                     val scanStartedAt = System.currentTimeMillis()
-                    dispatch(JunkScanStarted)
+                    update(JunkScanStarted)
                     val result =
                         withContext(ioDispatcher) {
                             cleanRepository.scan { progress ->
                                 if (currentState.phase == JunkCleanPhase.Scanning) {
-                                    reduce(
+                                    update(
                                         JunkScanProgressUpdated(
                                             progress = progress.percent,
                                             currentCategory = progress.currentCategory,
@@ -158,19 +162,19 @@ class JunkCleanViewModel(
                                 }
                             }
                         }.getOrElse {
-                            dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                            update(JunkFailed(JunkError.ScanFailed, duringScan = true))
                             return@launch
                         }
                     currentCoroutineContext().ensureActive()
                     lastScanResult = result
-                    dispatch(JunkScanCompleted(result))
+                    update(JunkScanCompleted(result))
                     delayRemainingScanAnimation(scanStartedAt)
                     loadPreview(result)
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
-                    dispatch(JunkFailed(JunkError.ScanFailed, duringScan = true))
+                    update(JunkFailed(JunkError.ScanFailed, duringScan = true))
                 }
             }
     }
@@ -184,13 +188,13 @@ class JunkCleanViewModel(
                 .filter { it.isChecked }
                 .map { it.file }
         if (selectedFiles.isEmpty()) {
-            dispatch(JunkCleaningRequested)
+            update(JunkCleaningRequested)
             return
         }
         if (cleaningJob?.isActive == true) return
         pendingCleanFiles = selectedFiles
         permissionPrevious = state
-        dispatch(JunkPermissionCheckStarted(JunkOperation.Clean))
+        update(JunkPermissionCheckStarted(JunkOperation.Clean))
     }
 
     private fun runCleaning(files: List<JunkFileModel>) {
@@ -198,7 +202,7 @@ class JunkCleanViewModel(
         cleaningJob =
             viewModelScope.launch {
                 try {
-                    dispatch(JunkCleaningRequested)
+                    update(JunkCleaningRequested)
                     if (currentState.phase != JunkCleanPhase.Cleaning) return@launch
 
                     val cleaningStartedAt = System.currentTimeMillis()
@@ -221,7 +225,7 @@ class JunkCleanViewModel(
                     throw error
                 } catch (error: Exception) {
                     currentCoroutineContext().ensureActive()
-                    dispatch(JunkFailed(JunkError.CleanFailed))
+                    update(JunkFailed(JunkError.CleanFailed))
                 }
             }
     }
@@ -229,7 +233,7 @@ class JunkCleanViewModel(
     private suspend fun executeCleaning(files: List<JunkFileModel>): CleaningExecutionState? {
         val outcomes =
             withContext(ioDispatcher) { cleanRepository.deleteFiles(files) { stopCleaning } }.getOrElse {
-                dispatch(JunkFailed(JunkError.CleanFailed))
+                update(JunkFailed(JunkError.CleanFailed))
                 return null
             }
         currentCoroutineContext().ensureActive()
@@ -255,7 +259,7 @@ class JunkCleanViewModel(
         scanJob = null
         cleaningJob?.cancel()
         cleaningJob = null
-        dispatch(JunkActiveOperationCancelled)
+        update(JunkActiveOperationCancelled)
         cleaningExecutionState = CleaningExecutionState()
     }
 
@@ -271,7 +275,7 @@ class JunkCleanViewModel(
                 .map { it.file }
                 .toSet()
         val summary = CleanupSummaryModel(freedSpace = bytes, cleanedCount = deleted.size)
-        dispatch(JunkCleaningStopped(files, selected, summary))
+        update(JunkCleaningStopped(files, selected, summary))
         cleaningExecutionState = CleaningExecutionState()
     }
 
@@ -282,12 +286,12 @@ class JunkCleanViewModel(
             JunkCleanPhase.Cleaning -> Unit
             else -> return
         }
-        dispatch(JunkStopDialogShown(phase))
+        update(JunkStopDialogShown(phase))
     }
 
     private fun dismissStopDialog(resume: Boolean) {
         val stoppedPhase = currentState.stopDialogPhase
-        dispatch(JunkStopDialogDismissed)
+        update(JunkStopDialogDismissed)
         if (resume && stoppedPhase == JunkCleanPhase.Scanning) {
             startScanIfNeeded()
         }
@@ -295,11 +299,11 @@ class JunkCleanViewModel(
 
     private fun loadPreview(scanResult: JunkScanResultModel?) {
         if (scanResult == null) {
-            dispatch(JunkPreviewLoadFailed)
+            update(JunkPreviewLoadFailed)
             return
         }
 
-        dispatch(JunkPreviewLoaded(scanResult))
+        update(JunkPreviewLoaded(scanResult))
     }
 
     private suspend fun finishCleaning(
@@ -330,10 +334,10 @@ class JunkCleanViewModel(
             }
 
         cleaningExecutionState = CleaningExecutionState()
-        dispatch(JunkCleaningCompleted(summary))
+        update(JunkCleaningCompleted(summary))
         delay(finishingAnimationMillis)
         if (currentState.phase == JunkCleanPhase.CompleteAnimation) {
-            dispatch(JunkResultAnimationCompleted)
+            update(JunkResultAnimationCompleted)
         }
     }
 
