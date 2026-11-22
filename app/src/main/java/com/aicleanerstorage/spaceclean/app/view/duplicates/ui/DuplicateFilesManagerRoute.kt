@@ -13,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -65,6 +66,7 @@ fun DuplicateFilesManagerRoute(
     )
 
     FileManagerFlowDialogs(
+        FileManagerFlowDialogParams(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(DuplicateFilesAction.StopDismissed) },
         permissionState = permissionState,
@@ -74,7 +76,10 @@ fun DuplicateFilesManagerRoute(
         onCancelActiveOperation = { viewModel.dispatch(DuplicateFilesAction.OperationCancellationRequested) },
         onCancelDelete = { viewModel.dispatch(DuplicateFilesAction.DeleteDismissed) },
         onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
+    
+        ),
     )
 }
+
 
 

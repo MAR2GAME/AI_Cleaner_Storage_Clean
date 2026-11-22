@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.documents.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.documents.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
@@ -20,6 +20,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 
 @Composable
@@ -53,6 +54,7 @@ fun DocumentsManagerScreen(
         val result = state.resultSize
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
+            FileOperationPhaseParams(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_documents),
                 deletingText = stringResource(R.string.file_deleting_files),
@@ -68,7 +70,9 @@ fun DocumentsManagerScreen(
                         onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
                     )
                 },
-            ) {
+            
+            ),
+        ) {
                 FileManagerListView(
                     tabs = state.tabs,
                     items = visibleItems,
@@ -89,3 +93,4 @@ fun DocumentsManagerScreen(
         }
     }
 }
+

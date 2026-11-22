@@ -8,6 +8,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -45,6 +46,7 @@ fun PhotosManagerRoute(
     )
 
     FileManagerFlowDialogs(
+        FileManagerFlowDialogParams(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(FilePageAction.StopDismissed) },
         permissionState = permissionState,
@@ -54,7 +56,10 @@ fun PhotosManagerRoute(
         onCancelActiveOperation = { viewModel.dispatch(FilePageAction.OperationCancellationRequested) },
         onCancelDelete = { viewModel.dispatch(FilePageAction.DeleteDismissed) },
         onDeleteReady = { viewModel.dispatch(FilePageAction.DeleteConfirmed) },
+    
+        ),
     )
 }
+
 
 

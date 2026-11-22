@@ -12,6 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPr
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -83,6 +84,7 @@ fun PhotoPrivacyManagerRoute(
     )
 
     FileManagerFlowDialogs(
+        FileManagerFlowDialogParams(
         flowState = flowState,
         onDismissStopDialog = { viewModel.dispatch(PhotoPrivacyAction.StopDismissed) },
         permissionState = permissionState,
@@ -92,7 +94,10 @@ fun PhotoPrivacyManagerRoute(
         onCancelActiveOperation = { viewModel.dispatch(PhotoPrivacyAction.OperationCancellationRequested) },
         onCancelDelete = { viewModel.dispatch(PhotoPrivacyAction.LocationRemovalDismissed) },
         onDeleteReady = { viewModel.dispatch(PhotoPrivacyAction.LocationRemovalConfirmed) },
+    
+        ),
     )
 }
+
 
 

@@ -5,24 +5,14 @@ import androidx.compose.ui.res.stringResource
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 fun FileOperationPhaseContent(
-    phase: FileOperationPhase,
-    scanningText: String,
-    deletingText: String? = null,
-    completeText: String? = null,
-    resultAmount: String,
-    resultUnit: String,
-    resultCaption: String,
-    onNavigateTool: (AppDestination) -> Unit,
-    onContinue: () -> Unit,
-    noResultsContent: @Composable () -> Unit = { FileManagerNoResultsContent() },
+    params: FileOperationPhaseParams,
     browsingContent: @Composable () -> Unit,
 ) {
-    when (phase) {
-        FileOperationPhase.Scanning -> FileManagerScanningView(text = scanningText)
+    when (params.phase) {
+        FileOperationPhase.Scanning -> FileManagerScanningView(text = params.scanningText)
         FileOperationPhase.Browsing,
         FileOperationPhase.ConfirmDelete,
         -> browsingContent()
@@ -30,10 +20,10 @@ fun FileOperationPhaseContent(
         FileOperationPhase.CompleteAnimation,
         ->
             FileManagerDeletingView(
-                deletingText = deletingText ?: stringResource(R.string.file_deleting_files),
-                completeText = completeText ?: stringResource(R.string.file_cleanup_completed),
+                deletingText = params.deletingText ?: stringResource(R.string.file_deleting_files),
+                completeText = params.completeText ?: stringResource(R.string.file_cleanup_completed),
                 stage =
-                    if (phase == FileOperationPhase.CompleteAnimation) {
+                    if (params.phase == FileOperationPhase.CompleteAnimation) {
                         CleanXDeleteCompleteStage.Complete
                     } else {
                         CleanXDeleteCompleteStage.Deleting
@@ -41,12 +31,12 @@ fun FileOperationPhaseContent(
             )
         FileOperationPhase.Result ->
             FileManagerResultView(
-                amount = resultAmount,
-                unit = resultUnit,
-                caption = resultCaption,
-                onNavigateTool = onNavigateTool,
-                onContinue = onContinue,
+                amount = params.resultAmount,
+                unit = params.resultUnit,
+                caption = params.resultCaption,
+                onNavigateTool = params.onNavigateTool,
+                onContinue = params.onContinue,
             )
-        FileOperationPhase.NoResults -> noResultsContent()
+        FileOperationPhase.NoResults -> params.noResultsContent()
     }
 }

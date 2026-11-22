@@ -1,46 +1,34 @@
 package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
 
 import androidx.compose.runtime.Composable
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
-import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 
 @Composable
-fun FileManagerFlowDialogs(
-    flowState: FileManagerFlowState,
-    onDismissStopDialog: () -> Unit,
-    permissionState: FileManagerPermissionState,
-    phase: FileOperationPhase,
-    deleteDialogVisible: Boolean,
-    onCancelActiveOperation: () -> Unit,
-    onCancelDelete: () -> Unit,
-    onDeleteReady: () -> Unit,
-    onExitConfirmed: () -> Unit,
-) {
+fun FileManagerFlowDialogs(params: FileManagerFlowDialogParams) {
     FileManagerStopOperationDialog(
-        visible = flowState.showStopDialog,
-        permissionGranted = permissionState.granted,
+        visible = params.flowState.showStopDialog,
+        permissionGranted = params.permissionState.granted,
         onQuit = {
-            onDismissStopDialog()
-            onCancelActiveOperation()
-            onExitConfirmed()
+            params.onDismissStopDialog()
+            params.onCancelActiveOperation()
+            params.onExitConfirmed()
         },
         onResume = {
-            onDismissStopDialog()
+            params.onDismissStopDialog()
         },
     )
 
     FileManagerDeleteConfirmDialog(
-        visible = deleteDialogVisible,
-        permissionGranted = permissionState.granted,
-        ownerState = permissionState,
-        onCancel = onCancelDelete,
-        onDeleteReady = onDeleteReady,
+        visible = params.deleteDialogVisible,
+        permissionGranted = params.permissionState.granted,
+        ownerState = params.permissionState,
+        onCancel = params.onCancelDelete,
+        onDeleteReady = params.onDeleteReady,
     )
 
     FileManagerNoResultsDialog(
-        visible = phase == FileOperationPhase.NoResults && !permissionState.leavingPage,
-        permissionGranted = permissionState.granted,
-        onBack = onExitConfirmed,
+        visible = params.phase == FileOperationPhase.NoResults && !params.permissionState.leavingPage,
+        permissionGranted = params.permissionState.granted,
+        onBack = params.onExitConfirmed,
     )
 }

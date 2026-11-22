@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPhotoPrivacyView
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerUiState
 
@@ -44,6 +45,7 @@ fun PhotoPrivacyManagerScreen(
     ) {
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
+            FileOperationPhaseParams(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_photo_privacy),
                 deletingText = stringResource(R.string.file_removing_location_data_progress),
@@ -53,7 +55,9 @@ fun PhotoPrivacyManagerScreen(
                 resultCaption = stringResource(R.string.file_location_data_removed),
                 onNavigateTool = { destination -> onAction(PhotoPrivacyAction.NavigationRequested(destination)) },
                 onContinue = { onAction(PhotoPrivacyAction.ContinueManagingClicked) },
-            ) {
+            
+            ),
+        ) {
                 FileManagerPhotoPrivacyView(
                     groups = state.displayGroups,
                     selectedIds = state.selectedIds,
@@ -75,3 +79,4 @@ fun PhotoPrivacyManagerScreen(
         )
     }
 }
+

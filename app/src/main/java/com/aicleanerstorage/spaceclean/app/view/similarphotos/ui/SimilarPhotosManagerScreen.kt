@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.similarphotos.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.similarphotos.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
@@ -17,6 +17,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerSimilarPhotosView
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerUiState
 
@@ -53,6 +54,7 @@ fun SimilarPhotosManagerScreen(
                 androidx.compose.material3.Text(stringResource(R.string.similar_photo_grouping_hint))
             }
             FileOperationPhaseContent(
+            FileOperationPhaseParams(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_similar_photos),
                 deletingText = stringResource(R.string.file_deleting_files),
@@ -61,7 +63,9 @@ fun SimilarPhotosManagerScreen(
                 resultCaption = stringResource(R.string.file_deleted_in_cleanup),
                 onNavigateTool = { destination -> onAction(SimilarPhotosAction.NavigationRequested(destination)) },
                 onContinue = { onAction(SimilarPhotosAction.ContinueManagingClicked) },
-            ) {
+            
+            ),
+        ) {
                 FileManagerSimilarPhotosView(
                     groups = state.displayGroups,
                     totalCount = state.totalPhotoCount,
@@ -88,3 +92,4 @@ fun SimilarPhotosManagerScreen(
         }
     }
 }
+

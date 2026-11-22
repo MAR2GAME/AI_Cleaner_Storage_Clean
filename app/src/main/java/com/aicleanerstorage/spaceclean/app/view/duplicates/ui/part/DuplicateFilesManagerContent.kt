@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part
+﻿package com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -13,6 +13,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.splitFileSizeLabel
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFileEntry
 import com.aicleanerstorage.spaceclean.app.view.duplicates.interaction.DuplicateFilesManagerUiState
@@ -43,6 +44,7 @@ internal fun DuplicateFilesManagerContent(
                 .padding(horizontal = 16.dp),
     ) {
         FileOperationPhaseContent(
+            FileOperationPhaseParams(
             phase = uiState.phase,
             scanningText = stringResource(R.string.file_scanning_duplicate_files),
             deletingText = stringResource(R.string.file_deleting_duplicate_files),
@@ -51,6 +53,8 @@ internal fun DuplicateFilesManagerContent(
             resultCaption = stringResource(R.string.file_deleted_in_cleanup),
             onNavigateTool = onNavigateTool,
             onContinue = onContinue,
+        
+            ),
         ) {
             if (uiState.phase == FileOperationPhase.Browsing || uiState.phase == FileOperationPhase.ConfirmDelete) {
                 val group = uiState.selectedGroup
@@ -80,3 +84,4 @@ internal fun DuplicateFilesManagerContent(
         }
     }
 }
+

@@ -1,4 +1,4 @@
-# MVI rule checks for Storage Clean.
+﻿# MVI rule checks for Storage Clean.
 # Usage: .\scripts\check-rules.ps1 [-Profile profiles\android-compose-mvi.json]
 # Windows PowerShell 5.1+; messages are ASCII-only on purpose.
 
@@ -286,9 +286,70 @@ if (Test-CheckEnabled 'naming') {
     }
 }
 
+# 15. public domain capabilities must have KDoc; port methods document their contract.
+if (Test-CheckEnabled 'domainPublicKdoc' -and (Test-Path -LiteralPath $domainDir)) {
+    $missingKdoc = @()
+    $domainFiles = @()
+    $domainFiles += Get-KotlinFiles (Join-Path $domainDir 'port')
+    $domainFiles += Get-KotlinFiles (Join-Path $domainDir 'model')
+    foreach ($file in $domainFiles) {
+        $lines = Get-Content -LiteralPath $file.FullName
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            $line = $lines[$i]
+            $isMethod = $line -match '^\s{4}(suspend )?fun\s+'
+            $isType = $line -match '^(data class|enum class|sealed interface|sealed class|interface|object|class)\s+'
+            if (-not ($isMethod -or $isType)) { continue }
+            $previous = $i - 1
+            while ($previous -ge 0 -and ($lines[$previous].Trim() -eq '' -or $lines[$previous].Trim().StartsWith('@'))) { $previous-- }
+            if ($previous -lt 0 -or $lines[$previous].Trim() -notmatch '^(\/\*\*|\*)') {
+                $missingKdoc += ("{0}:{1}" -f (RelativePath $file.FullName), ($i + 1))
+            }
+        }
+    }
+    if ($missingKdoc.Count -eq 0) { Add-Pass 'domainPublicKdoc' } else {
+        $missingKdoc | Select-Object -First 20 | ForEach-Object { Add-Failure 'domainPublicKdoc' ("{0} missing KDoc" -f $_) }
+    }
+}
+
+# 16. no wildcard imports.
+if (Test-CheckEnabled 'wildcardImport') {
+    $wildcards = Get-KotlinFiles $src | Select-String -Pattern '^import .*\.\*$'
+    if ($wildcards.Count -eq 0) { Add-Pass 'wildcardImport' } else {
+        $wildcards | Select-Object -First 20 | ForEach-Object { Add-Failure 'wildcardImport' ("{0}:{1}" -f (RelativePath $_.Path), $_.LineNumber) }
+    }
+}
+
+# 17. ui/part never owns navigation.
+if (Test-CheckEnabled 'uiPartNoNavigator' -and (Test-Path -LiteralPath $viewDir)) {
+    $partFiles = Get-KotlinFiles $viewDir | Where-Object { $_.FullName -match '[\\/]ui[\\/]part[\\/]' }
+    $navigatorHits = $partFiles | Select-String -Pattern 'AppNavigator|leaveBack\(|\.navigate\('
+    if ($navigatorHits.Count -eq 0) { Add-Pass 'uiPartNoNavigator' } else {
+        $navigatorHits | Select-Object -First 20 | ForEach-Object { Add-Failure 'uiPartNoNavigator' ("{0}:{1}" -f (RelativePath $_.Path), $_.LineNumber) }
+    }
+}
+
+# 18. screens do not dispatch actions from LaunchedEffect.
+if (Test-CheckEnabled 'screenNoActionEffect' -and (Test-Path -LiteralPath $viewDir)) {
+    $effectHits = @()
+    foreach ($file in Get-KotlinFiles $viewDir | Where-Object { $_.Name -like '*Screen.kt' }) {
+        $lines = Get-Content -LiteralPath $file.FullName
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -notmatch 'LaunchedEffect\(') { continue }
+            $window = ($lines[$i..([Math]::Min($i + 5, $lines.Count - 1))] -join ' ')
+            if ($window -match 'onAction\(|dispatch\(') {
+                $effectHits += ("{0}:{1}" -f (RelativePath $file.FullName), ($i + 1))
+            }
+        }
+    }
+    if ($effectHits.Count -eq 0) { Add-Pass 'screenNoActionEffect' } else {
+        $effectHits | Select-Object -First 20 | ForEach-Object { Add-Failure 'screenNoActionEffect' $_ }
+    }
+}
+
 if ($failures -gt 0) {
     Write-Host ("{0} failure(s)" -f $failures)
     exit 1
 }
 Write-Host 'all checks passed'
 exit 0
+

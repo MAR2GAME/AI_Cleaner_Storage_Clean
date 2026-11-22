@@ -1,4 +1,4 @@
-package com.aicleanerstorage.spaceclean.app.view.photos.ui
+﻿package com.aicleanerstorage.spaceclean.app.view.photos.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
@@ -18,6 +18,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerNoResultsContent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerPageBrush
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerScaffold
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileOperationPhaseContent
 import com.aicleanerstorage.spaceclean.app.view.photos.interaction.PhotosUiState
 
@@ -52,6 +53,7 @@ fun PhotosManagerScreen(
         val result = state.resultSize
         Column(modifier = modifier.background(FileManagerPageBrush).padding(horizontal = 16.dp)) {
             FileOperationPhaseContent(
+            FileOperationPhaseParams(
                 phase = state.phase,
                 scanningText = stringResource(R.string.file_scanning_photos),
                 deletingText = stringResource(R.string.file_deleting_files),
@@ -67,7 +69,9 @@ fun PhotosManagerScreen(
                         onTabSelected = { onAction(FilePageAction.TabChangeRequested(it)) },
                     )
                 },
-            ) {
+            
+            ),
+        ) {
                 FileManagerGalleryBrowserView(
                     tabs = state.displayTabs,
                     selectedTabIndex = state.selectedTabIndex,
@@ -86,3 +90,4 @@ fun PhotosManagerScreen(
         }
     }
 }
+
