@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.data.local.junkclean.scanner
 
 import android.content.Context
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkSource
 import java.io.File
 
 internal class CacheScanner(
@@ -11,5 +12,5 @@ internal class CacheScanner(
 
     override fun getRootDirectories(): List<File> = listOf(context.cacheDir) + context.externalCacheDirs.filterNotNull()
 
-    override fun isJunkFile(file: File): Boolean = true
+    override fun sourceOf(file: File): JunkSource = JunkSource.AppCache
 }

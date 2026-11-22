@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
+package com.aicleanerstorage.spaceclean.app.view.deviceinfo.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -164,12 +164,7 @@ internal class DeviceInfoStateController(
         val cpuTemperatureC = repository.cpuTemperatureC()
         val currentNow = repository.batteryCurrentNowMa().normalizedBatteryCurrent()
         val currentAverage = repository.batteryCurrentAverageMa().normalizedBatteryCurrent()
-        val historySamples =
-            if (mode == DeviceInfoMode.Battery) {
-                batteryHistoryRepository.loadRecent(timestampMillis)
-            } else {
-                batteryHistoryRepository.loadRecent()
-            }
+        val historySamples = batteryHistoryRepository.loadRecent(timestampMillis)
 
         return DeviceInfoUiState(
             mode = mode,
@@ -239,7 +234,7 @@ internal class DeviceInfoStateController(
     private fun shouldForceBatterySample(timestampMillis: Long): Boolean {
         val latestSample =
             batteryHistoryRepository
-                .loadRecent()
+                .loadRecent(timestampMillis)
                 .lastOrNull()
                 ?: batteryHistoryRepository.loadRecent(timestampMillis).lastOrNull()
                 ?: return true

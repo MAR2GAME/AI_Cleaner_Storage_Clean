@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.domain.port
+package com.aicleanerstorage.spaceclean.domain.port
 
 import com.aicleanerstorage.spaceclean.domain.model.battery.BatteryHistorySampleModel
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +30,7 @@ interface BatteryHistoryRepository {
      * @param nowMillis 当前时间；测试可注入固定值。
      * @return 按时间升序的样本列表；没有数据时为空列表。
      */
-    fun loadRecent(nowMillis: Long = System.currentTimeMillis()): List<BatteryHistorySampleModel>
+    fun loadRecent(nowMillis: Long): List<BatteryHistorySampleModel>
 
     /**
      * 追加一条采样并返回更新后的窗口。
@@ -41,7 +41,7 @@ interface BatteryHistoryRepository {
      */
     fun append(
         sample: BatteryHistorySampleModel,
-        nowMillis: Long = System.currentTimeMillis(),
+        nowMillis: Long,
     ): List<BatteryHistorySampleModel>
 
     companion object {

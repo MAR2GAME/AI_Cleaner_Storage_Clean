@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.io.File
 
 class FileClassificationRuleTest {
     @Test
@@ -35,8 +34,8 @@ class FileClassificationRuleTest {
 
     @Test
     fun `identity prefers path and falls back to uri`() {
-        val path = File("a/../b").path
-        assertEquals(File(path).canonicalPath, FileClassificationRule.identity(path, "content://1"))
+        val path = "a/../b"
+        assertEquals(path, FileClassificationRule.identity(path, "content://1"))
         assertEquals("content://1", FileClassificationRule.identity(null, "content://1"))
         assertEquals("content://1", FileClassificationRule.identity("", "content://1"))
     }

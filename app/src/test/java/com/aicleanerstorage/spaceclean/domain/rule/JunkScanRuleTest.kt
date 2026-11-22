@@ -27,5 +27,6 @@ class JunkScanRuleTest {
         name = path.substringAfterLast('/'),
         sizeBytes = 10L,
         category = category,
+        modifiedMillis = 0L,
     )
 }

@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
+package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 
 import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
@@ -37,6 +37,7 @@ class JunkCleanViewModelTest {
             name = "a.tmp",
             sizeBytes = 100L,
             category = JunkCategory.CACHE,
+            modifiedMillis = 0L,
         )
 
     @Before

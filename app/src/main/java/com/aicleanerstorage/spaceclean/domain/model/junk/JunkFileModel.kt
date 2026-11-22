@@ -12,6 +12,6 @@ data class JunkFileModel(
     val name: String,
     val sizeBytes: Long,
     val category: JunkCategory,
-    val modifiedMillis: Long = System.currentTimeMillis(),
+    val modifiedMillis: Long,
     val duplicate: JunkDuplicateMetadataModel? = null,
 )

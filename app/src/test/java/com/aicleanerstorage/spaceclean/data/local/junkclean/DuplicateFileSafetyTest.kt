@@ -43,6 +43,7 @@ class DuplicateFileSafetyTest {
                 copy.name,
                 copy.length(),
                 JunkCategory.DUPLICATE,
+                modifiedMillis = copy.lastModified(),
                 duplicate = JunkDuplicateMetadataModel(hash = FileContentDigest.hashFile(copy), originalPath = original.path),
             )
         assertTrue(JunkFileDeleter.canDeleteDuplicate(item, setOf(copy.path)))

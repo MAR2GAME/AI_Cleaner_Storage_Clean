@@ -1,6 +1,10 @@
 package com.aicleanerstorage.spaceclean.data.local.junkclean.scanner
 
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCandidateModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkSource
+import com.aicleanerstorage.spaceclean.domain.rule.JunkClassificationRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -10,10 +14,16 @@ import java.nio.file.Files
 internal abstract class FileSystemJunkScanner : JunkScanner {
     protected abstract fun getRootDirectories(): List<File>
 
-    protected abstract fun isJunkFile(file: File): Boolean
+    protected open fun sourceOf(file: File): JunkSource = JunkSource.PublicStorage
+
+    protected open fun classify(
+        candidate: JunkCandidateModel,
+        nowMillis: Long,
+    ): JunkCategory? = JunkClassificationRule.categoryOf(candidate, nowMillis)
 
     override suspend fun scan(): List<JunkFileModel> =
         withContext(Dispatchers.IO) {
+            val nowMillis = System.currentTimeMillis()
             buildList {
                 for (root in getRootDirectories()) {
                     if (Files.isSymbolicLink(root.toPath())) continue
@@ -25,15 +35,24 @@ internal abstract class FileSystemJunkScanner : JunkScanner {
                             !Files.isSymbolicLink(it.toPath())
                         }.forEach { file ->
                             ensureActive()
-                            if (Files.isSymbolicLink(file.toPath()) || !file.isFile || !isJunkFile(file)) return@forEach
-                            add(
-                                JunkFileModel(
-                                    id = file.path,
+                            if (Files.isSymbolicLink(file.toPath()) || !file.isFile) return@forEach
+                            val candidate =
+                                JunkCandidateModel(
                                     path = file.path,
                                     name = file.name,
                                     sizeBytes = file.length(),
-                                    category = category,
                                     modifiedMillis = file.lastModified(),
+                                    source = sourceOf(file),
+                                )
+                            if (classify(candidate, nowMillis) != category) return@forEach
+                            add(
+                                JunkFileModel(
+                                    id = candidate.path,
+                                    path = candidate.path,
+                                    name = candidate.name,
+                                    sizeBytes = candidate.sizeBytes,
+                                    category = category,
+                                    modifiedMillis = candidate.modifiedMillis,
                                 ),
                             )
                         }

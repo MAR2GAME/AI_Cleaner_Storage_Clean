@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.data.local.junkclean.scanner
 
 import com.aicleanerstorage.spaceclean.data.local.storage.inspectFile
 import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
+import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCandidateModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -24,7 +25,10 @@ class FileSelectionSafetyTest {
 
                     override fun getRootDirectories() = listOf(root)
 
-                    override fun isJunkFile(file: File) = true
+                    override fun classify(
+                        candidate: JunkCandidateModel,
+                        nowMillis: Long,
+                    ) = JunkCategory.TEMP_FILE
                 }
             val selection = scanner.scan()
             File(nested, "new.log").writeText("new")

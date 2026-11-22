@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.domain.rule
 
 import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
-import java.io.File
 import java.util.Locale
 
 /**
@@ -87,7 +86,8 @@ internal object FileClassificationRule {
     /**
      * 生成文件身份，用于去重和重复文件判定。
      *
-     * 优先使用规范化的绝对路径；路径为空时退回 URI。
+     * 优先使用调用方提供的绝对路径；为空时退回 URI。
+     * 规范化（canonicalPath）由 data 层在枚举时完成，规则本身不触盘。
      *
      * @param path 文件绝对路径，可为空。
      * @param uri 平台 URI，作为兜底身份。
@@ -96,11 +96,7 @@ internal object FileClassificationRule {
     fun identity(
         path: String?,
         uri: String,
-    ): String =
-        path
-            ?.takeIf(String::isNotBlank)
-            ?.let { runCatching { File(it).canonicalPath }.getOrDefault(it) }
-            ?: uri
+    ): String = path?.takeIf(String::isNotBlank) ?: uri
 
     private val DOCUMENT_EXTENSIONS =
         setOf(
