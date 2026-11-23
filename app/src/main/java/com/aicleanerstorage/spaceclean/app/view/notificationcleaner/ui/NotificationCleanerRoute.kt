@@ -11,11 +11,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.NotificationCleanerScreen
+import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.NotificationPermissionGuideDialog
+import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
@@ -32,7 +35,14 @@ fun NotificationCleanerRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionPrompt =
+        rememberPermissionPrompt { permission, onConfirm, onDismiss ->
+            if (permission == AppPermission.NotificationListener) {
+                NotificationPermissionGuideDialog(onConfirm, onDismiss)
+            } else {
+                PermissionDialog(permission.dialogCopy(), onConfirm, onDismiss)
+            }
+        }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, viewModel) {
