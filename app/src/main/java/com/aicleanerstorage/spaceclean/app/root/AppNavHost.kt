@@ -44,7 +44,7 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.What
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppCleanerRoute
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.MAIN_TAB_REQUEST
-import com.aicleanerstorage.spaceclean.base.navigation.MainTab
+import com.aicleanerstorage.spaceclean.base.navigation.MainTabRequest
 import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
 import org.koin.androidx.compose.koinViewModel
 
@@ -111,16 +111,15 @@ internal fun AppNavHost(
             val viewModel: HomeViewModel = koinViewModel()
             val initialTab = remember(entry) { entry.toRoute<AppDestination.Main>().initialTab }
             val requestedTab by entry.savedStateHandle
-                .getStateFlow<String?>(MAIN_TAB_REQUEST, null)
+                .getStateFlow<Any?>(MAIN_TAB_REQUEST, null)
                 .collectAsStateWithLifecycle()
             LaunchedEffect(requestedTab) {
-                requestedTab?.let {
-                    viewModel.dispatch(
-                        com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeAction
-                            .TabSelected(MainTab.valueOf(it).ordinal),
-                    )
-                    entry.savedStateHandle[MAIN_TAB_REQUEST] = null
-                }
+                val tab = MainTabRequest.decode(requestedTab) ?: return@LaunchedEffect
+                viewModel.dispatch(
+                    com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeAction
+                        .TabSelected(tab.ordinal),
+                )
+                entry.savedStateHandle[MAIN_TAB_REQUEST] = null
             }
             HomeRoute(
                 navigator = navigator,

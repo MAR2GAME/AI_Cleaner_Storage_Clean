@@ -30,7 +30,7 @@ class NavControllerAppNavigator(
             if (destination is AppDestination.Main) {
                 navController
                     .getBackStackEntry<AppDestination.Main>()
-                    .savedStateHandle[MAIN_TAB_REQUEST] = destination.initialTab
+                    .savedStateHandle[MAIN_TAB_REQUEST] = MainTabRequest.encode(destination.initialTab)
                 navController.popBackStack<AppDestination.Main>(inclusive = false)
             } else {
                 navController.navigate(destination) {
