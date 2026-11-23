@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.permission
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialogCopy
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
@@ -24,9 +25,16 @@ internal fun rememberPermissionPrompt(
     dialog: (@Composable (AppPermission, () -> Unit, () -> Unit) -> Unit)? = null,
 ): PermissionPromptController {
     val gate = rememberPermissionGate()
-    val controller = remember(gate) { PermissionPromptController(gate) }
+    val context = LocalContext.current
+    val controller =
+        remember(gate, context) {
+            PermissionPromptController(gate) { permission -> permission.requiresSettings(context) }
+        }
 
-    PermissionRequestEffect(controller.requesting) { result ->
+    PermissionRequestEffect(
+        request = controller.requesting,
+        settingsOnly = controller.requestingSettingsOnly,
+    ) { result ->
         controller.completeRequest(result)
     }
     controller.explaining?.let { permission ->

@@ -23,7 +23,7 @@ class PermissionPromptControllerTest {
     @Test
     fun `confirmation moves from explanation to system request`() {
         var result: PermissionResult? = null
-        val controller = PermissionPromptController(PermissionGate { false })
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { true })
 
         controller.request(AppPermission.StorageFiles) { result = it }
         assertEquals(AppPermission.StorageFiles, controller.explaining)
@@ -31,6 +31,7 @@ class PermissionPromptControllerTest {
         controller.confirmExplanation()
         assertNull(controller.explaining)
         assertEquals(AppPermission.StorageFiles, controller.requesting)
+        assertEquals(true, controller.requestingSettingsOnly)
 
         controller.completeRequest(PermissionResult.Granted)
         assertEquals(PermissionResult.Granted, result)
@@ -40,7 +41,7 @@ class PermissionPromptControllerTest {
     @Test
     fun `dismissing explanation reports denied`() {
         var result: PermissionResult? = null
-        val controller = PermissionPromptController(PermissionGate { false })
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { true })
 
         controller.request(AppPermission.StorageFiles) { result = it }
         controller.dismissExplanation()
@@ -54,7 +55,7 @@ class PermissionPromptControllerTest {
     fun `request is ignored while another is in flight`() {
         var first: PermissionResult? = null
         var second: PermissionResult? = null
-        val controller = PermissionPromptController(PermissionGate { false })
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { true })
 
         controller.request(AppPermission.StorageFiles) { first = it }
         controller.request(AppPermission.UsageAccess) { second = it }
@@ -64,5 +65,39 @@ class PermissionPromptControllerTest {
 
         controller.dismissExplanation()
         assertEquals(PermissionResult.Denied, first)
+    }
+
+    @Test
+    fun `runtime permission requests system directly`() {
+        var result: PermissionResult? = null
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { false })
+
+        controller.request(AppPermission.Location) { result = it }
+
+        assertNull(controller.explaining)
+        assertEquals(AppPermission.Location, controller.requesting)
+        assertEquals(false, controller.requestingSettingsOnly)
+
+        controller.completeRequest(PermissionResult.Granted)
+        assertEquals(PermissionResult.Granted, result)
+    }
+
+    @Test
+    fun `permanent runtime denial falls back to explanation then settings`() {
+        var result: PermissionResult? = null
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { false })
+
+        controller.request(AppPermission.Location) { result = it }
+        controller.completeRequest(PermissionResult.PermanentlyDenied)
+
+        assertEquals(AppPermission.Location, controller.explaining)
+        assertNull(controller.requesting)
+
+        controller.confirmExplanation()
+        assertEquals(AppPermission.Location, controller.requesting)
+        assertEquals(true, controller.requestingSettingsOnly)
+
+        controller.completeRequest(PermissionResult.RequiresSettings)
+        assertEquals(PermissionResult.RequiresSettings, result)
     }
 }

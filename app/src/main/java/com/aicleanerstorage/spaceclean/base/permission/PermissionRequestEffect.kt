@@ -18,11 +18,16 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
  *
  * - 运行时权限：系统弹窗；
  * - 特殊权限：跳设置页，返回后重查；
- * - 是否先解释、是否提示去设置，由页面决定。
+ * - [settingsOnly] 为 true 时只跳设置页，用于系统已经不会再弹的场景。
+ *
+ * @param request 目标权限；null 表示空闲。
+ * @param settingsOnly 是否强制只跳设置页。
+ * @param onResult 复检后的权限结果。
  */
 @Composable
 fun PermissionRequestEffect(
     request: AppPermission?,
+    settingsOnly: Boolean = false,
     onResult: (PermissionResult) -> Unit,
 ) {
     val context = LocalContext.current
@@ -30,7 +35,7 @@ fun PermissionRequestEffect(
     val latestOnResult by rememberUpdatedState(onResult)
     var awaitingSettings by remember { mutableStateOf<AppPermission?>(null) }
 
-    LaunchedEffect(request) {
+    LaunchedEffect(request, settingsOnly) {
         val permission = request ?: return@LaunchedEffect
 
         if (gate.isGranted(permission)) {
@@ -38,7 +43,7 @@ fun PermissionRequestEffect(
             return@LaunchedEffect
         }
 
-        if (permission.requiresSettings(context)) {
+        if (settingsOnly || permission.requiresSettings(context)) {
             awaitingSettings = permission
             gate.openSettings(permission)
             return@LaunchedEffect
