@@ -17,6 +17,9 @@ fun AppRootView() {
     var permissionUiActive by remember { mutableStateOf(false) }
     val currentEntry by navController.currentBackStackEntryAsState()
     val onHome = currentEntry?.destination?.hasRoute<AppDestination.Main>() == true
+    val onSplash =
+        currentEntry == null ||
+            currentEntry?.destination?.hasRoute<AppDestination.Splash>() == true
 
     AppNavHost(
         navController = navController,
@@ -24,7 +27,8 @@ fun AppRootView() {
         notificationPermissionUiActive = permissionUiActive,
     )
     NotificationPermissionPrompt(
-        enabled = onHome,
+        onSplash = onSplash,
+        onHome = onHome,
         onActiveChanged = { permissionUiActive = it },
     )
 }
