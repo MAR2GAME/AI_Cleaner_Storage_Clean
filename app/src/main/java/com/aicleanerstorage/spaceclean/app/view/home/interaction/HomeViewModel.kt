@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.home.interaction
+package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
@@ -24,6 +24,7 @@ class HomeViewModel(
     private val autoRatePromptDelayMillis: Long = AUTO_RATE_PROMPT_DELAY_MS,
 ) : MviViewModel<HomeUiState, HomeAction, HomeEvent>(HomeUiState()) {
     private var autoRatePromptJob: Job? = null
+    private var summaryJob: Job? = null
     private var entered = false
     private var featureClicked = false
     private var externalBlockingPromptActive = false
@@ -118,24 +119,26 @@ class HomeViewModel(
     }
 
     private fun refreshSummary() {
-        viewModelScope.launch(ioDispatcher) {
-            val currentSummary = currentState.summary
-            val loadedState =
-                runCatching {
-                    val hardware = repository.hardwareInfo()
-                    HomeSummaryUiState(
-                        storageInfo = repository.internalStorageInfo(),
-                        batteryInfo = repository.batteryInfo(),
-                        deviceModel = hardware.model,
-                        androidVersion = hardware.androidVersion,
-                        lockedAppCount = runCatching { appLockRepository.currentLockedAppCount() }.getOrDefault(0),
-                        isLoading = false,
-                    )
-                }.getOrElse {
-                    currentSummary.copy(isLoading = false)
-                }
-            setState { it.copy(summary = loadedState) }
-        }
+        if (summaryJob?.isActive == true) return
+        summaryJob =
+            viewModelScope.launch(ioDispatcher) {
+                val currentSummary = currentState.summary
+                val loadedState =
+                    runCatching {
+                        val hardware = repository.hardwareInfo()
+                        HomeSummaryUiState(
+                            storageInfo = repository.internalStorageInfo(),
+                            batteryInfo = repository.batteryInfo(),
+                            deviceModel = hardware.model,
+                            androidVersion = hardware.androidVersion,
+                            lockedAppCount = runCatching { appLockRepository.currentLockedAppCount() }.getOrDefault(0),
+                            isLoading = false,
+                        )
+                    }.getOrElse {
+                        currentSummary.copy(isLoading = false)
+                    }
+                setState { it.copy(summary = loadedState) }
+            }
     }
 
     private fun nextExitPromptDestination(): AppDestination {

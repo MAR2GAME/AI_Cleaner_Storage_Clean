@@ -1,8 +1,14 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.home.interaction
+package com.aicleanerstorage.spaceclean.app.view.home.interaction
 
 import androidx.lifecycle.ViewModelStore
+import com.aicleanerstorage.spaceclean.domain.model.device.BatteryInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceCpuInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceHardwareInfoModel
+import com.aicleanerstorage.spaceclean.domain.model.device.DeviceSensorInfoModel
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import com.aicleanerstorage.spaceclean.testsupport.InMemoryAppSettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -10,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -98,6 +105,39 @@ class HomeViewModelTest {
             }
         }
 
+    @Test
+    fun `repeated refresh requests share a single load`() =
+        runTest {
+            val dispatcher = StandardTestDispatcher(testScheduler)
+            Dispatchers.setMain(dispatcher)
+            try {
+                val repository = CountingDeviceInfoRepository()
+                val store = ViewModelStore()
+                val model =
+                    HomeViewModel(
+                        repository = repository,
+                        appLockRepository =
+                            object : AppLockRepository by unusedRepository<AppLockRepository>() {
+                                override fun observeLockedAppCount(): Flow<Int> = MutableStateFlow(0)
+                            },
+                        settingsRepository = FakeHomeSettings(0L),
+                        ioDispatcher = dispatcher,
+                        autoRateDispatcher = dispatcher,
+                        autoRatePromptDelayMillis = 1L,
+                    )
+                store.put("home", model)
+
+                repeat(500) { model.dispatch(HomeAction.SummaryRefreshRequested) }
+                advanceUntilIdle()
+
+                assertEquals(1, repository.batteryReads)
+                assertEquals(false, model.state.value.summary.isLoading)
+                store.clear()
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
     private class FakeHomeSettings(
         private var lastPrompt: Long,
     ) : AppSettingsRepository by InMemoryAppSettingsRepository() {
@@ -119,6 +159,47 @@ class HomeViewModelTest {
         override fun hasShownNotificationCleanerExitPrompt() = false
 
         override fun saveNotificationCleanerExitPromptShown(): Result<Unit> = Result.success(Unit)
+    }
+
+    private class CountingDeviceInfoRepository : DeviceInfoRepository {
+        var batteryReads = 0
+            private set
+
+        override suspend fun readCpuUsagePercent(previousPercent: Int?): Int? = null
+
+        override fun batteryInfo(): BatteryInfoModel {
+            batteryReads++
+            return BatteryInfoModel(levelPercent = 66)
+        }
+
+        override fun memoryInfo(): CapacityInfoModel =
+            CapacityInfoModel(
+                totalBytes = 8L * 1024 * 1024 * 1024,
+                availableBytes = 4L * 1024 * 1024 * 1024,
+            )
+
+        override fun internalStorageInfo(): CapacityInfoModel =
+            CapacityInfoModel(
+                totalBytes = 128L * 1024 * 1024 * 1024,
+                availableBytes = 64L * 1024 * 1024 * 1024,
+            )
+
+        override fun hardwareInfo(): DeviceHardwareInfoModel =
+            DeviceHardwareInfoModel(
+                model = "fixture",
+                androidVersion = "Android 16",
+                screenSize = "1260x2800",
+                screenDensity = "560",
+                multiTouchSupported = true,
+                sensors = DeviceSensorInfoModel(false, false, false, false, false, false, false),
+                cpu = DeviceCpuInfoModel(hardware = "fixture", model = "fixture", cores = 8, maxFrequency = "3.2GHz"),
+            )
+
+        override fun cpuTemperatureC(): Float? = 30f
+
+        override fun batteryCurrentNowMa(): Float? = 100f
+
+        override fun batteryCurrentAverageMa(): Float? = 90f
     }
 
     // Summary jobs remain queued on the test dispatcher; this test exercises synchronous navigation inputs.
