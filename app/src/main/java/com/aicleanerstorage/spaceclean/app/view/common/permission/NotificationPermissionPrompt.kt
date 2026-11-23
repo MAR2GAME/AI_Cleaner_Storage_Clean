@@ -26,10 +26,13 @@ import java.util.Calendar
 private const val HOME_PROMPT_DELAY_MILLIS = 1_200L
 
 /**
- * 通知权限提示：回到首页后延迟展示，每天最多一次；拒绝后回到系统设置。
+ * 通知权限提示：回到首页后延迟处理，每天最多一次。
  *
- * @param enabled 当前是否在首页；不在首页时不弹。
- * @param onActiveChanged 提示是否显示，用于暂停首页的打分/退出提示。
+ * 系统还能弹授权框时直接请求；设置类权限或运行时权限被永久拒绝时，
+ * 才展示两步引导并跳设置。
+ *
+ * @param enabled 当前是否在首页；不在首页时不处理。
+ * @param onActiveChanged 是否有系统界面/引导在展示，用于暂停首页的提示。
  */
 @Composable
 fun NotificationPermissionPrompt(
@@ -37,22 +40,24 @@ fun NotificationPermissionPrompt(
     onActiveChanged: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val preferences: AppSettingsRepository = koinInject()
     var hasPermission by remember { mutableStateOf(notificationsEnabled(context)) }
     var entered by rememberSaveable { mutableStateOf(false) }
     var showGuide by remember { mutableStateOf(false) }
     var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
+    var settingsOnly by remember { mutableStateOf(false) }
 
-    LaunchedEffect(showGuide) {
-        onActiveChanged(showGuide)
+    LaunchedEffect(showGuide, pendingPermission) {
+        onActiveChanged(showGuide || pendingPermission != null)
     }
 
-    PermissionRequestEffect(pendingPermission) { result ->
+    PermissionRequestEffect(pendingPermission, settingsOnly = settingsOnly) { result ->
+        val viaSettings = settingsOnly
         pendingPermission = null
+        settingsOnly = false
         hasPermission = result == PermissionResult.Granted
-        if (result == PermissionResult.PermanentlyDenied || result == PermissionResult.RequiresSettings) {
-            openNotificationSettings(context)
+        if (!viaSettings && result == PermissionResult.PermanentlyDenied) {
+            showGuide = true
         }
     }
 
@@ -66,28 +71,41 @@ fun NotificationPermissionPrompt(
         }
         delay(HOME_PROMPT_DELAY_MILLIS)
         preferences.saveLastNotificationPermissionPromptAt(System.currentTimeMillis())
-        showGuide = true
+        if (AppPermission.PostNotifications.requiresSettings(context)) {
+            showGuide = true
+        } else {
+            settingsOnly = false
+            pendingPermission = AppPermission.PostNotifications
+        }
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer =
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    hasPermission = notificationsEnabled(context)
-                }
-            }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
+    NotificationPermissionResumeEffect { granted -> hasPermission = granted }
 
     if (showGuide) {
         NotificationPermissionGuideDialog(
             onConfirm = {
                 showGuide = false
+                settingsOnly = true
                 pendingPermission = AppPermission.PostNotifications
             },
             onDismiss = { showGuide = false },
         )
+    }
+}
+
+@Composable
+private fun NotificationPermissionResumeEffect(onPermissionChanged: (Boolean) -> Unit) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    onPermissionChanged(notificationsEnabled(context))
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 }
 
@@ -102,16 +120,6 @@ internal fun canPromptToday(
     return last.get(Calendar.ERA) != now.get(Calendar.ERA) ||
         last.get(Calendar.YEAR) != now.get(Calendar.YEAR) ||
         last.get(Calendar.DAY_OF_YEAR) != now.get(Calendar.DAY_OF_YEAR)
-}
-
-private fun openNotificationSettings(context: Context) {
-    AppPermission.PostNotifications.settingsIntents(context).forEach { intent ->
-        try {
-            context.startActivity(intent)
-            return
-        } catch (_: Exception) {
-        }
-    }
 }
 
 private fun notificationsEnabled(context: Context): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()
