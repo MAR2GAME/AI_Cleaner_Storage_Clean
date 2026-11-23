@@ -174,6 +174,7 @@
     <string name="file_music">M?sica</string>
     <string name="permission_network_usage_desc">Para mostrar detalhes de uso de rede, permita Storage Clean no Acesso de uso.</string>
     <string name="permission_notification_desc">Para organizar notificações automaticamente, permita Storage Clean no Acesso a notificações.</string>
+    <string name="permission_post_notifications_desc">Permita notificações para receber resultados de limpeza e verificação.</string>
     <string name="permission_overlay_desc">Para mostrar a tela PIN sobre os apps protegidos, permita que o Storage Clean seja exibido sobre outros apps.</string>
     <string name="rate_title">Gostando do Storage Clean?</string>
     <string name="rate_feedback_message">Obrigado pelo feedback. Continuaremos melhorando o Storage Clean.</string>

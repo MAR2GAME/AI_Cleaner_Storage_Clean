@@ -130,6 +130,7 @@
     <string name="permission_usage_desc">หากต้องการแสดงรายละเอียดการใช้งานแอป โปรดอนุญาต Storage Clean ในการเข้าถึงการใช้งาน</string>
     <string name="permission_network_usage_desc">หากต้องการแสดงรายละเอียดการใช้งานเครือข่าย โปรดอนุญาต Storage Clean ในการเข้าถึงการใช้งาน</string>
     <string name="permission_notification_desc">หากต้องการจัดระเบียบการแจ้งเตือนอัตโนมัติ โปรดอนุญาต Storage Clean ในการเข้าถึงการแจ้งเตือน</string>
+    <string name="permission_post_notifications_desc">อนุญาตการแจ้งเตือนเพื่อรับผลการล้างและการสแกน</string>
     <string name="permission_overlay_desc">หากต้องการแสดงหน้าจอ PIN เหนือแอปที่ป้องกันไว้ โปรดอนุญาตให้ Storage Clean แสดงทับแอปอื่นได้</string>
     <string name="rate_title">ชอบ Storage Clean ไหม</string>
     <string name="rate_feedback_message">ขอบคุณสำหรับความคิดเห็น เราจะปรับปรุง Storage Clean ต่อไป</string>

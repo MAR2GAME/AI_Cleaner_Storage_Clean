@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.permission
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,55 +11,82 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationManagerCompat
-import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.PostNotificationsPermissionDialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.NotificationPermissionGuideDialog
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import java.util.Calendar
 
+private const val HOME_PROMPT_DELAY_MILLIS = 1_200L
+
 /**
- * 通知权限提示：先解释，再拉系统弹窗 / 设置页；每天最多一次。
+ * 通知权限提示：回到首页后延迟展示，每天最多一次；拒绝后回到系统设置。
+ *
+ * @param enabled 当前是否在首页；不在首页时不弹。
+ * @param onActiveChanged 提示是否显示，用于暂停首页的打分/退出提示。
  */
 @Composable
-fun NotificationPermissionPrompt(onActiveChanged: (Boolean) -> Unit = {}) {
+fun NotificationPermissionPrompt(
+    enabled: Boolean,
+    onActiveChanged: (Boolean) -> Unit = {},
+) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     val preferences: AppSettingsRepository = koinInject()
-    var enabled by remember { mutableStateOf(notificationsEnabled(context)) }
+    var hasPermission by remember { mutableStateOf(notificationsEnabled(context)) }
     var entered by rememberSaveable { mutableStateOf(false) }
-    var showExplain by remember { mutableStateOf(false) }
+    var showGuide by remember { mutableStateOf(false) }
     var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
 
-    LaunchedEffect(showExplain) {
-        onActiveChanged(showExplain)
+    LaunchedEffect(showGuide) {
+        onActiveChanged(showGuide)
     }
 
     PermissionRequestEffect(pendingPermission) { result ->
         pendingPermission = null
-        enabled = result == PermissionResult.Granted
+        hasPermission = result == PermissionResult.Granted
+        if (result == PermissionResult.PermanentlyDenied || result == PermissionResult.RequiresSettings) {
+            openNotificationSettings(context)
+        }
     }
 
-    LaunchedEffect(Unit) {
-        if (entered) return@LaunchedEffect
+    LaunchedEffect(enabled) {
+        if (!enabled || entered) return@LaunchedEffect
         entered = true
-        if (enabled) return@LaunchedEffect
-
+        if (hasPermission) return@LaunchedEffect
         val now = System.currentTimeMillis()
         if (!canPromptToday(preferences.readLastNotificationPermissionPromptAt(), now)) {
             return@LaunchedEffect
         }
-        preferences.saveLastNotificationPermissionPromptAt(now)
-        showExplain = true
+        delay(HOME_PROMPT_DELAY_MILLIS)
+        preferences.saveLastNotificationPermissionPromptAt(System.currentTimeMillis())
+        showGuide = true
     }
 
-    if (showExplain) {
-        PostNotificationsPermissionDialog(
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    hasPermission = notificationsEnabled(context)
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    if (showGuide) {
+        NotificationPermissionGuideDialog(
             onConfirm = {
-                showExplain = false
+                showGuide = false
                 pendingPermission = AppPermission.PostNotifications
             },
-            onDismiss = { showExplain = false },
+            onDismiss = { showGuide = false },
         )
     }
 }
@@ -74,6 +102,16 @@ internal fun canPromptToday(
     return last.get(Calendar.ERA) != now.get(Calendar.ERA) ||
         last.get(Calendar.YEAR) != now.get(Calendar.YEAR) ||
         last.get(Calendar.DAY_OF_YEAR) != now.get(Calendar.DAY_OF_YEAR)
+}
+
+private fun openNotificationSettings(context: Context) {
+    AppPermission.PostNotifications.settingsIntents(context).forEach { intent ->
+        try {
+            context.startActivity(intent)
+            return
+        } catch (_: Exception) {
+        }
+    }
 }
 
 private fun notificationsEnabled(context: Context): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()

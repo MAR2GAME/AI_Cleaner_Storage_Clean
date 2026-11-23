@@ -163,6 +163,7 @@
     <string name="permission_usage_desc">为了显示应用使用详情，请在使用情况访问设置中允许 Storage Clean。</string>
     <string name="permission_network_usage_desc">为了显示网络用量详情，请在使用情况访问设置中允许 Storage Clean。</string>
     <string name="permission_notification_desc">为了自动整理通知，请在通知访问设置中允许 Storage Clean。</string>
+    <string name="permission_post_notifications_desc">允许通知后，清理完成和扫描结果会及时提醒你。</string>
     <string name="permission_hint_junk_deleted">只会删除垃圾文件。</string>
     <string name="permission_hint_files_safe">只会管理你选择的文件。</string>
     <string name="permission_hint_threat_files">只会处理你选择的风险文件。</string>

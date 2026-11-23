@@ -4,21 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsAction
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsEvent
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 
 @Composable
 fun ManagePermissionsRoute(
@@ -28,7 +25,6 @@ fun ManagePermissionsRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
 
     fun refreshStatuses() {
         val statuses =
@@ -38,10 +34,7 @@ fun ManagePermissionsRoute(
         viewModel.dispatch(ManagePermissionsAction.StatusesChanged(statuses))
     }
 
-    PermissionRequestEffect(pendingPermission) {
-        pendingPermission = null
-        refreshStatuses()
-    }
+    val permissionPrompt = rememberPermissionPrompt()
 
     DisposableEffect(lifecycleOwner, viewModel) {
         val observer =
@@ -60,7 +53,7 @@ fun ManagePermissionsRoute(
         when (effect) {
             ManagePermissionsEvent.NavigateBack -> navigator.back()
             is ManagePermissionsEvent.OpenPermissionSettings ->
-                pendingPermission = effect.permission
+                permissionPrompt.request(effect.permission) { refreshStatuses() }
         }
     }
 

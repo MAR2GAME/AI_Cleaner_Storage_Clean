@@ -130,6 +130,7 @@
     <string name="permission_usage_desc">Um App-Nutzungsdetails anzuzeigen, erlaube Storage Clean den Nutzungszugriff.</string>
     <string name="permission_network_usage_desc">Um Netzwerknutzungsdetails anzuzeigen, erlaube Storage Clean den Nutzungszugriff.</string>
     <string name="permission_notification_desc">Um Benachrichtigungen automatisch zu ordnen, erlaube Storage Clean den Benachrichtigungszugriff.</string>
+    <string name="permission_post_notifications_desc">Erlaube Benachrichtigungen, um Ergebnisse von Bereinigung und Scan zu erhalten.</string>
     <string name="permission_overlay_desc">Damit der PIN-Bildschirm über geschützten Apps angezeigt werden kann, erlaube Storage Clean das Anzeigen über anderen Apps.</string>
     <string name="rate_title">Gefällt dir Storage Clean?</string>
     <string name="rate_feedback_message">Danke für dein Feedback. Wir werden Storage Clean weiter verbessern.</string>

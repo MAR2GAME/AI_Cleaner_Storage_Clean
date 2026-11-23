@@ -42,7 +42,6 @@ app/src/main/java/com/aicleanerstorage/spaceclean/app/view/home/ui/HomeScreen.kt
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/home/ui/part/HomeExitPromptDialog.kt|HomeExitPromptScaffold
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/home/ui/part/HomeExitPromptDialog.kt|NotificationCleanerExitPromptDialog
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/junkclean/interaction/JunkCleanReducer.kt|reduce
-app/src/main/java/com/aicleanerstorage/spaceclean/app/view/junkclean/ui/JunkCleanRoute.kt|JunkCleanRoute
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/junkclean/ui/part/JunkCleanContent.kt|JunkCleanContent
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/junkclean/ui/part/JunkCleanResultContent.kt|JunkCleanResultContent
 app/src/main/java/com/aicleanerstorage/spaceclean/app/view/junkclean/ui/part/JunkScanResultContent.kt|CategoryGroupSection

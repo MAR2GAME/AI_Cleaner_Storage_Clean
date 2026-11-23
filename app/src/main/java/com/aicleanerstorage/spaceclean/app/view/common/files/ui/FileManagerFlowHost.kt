@@ -1,11 +1,10 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.common.files.ui
+package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -18,11 +17,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerFlowEffects
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 
 /**
@@ -104,27 +103,26 @@ internal fun <S : Any, A : Any> FileManagerFlowHost(
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleState by currentEntry.lifecycle.currentStateAsState()
-    var pendingPermission by remember(requestPermissions, requiredPermissions) {
-        mutableStateOf(
-            if (requestPermissions) {
-                requiredPermissions.firstOrNull { !it.isGranted(context) }
-            } else {
-                null
-            },
-        )
-    }
+    val permissionPrompt = rememberPermissionPrompt()
 
-    PermissionRequestEffect(pendingPermission) { result ->
-        pendingPermission = null
-        permissionState.refresh(context)
-        when (result) {
-            PermissionResult.Granted ->
-                pendingPermission = requiredPermissions.firstOrNull { !it.isGranted(context) }
-            PermissionResult.Denied,
-            PermissionResult.PermanentlyDenied,
-            PermissionResult.RequiresSettings,
-            -> navigator.back()
+    LaunchedEffect(requestPermissions, requiredPermissions) {
+        if (!requestPermissions) return@LaunchedEffect
+
+        fun requestNextMissing() {
+            val missing = requiredPermissions.firstOrNull { !it.isGranted(context) } ?: return
+            permissionPrompt.request(missing) { result ->
+                permissionState.refresh(context)
+                when (result) {
+                    PermissionResult.Granted -> requestNextMissing()
+                    PermissionResult.Denied,
+                    PermissionResult.PermanentlyDenied,
+                    PermissionResult.RequiresSettings,
+                    -> navigator.back()
+                }
+            }
         }
+
+        requestNextMissing()
     }
 
     DisposableEffect(lifecycleOwner, permissionState) {

@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect
+package com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect
 
 import android.content.ActivityNotFoundException
 import androidx.compose.runtime.Composable
@@ -15,11 +15,11 @@ import com.aicleanerstorage.spaceclean.app.view.antivirus.interaction.VirusScanV
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.openAppSettings
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.openDeveloperSettings
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.safeDelete
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import com.aicleanerstorage.spaceclean.domain.model.security.VirusScanMode
 import kotlinx.coroutines.ensureActive
@@ -34,13 +34,7 @@ fun VirusEffectHandler(
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
-    PermissionRequestEffect(pendingPermission) { result ->
-        pendingPermission = null
-        viewModel.dispatch(
-            VirusScanAction.DeepScanPermissionResultReceived(result == PermissionResult.Granted),
-        )
-    }
+    val permissionPrompt = rememberPermissionPrompt()
     CollectEffects(viewModel) { effect ->
         when (effect) {
             VirusScanEvent.NavigateBack -> currentNavigator.back()
@@ -87,7 +81,12 @@ fun VirusEffectHandler(
                     viewModel.dispatch(VirusScanAction.SettingsLaunchFailed)
                 }
             }
-            is VirusScanEvent.RequestDeepScanPermission -> pendingPermission = AppPermission.StorageFiles
+            is VirusScanEvent.RequestDeepScanPermission ->
+                permissionPrompt.request(AppPermission.StorageFiles) { result ->
+                    viewModel.dispatch(
+                        VirusScanAction.DeepScanPermissionResultReceived(result == PermissionResult.Granted),
+                    )
+                }
 
             is VirusScanEvent.NavigateToScan -> {
                 currentNavigator.navigate(

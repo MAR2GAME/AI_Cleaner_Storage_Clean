@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui
+package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerViewModel
@@ -18,7 +19,6 @@ import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.Notificat
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -32,16 +32,7 @@ fun NotificationCleanerRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var pendingAction by remember { mutableStateOf<NotificationCleanerAction?>(null) }
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
-    PermissionRequestEffect(pendingPermission) { result ->
-        val action = pendingAction
-        pendingAction = null
-        pendingPermission = null
-        if (action != null && result == PermissionResult.Granted) {
-            viewModel.dispatch(action)
-        }
-    }
+    val permissionPrompt = rememberPermissionPrompt()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -82,8 +73,11 @@ fun NotificationCleanerRoute(
                     viewModel.dispatch(action)
                 }
                 NotificationCleanerAction.BlockingEnableRequested -> {
-                    pendingAction = action
-                    pendingPermission = AppPermission.NotificationListener
+                    permissionPrompt.request(AppPermission.NotificationListener) { result ->
+                        if (result == PermissionResult.Granted) {
+                            viewModel.dispatch(NotificationCleanerAction.BlockingEnableRequested)
+                        }
+                    }
                 }
 
                 is NotificationCleanerAction.NavigationRequested -> if (!exiting) viewModel.dispatch(action)

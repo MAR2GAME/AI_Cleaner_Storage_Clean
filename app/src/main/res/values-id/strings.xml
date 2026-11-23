@@ -146,6 +146,7 @@
     <string name="permission_usage_desc">Untuk menampilkan detail penggunaan app, izinkan Storage Clean di Akses penggunaan.</string>
     <string name="permission_network_usage_desc">Untuk menampilkan detail penggunaan jaringan, izinkan Storage Clean di Akses penggunaan.</string>
     <string name="permission_notification_desc">Untuk merapikan notifikasi secara otomatis, izinkan Storage Clean di Akses notifikasi.</string>
+    <string name="permission_post_notifications_desc">Izinkan notifikasi untuk menerima hasil pembersihan dan pemindaian.</string>
     <string name="permission_overlay_desc">Untuk menampilkan layar PIN di atas aplikasi yang dilindungi, izinkan Storage Clean tampil di atas aplikasi lain.</string>
     <string name="rate_title">Suka Storage Clean?</string>
     <string name="rate_feedback_message">Terima kasih atas masukan Anda. Kami akan terus meningkatkan Storage Clean.</string>

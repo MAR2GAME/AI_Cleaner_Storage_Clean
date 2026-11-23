@@ -1,11 +1,9 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
+package com.aicleanerstorage.spaceclean.app.view.photoprivacy.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
@@ -13,11 +11,11 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermi
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 
 private val PRIVACY_PERMISSIONS =
@@ -52,21 +50,27 @@ fun PhotoPrivacyManagerRoute(
     permissionState: FileManagerPermissionState,
 ) {
     val context = LocalContext.current
-    var pendingPermission by remember { mutableStateOf(nextMissingPermission(context)) }
+    val permissionPrompt = rememberPermissionPrompt()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
 
-    PermissionRequestEffect(pendingPermission) { result ->
-        pendingPermission = null
-        permissionState.refresh(context)
-        when (result) {
-            PermissionResult.Granted -> pendingPermission = nextMissingPermission(context)
-            PermissionResult.Denied,
-            PermissionResult.PermanentlyDenied,
-            PermissionResult.RequiresSettings,
-            -> viewModel.dispatch(PhotoPrivacyAction.PermissionRejected)
+    fun requestNextMissing() {
+        val missing = nextMissingPermission(context) ?: return
+        permissionPrompt.request(missing) { result ->
+            permissionState.refresh(context)
+            when (result) {
+                PermissionResult.Granted -> requestNextMissing()
+                PermissionResult.Denied,
+                PermissionResult.PermanentlyDenied,
+                PermissionResult.RequiresSettings,
+                -> viewModel.dispatch(PhotoPrivacyAction.PermissionRejected)
+            }
         }
+    }
+
+    LaunchedEffect(context) {
+        requestNextMissing()
     }
 
     PhotoPrivacyManagerScreen(

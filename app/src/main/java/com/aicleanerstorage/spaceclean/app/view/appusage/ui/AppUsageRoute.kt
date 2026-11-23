@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.appusage.ui
+package com.aicleanerstorage.spaceclean.app.view.appusage.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -22,10 +22,10 @@ import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageEve
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.AppUsageRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.ui.AppUsageScreen
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -39,21 +39,19 @@ fun AppUsageRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
-    PermissionRequestEffect(pendingPermission) { result ->
-        pendingPermission = null
-        viewModel.dispatch(
-            if (result == PermissionResult.Granted) {
-                AppUsageAction.PermissionGranted
-            } else {
-                AppUsageAction.PermissionRejected
-            },
-        )
-    }
+    val permissionPrompt = rememberPermissionPrompt()
     LaunchedEffect(uiState.permissionRequestPending) {
         if (uiState.permissionRequestPending) {
             viewModel.dispatch(AppUsageAction.PermissionRequestConsumed)
-            pendingPermission = AppPermission.UsageAccess
+            permissionPrompt.request(AppPermission.UsageAccess) { result ->
+                viewModel.dispatch(
+                    if (result == PermissionResult.Granted) {
+                        AppUsageAction.PermissionGranted
+                    } else {
+                        AppUsageAction.PermissionRejected
+                    },
+                )
+            }
         }
     }
     val lifecycleOwner = LocalLifecycleOwner.current

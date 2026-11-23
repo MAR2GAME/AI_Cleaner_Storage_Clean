@@ -145,6 +145,7 @@
     <string name="permission_usage_desc">Để hiển thị chi tiết sử dụng ứng dụng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
     <string name="permission_network_usage_desc">Để hiển thị chi tiết sử dụng mạng, hãy cho phép Storage Clean trong Truy cập sử dụng.</string>
     <string name="permission_notification_desc">Để tự động sắp xếp thông báo, hãy cho phép Storage Clean trong Truy cập thông báo.</string>
+    <string name="permission_post_notifications_desc">Cho phép thông báo để nhận kết quả dọn dẹp và quét.</string>
     <string name="permission_overlay_desc">Để hiển thị màn hình PIN trên các ứng dụng được bảo vệ, hãy cho phép Storage Clean hiển thị trên ứng dụng khác.</string>
     <string name="rate_title">Bạn thích Storage Clean chứ?</string>
     <string name="rate_feedback_message">Cảm ơn phản hồi của bạn. Chúng tôi sẽ tiếp tục cải thiện Storage Clean.</string>

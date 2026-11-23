@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.networkscan.ui
+package com.aicleanerstorage.spaceclean.app.view.networkscan.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanAction
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanEvent
 import com.aicleanerstorage.spaceclean.app.view.networkscan.interaction.NetworkScanViewModel
@@ -25,7 +26,6 @@ import com.aicleanerstorage.spaceclean.app.view.networkscan.ui.NetworkScanScreen
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -41,13 +41,7 @@ fun NetworkScanRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
-    PermissionRequestEffect(pendingPermission) { result ->
-        pendingPermission = null
-        if (result == PermissionResult.Granted) {
-            viewModel.dispatch(NetworkScanAction.ScanStartRequested)
-        }
-    }
+    val permissionPrompt = rememberPermissionPrompt()
 
     fun handleBack() {
         if (exiting) return
@@ -83,7 +77,13 @@ fun NetworkScanRoute(
         onAction = { action ->
             when (action) {
                 NetworkScanAction.ScanStartRequested ->
-                    if (!exiting) pendingPermission = AppPermission.Location
+                    if (!exiting) {
+                        permissionPrompt.request(AppPermission.Location) { result ->
+                            if (result == PermissionResult.Granted) {
+                                viewModel.dispatch(NetworkScanAction.ScanStartRequested)
+                            }
+                        }
+                    }
                 else -> viewModel.dispatch(action)
             }
         },

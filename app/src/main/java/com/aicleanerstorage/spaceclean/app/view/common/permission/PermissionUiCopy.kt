@@ -34,5 +34,5 @@ internal fun AppPermission.descriptionRes(): Int =
         AppPermission.UsageAccess -> R.string.permission_usage_desc
         AppPermission.NotificationListener -> R.string.permission_notification_desc
         AppPermission.Overlay -> R.string.permission_overlay_desc
-        AppPermission.PostNotifications -> R.string.permission_notification_desc
+        AppPermission.PostNotifications -> R.string.permission_post_notifications_desc
     }

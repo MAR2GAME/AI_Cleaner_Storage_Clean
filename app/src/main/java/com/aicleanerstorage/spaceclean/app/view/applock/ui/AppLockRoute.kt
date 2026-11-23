@@ -19,10 +19,14 @@ import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockActio
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockEvent
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockPermissions
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
+import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.AppLockOverlayPermissionDialog
+import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.AppLockUsagePermissionDialog
+import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 
@@ -37,9 +41,16 @@ fun AppLockRoute(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
     val toastRes = uiState.toastRes
     val toastMessage = toastRes?.let { stringResource(it) }
+    val permissionPrompt =
+        rememberPermissionPrompt { permission, onConfirm, onDismiss ->
+            when (permission) {
+                AppPermission.Overlay -> AppLockOverlayPermissionDialog(onConfirm, onDismiss)
+                AppPermission.UsageAccess -> AppLockUsagePermissionDialog(onConfirm, onDismiss)
+                else -> PermissionDialog(permission.dialogCopy(), onConfirm, onDismiss)
+            }
+        }
 
     fun refreshPermissions() {
         val statuses =
@@ -47,11 +58,6 @@ fun AppLockRoute(
                 permission.isGranted(context)
             }
         viewModel.dispatch(AppLockAction.StatusesChanged(statuses))
-    }
-
-    PermissionRequestEffect(pendingPermission) {
-        pendingPermission = null
-        refreshPermissions()
     }
 
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -91,7 +97,8 @@ fun AppLockRoute(
         when (effect) {
             AppLockEvent.Exit -> exitBack()
             is AppLockEvent.Navigate -> if (!exiting) navigator.navigate(effect.destination)
-            is AppLockEvent.OpenPermissionSettings -> pendingPermission = effect.permission
+            is AppLockEvent.OpenPermissionSettings ->
+                permissionPrompt.request(effect.permission) { refreshPermissions() }
         }
     }
 
@@ -100,7 +107,8 @@ fun AppLockRoute(
         onAction = { action ->
             if (exiting) return@AppLockScreen
             when (action) {
-                is AppLockAction.PermissionClicked -> pendingPermission = action.permission
+                is AppLockAction.PermissionClicked ->
+                    permissionPrompt.request(action.permission) { refreshPermissions() }
                 else -> viewModel.dispatch(action)
             }
         },

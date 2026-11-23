@@ -9,14 +9,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkExitTarget
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperation
 import com.aicleanerstorage.spaceclean.app.view.junkclean.ui.effect.JunkCleanEffects
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -32,23 +31,14 @@ fun JunkCleanRoute(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
 
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
-    var pendingOperation by remember { mutableStateOf<JunkOperation?>(null) }
+    val permissionPrompt = rememberPermissionPrompt()
 
     LaunchedEffect(uiState.phase) {
         val checking = uiState.phase as? JunkCleanPhase.CheckingPermission ?: return@LaunchedEffect
-        pendingOperation = checking.request
-        pendingPermission = AppPermission.StorageFiles
-    }
-
-    PermissionRequestEffect(pendingPermission) { result ->
-        val operation = pendingOperation
-        pendingPermission = null
-        pendingOperation = null
-        if (operation != null) {
+        permissionPrompt.request(AppPermission.StorageFiles) { result ->
             viewModel.dispatch(
                 JunkCleanAction.PermissionResultReceived(
-                    request = operation,
+                    request = checking.request,
                     granted = result == PermissionResult.Granted,
                 ),
             )

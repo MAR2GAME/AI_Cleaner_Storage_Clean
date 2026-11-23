@@ -130,6 +130,7 @@
     <string name="permission_usage_desc">アプリ使用状況の詳細を表示するため、使用状況アクセスでStorage Cleanを許可してください。</string>
     <string name="permission_network_usage_desc">ネットワーク使用状況の詳細を表示するため、使用状況アクセスでStorage Cleanを許可してください。</string>
     <string name="permission_notification_desc">通知を自動的に整理するため、通知アクセスでStorage Cleanを許可してください。</string>
+    <string name="permission_post_notifications_desc">通知を許可すると、クリーニング結果やスキャン結果をお知らせします。</string>
     <string name="permission_overlay_desc">保護されたアプリの上に PIN 画面を表示するには、Storage Clean の他のアプリ上への表示を許可してください。</string>
     <string name="rate_title">Storage Cleanを気に入っていますか？</string>
     <string name="rate_feedback_message">フィードバックありがとうございます。Storage Cleanを引き続き改善します。</string>

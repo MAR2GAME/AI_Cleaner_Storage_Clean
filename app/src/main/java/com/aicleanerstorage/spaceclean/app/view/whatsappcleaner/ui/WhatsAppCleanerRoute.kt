@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
@@ -15,7 +16,6 @@ import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
-import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -29,20 +29,11 @@ fun WhatsAppCleanerRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var pendingAction by remember { mutableStateOf<WhatsAppCleanerAction?>(null) }
-    var pendingPermission by remember { mutableStateOf<AppPermission?>(null) }
+    val permissionPrompt = rememberPermissionPrompt()
 
     fun gated(action: WhatsAppCleanerAction) {
         if (exiting) return
-        pendingAction = action
-        pendingPermission = AppPermission.StorageFiles
-    }
-
-    PermissionRequestEffect(pendingPermission) { result ->
-        val action = pendingAction
-        pendingAction = null
-        pendingPermission = null
-        if (action != null) {
+        permissionPrompt.request(AppPermission.StorageFiles) { result ->
             if (result == PermissionResult.Granted) {
                 viewModel.dispatch(action)
             } else {

@@ -97,6 +97,7 @@
     <string name="permission_usage_desc">Para mostrar el uso de apps, permite Storage Clean en Acceso de uso.</string>
     <string name="permission_network_usage_desc">Para mostrar el uso de red, permite Storage Clean en Acceso de uso.</string>
     <string name="permission_notification_desc">Para ordenar notificaciones automáticamente, permite Storage Clean en Acceso a notificaciones.</string>
+    <string name="permission_post_notifications_desc">Permite las notificaciones para recibir resultados de limpieza y análisis.</string>
     <string name="permission_hint_junk_deleted">Solo se eliminarán archivos basura.</string>
     <string name="permission_hint_files_safe">Solo se gestionarán los archivos seleccionados.</string>
     <string name="permission_hint_no_personal">No se recopilará información personal.</string>
