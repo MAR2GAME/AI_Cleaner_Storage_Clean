@@ -32,7 +32,13 @@ fun FileManagerDeleteConfirmDialog(
     if (permissionGranted && visible) {
         DeleteConfirmDialog(
             onCancel = onCancel,
-            onDelete = { if (!ownerState.leavingPage) onDeleteReady() },
+            onDelete = {
+                if (!ownerState.leavingPage) {
+                    ownerState.requestPermission { granted ->
+                        if (granted && !ownerState.leavingPage) onDeleteReady()
+                    }
+                }
+            },
         )
     }
 }

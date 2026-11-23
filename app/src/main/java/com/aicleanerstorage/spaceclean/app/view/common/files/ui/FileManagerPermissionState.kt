@@ -30,6 +30,23 @@ class FileManagerPermissionState(
     var leavingPage by mutableStateOf(false)
         private set
 
+    private var permissionRequester: (((Boolean) -> Unit) -> Unit)? = null
+
+    /**
+     * 重新校验并申请流程所需权限。
+     *
+     * 用于删除等二次操作前的兜底；未挂接申请器时按拒绝处理。
+     *
+     * @param onResult 权限结果回调。
+     */
+    fun requestPermission(onResult: (Boolean) -> Unit) {
+        permissionRequester?.invoke(onResult) ?: onResult(false)
+    }
+
+    internal fun attachPermissionRequester(requester: ((Boolean) -> Unit) -> Unit) {
+        permissionRequester = requester
+    }
+
     /**
      * 重新从系统读取权限状态。
      *

@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -105,8 +106,16 @@ internal fun <S : Any, A : Any> FileManagerFlowHost(
     val lifecycleState by currentEntry.lifecycle.currentStateAsState()
     val permissionPrompt = rememberPermissionPrompt()
 
-    LaunchedEffect(requestPermissions, requiredPermissions) {
-        if (!requestPermissions) return@LaunchedEffect
+    SideEffect {
+        permissionState.attachPermissionRequester { onResult ->
+            permissionPrompt.request(AppPermission.StorageFiles) { result ->
+                onResult(result == PermissionResult.Granted)
+            }
+        }
+    }
+
+    LaunchedEffect(permissionState.granted, requestPermissions, requiredPermissions) {
+        if (!requestPermissions || permissionState.granted) return@LaunchedEffect
 
         fun requestNextMissing() {
             val missing = requiredPermissions.firstOrNull { !it.isGranted(context) } ?: return
