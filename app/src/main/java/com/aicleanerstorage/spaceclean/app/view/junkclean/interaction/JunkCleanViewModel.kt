@@ -72,7 +72,7 @@ class JunkCleanViewModel(
         permissionPrevious = null
         if (!action.granted) {
             update(JunkPermissionDenied(action.request))
-            requestExit()
+            requestExit(JunkExitTarget.HomeAfterComplete)
             return
         }
         if (previous == null) return
