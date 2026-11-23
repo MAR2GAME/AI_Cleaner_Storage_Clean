@@ -1,5 +1,7 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+
 import com.aicleanerstorage.spaceclean.domain.model.device.BatteryHealth
 import com.aicleanerstorage.spaceclean.domain.model.device.BatteryStatus
 import com.aicleanerstorage.spaceclean.domain.model.device.CapacityInfoModel
@@ -27,7 +29,7 @@ sealed interface OnboardingAction {
 sealed interface OnboardingEvent {
     data object NotifyScanFinished : OnboardingEvent
 
-    data object FinishOnboarding : OnboardingEvent
+    data class FinishOnboarding(val destination: AppDestination) : OnboardingEvent
 }
 
 internal data class OnboardingLoaded(

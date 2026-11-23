@@ -1,0 +1,17 @@
+{
+  "package": "com.aicleanerstorage.spaceclean",
+  "ABTestName": "",
+  "PlayIntegrityID": 0,
+  "highEcpm": 0,
+  "serverUrl": "https://example.invalid",
+  "serverAppID": 0,
+  "serverClientKey": "FILL_CLEANER_SERVER_CLIENT_KEY",
+  "isAutoLogin": true,
+  "parseTokenPath": "/parseToken",
+  "ipInfoPath": "/getIpInfoV2",
+  "initLogPath": "/server/user/initLog",
+  "platformLoginPath": "/server/user/platformLogin",
+  "autoLoginreflushtokenPath": "/server/user/autoLoginreflushtoken",
+  "uploadUserPath": "/server/user/uploadUser",
+  "searchConfigsPath": "/server/user/searchConfigs"
+}

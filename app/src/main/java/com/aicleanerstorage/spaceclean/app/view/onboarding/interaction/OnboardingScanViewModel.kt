@@ -64,8 +64,14 @@ class OnboardingScanViewModel(
     private fun completeOnboarding() {
         if (completionSubmitted || !currentState.complete) return
         completionSubmitted = true
-        settingsRepository.markOnboardingScanCompleted()
-        sendEvent(OnboardingEvent.FinishOnboarding)
+        val destination = if (settingsRepository.isFirstOnboardingPending()) {
+            settingsRepository.markFirstOnboardingCompleted()
+            com.aicleanerstorage.spaceclean.base.navigation.AppDestination.OnboardingScan
+        } else {
+            settingsRepository.markSecondOnboardingCompleted()
+            com.aicleanerstorage.spaceclean.base.navigation.AppDestination.Main()
+        }
+        sendEvent(OnboardingEvent.FinishOnboarding(destination))
     }
 }
 

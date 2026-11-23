@@ -10,6 +10,8 @@ internal class InMemoryAppSettingsRepository(
     private var lastNotificationPermissionPrompt = 0L
     private var exitPromptShown = false
     private var onboardingCompleted = false
+    private var firstOnboardingPending = true
+    private var secondOnboardingPending = true
     private var duplicateWarningAccepted = false
 
     override fun readTemperatureUnit() = temperatureUnit
@@ -43,6 +45,21 @@ internal class InMemoryAppSettingsRepository(
     override fun isOnboardingScanCompleted() = onboardingCompleted
 
     override fun markOnboardingScanCompleted(): Result<Unit> {
+        onboardingCompleted = true
+        return Result.success(Unit)
+    }
+
+    override fun isFirstOnboardingPending() = !onboardingCompleted && firstOnboardingPending
+
+    override fun isSecondOnboardingPending() = !onboardingCompleted && secondOnboardingPending
+
+    override fun markFirstOnboardingCompleted(): Result<Unit> {
+        firstOnboardingPending = false
+        return Result.success(Unit)
+    }
+
+    override fun markSecondOnboardingCompleted(): Result<Unit> {
+        secondOnboardingPending = false
         onboardingCompleted = true
         return Result.success(Unit)
     }

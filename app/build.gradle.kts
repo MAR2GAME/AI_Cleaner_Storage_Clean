@@ -66,6 +66,9 @@ ktlint {
 }
 
 dependencies {
+    implementation("com.mar2game.mar2sdk:core:2.0.15")
+    implementation("com.mar2game.mar2sdk:impl:2.0.15")
+    debugImplementation("com.mar2game.mar2sdk:debug:2.0.15")
     implementation(project(":junkcc"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.foundation.layout)

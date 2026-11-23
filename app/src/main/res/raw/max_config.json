@@ -1,0 +1,25 @@
+{
+  "sdkKey": "",
+  "openConfig": {
+    "id": "",
+    "timeout": 30000,
+    "poolSize": 0
+  },
+  "interConfig": {
+    "id": "",
+    "timeout": 30000,
+    "poolSize": 0
+  },
+  "videoConfig": {
+    "id": "",
+    "timeout": 30000,
+    "poolSize": 0
+  },
+  "bannerConfig": {
+    "id": ""
+  },
+  "nativeConfig": {
+    "timeout": 30000,
+    "ads": []
+  }
+}

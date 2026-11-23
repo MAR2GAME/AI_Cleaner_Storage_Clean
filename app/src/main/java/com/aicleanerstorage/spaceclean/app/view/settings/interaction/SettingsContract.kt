@@ -4,6 +4,7 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 data class SettingsUiState(
     val temperatureUnit: String,
+    val versionLabel: String,
 )
 
 sealed interface SettingsAction {

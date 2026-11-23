@@ -249,6 +249,7 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Storage</string>
     <string name="settings_usage_data_permission">Usage Data</string>
     <string name="settings_location_permission">Location</string>
@@ -480,4 +481,8 @@
     <string name="permission_media_location_desc">เพื่อค้นหารูปภาพที่มีข้อมูลตำแหน่ง โปรดอนุญาตการเข้าถึงตำแหน่งรูปภาพ</string>
     <string name="duplicates_skipped">ข้าม %1$d ไฟล์ ไฟล์อาจมีการเปลี่ยนแปลง หรือไม่สามารถตรวจสอบหรือลบสำเนาได้</string>
     <string name="duplicates_pending_verification">รอการตรวจสอบ · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

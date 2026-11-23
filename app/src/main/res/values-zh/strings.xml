@@ -184,6 +184,7 @@
     <string name="settings_terms_of_service">服务条款</string>
     <string name="settings_privacy_policy">隐私政策</string>
     <string name="settings_rate_us">给我们评分</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">存储</string>
     <string name="settings_usage_data_permission">使用数据</string>
     <string name="settings_location_permission">位置</string>
@@ -563,4 +564,8 @@
     <string name="permission_media_location_desc">为了找出包含位置信息的照片，请授予照片位置权限。</string>
     <string name="duplicates_skipped">已跳过 %1$d 个文件。文件可能已变化，或无法核验或删除副本。</string>
     <string name="duplicates_pending_verification">待核验 · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

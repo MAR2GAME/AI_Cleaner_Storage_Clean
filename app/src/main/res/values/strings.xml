@@ -194,6 +194,7 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Storage Permissions</string>
     <string name="settings_usage_data_permission">Usage Data Permissions</string>
     <string name="settings_location_permission">Location Management</string>
@@ -468,4 +469,8 @@
     <string name="permission_media_location_desc">To find photos that contain location data, please grant photo location access.</string>
     <string name="duplicates_skipped">Skipped %1$d files. The files may have changed, or a matching copy could not be verified or removed.</string>
     <string name="duplicates_pending_verification">Needs verification · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

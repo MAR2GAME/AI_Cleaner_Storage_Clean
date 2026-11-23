@@ -1,0 +1,294 @@
+{
+  "isSend": true,
+  "isForegroundSend": false,
+  "isScreenOffSend": false,
+  "isScreenLockSend": false,
+  "interval_second": 0,
+  "busyBatchPolicy": "drop",
+  "busyBatchDelaySeconds": 10,
+  "24HMaxBatch": 50,
+  "1HMaxBatch": 50,
+  "24HMaxItem": 500,
+  "1HMaxItem": 500,
+  "ChannelCount": 5,
+  "triggers": {
+    "unlock_home_launcher": {
+      "first_delay": 0,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "home_recent": {
+      "first_delay": 0,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "screen_on_a": {
+      "first_delay": 0,
+      "delay": 5,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 900,
+      "interval_item": 5
+    },
+    "screen_on_b": {
+      "first_delay": 120,
+      "delay": 10,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "screen_on_c": {
+      "first_delay": 300,
+      "delay": 65,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 360,
+      "interval_item": 5
+    },
+    "screen_off_locked": {
+      "first_delay": 300,
+      "delay": 60,
+      "count": 0,
+      "styles": [
+        1
+      ],
+      "interval_batch": 60,
+      "interval_item": 5
+    },
+    "power_connected": {
+      "first_delay": 600,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "return_to_home": {
+      "first_delay": 0,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "ad_click": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 60,
+      "interval_item": 5
+    },
+    "app_exit": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 60,
+      "interval_item": 5
+    },
+    "package_added": {
+      "first_delay": 0,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 0,
+      "interval_item": 5
+    },
+    "package_removed": {
+      "first_delay": 0,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 0,
+      "interval_item": 5
+    },
+    "volume_changed": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "network_changed": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "boot_restore": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "media_changed": {
+      "first_delay": 300,
+      "delay": 10,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    },
+    "phone_pickup": {
+      "first_delay": 300,
+      "delay": 0,
+      "count": 3,
+      "styles": [
+        1
+      ],
+      "interval_batch": 300,
+      "interval_item": 5
+    }
+  },
+  "timer": {
+    "timer-a": {
+      "HH": 6,
+      "MM": 0,
+      "count": 3,
+      "styles": [
+        1
+      ]
+    },
+    "timer-b": {
+      "HH": 9,
+      "MM": 0,
+      "count": 3,
+      "styles": [
+        1
+      ]
+    },
+    "timer-c": {
+      "HH": 14,
+      "MM": 0,
+      "count": 3,
+      "styles": [
+        1
+      ]
+    },
+    "timer-d": {
+      "HH": 19,
+      "MM": 25,
+      "count": 3,
+      "styles": [
+        1
+      ]
+    }
+  },
+  "groups": {
+    "interval_between_groups": 0,
+    "list": [
+      {
+        "name": "screen_on",
+        "enable": false,
+        "scenes": [
+          "screen_on_a",
+          "screen_on_b",
+          "screen_on_c"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      },
+      {
+        "name": "status_change",
+        "enable": false,
+        "scenes": [
+          "power_connected",
+          "screen_off_locked",
+          "network_changed",
+          "boot_restore",
+          "media_changed",
+          "phone_pickup"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      },
+      {
+        "name": "timer",
+        "enable": false,
+        "scenes": [
+          "timer-a",
+          "timer-b",
+          "timer-c",
+          "timer-d"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      },
+      {
+        "name": "ad",
+        "enable": false,
+        "scenes": [
+          "ad_click"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      },
+      {
+        "name": "unlock_and_returnhome",
+        "enable": false,
+        "scenes": [
+          "unlock_home_launcher",
+          "home_recent",
+          "return_to_home",
+          "app_exit",
+          "volume_changed"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      },
+      {
+        "name": "package_change",
+        "enable": false,
+        "scenes": [
+          "package_added",
+          "package_removed"
+        ],
+        "interval_within_group": 0,
+        "interval_within_scene": 0
+      }
+    ]
+  }
+}

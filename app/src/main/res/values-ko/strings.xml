@@ -249,6 +249,7 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Storage</string>
     <string name="settings_usage_data_permission">Usage Data</string>
     <string name="settings_location_permission">Location</string>
@@ -480,4 +481,8 @@
     <string name="permission_media_location_desc">위치 정보가 포함된 사진을 찾으려면 사진 위치 접근을 허용하세요.</string>
     <string name="duplicates_skipped">파일 %1$d개를 건너뛰었습니다. 파일이 변경되었거나 복사본을 확인하거나 삭제할 수 없습니다.</string>
     <string name="duplicates_pending_verification">확인 필요 · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

@@ -80,6 +80,18 @@ interface AppSettingsRepository {
      */
     fun markOnboardingScanCompleted(): Result<Unit>
 
+    /** 是否仍需完成第一次新手引导。 */
+    fun isFirstOnboardingPending(): Boolean
+
+    /** 是否仍需完成第二次新手引导。 */
+    fun isSecondOnboardingPending(): Boolean
+
+    /** 标记第一次新手引导完成。 */
+    fun markFirstOnboardingCompleted(): Result<Unit>
+
+    /** 标记第二次新手引导完成。 */
+    fun markSecondOnboardingCompleted(): Result<Unit>
+
     /**
      * 判断重复文件删除警告是否已接受。
      *

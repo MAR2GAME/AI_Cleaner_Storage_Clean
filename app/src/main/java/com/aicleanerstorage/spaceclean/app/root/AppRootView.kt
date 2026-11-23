@@ -10,9 +10,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aicleanerstorage.spaceclean.app.view.common.permission.NotificationPermissionPrompt
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
 
 @Composable
-fun AppRootView() {
+fun AppRootView(notificationRoutes: NotificationRouteCoordinator) {
     val navController = rememberNavController()
     var permissionUiActive by remember { mutableStateOf(false) }
     val currentEntry by navController.currentBackStackEntryAsState()
@@ -25,6 +26,7 @@ fun AppRootView() {
         navController = navController,
         splashPaused = permissionUiActive,
         notificationPermissionUiActive = permissionUiActive,
+        notificationRoutes = notificationRoutes,
     )
     NotificationPermissionPrompt(
         onSplash = onSplash,

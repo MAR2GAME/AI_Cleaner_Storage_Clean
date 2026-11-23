@@ -106,6 +106,7 @@
     <string name="settings_terms_of_service">Términos de servicio</string>
     <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="settings_rate_us">Califícanos</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Almacenamiento</string>
     <string name="settings_usage_data_permission">Datos de uso</string>
     <string name="settings_location_permission">Ubicación</string>
@@ -492,4 +493,8 @@
     <string name="permission_media_location_desc">Para encontrar fotos con datos de ubicación, concede acceso a la ubicación de las fotos.</string>
     <string name="duplicates_skipped">Se omitieron %1$d archivos. Es posible que hayan cambiado o que no se haya podido verificar o eliminar una copia.</string>
     <string name="duplicates_pending_verification">Pendiente de verificación · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

@@ -1,0 +1,457 @@
+{
+  "defaultPlatform": "ADMOB",
+  "activePlatforms": [],
+  "explorePlatforms": "ADMOB",
+  "exploreTime": 0,
+  "priceMultiplier": 1,
+  "priceOffset": 0,
+  "showMaxTime": 10000,
+  "showMinTime": 500,
+  "isOpen": true,
+  "isRisk": false,
+  "showMod": "MODE_555",
+  "1HMax": 50,
+  "24HMax": 50,
+  "interval": 0,
+  "autoRate": {
+    "enable": false,
+    "targets": {
+      "OPEN": 0,
+      "INTER": 0,
+      "VIDEO": 0
+    }
+  },
+  "ad_units": {
+    "openPageAdv": {
+      "rate": 1,
+      "1HMax": 4,
+      "24HMax": 20,
+      "interval": 0,
+      "format": "OPEN",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "foreGroundAdv": {
+      "rate": 1,
+      "1HMax": 4,
+      "24HMax": 20,
+      "interval": 30,
+      "format": "OPEN",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "newGuideScanFinishAdv": {
+      "rate": 0,
+      "1HMax": 5,
+      "24HMax": 5,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "newGuideSkipAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 5,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainJunkCleanFinishAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainFileManageFinishAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNotificationCleanFinishAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainWhatsappCleanFinishAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNetworkSpeedFinishAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainJunkCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainFileManageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNotificationCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainWhatsappCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainVirusAntiAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainAppLockAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainDeviceInfoAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainBatteryInfoAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainAppUsageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNetworkUsageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNetworkScanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "mainNetworkSpeedAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromJunkCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromVirusAntiAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromAppLockAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromFileManageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromDeviceInfoAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromBatteryInfoAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromAppUsageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromNotificationCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromWhatsappCleanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromNetworkUsageAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromNetworkScanAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    },
+    "returnFromNetworkSpeedAdv": {
+      "rate": 1,
+      "1HMax": 5,
+      "24HMax": 10,
+      "interval": 0,
+      "format": "INTER",
+      "fromRoutes": [
+        "*"
+      ],
+      "toRoutes": [
+        "*"
+      ]
+    }
+  },
+  "ad_native": {},
+  "ad_banner": {}
+}

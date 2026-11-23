@@ -249,6 +249,7 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Storage</string>
     <string name="settings_usage_data_permission">Usage Data</string>
     <string name="settings_location_permission">Location</string>
@@ -480,4 +481,8 @@
     <string name="permission_media_location_desc">位置情報を含む写真を検索するには、写真の位置情報へのアクセスを許可してください。</string>
     <string name="duplicates_skipped">%1$d 件のファイルをスキップしました。ファイルが変更されたか、コピーを確認または削除できませんでした。</string>
     <string name="duplicates_pending_verification">要確認 · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

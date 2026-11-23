@@ -11,6 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingAction
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingEvent
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
@@ -23,6 +29,7 @@ fun OnboardingRoute(
     navigator: AppNavigator,
     viewModel: OnboardingScanViewModel,
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     var exiting by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -31,10 +38,22 @@ fun OnboardingRoute(
     CollectEffects(viewModel) { effect ->
         when (effect) {
             OnboardingEvent.NotifyScanFinished -> Unit
-            OnboardingEvent.FinishOnboarding -> {
+            is OnboardingEvent.FinishOnboarding -> {
                 if (!exiting) {
                     exiting = true
-                    navigator.replace(AppDestination.Main())
+                    val activity = context.findActivity()
+                    val continueNavigation = { navigator.replace(effect.destination) }
+                    if (activity == null) {
+                        continueNavigation()
+                    } else {
+                        Mar2AdGateway.showInterstitial(
+                            activity = activity,
+                            areaKey = Mar2AdPlacementRegistry.NEW_GUIDE_SCAN_FINISH,
+                            fromRoute = "onboarding",
+                            toRoute = effect.destination.javaClass.simpleName,
+                            onContinue = continueNavigation,
+                        )
+                    }
                 }
             }
         }
@@ -55,4 +74,10 @@ fun OnboardingRoute(
         state = state,
         onAction = { if (!exiting) viewModel.dispatch(it) },
     )
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

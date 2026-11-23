@@ -56,6 +56,7 @@
     <string name="settings_terms_of_service">Điều khoản dịch vụ</string>
     <string name="settings_privacy_policy">Chính sách quyền riêng tư</string>
     <string name="settings_rate_us">Đánh giá chúng tôi</string>
+    <string name="settings_version">Version</string>
     <string name="file_select_all">Chọn tất cả</string>
     <string name="file_unselect_all">Bỏ chọn tất cả</string>
     <string name="file_delete">Xóa</string>
@@ -480,4 +481,8 @@
     <string name="permission_media_location_desc">Để tìm ảnh có dữ liệu vị trí, vui lòng cấp quyền truy cập vị trí ảnh.</string>
     <string name="duplicates_skipped">Đã bỏ qua %1$d tệp. Tệp có thể đã thay đổi hoặc không thể xác minh hay xóa bản sao.</string>
     <string name="duplicates_pending_verification">Cần xác minh · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>

@@ -7,12 +7,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import com.aicleanerstorage.spaceclean.BuildConfig
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Navigator
+import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
@@ -53,8 +64,37 @@ internal fun AppNavHost(
     navController: NavHostController,
     splashPaused: Boolean,
     notificationPermissionUiActive: Boolean,
+    notificationRoutes: NotificationRouteCoordinator,
 ) {
-    val navigator = remember(navController) { NavControllerAppNavigator(navController) }
+    val activity = LocalContext.current.findActivity()
+    val navigator = remember(navController, activity) { Mar2Navigator(navController, activity) }
+    val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentEntry?.destination
+
+    LaunchedEffect(pendingNotification, currentDestination) {
+        val action = pendingNotification ?: return@LaunchedEffect
+        if (currentDestination?.hasRoute<AppDestination.Splash>() == true ||
+            currentDestination?.hasRoute<AppDestination.OnboardingScan>() == true
+        ) return@LaunchedEffect
+        val continueNavigation = {
+            notificationRoutes.consume(action.id)
+            navigator.resetToRoot(action.destination)
+        }
+        if (action.waitForForegroundAd && activity != null) {
+            Mar2AdGateway.show(
+                activity = activity,
+                areaKey = Mar2AdPlacementRegistry.FOREGROUND,
+                format = com.mar2sdk.core.ad.status.AdFormat.OPEN,
+                trigger = com.mar2sdk.core.ad.policy.ScreenAdTrigger.RETURN,
+                fromRoute = "main",
+                toRoute = action.destination.javaClass.simpleName,
+                onContinue = continueNavigation,
+            )
+        } else {
+            continueNavigation()
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -225,4 +265,10 @@ internal fun AppNavHost(
             )
         }
     }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

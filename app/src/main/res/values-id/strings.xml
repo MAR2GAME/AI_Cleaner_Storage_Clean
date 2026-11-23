@@ -57,6 +57,7 @@
     <string name="settings_terms_of_service">Ketentuan layanan</string>
     <string name="settings_privacy_policy">Kebijakan privasi</string>
     <string name="settings_rate_us">Beri rating</string>
+    <string name="settings_version">Version</string>
     <string name="file_select_all">Pilih semua</string>
     <string name="file_unselect_all">Batal pilih semua</string>
     <string name="file_delete">Hapus</string>
@@ -481,4 +482,8 @@
     <string name="permission_media_location_desc">Untuk menemukan foto yang berisi data lokasi, izinkan akses lokasi foto.</string>
     <string name="duplicates_skipped">%1$d file dilewati. File mungkin telah berubah, atau salinannya tidak dapat diverifikasi atau dihapus.</string>
     <string name="duplicates_pending_verification">Perlu verifikasi · %1$s</string>
+    <string name="common_notification_action_1">Photos</string>
+    <string name="common_notification_action_2">Files</string>
+    <string name="common_notification_action_3">Videos</string>
+    <string name="common_notification_action_4">Recovered</string>
 </resources>
