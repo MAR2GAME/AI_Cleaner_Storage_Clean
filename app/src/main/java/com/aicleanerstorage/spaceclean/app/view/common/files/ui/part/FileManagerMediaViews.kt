@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
+package com.aicleanerstorage.spaceclean.app.view.common.files.ui.part
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -89,6 +89,11 @@ private val FileManagerBitmapCache =
             value: Bitmap,
         ): Int = value.byteCount / 1024
     }
+
+/** 清空缩略图缓存；系统低内存时由 App 调用，优先保住进程。 */
+internal fun trimFileManagerBitmapCache() {
+    FileManagerBitmapCache.evictAll()
+}
 
 @Composable
 fun FileManagerScreenshotGridView(params: FileManagerScreenshotGridParams) {
