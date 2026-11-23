@@ -36,6 +36,7 @@ internal fun VirusScanNoticeDialog(
     VirusDialogPanel(
         onDismiss = onDecline,
         surfaceColor = Color.Transparent,
+        dismissOnBackPress = true,
         panelModifier =
             Modifier.offset(y = 16.dp).background(
                 Brush.verticalGradient(

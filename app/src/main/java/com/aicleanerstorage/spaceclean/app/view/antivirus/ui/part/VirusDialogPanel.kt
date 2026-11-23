@@ -31,6 +31,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 internal fun VirusDialogPanel(
     onDismiss: () -> Unit,
     surfaceColor: Color,
+    dismissOnBackPress: Boolean = false,
     panelModifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -38,7 +39,7 @@ internal fun VirusDialogPanel(
         onDismissRequest = onDismiss,
         properties =
             DialogProperties(
-                dismissOnBackPress = false,
+                dismissOnBackPress = dismissOnBackPress,
                 dismissOnClickOutside = false,
                 usePlatformDefaultWidth = false,
             ),
