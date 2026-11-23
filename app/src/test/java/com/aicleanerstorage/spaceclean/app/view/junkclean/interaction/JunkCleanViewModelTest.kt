@@ -93,8 +93,7 @@ class JunkCleanViewModelTest {
             viewModel.dispatch(JunkCleanAction.PermissionResultReceived(JunkOperation.Scan, granted = false))
             advanceUntilIdle()
 
-            val exit = events.filterIsInstance<JunkCleanEvent.Exit>().single()
-            assertEquals(JunkExitTarget.HomeAfterComplete, exit.target)
+            assertEquals(listOf(JunkCleanEvent.Exit), events)
         }
 
     @Test

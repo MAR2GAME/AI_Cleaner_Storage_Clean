@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.data.local.storage
 
 import com.aicleanerstorage.spaceclean.domain.rule.DuplicateFileRule
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -57,6 +58,37 @@ class FileContentDigestTest {
         val file = directory.newFile("large")
         RandomAccessFile(file, "rw").use { it.setLength(100L * 1024 * 1024 + 1) }
         assertNull(FileContentDigest.hashFile(file, maxBytes = 100L * 1024 * 1024))
+    }
+
+    @Test
+    fun `prefix digest of a short file is the full content hash`() {
+        val file = directory.newFile("short").apply { writeText("same") }
+
+        val digest = FileContentDigest.hashFilePrefix(file)
+
+        assertEquals(FileContentDigest.hashFile(file), digest?.hash)
+        assertTrue(digest?.isComplete == true)
+    }
+
+    @Test
+    fun `prefix digest stops at the window and reports an incomplete read`() {
+        val file = directory.newFile("long")
+        val content = ByteArray(FileContentDigest.PREFIX_HASH_BYTES + 10) { it.toByte() }
+        file.writeBytes(content)
+
+        val digest = FileContentDigest.hashFilePrefix(file)
+
+        assertFalse(digest?.isComplete == true)
+        assertEquals(
+            FileContentDigest.sha256(content.inputStream(0, FileContentDigest.PREFIX_HASH_BYTES)),
+            digest?.hash,
+        )
+    }
+
+    @Test(expected = CancellationException::class)
+    fun `prefix hashing propagates cancellation`() {
+        val file = directory.newFile("file").apply { writeText("data") }
+        FileContentDigest.hashFilePrefix(file) { throw CancellationException() }
     }
 
     @Test(expected = CancellationException::class)

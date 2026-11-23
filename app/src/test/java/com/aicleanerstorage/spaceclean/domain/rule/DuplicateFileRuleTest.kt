@@ -18,12 +18,57 @@ class DuplicateFileRuleTest {
                 candidate("empty-b", size = 0),
             )
 
-        DuplicateFileRule.group(candidates) { value ->
+        DuplicateFileRule.group(candidates, prefixHash = { "prefix" }) { value ->
             hashed += value
             "same"
         }
 
         assertEquals(listOf("first", "second"), hashed)
+    }
+
+    @Test
+    fun `skips full hashing when prefixes differ`() {
+        val hashed = mutableListOf<String>()
+        val candidates = listOf(candidate("first", size = 10), candidate("second", size = 10))
+
+        val groups =
+            DuplicateFileRule.group(candidates, prefixHash = { it }) { value ->
+                hashed += value
+                "same"
+            }
+
+        assertTrue(groups.isEmpty())
+        assertTrue(hashed.isEmpty())
+    }
+
+    @Test
+    fun `full hashing decides files whose prefixes match`() {
+        val candidates = listOf(candidate("first", size = 10), candidate("second", size = 10))
+
+        val groups =
+            DuplicateFileRule.group(candidates, prefixHash = { "prefix" }) { value ->
+                if (value == "first") "a" else "b"
+            }
+
+        assertTrue(groups.isEmpty())
+    }
+
+    @Test
+    fun `unknown prefix falls back to full hashing`() {
+        val hashed = mutableListOf<String>()
+        val candidates =
+            listOf(
+                candidate("first", size = 10),
+                candidate("second", size = 10),
+                candidate("third", size = 10),
+            )
+
+        DuplicateFileRule.group(candidates, prefixHash = { if (it == "third") null else it }) { value ->
+            hashed += value
+            "same"
+        }
+
+        assertEquals(listOf("first", "second", "third"), hashed)
     }
 
     @Test
@@ -35,7 +80,10 @@ class DuplicateFileRuleTest {
                 candidate("different", size = 10, modified = 3),
             )
 
-        val groups = DuplicateFileRule.group(candidates) { value -> if (value == "different") "other" else "match" }
+        val groups =
+            DuplicateFileRule.group(candidates, prefixHash = { "prefix" }) { value ->
+                if (value == "different") "other" else "match"
+            }
 
         assertEquals(listOf(DuplicateFileRule.Group("match", listOf("new", "old"))), groups)
     }
@@ -48,7 +96,7 @@ class DuplicateFileRuleTest {
                 candidate("b", name = "report.PDF", size = 10),
             )
 
-        val groups = DuplicateFileRule.group(candidates) { null }
+        val groups = DuplicateFileRule.group(candidates, prefixHash = { null }) { null }
 
         assertEquals(DuplicateFileRule.Group(null, listOf("a", "b")), groups.single())
     }
@@ -56,7 +104,10 @@ class DuplicateFileRuleTest {
     @Test
     fun `hash failure does not combine successfully hashed different contents`() {
         val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
-        val groups = DuplicateFileRule.group(candidates) { if (it == "unreadable") null else it }
+        val groups =
+            DuplicateFileRule.group(candidates, prefixHash = { if (it == "unreadable") null else "prefix" }) { value ->
+                if (value == "unreadable") null else value
+            }
         assertTrue(groups.single().hash == null)
         assertEquals(listOf("a", "unreadable"), groups.single().files)
     }
@@ -64,7 +115,10 @@ class DuplicateFileRuleTest {
     @Test
     fun `verified group stays separate from pending candidates`() {
         val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
-        val groups = DuplicateFileRule.group(candidates) { if (it == "unreadable") null else "same" }
+        val groups =
+            DuplicateFileRule.group(candidates, prefixHash = { if (it == "unreadable") null else "prefix" }) { value ->
+                if (value == "unreadable") null else "same"
+            }
         assertEquals(listOf("a", "b"), groups.single { it.hash != null }.files)
         assertEquals(listOf("a", "unreadable"), groups.single { it.hash == null }.files)
     }

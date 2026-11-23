@@ -12,7 +12,10 @@ import org.junit.Test
 class DuplicateFileSelectionRuleTest {
     @Test
     fun `scan evidence supports keeping any unselected verified copy`() {
-        val group = DuplicateFileSelectionRule.buildGroups(listOf(file(1), file(2), file(3))) { "hash" }.single()
+        val group =
+            DuplicateFileSelectionRule
+                .buildGroups(listOf(file(1), file(2), file(3)), prefixHash = { "prefix" }) { "hash" }
+                .single()
         val first = group.files.first()
         val selected =
             group.files
@@ -30,7 +33,10 @@ class DuplicateFileSelectionRuleTest {
 
     @Test
     fun `selecting every copy blocks deletion`() {
-        val group = DuplicateFileSelectionRule.buildGroups(listOf(file(1), file(2))) { "hash" }.single()
+        val group =
+            DuplicateFileSelectionRule
+                .buildGroups(listOf(file(1), file(2)), prefixHash = { "prefix" }) { "hash" }
+                .single()
         val selected = group.files.map { it.uri }.toSet()
         group.files.forEach {
             assertFalse(
@@ -44,7 +50,10 @@ class DuplicateFileSelectionRuleTest {
 
     @Test
     fun `changed or unreadable retained copy blocks deletion`() {
-        val group = DuplicateFileSelectionRule.buildGroups(listOf(file(1), file(2))) { "hash" }.single()
+        val group =
+            DuplicateFileSelectionRule
+                .buildGroups(listOf(file(1), file(2)), prefixHash = { "prefix" }) { "hash" }
+                .single()
         val first = group.files.first()
         val selection = DuplicateFileSelectionModel(first, group)
         val selected = setOf(first.uri)
@@ -67,12 +76,27 @@ class DuplicateFileSelectionRuleTest {
     @Test
     fun pendingFileRequiresReadableMatchingUnselectedCopy() {
         val files = listOf(file(1), file(2))
-        val group = DuplicateFileSelectionRule.buildGroups(files) { null }.single()
+        val group =
+            DuplicateFileSelectionRule
+                .buildGroups(files, prefixHash = { "prefix" }) { null }
+                .single()
         val selection = DuplicateFileSelectionModel(files[1], group)
         val selected = setOf(files[1].uri)
         assertFalse(DuplicateFileSelectionRule.canDelete(selection, selected) { null })
         assertFalse(DuplicateFileSelectionRule.canDelete(selection, selected) { it.uri })
         assertTrue(DuplicateFileSelectionRule.canDelete(selection, selected) { "same" })
+    }
+
+    @Test
+    fun `possible duplicate files only keep files that share a size`() {
+        val single = file(1).copy(sizeBytes = 1L)
+        val first = file(2)
+        val second = file(3)
+
+        assertEquals(
+            listOf(first, second),
+            DuplicateFileSelectionRule.possibleDuplicateFiles(listOf(single, first, second)),
+        )
     }
 
     private fun file(id: Long) =

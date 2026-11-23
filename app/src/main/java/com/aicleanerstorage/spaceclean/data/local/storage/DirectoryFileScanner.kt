@@ -8,17 +8,21 @@ import com.aicleanerstorage.spaceclean.domain.rule.FileClassificationRule
 import java.io.File
 
 internal object DirectoryFileScanner {
-    fun scanPublicFiles(checkCancellation: () -> Unit = {}): List<ManagedFileModel> {
+    fun scanPublicFiles(
+        checkCancellation: () -> Unit = {},
+        accept: (File) -> Boolean = { true },
+    ): List<ManagedFileModel> {
         val root = externalStorageDirectoryOrNull() ?: return emptyList()
         if (!root.exists() || !root.isDirectory) return emptyList()
 
-        return scanPublicFiles(root, checkCancellation) { file, size -> file.toManagedFileItem(size) }
+        return scanPublicFiles(root, checkCancellation, accept) { file, size -> file.toManagedFileItem(size) }
             .distinctBy(::identity)
     }
 
     internal fun <T> scanPublicFiles(
         root: File,
         checkCancellation: () -> Unit,
+        accept: (File) -> Boolean = { true },
         toItem: (File, Long) -> T,
     ): List<T> {
         val results = mutableListOf<T>()
@@ -27,6 +31,7 @@ internal object DirectoryFileScanner {
             results,
             maxDepth = 1,
             limit = MAX_FILE_SYSTEM_RESULTS,
+            accept = accept,
             checkCancellation = checkCancellation,
             toItem = toItem,
         )
@@ -36,6 +41,7 @@ internal object DirectoryFileScanner {
                 results,
                 maxDepth = 12,
                 limit = MAX_FILE_SYSTEM_RESULTS,
+                accept = accept,
                 checkCancellation = checkCancellation,
                 toItem = toItem,
             )

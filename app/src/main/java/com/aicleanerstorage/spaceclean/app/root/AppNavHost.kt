@@ -133,10 +133,8 @@ internal fun AppNavHost(
         composable<AppDestination.JunkClean> { entry ->
             val viewModel: JunkCleanViewModel = koinViewModel(viewModelStoreOwner = entry)
             JunkCleanRoute(
+                navigator = navigator,
                 viewModel = viewModel,
-                onNavigateBack = { navigator.back() },
-                onNavigateHome = { navigator.resetToRoot(AppDestination.Main()) },
-                onNavigateHomeAfterComplete = { navigator.resetToRoot(AppDestination.Main()) },
                 resultTools = { modifier, enabled ->
                     ToolFeatureBanners(
                         modifier = modifier,

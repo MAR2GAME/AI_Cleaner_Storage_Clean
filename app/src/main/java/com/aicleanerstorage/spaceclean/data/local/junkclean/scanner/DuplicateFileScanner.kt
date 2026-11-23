@@ -18,19 +18,14 @@ internal class DuplicateFileScanner : JunkScanner {
 
     override suspend fun scan(): List<JunkFileModel> =
         withContext(Dispatchers.IO) {
-            val files = scanPublicFilesFromFileSystem(coroutineContext::ensureActive)
+            val checkCancellation = coroutineContext::ensureActive
+            val files = scanPublicFilesFromFileSystem(checkCancellation)
 
             val groups =
                 buildDuplicateFileGroups(
                     files = files,
-                    contentHash = { item ->
-                        FileContentDigest
-                            .hashFile(
-                                File(item.path),
-                                maxBytes = MAX_HASH_FILE_SIZE_BYTES,
-                                checkCancellation = coroutineContext::ensureActive,
-                            )
-                    },
+                    prefixHash = { file -> hashPrefix(file, checkCancellation) },
+                    contentHash = { file -> hashContent(file, checkCancellation) },
                 )
 
             groups
@@ -60,6 +55,7 @@ internal class DuplicateFileScanner : JunkScanner {
 
     internal fun buildDuplicateFileGroups(
         files: List<ScannedFile>,
+        prefixHash: (ScannedFile) -> String?,
         contentHash: (ScannedFile) -> String?,
     ): List<DuplicateFileRule.Group<ScannedFile>> =
         DuplicateFileRule.group(
@@ -73,8 +69,19 @@ internal class DuplicateFileScanner : JunkScanner {
                         modifiedMillis = file.modifiedMillis,
                     )
                 },
+            prefixHash = prefixHash,
             contentHash = contentHash,
         )
+
+    private fun hashPrefix(
+        file: ScannedFile,
+        checkCancellation: () -> Unit,
+    ): String? = FileContentDigest.hashFilePrefix(File(file.path), checkCancellation)?.hash
+
+    private fun hashContent(
+        file: ScannedFile,
+        checkCancellation: () -> Unit,
+    ): String? = FileContentDigest.hashFile(File(file.path), MAX_HASH_FILE_SIZE_BYTES, checkCancellation)
 
     private fun scanPublicFilesFromFileSystem(checkCancellation: () -> Unit): List<ScannedFile> {
         val root = externalStorageDirectoryOrNull() ?: return emptyList()

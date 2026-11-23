@@ -22,8 +22,12 @@ class DuplicateFileSafetyTest {
                 DuplicateFileScanner.ScannedFile(path, "same.pdf", 10L, index.toLong())
             }
         val scanner = DuplicateFileScanner()
-        assertEquals(files.reversed(), scanner.buildDuplicateFileGroups(files) { null }.single().files)
-        val groups = scanner.buildDuplicateFileGroups(files) { if (it.path == "c") null else "hash" }
+        assertEquals(
+            files.reversed(),
+            scanner.buildDuplicateFileGroups(files, prefixHash = { "prefix" }, contentHash = { null }).single().files,
+        )
+        val groups =
+            scanner.buildDuplicateFileGroups(files, prefixHash = { "prefix" }) { if (it.path == "c") null else "hash" }
         assertEquals(listOf(files[1], files[0]), groups.single { it.hash != null }.files)
         assertEquals(listOf(files[1], files[2]), groups.single { it.hash == null }.files)
     }

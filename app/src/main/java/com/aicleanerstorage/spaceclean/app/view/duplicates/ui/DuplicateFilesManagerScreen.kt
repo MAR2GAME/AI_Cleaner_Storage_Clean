@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.duplicates.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,7 +21,7 @@ fun DuplicateFilesManagerScreen(
     onAction: (DuplicateFilesAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val groupListScrollState = remember { ScrollState(0) }
+    val groupListState = rememberLazyListState()
     val groupDetailScrollStates = remember { mutableMapOf<Int, ScrollState>() }
 
     fun scrollStateForGroup(groupId: Int): ScrollState = groupDetailScrollStates.getOrPut(groupId) { ScrollState(0) }
@@ -43,7 +44,7 @@ fun DuplicateFilesManagerScreen(
     ) {
         DuplicateFilesManagerContent(
             uiState = state,
-            groupListScrollState = groupListScrollState,
+            groupListState = groupListState,
             scrollStateForGroup = ::scrollStateForGroup,
             onToggleAll = { onAction(DuplicateFilesAction.SelectAllClicked) },
             onOpenGroup = { onAction(DuplicateFilesAction.GroupClicked(it)) },

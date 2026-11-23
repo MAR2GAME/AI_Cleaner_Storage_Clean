@@ -1,10 +1,11 @@
-﻿package com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part
+package com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,7 +25,7 @@ import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 @Composable
 internal fun DuplicateFilesManagerContent(
     uiState: DuplicateFilesManagerUiState,
-    groupListScrollState: ScrollState,
+    groupListState: LazyListState,
     scrollStateForGroup: (Int) -> ScrollState,
     onToggleAll: () -> Unit,
     onOpenGroup: (DuplicateGroupItem) -> Unit,
@@ -63,7 +64,7 @@ internal fun DuplicateFilesManagerContent(
                         selectedFileKeys = uiState.selectedFileKeys,
                         allSelected = uiState.allSelected,
                         showWarning = uiState.showWarning,
-                        scrollState = groupListScrollState,
+                        listState = groupListState,
                         onToggleAll = onToggleAll,
                         onOpenGroup = onOpenGroup,
                         onToggleGroupSelection = onToggleGroupSelection,

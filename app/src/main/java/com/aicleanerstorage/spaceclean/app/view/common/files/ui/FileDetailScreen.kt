@@ -20,11 +20,12 @@ fun FileDetailScreen(
 ) {
     if (state.totalCount == 0) return
 
-    BackHandler { onAction(FilePageAction.BackClicked) }
+    // 详情页的返回只关闭详情：BackClicked 表示“离开整个文件流程”，在这里会直接跳首页。
+    BackHandler { onAction(FilePageAction.DetailBackClicked) }
 
     FileManagerScaffold(
         title = fileDetailTitle(state.selectedCount, state.totalCount),
-        onBack = { onAction(FilePageAction.BackClicked) },
+        onBack = { onAction(FilePageAction.DetailBackClicked) },
         actions = {
             FileManagerTopAction(
                 actionText = stringResource(R.string.file_delete_count, state.selectedCount),

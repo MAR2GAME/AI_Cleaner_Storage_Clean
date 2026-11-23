@@ -23,14 +23,21 @@ internal class FileOperations<T>(
         activeJob = null
     }
 
+    /**
+     * 加载列表并保证扫描动画至少展示 [delayMillis]。
+     *
+     * 扫描耗时超过 [delayMillis] 时不再额外等待，避免“扫描完还要空转”造成体感卡顿。
+     */
     fun scan(
         delayMillis: Long,
         onStart: () -> Unit,
         onLoaded: (T) -> Unit,
         onFailure: (Exception) -> Unit,
     ) = start(onStart, onFailure) {
+        val startedAtNanos = System.nanoTime()
         val items = withContext(ioDispatcher) { load() }
-        delay(delayMillis)
+        val elapsedMillis = (System.nanoTime() - startedAtNanos) / 1_000_000L
+        delay((delayMillis - elapsedMillis).coerceAtLeast(0L))
         currentCoroutineContext().ensureActive()
         onLoaded(items)
     }

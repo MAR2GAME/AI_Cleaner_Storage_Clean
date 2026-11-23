@@ -53,13 +53,20 @@ internal class DefaultJunkCleanRepository(
     private val duplicateFileScanner = DuplicateFileScanner()
     private val memoryCleaner = MemoryCleaner
 
+    /**
+     * 扫描顺序：重复文件排在最前。
+     *
+     * 重复文件会决定哪些“原件”不能被清理（见 [JunkScanRule.normalize]）。先跑完
+     * 重复文件，后续扫描器发现的同路径原件会被立即过滤，扫描过程中的累计大小
+     * 只会增加；否则最后一步才发现原件，界面会出现“扫到 24MB 又跳回 20MB”。
+     */
     private val scanners =
         listOf(
+            duplicateFileScanner,
             cacheScanner,
             tempFileScanner,
             PublicJunkScanner(context),
             apkScanner,
-            duplicateFileScanner,
         )
 
     private var lastScanFiles: List<JunkFileModel> = emptyList()

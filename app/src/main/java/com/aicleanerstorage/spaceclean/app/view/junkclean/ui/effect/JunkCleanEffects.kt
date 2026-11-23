@@ -14,13 +14,13 @@ import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 @Composable
 fun JunkCleanEffects(
     viewModel: JunkCleanViewModel,
-    onExit: (JunkCleanEvent.Exit) -> Unit,
+    onExit: () -> Unit,
 ) {
     val latestOnExit by rememberUpdatedState(onExit)
 
     CollectEffects(viewModel) { effect ->
         when (effect) {
-            is JunkCleanEvent.Exit -> latestOnExit(effect)
+            JunkCleanEvent.Exit -> latestOnExit()
         }
     }
 }

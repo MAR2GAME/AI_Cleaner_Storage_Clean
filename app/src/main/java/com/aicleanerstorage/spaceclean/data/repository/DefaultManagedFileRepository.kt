@@ -5,6 +5,7 @@ import android.provider.MediaStore
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.requireGranted
 import com.aicleanerstorage.spaceclean.data.catching
+import com.aicleanerstorage.spaceclean.data.local.files.DuplicateFileHasher
 import com.aicleanerstorage.spaceclean.data.local.files.FileContentHasher
 import com.aicleanerstorage.spaceclean.data.local.files.FileDeletionDataSource
 import com.aicleanerstorage.spaceclean.data.local.files.FileLocationMetadata
@@ -92,10 +93,18 @@ internal class DefaultManagedFileRepository(
 
     override suspend fun loadDuplicateGroups(): List<DuplicateFileGroupModel> =
         withContext(Dispatchers.IO) {
-            val files = discoverFiles(context).filter { it.kind != FileKind.Image }
-            DuplicateFileSelectionRule.buildGroups(files) { item ->
-                FileContentHasher.hash(context, item, coroutineContext)
-            }
+            val files = discoverFiles(context, excludeImages = true)
+            val hasher =
+                DuplicateFileHasher(
+                    readPrefix = { item -> FileContentHasher.hashPrefix(context, item, coroutineContext) },
+                    readContent = { item -> FileContentHasher.hash(context, item, coroutineContext) },
+                )
+            hasher.prefetchPrefixes(files)
+            DuplicateFileSelectionRule.buildGroups(
+                files = files,
+                prefixHash = hasher::prefixHash,
+                contentHash = hasher::contentHash,
+            )
         }
 
     override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
@@ -145,24 +154,33 @@ internal class DefaultManagedFileRepository(
 
     private fun fileIdentity(item: ManagedFileModel): String = FileClassificationRule.identity(item.path, item.uri)
 
-    private suspend fun discoverFiles(context: Context): List<ManagedFileModel> {
+    private suspend fun discoverFiles(
+        context: Context,
+        excludeImages: Boolean = false,
+    ): List<ManagedFileModel> {
         val coroutineContext = currentCoroutineContext()
         return (
-            queryFiles(context) +
-                discoverPublicFilesFromFileSystemIfAllowed(coroutineContext::ensureActive)
+            queryFiles(context, excludeImages) +
+                discoverPublicFilesFromFileSystemIfAllowed(coroutineContext::ensureActive, excludeImages)
         ).distinctBy(::fileIdentity).also { if (it.isEmpty()) AppPermission.StorageFiles.requireGranted(context) }
     }
 
-    private fun discoverPublicFilesFromFileSystemIfAllowed(checkCancellation: () -> Unit): List<ManagedFileModel> =
-        if (AppPermission.StorageFiles.isGranted(context)) {
-            runCatching { DirectoryFileScanner.scanPublicFiles(checkCancellation) }.getOrElse {
-                if (it is SecurityException) throw it
-                checkCancellation()
-                emptyList()
-            }
-        } else {
+    private fun discoverPublicFilesFromFileSystemIfAllowed(
+        checkCancellation: () -> Unit,
+        excludeImages: Boolean = false,
+    ): List<ManagedFileModel> {
+        if (!AppPermission.StorageFiles.isGranted(context)) return emptyList()
+        return runCatching {
+            DirectoryFileScanner.scanPublicFiles(
+                checkCancellation = checkCancellation,
+                accept = { file -> !excludeImages || FileClassificationRule.typeForName(file.name) != FileKind.Image },
+            )
+        }.getOrElse {
+            if (it is SecurityException) throw it
+            checkCancellation()
             emptyList()
         }
+    }
 
     private fun discoverDocumentFilesFromFileSystemIfAllowed(checkCancellation: () -> Unit): List<ManagedFileModel> =
         if (AppPermission.StorageFiles.isGranted(context)) {
@@ -175,6 +193,13 @@ internal class DefaultManagedFileRepository(
             emptyList()
         }
 
-    private suspend fun queryFiles(context: Context): List<ManagedFileModel> =
-        MediaStoreFileQuery.queryFiles(context.contentResolver, currentCoroutineContext())
+    private suspend fun queryFiles(
+        context: Context,
+        excludeImages: Boolean = false,
+    ): List<ManagedFileModel> =
+        MediaStoreFileQuery.queryFiles(
+            context.contentResolver,
+            currentCoroutineContext(),
+            excludeImages = excludeImages,
+        )
 }

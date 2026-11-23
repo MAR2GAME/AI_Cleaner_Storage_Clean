@@ -14,8 +14,8 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermis
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
-import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkExitTarget
 import com.aicleanerstorage.spaceclean.app.view.junkclean.ui.effect.JunkCleanEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
 import kotlinx.coroutines.ensureActive
@@ -23,10 +23,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun JunkCleanRoute(
+    navigator: AppNavigator,
     viewModel: JunkCleanViewModel,
-    onNavigateBack: () -> Unit,
-    onNavigateHome: () -> Unit,
-    onNavigateHomeAfterComplete: () -> Unit = onNavigateHome,
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -63,14 +61,7 @@ fun JunkCleanRoute(
 
     JunkCleanEffects(
         viewModel = viewModel,
-        onExit = { effect ->
-            exitOnce {
-                when (effect.target) {
-                    JunkExitTarget.Back -> onNavigateBack()
-                    JunkExitTarget.HomeAfterComplete -> onNavigateHomeAfterComplete()
-                }
-            }
-        },
+        onExit = { exitOnce { navigator.back() } },
     )
 
     JunkCleanScreen(

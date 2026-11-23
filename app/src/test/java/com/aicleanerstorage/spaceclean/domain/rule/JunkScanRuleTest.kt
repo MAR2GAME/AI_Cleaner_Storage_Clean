@@ -27,6 +27,34 @@ class JunkScanRuleTest {
         assertEquals(listOf(duplicate), JunkScanRule.normalize(listOf(retained, duplicate)))
     }
 
+    @Test
+    fun `retained original collected after duplicates is filtered without shrinking the total`() {
+        val copy =
+            file("copy", "/tmp/copy", JunkCategory.DUPLICATE)
+                .copy(duplicate = JunkDuplicateMetadataModel(hash = "same", originalPath = "/tmp/original"))
+        val retained = file("original", "/tmp/original", JunkCategory.APK).copy(sizeBytes = 20L)
+
+        val afterDuplicates = JunkScanRule.normalize(listOf(copy))
+        val afterOtherScanners = JunkScanRule.normalize(listOf(copy, retained))
+
+        assertEquals(afterDuplicates.sumOf { it.sizeBytes }, afterOtherScanners.sumOf { it.sizeBytes })
+        assertEquals(listOf(copy), afterOtherScanners)
+    }
+
+    @Test
+    fun `retained original counted before duplicates shrinks the running total`() {
+        val retained = file("original", "/tmp/original", JunkCategory.APK).copy(sizeBytes = 20L)
+        val copy =
+            file("copy", "/tmp/copy", JunkCategory.DUPLICATE)
+                .copy(duplicate = JunkDuplicateMetadataModel(hash = "same", originalPath = "/tmp/original"))
+
+        val beforeDuplicates = JunkScanRule.normalize(listOf(retained))
+        val afterDuplicates = JunkScanRule.normalize(listOf(retained, copy))
+
+        assertEquals(20L, beforeDuplicates.sumOf { it.sizeBytes })
+        assertEquals(10L, afterDuplicates.sumOf { it.sizeBytes })
+    }
+
     private fun file(
         id: String,
         path: String,

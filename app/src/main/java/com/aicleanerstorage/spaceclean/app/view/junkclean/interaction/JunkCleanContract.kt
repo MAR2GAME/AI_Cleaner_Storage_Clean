@@ -179,13 +179,7 @@ internal data class JunkStopDialogShown(
 
 internal data object JunkStopDialogDismissed : JunkCleanUpdate
 
-enum class JunkExitTarget {
-    Back,
-    HomeAfterComplete,
-}
-
 sealed interface JunkCleanEvent {
-    data class Exit(
-        val target: JunkExitTarget = JunkExitTarget.Back,
-    ) : JunkCleanEvent
+    /** 页面该关闭了；回退还是清栈由宿主决定，ViewModel 不描述导航策略。 */
+    data object Exit : JunkCleanEvent
 }

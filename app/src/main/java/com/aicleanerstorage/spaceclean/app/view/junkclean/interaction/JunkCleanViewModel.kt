@@ -51,7 +51,7 @@ class JunkCleanViewModel(
             is JunkCleanAction.PermissionResultReceived -> handlePermissionResult(intent)
             JunkCleanAction.ContinueClicked -> {
                 if (currentState.phase == JunkCleanPhase.Complete) {
-                    requestExit(JunkExitTarget.HomeAfterComplete)
+                    requestExit()
                 }
             }
             JunkCleanAction.StopConfirmed -> {
@@ -73,7 +73,7 @@ class JunkCleanViewModel(
         permissionPrevious = null
         if (!action.granted) {
             update(JunkPermissionDenied(action.request))
-            requestExit(JunkExitTarget.HomeAfterComplete)
+            requestExit()
             return
         }
         if (previous == null) return
@@ -92,18 +92,16 @@ class JunkCleanViewModel(
         if (currentState.showStopDialog) return
         when (currentState.phase) {
             JunkCleanPhase.Scanning, JunkCleanPhase.Cleaning -> requestStopDialog()
-            JunkCleanPhase.CompleteAnimation, JunkCleanPhase.Complete ->
-                requestExit(JunkExitTarget.HomeAfterComplete)
             else -> requestExit()
         }
     }
 
-    private fun requestExit(target: JunkExitTarget = JunkExitTarget.Back) {
+    private fun requestExit() {
         if (exitEffectSent) return
         exitEffectSent = true
         scanJob?.cancel()
         cleaningJob?.cancel()
-        sendEvent(JunkCleanEvent.Exit(target))
+        sendEvent(JunkCleanEvent.Exit)
     }
 
     private fun reduce(action: JunkCleanAction) {

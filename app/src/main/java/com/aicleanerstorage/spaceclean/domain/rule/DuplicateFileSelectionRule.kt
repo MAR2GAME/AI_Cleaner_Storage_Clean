@@ -15,16 +15,29 @@ internal object DuplicateFileSelectionRule {
      * 构造重复文件组。
      *
      * @param files 待分组文件。
+     * @param prefixHash 头部哈希函数；返回 null 表示读不到，交给全量哈希复核。
      * @param contentHash 内容哈希函数；返回 null 表示读取失败或文件过大。
      * @return 重复文件组；hash 只保存在组上。
      */
     fun buildGroups(
         files: List<ManagedFileModel>,
+        prefixHash: (ManagedFileModel) -> String?,
         contentHash: (ManagedFileModel) -> String?,
     ): List<DuplicateFileGroupModel> =
-        DuplicateFileRule.group(files.map(::candidate), contentHash).map { group ->
+        DuplicateFileRule.group(files.map(::candidate), prefixHash, contentHash).map { group ->
             DuplicateFileGroupModel(hash = group.hash, files = group.files)
         }
+
+    /**
+     * 可能重复的文件。
+     *
+     * data 层用它并行预读头部哈希；与 [buildGroups] 共用同一份筛选口径。
+     *
+     * @param files 本次扫描的文件全集。
+     * @return 大小相同且身份唯一的文件；没有同尺寸组合时为空列表。
+     */
+    fun possibleDuplicateFiles(files: List<ManagedFileModel>): List<ManagedFileModel> =
+        DuplicateFileRule.possibleDuplicates(files.map(::candidate)).map { it.value }
 
     /**
      * 判断某个重复文件是否可以删除。

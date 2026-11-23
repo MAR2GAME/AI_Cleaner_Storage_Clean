@@ -1,7 +1,6 @@
 package com.aicleanerstorage.spaceclean.app.view.duplicates.ui.part
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,8 +17,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -56,102 +57,115 @@ internal fun DuplicateFileGroupList(
     selectedFileKeys: Set<String>,
     allSelected: Boolean,
     showWarning: Boolean,
-    scrollState: ScrollState,
+    listState: LazyListState,
     onToggleAll: () -> Unit,
     onOpenGroup: (DuplicateGroupItem) -> Unit,
     onToggleGroupSelection: (DuplicateGroupItem) -> Unit,
     onAcceptWarning: () -> Unit,
 ) {
     val duplicateFileCount = remember(groups) { groups.sumOf { it.files.size } }
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(bottom = FileManagerListBottomPadding),
+    val rows = remember(groups) { groups.chunked(2) }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = FileManagerListBottomPadding),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (showWarning) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.White,
-                shape = RoundedCornerShape(12.dp),
-            ) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(R.string.file_duplicate_warning),
-                        color = FileManagerTextColor,
-                        fontSize = 18.sp,
-                        lineHeight = 24.sp,
+        item(key = "duplicates-header") {
+            Column {
+                if (showWarning) {
+                    DuplicateWarningCard(onAcceptWarning)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+                DuplicateSummaryCard(
+                    duplicateFileCount = duplicateFileCount,
+                    allSelected = allSelected,
+                    onToggleAll = onToggleAll,
+                )
+            }
+        }
+        items(items = rows, key = { row -> row.first().id }) { rowGroups ->
+            Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                rowGroups.forEach { group ->
+                    DuplicateGroupCard(
+                        group = group,
+                        selected = group.files.any { duplicateFileKey(it) in selectedFileKeys },
+                        onOpen = { onOpenGroup(group) },
+                        onToggleSelection = { onToggleGroupSelection(group) },
                         modifier = Modifier.weight(1f),
                     )
-                    Button(
-                        onClick = {
-                            onAcceptWarning()
-                        },
-                        modifier =
-                            Modifier
-                                .width(72.dp)
-                                .height(35.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = FileManagerPrimaryGreen),
-                        contentPadding = PaddingValues(horizontal = 8.dp),
-                    ) {
-                        Text(stringResource(R.string.file_got_it), fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                    }
+                }
+                repeat(2 - rowGroups.size) {
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+}
 
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.White,
-            shape = RoundedCornerShape(12.dp),
+@Composable
+private fun DuplicateWarningCard(onAccept: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Text(
+                text = stringResource(R.string.file_duplicate_warning),
+                color = FileManagerTextColor,
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                modifier = Modifier.weight(1f),
+            )
+            Button(
+                onClick = onAccept,
+                modifier =
+                    Modifier
+                        .width(72.dp)
+                        .height(35.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = FileManagerPrimaryGreen),
+                contentPadding = PaddingValues(horizontal = 8.dp),
             ) {
-                Text(duplicateFileCount.toString(), color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(stringResource(R.string.nav_duplicate_files), color = FileManagerMutedNavy, fontSize = 16.sp)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    stringResource(if (allSelected) R.string.file_unselect_all else R.string.file_select_all),
-                    color = FileManagerPrimaryGreen,
-                    fontSize = 16.sp,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                SelectionCircle(selected = allSelected, modifier = Modifier.clickable { onToggleAll() })
+                Text(stringResource(R.string.file_got_it), fontSize = 16.sp, fontWeight = FontWeight.Medium)
             }
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            groups.chunked(2).forEach { rowGroups ->
-                Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                    rowGroups.forEach { group ->
-                        DuplicateGroupCard(
-                            group = group,
-                            selected = group.files.any { duplicateFileKey(it) in selectedFileKeys },
-                            onOpen = { onOpenGroup(group) },
-                            onToggleSelection = { onToggleGroupSelection(group) },
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
-                    repeat(2 - rowGroups.size) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
-                }
-            }
+@Composable
+private fun DuplicateSummaryCard(
+    duplicateFileCount: Int,
+    allSelected: Boolean,
+    onToggleAll: () -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(duplicateFileCount.toString(), color = FileManagerNavy, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(stringResource(R.string.nav_duplicate_files), color = FileManagerMutedNavy, fontSize = 16.sp)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                stringResource(if (allSelected) R.string.file_unselect_all else R.string.file_select_all),
+                color = FileManagerPrimaryGreen,
+                fontSize = 16.sp,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            SelectionCircle(selected = allSelected, modifier = Modifier.clickable { onToggleAll() })
         }
     }
 }

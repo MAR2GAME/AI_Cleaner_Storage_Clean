@@ -188,7 +188,7 @@ private fun FilePageDetailRoute(
     dispatch: (FilePageAction) -> Unit,
 ) {
     LaunchedEffect(uiState.totalCount) {
-        if (uiState.totalCount == 0) dispatch(FilePageAction.BackClicked)
+        if (uiState.totalCount == 0) dispatch(FilePageAction.DetailBackClicked)
     }
     FileDetailScreen(
         state = uiState,
@@ -221,7 +221,7 @@ private fun FileDetailRoute(
         state = uiState,
         onAction = { action ->
             when (action) {
-                FilePageAction.BackClicked -> dispatch(SimilarPhotosAction.DetailBackClicked)
+                FilePageAction.DetailBackClicked -> dispatch(SimilarPhotosAction.DetailBackClicked)
                 FilePageAction.DeleteClicked -> dispatch(SimilarPhotosAction.DeleteClicked)
                 is FilePageAction.SelectionToggled -> dispatch(SimilarPhotosAction.SelectionToggled(action.id))
                 else -> Unit

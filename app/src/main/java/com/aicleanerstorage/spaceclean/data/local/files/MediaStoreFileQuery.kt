@@ -1,4 +1,4 @@
-﻿package com.aicleanerstorage.spaceclean.data.local.files
+package com.aicleanerstorage.spaceclean.data.local.files
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -72,11 +72,13 @@ internal object MediaStoreFileQuery {
     fun queryFiles(
         resolver: ContentResolver,
         coroutineContext: CoroutineContext,
+        excludeImages: Boolean = false,
     ): List<ManagedFileModel> {
         val collection = MediaStore.Files.getContentUri("external")
+        val selection = if (excludeImages) NON_IMAGE_SELECTION else null
         return runCatching {
             resolver
-                .query(collection, FILE_PROJECTION, null, null, "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC")
+                .query(collection, FILE_PROJECTION, selection, null, "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC")
                 ?.use { cursor -> readFileRows(cursor, collection, coroutineContext) }
                 ?: throw java.io.IOException("MediaStore returned no cursor")
         }.getOrElse {
@@ -161,6 +163,11 @@ internal object MediaStoreFileQuery {
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
         )
+
+    /** 重复文件扫描只关心非图片，直接在查询侧排除，避免把整张图片表读成模型。 */
+    private val NON_IMAGE_SELECTION =
+        "(${MediaStore.Files.FileColumns.MEDIA_TYPE} IS NULL" +
+            " OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} != ${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE})"
 
     private fun Cursor.stringOrNull(index: Int): String? = if (index >= 0 && !isNull(index)) getString(index) else null
 
