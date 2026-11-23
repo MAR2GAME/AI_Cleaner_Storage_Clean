@@ -44,7 +44,7 @@ fun mapDuplicateGroups(groups: List<DuplicateFileGroupModel>): List<DuplicateGro
                             path = file.path ?: file.name,
                             date = formatManagedFileDate(file.modifiedSeconds),
                             sizeLabel = FormatUtil.formatSize(file.sizeBytes),
-                            selected = index > 0,
+                            selected = group.hash != null && index > 0,
                             note = if (index == 0) "Removal not recommended" else null,
                             realFile = file,
                         )

@@ -479,4 +479,6 @@
     <string name="settings_post_notifications">Notifikasi</string>
     <string name="settings_media_location_permission">Lokasi Foto</string>
     <string name="permission_media_location_desc">Untuk menemukan foto yang berisi data lokasi, izinkan akses lokasi foto.</string>
+    <string name="duplicates_skipped">%1$d file dilewati. File mungkin telah berubah, atau salinannya tidak dapat diverifikasi atau dihapus.</string>
+    <string name="duplicates_pending_verification">Perlu verifikasi · %1$s</string>
 </resources>

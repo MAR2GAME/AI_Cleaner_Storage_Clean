@@ -154,6 +154,51 @@ class VideosManagerDeletionTest {
             assertEquals(FileOperationPhase.Browsing, viewModel.state.value.phase)
         }
 
+    @Test
+    fun allFilesAlreadyAbsentCompleteWithZeroFreedBytes() =
+        runTest {
+            val fallback = FakeFileRepository(DeleteStatus.Failed)
+            val repository =
+                object : ManagedFileRepository by fallback {
+                    override suspend fun delete(files: List<ManagedFileModel>) =
+                        Result.success(FileDeleteSummaryModel(0, 0L, alreadyAbsentCount = files.size))
+                }
+            val model = viewModel(repository)
+            model.dispatch(FilePageAction.RefreshRequested)
+            advanceUntilIdle()
+            model.dispatch(FilePageAction.SelectionToggled(1))
+            model.dispatch(FilePageAction.DeleteConfirmed)
+            advanceUntilIdle()
+
+            assertEquals(FileOperationPhase.Result, model.state.value.phase)
+            assertEquals(0L, model.state.value.deletedBytes)
+        }
+
+    @Test
+    fun cancelledAuthorizationRefreshesListAndPreservesConfirmedBytes() =
+        runTest {
+            val fallback = FakeFileRepository(DeleteStatus.Failed)
+            val repository =
+                object : ManagedFileRepository by fallback {
+                    override suspend fun delete(files: List<ManagedFileModel>) =
+                        Result.success(FileDeleteSummaryModel(1, 100L, skippedCount = 1, isAuthorizationCancelled = true))
+                }
+            val model = viewModel(repository)
+            model.dispatch(FilePageAction.RefreshRequested)
+            advanceUntilIdle()
+            model.dispatch(FilePageAction.SelectionToggled(1))
+            model.dispatch(FilePageAction.DeleteConfirmed)
+            advanceUntilIdle()
+
+            assertEquals(FileOperationPhase.Browsing, model.state.value.phase)
+            assertEquals(100L, model.state.value.deletedBytes)
+            assertTrue(
+                model.state.value.selectedIds
+                    .isEmpty(),
+            )
+            assertEquals(R.string.cleanup_stopped_summary, (model.state.value.error as UiText.Res).id)
+        }
+
     private fun viewModel(repository: ManagedFileRepository): VideosManagerViewModel =
         VideosManagerViewModel(
             repository = repository,

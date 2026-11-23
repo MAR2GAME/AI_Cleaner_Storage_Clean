@@ -16,8 +16,11 @@ internal object JunkScanRule {
      * @param files 各扫描器产出的原始文件。
      * @return 重复文件在前、同一路径唯一的列表。
      */
-    fun normalize(files: List<JunkFileModel>): List<JunkFileModel> =
-        files
+    fun normalize(files: List<JunkFileModel>): List<JunkFileModel> {
+        val retainedPaths = files.mapNotNull { it.duplicate?.originalPath }.toSet()
+        return files
+            .filterNot { it.path in retainedPaths }
             .sortedBy { if (it.category == JunkCategory.DUPLICATE) 0 else 1 }
             .distinctBy { it.path }
+    }
 }

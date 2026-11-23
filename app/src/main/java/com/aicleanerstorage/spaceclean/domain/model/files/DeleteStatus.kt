@@ -9,6 +9,7 @@ package com.aicleanerstorage.spaceclean.domain.model.files
 enum class DeleteStatus {
     Deleted,
     AuthorizationRequired,
+    AuthorizationCancelled,
     AlreadyAbsent,
     Changed,
     Unknown,

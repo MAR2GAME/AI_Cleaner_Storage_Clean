@@ -17,7 +17,9 @@ internal data class FileDeleteResult(
 ) {
     val deletedCount: Int = outcomes.count { it.status == DeleteStatus.Deleted }
 
-    val skippedCount: Int get() = outcomes.size - deletedCount
+    val alreadyAbsentCount: Int = outcomes.count { it.status == DeleteStatus.AlreadyAbsent }
+
+    val skippedCount: Int get() = outcomes.size - deletedCount - alreadyAbsentCount
 
     val freedBytes: Long = outcomes.sumOf { if (it.status == DeleteStatus.Deleted) it.item.sizeBytes else 0L }
 }
@@ -27,4 +29,6 @@ internal fun FileDeleteResult.toSummary(): FileDeleteSummaryModel =
         deletedCount = deletedCount,
         freedBytes = freedBytes,
         skippedCount = skippedCount,
+        alreadyAbsentCount = alreadyAbsentCount,
+        isAuthorizationCancelled = outcomes.any { it.status == DeleteStatus.AuthorizationCancelled },
     )

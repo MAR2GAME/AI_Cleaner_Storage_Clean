@@ -84,7 +84,7 @@ class DuplicateFilesWarningStateTest {
                 advanceUntilIdle()
 
                 assertEquals(valid + file(4), submitted)
-                assertEquals(FileOperationPhase.Result, model.state.value.phase)
+                assertEquals(FileOperationPhase.Browsing, model.state.value.phase)
                 assertEquals(1, model.state.value.skippedDeleteCount)
                 assertEquals(10L, model.state.value.deletedBytes)
             } finally {

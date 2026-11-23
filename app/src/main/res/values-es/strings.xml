@@ -490,4 +490,6 @@
     <string name="settings_post_notifications">Notificaciones</string>
     <string name="settings_media_location_permission">Ubicación de fotos</string>
     <string name="permission_media_location_desc">Para encontrar fotos con datos de ubicación, concede acceso a la ubicación de las fotos.</string>
+    <string name="duplicates_skipped">Se omitieron %1$d archivos. Es posible que hayan cambiado o que no se haya podido verificar o eliminar una copia.</string>
+    <string name="duplicates_pending_verification">Pendiente de verificación · %1$s</string>
 </resources>

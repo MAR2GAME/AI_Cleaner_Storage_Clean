@@ -22,7 +22,7 @@ data class DuplicateFilesManagerUiState(
         get() = groups.firstOrNull { it.id == selectedGroupId }
 
     val allDeleteFileKeys: Set<String>
-        get() = groups.flatMap { group -> group.files.drop(1).map(::duplicateFileKey) }.toSet()
+        get() = groups.filter { it.group.hash != null }.flatMap { group -> group.files.drop(1).map(::duplicateFileKey) }.toSet()
 
     val activeDeleteFileKeys: Set<String>
         get() = pendingDeleteFileKeys ?: selectedFileKeys
@@ -36,7 +36,8 @@ data class DuplicateFilesManagerUiState(
     val selectedGroupFileKeys: Set<String>
         get() {
             val group = selectedGroup ?: return emptySet()
-            val groupKeys = group.files.map(::duplicateFileKey).toSet()
+            val files = if (group.group.hash == null) group.files.drop(1) else group.files
+            val groupKeys = files.map(::duplicateFileKey).toSet()
             return selectedFileKeys.intersect(groupKeys)
         }
 
@@ -47,7 +48,8 @@ data class DuplicateFilesManagerUiState(
 
     private fun filesMatchingKeys(keys: Set<String>): List<DuplicateFileSelectionModel> =
         groups.flatMap { group ->
-            group.files
+            val files = if (group.group.hash == null) group.files.drop(1) else group.files
+            files
                 .filter { duplicateFileKey(it) in keys }
                 .mapNotNull { entry ->
                     entry.realFile?.let { DuplicateFileSelectionModel(it, group.group) }

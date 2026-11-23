@@ -21,17 +21,10 @@ internal object DuplicateFileSelectionRule {
     fun buildGroups(
         files: List<ManagedFileModel>,
         contentHash: (ManagedFileModel) -> String?,
-    ): List<DuplicateFileGroupModel> {
-        val hashes = mutableMapOf<String, String?>()
-        return DuplicateFileRule
-            .group(
-                candidates = files.map(::candidate),
-                contentHash = { item -> contentHash(item).also { hashes[fileIdentity(item)] = it } },
-            ).mapNotNull { group ->
-                val hash = hashes.getValue(fileIdentity(group.first())) ?: return@mapNotNull null
-                DuplicateFileGroupModel(hash = hash, files = group)
-            }
-    }
+    ): List<DuplicateFileGroupModel> =
+        DuplicateFileRule.group(files.map(::candidate), contentHash).map { group ->
+            DuplicateFileGroupModel(hash = group.hash, files = group.files)
+        }
 
     /**
      * 判断某个重复文件是否可以删除。

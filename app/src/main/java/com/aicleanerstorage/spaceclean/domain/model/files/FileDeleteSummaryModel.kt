@@ -10,4 +10,10 @@ data class FileDeleteSummaryModel(
     val deletedCount: Int,
     val freedBytes: Long,
     val skippedCount: Int = 0,
-)
+    val alreadyAbsentCount: Int = 0,
+    val isAuthorizationCancelled: Boolean = false,
+) {
+    val isComplete: Boolean get() = processedCount > 0 && skippedCount == 0 && !isAuthorizationCancelled
+
+    val processedCount: Int get() = deletedCount + alreadyAbsentCount
+}

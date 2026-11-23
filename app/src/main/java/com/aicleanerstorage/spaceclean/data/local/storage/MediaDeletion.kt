@@ -56,8 +56,12 @@ internal suspend fun authorizePendingMedia(
         if (ready.isEmpty()) continue
         val sender = createMediaDeleteSender(resolver, ready)
         if (shouldStop()) break
-        if (sender == null || !authorize(sender)) {
+        if (sender == null) {
             ready.forEach { results[it.uri] = DeleteStatus.Failed }
+            continue
+        }
+        if (!authorize(sender)) {
+            items.forEach { results.putIfAbsent(it.uri, DeleteStatus.AuthorizationCancelled) }
             break
         }
         for (item in ready) {

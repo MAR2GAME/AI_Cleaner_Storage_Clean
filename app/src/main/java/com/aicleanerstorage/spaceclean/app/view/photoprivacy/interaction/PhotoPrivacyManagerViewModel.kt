@@ -153,15 +153,14 @@ class PhotoPrivacyManagerViewModel(
             onStart = { setState { it.copy(phase = FileOperationPhase.Deleting) } },
             operationDelayMillis = removeDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = { repository.removeLocationData(selectedFiles) },
-            isSuccessful = { (it.getOrNull() ?: 0) > 0 },
-            onCompleteAnimation = { outcome, loaded ->
+            operation = { repository.removeLocationData(selectedFiles).getOrThrow().also { check(it > 0) } },
+            onReloaded = { outcome, loaded ->
                 setState {
                     it.copy(
                         phase = FileOperationPhase.CompleteAnimation,
                         items = loaded.items,
                         selectedIds = emptySet(),
-                        removedLocationCount = outcome.getOrNull() ?: 0,
+                        removedLocationCount = outcome,
                     )
                 }
             },

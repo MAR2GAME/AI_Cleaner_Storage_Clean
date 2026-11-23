@@ -17,7 +17,7 @@ internal fun inspectFile(
 ): DeleteStatus? =
     try {
         val attributes = Files.readAttributes(file.toPath(), BasicFileAttributes::class.java, LinkOption.NOFOLLOW_LINKS)
-        val millis = attributes.lastModifiedTime().toMillis()
+        val millis = file.lastModified()
         if (!attributes.isRegularFile ||
             file.canonicalFile != file.absoluteFile ||
             attributes.size() != bytes ||

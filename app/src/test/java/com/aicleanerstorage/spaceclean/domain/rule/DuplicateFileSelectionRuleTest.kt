@@ -64,6 +64,17 @@ class DuplicateFileSelectionRuleTest {
         )
     }
 
+    @Test
+    fun pendingFileRequiresReadableMatchingUnselectedCopy() {
+        val files = listOf(file(1), file(2))
+        val group = DuplicateFileSelectionRule.buildGroups(files) { null }.single()
+        val selection = DuplicateFileSelectionModel(files[1], group)
+        val selected = setOf(files[1].uri)
+        assertFalse(DuplicateFileSelectionRule.canDelete(selection, selected) { null })
+        assertFalse(DuplicateFileSelectionRule.canDelete(selection, selected) { it.uri })
+        assertTrue(DuplicateFileSelectionRule.canDelete(selection, selected) { "same" })
+    }
+
     private fun file(id: Long) =
         ManagedFileModel(
             id = id,

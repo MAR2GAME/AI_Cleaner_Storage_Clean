@@ -21,6 +21,8 @@ internal abstract class FileSystemJunkScanner : JunkScanner {
         nowMillis: Long,
     ): JunkCategory? = JunkClassificationRule.categoryOf(candidate, nowMillis)
 
+    protected open fun accepts(result: JunkCategory): Boolean = result == category
+
     override suspend fun scan(): List<JunkFileModel> =
         withContext(Dispatchers.IO) {
             val nowMillis = System.currentTimeMillis()
@@ -44,14 +46,15 @@ internal abstract class FileSystemJunkScanner : JunkScanner {
                                     modifiedMillis = file.lastModified(),
                                     source = sourceOf(file),
                                 )
-                            if (classify(candidate, nowMillis) != category) return@forEach
+                            val result = classify(candidate, nowMillis) ?: return@forEach
+                            if (!accepts(result)) return@forEach
                             add(
                                 JunkFileModel(
                                     id = candidate.path,
                                     path = candidate.path,
                                     name = candidate.name,
                                     sizeBytes = candidate.sizeBytes,
-                                    category = category,
+                                    category = result,
                                     modifiedMillis = candidate.modifiedMillis,
                                 ),
                             )

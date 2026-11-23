@@ -37,11 +37,11 @@ class DuplicateFileRuleTest {
 
         val groups = DuplicateFileRule.group(candidates) { value -> if (value == "different") "other" else "match" }
 
-        assertEquals(listOf(listOf("new", "old")), groups)
+        assertEquals(listOf(DuplicateFileRule.Group("match", listOf("new", "old"))), groups)
     }
 
     @Test
-    fun `does not group same name and size when hashing fails`() {
+    fun `marks same name and size as pending when hashing fails`() {
         val candidates =
             listOf(
                 candidate("a", name = "Report.pdf", size = 10),
@@ -50,28 +50,30 @@ class DuplicateFileRuleTest {
 
         val groups = DuplicateFileRule.group(candidates) { null }
 
-        assertTrue(groups.isEmpty())
+        assertEquals(DuplicateFileRule.Group(null, listOf("a", "b")), groups.single())
     }
 
     @Test
     fun `hash failure does not combine successfully hashed different contents`() {
         val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
         val groups = DuplicateFileRule.group(candidates) { if (it == "unreadable") null else it }
-        assertTrue(groups.isEmpty())
+        assertTrue(groups.single().hash == null)
+        assertEquals(listOf("a", "unreadable"), groups.single().files)
     }
 
     @Test
-    fun `hash failure preserves only verified duplicate group`() {
+    fun `verified group stays separate from pending candidates`() {
         val candidates = listOf("a", "b", "unreadable").map { candidate(it, name = "same.pdf", size = 10) }
         val groups = DuplicateFileRule.group(candidates) { if (it == "unreadable") null else "same" }
-        assertEquals(listOf(listOf("a", "b")), groups)
+        assertEquals(listOf("a", "b"), groups.single { it.hash != null }.files)
+        assertEquals(listOf("a", "unreadable"), groups.single { it.hash == null }.files)
     }
 
     @Test
     fun `a file cannot be its own retained copy`() {
         assertFalse(DuplicateFileRule.hasVerifiedCopy("a", listOf("a"), "hash", { it }, { "hash" }))
         assertFalse(DuplicateFileRule.hasVerifiedCopy("a", emptyList(), "hash", { it }, { "hash" }))
-        assertFalse(DuplicateFileRule.hasVerifiedCopy("a", listOf("b"), null, { it }, { "hash" }))
+        assertTrue(DuplicateFileRule.hasVerifiedCopy("a", listOf("b"), null, { it }, { "hash" }))
     }
 
     private fun candidate(

@@ -17,6 +17,7 @@ import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkOperat
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXBackground
 import com.aicleanerstorage.spaceclean.base.designsystem.component.animations.CleanXDeleteCompleteStage
 import com.aicleanerstorage.spaceclean.base.mvi.asString
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkCategory
 
 @Composable
@@ -50,12 +51,13 @@ internal fun JunkCleanContent(
             JunkScanResultContent(
                 stoppedSummary =
                     uiState.stoppedSummary?.let {
-                        stringResource(
-                            com.aicleanerstorage.spaceclean.R.string.cleanup_stopped_summary,
-                            it.cleanedCount,
-                            com.aicleanerstorage.spaceclean.base.util.FormatUtil
-                                .formatSize(it.freedSpace),
-                        )
+                        val summary =
+                            stringResource(
+                                R.string.cleanup_stopped_summary,
+                                it.cleanedCount,
+                                FormatUtil.formatSize(it.freedSpace),
+                            )
+                        if (it.failedCount == 0) summary else summary + "\n" + stringResource(R.string.duplicates_skipped, it.failedCount)
                     },
                 groups = uiState.groups,
                 checkedEmptyCategories = uiState.checkedEmptyCategories,

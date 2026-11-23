@@ -135,6 +135,8 @@ class DuplicateFilesManagerViewModel(
     }
 
     private fun toggleFile(file: DuplicateFileEntry) {
+        val group = currentState.selectedGroup ?: return
+        if (group.group.hash == null && file == group.files.firstOrNull()) return
         val key = duplicateFileKey(file)
         setState {
             it.copy(selectedFileKeys = toggleId(it.selectedFileKeys, key))
@@ -143,6 +145,7 @@ class DuplicateFilesManagerViewModel(
 
     private fun autoSelectCurrentGroup() {
         val group = currentState.selectedGroup ?: return
+        if (group.group.hash == null) return
         val groupKeys = group.files.map(::duplicateFileKey).toSet()
         val deletableGroupKeys =
             group.files
@@ -215,21 +218,18 @@ class DuplicateFilesManagerViewModel(
             onStart = { setState { it.copy(phase = FileOperationPhase.Deleting, selectedGroupId = null) } },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = { repository.deleteDuplicates(selections) },
-            isSuccessful = { result ->
-                val summary = result.getOrNull()
-                setState { it.copy(skippedDeleteCount = summary?.skippedCount ?: 0) }
-                result.isSuccess && (summary?.deletedCount ?: 0) > 0
-            },
-            onCompleteAnimation = { outcome, loaded ->
+            operation = { repository.deleteDuplicates(selections).getOrThrow() },
+            shouldShowResult = { it.isComplete },
+            onReloaded = { outcome, loaded ->
                 setState {
                     it.copy(
-                        phase = FileOperationPhase.CompleteAnimation,
+                        phase = if (outcome.isComplete) FileOperationPhase.CompleteAnimation else loaded.phase,
+                        skippedDeleteCount = outcome.skippedCount,
                         groups = loaded.groups,
                         selectedGroupId = null,
                         selectedFileKeys = emptySet(),
                         pendingDeleteFileKeys = null,
-                        deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
+                        deletedBytes = outcome.freedBytes,
                     )
                 }
             },

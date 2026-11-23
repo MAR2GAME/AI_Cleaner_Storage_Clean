@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.junkclean.interaction
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.domain.error.JunkError
+import com.aicleanerstorage.spaceclean.domain.model.files.DeleteStatus
 import com.aicleanerstorage.spaceclean.domain.model.junk.CleanupSummaryModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
@@ -196,19 +197,12 @@ class JunkCleanViewModel(
                     val cleaningStartedAt = System.currentTimeMillis()
                     val execution = executeCleaning(files) ?: return@launch
                     update(JunkExecutionUpdated(execution))
-                    if (stopCleaning.get()) {
-                        publishStoppedPreview(
-                            execution.directCleanedFiles,
-                            execution.directFreedSpace,
-                        )
+                    if (stopCleaning.get() || execution.directFailedFiles.isNotEmpty()) {
+                        publishStoppedPreview(execution)
                         return@launch
                     }
                     delayRemainingCleaningAnimation(cleaningStartedAt)
-                    finishCleaning(
-                        extraCleanedFiles = emptyList(),
-                        extraFailedFiles = emptyList(),
-                        extraFreedSpace = 0L,
-                    )
+                    finishCleaning(execution)
                 } catch (error: CancellationException) {
                     throw error
                 } catch (error: Exception) {
@@ -225,19 +219,19 @@ class JunkCleanViewModel(
                 return null
             }
         currentCoroutineContext().ensureActive()
-        val deleted = outcomes.filter { it.deleted }
-        val failed = outcomes.filter { !it.deleted }
+        val (processed, failed) = outcomes.partition { it.processed }
+        if (failed.any { it.status == DeleteStatus.AuthorizationCancelled }) stopCleaning.set(true)
         val memoryResult =
-            if (stopCleaning.get()) {
+            if (stopCleaning.get() || failed.isNotEmpty()) {
                 null
             } else {
                 withContext(ioDispatcher) { cleanRepository.cleanMemory() }.getOrNull()
             }
         currentCoroutineContext().ensureActive()
         return JunkCleanExecution(
-            directCleanedFiles = deleted.map { it.file },
-            directFailedFiles = failed.map { it.file },
-            directFreedSpace = deleted.sumOf { it.freedBytes },
+            directCleanedFiles = processed.map { it.file },
+            directFailedFiles = failed.filter { it.status != DeleteStatus.AuthorizationCancelled }.map { it.file },
+            directFreedSpace = processed.sumOf { it.freedBytes },
             memoryResult = memoryResult,
         )
     }
@@ -250,18 +244,30 @@ class JunkCleanViewModel(
         update(JunkActiveOperationCancelled)
     }
 
-    private fun publishStoppedPreview(
-        deleted: List<JunkFileModel>,
-        bytes: Long,
-    ) {
-        val files = currentState.session.lastScan ?: return
+    private suspend fun publishStoppedPreview(execution: JunkCleanExecution) {
+        val previous = currentState.session.lastScan ?: return
+        val processed = execution.directCleanedFiles.toSet()
+        val remaining = previous.files.filterNot { it in processed }
+        val remainingPaths = remaining.map { it.path }.toSet()
+        val refreshed =
+            if (execution.directFailedFiles.isEmpty()) {
+                null
+            } else {
+                withContext(ioDispatcher) { cleanRepository.scan { }.getOrNull() }
+            }
+        val files = previous.copy(files = refreshed?.files?.filter { it.path in remainingPaths } ?: remaining)
         val selected =
             currentState.groups
                 .flatMap { it.items }
                 .filter { it.isChecked }
                 .map { it.file }
                 .toSet()
-        val summary = CleanupSummaryModel(freedSpace = bytes, cleanedCount = deleted.size)
+        val summary =
+            CleanupSummaryModel(
+                freedSpace = execution.directFreedSpace,
+                cleanedCount = processed.size,
+                failedCount = execution.directFailedFiles.size,
+            )
         update(JunkCleaningStopped(files, selected, summary))
     }
 
@@ -292,26 +298,18 @@ class JunkCleanViewModel(
         update(JunkPreviewLoaded(scanResult))
     }
 
-    private suspend fun finishCleaning(
-        extraCleanedFiles: List<JunkFileModel>,
-        extraFailedFiles: List<JunkFileModel>,
-        extraFreedSpace: Long,
-    ) {
+    private suspend fun finishCleaning(execution: JunkCleanExecution) {
         currentCoroutineContext().ensureActive()
-        val execution = currentState.session.execution
-        val cleanedFiles = execution.directCleanedFiles + extraCleanedFiles
+        val cleanedFiles = execution.directCleanedFiles.toSet()
         if (stopCleaning.get()) {
-            publishStoppedPreview(cleanedFiles, execution.directFreedSpace + extraFreedSpace)
+            publishStoppedPreview(execution)
             return
         }
-        val failedFiles = execution.directFailedFiles + extraFailedFiles
-        val freedSpace = execution.directFreedSpace + extraFreedSpace
         val memoryResult = execution.memoryResult
         val summary =
             CleanupSummaryModel(
-                freedSpace = freedSpace,
+                freedSpace = execution.directFreedSpace,
                 cleanedCount = cleanedFiles.size,
-                failedCount = failedFiles.size,
                 memoryFreedBytes = memoryResult?.freedBytes ?: 0L,
             )
 

@@ -176,7 +176,7 @@ internal fun DuplicateGroupCard(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = group.name,
+            text = if (group.group.hash == null) stringResource(R.string.duplicates_pending_verification, group.name) else group.name,
             color = FileManagerTextColor,
             fontSize = 18.sp,
             lineHeight = 22.sp,

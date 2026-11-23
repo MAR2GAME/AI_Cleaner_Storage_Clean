@@ -478,4 +478,6 @@
     <string name="settings_post_notifications">Thông báo</string>
     <string name="settings_media_location_permission">Vị trí ảnh</string>
     <string name="permission_media_location_desc">Để tìm ảnh có dữ liệu vị trí, vui lòng cấp quyền truy cập vị trí ảnh.</string>
+    <string name="duplicates_skipped">Đã bỏ qua %1$d tệp. Tệp có thể đã thay đổi hoặc không thể xác minh hay xóa bản sao.</string>
+    <string name="duplicates_pending_verification">Cần xác minh · %1$s</string>
 </resources>

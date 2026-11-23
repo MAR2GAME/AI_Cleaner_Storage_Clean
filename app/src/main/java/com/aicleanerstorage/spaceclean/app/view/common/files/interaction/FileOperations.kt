@@ -42,8 +42,8 @@ internal class FileOperations<T>(
         operationDelayMillis: Long,
         completeDelayMillis: Long,
         operation: suspend () -> R,
-        isSuccessful: (R) -> Boolean,
-        onCompleteAnimation: (R, T) -> Unit,
+        shouldShowResult: (R) -> Boolean = { true },
+        onReloaded: (R, T) -> Unit,
         onResult: () -> Unit,
         onFailure: (Exception) -> Unit,
     ) {
@@ -55,11 +55,12 @@ internal class FileOperations<T>(
         start(onStart, onFailure) {
             val result = withContext(ioDispatcher) { operation() }
             currentCoroutineContext().ensureActive()
-            check(isSuccessful(result)) { "Deletion failed" }
-            delay(operationDelayMillis)
+            val showResult = shouldShowResult(result)
+            if (showResult) delay(operationDelayMillis)
             val items = withContext(ioDispatcher) { load() }
             currentCoroutineContext().ensureActive()
-            onCompleteAnimation(result, items)
+            onReloaded(result, items)
+            if (!showResult) return@start
             delay(completeDelayMillis)
             onResult()
         }

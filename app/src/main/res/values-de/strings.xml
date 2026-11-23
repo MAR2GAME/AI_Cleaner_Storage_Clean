@@ -478,4 +478,6 @@
     <string name="settings_post_notifications">Benachrichtigungen</string>
     <string name="settings_media_location_permission">Fotostandort</string>
     <string name="permission_media_location_desc">Um Fotos mit Standortdaten zu finden, erlauben Sie bitte den Zugriff auf den Fotostandort.</string>
+    <string name="duplicates_skipped">%1$d Dateien übersprungen. Die Dateien wurden möglicherweise geändert oder eine Kopie konnte nicht geprüft oder gelöscht werden.</string>
+    <string name="duplicates_pending_verification">Prüfung ausstehend · %1$s</string>
 </resources>

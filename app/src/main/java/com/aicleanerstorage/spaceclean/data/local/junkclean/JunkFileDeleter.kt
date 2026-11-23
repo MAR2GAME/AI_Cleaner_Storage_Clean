@@ -94,10 +94,12 @@ internal object JunkFileDeleter {
         ) {
             return false
         }
+        val file = File(junkFile.path)
+        if (junkFile.duplicate.hash == null && !file.name.equals(original.name, ignoreCase = true)) return false
         return DuplicateFileRule.hasVerifiedCopy(
-            candidate = File(junkFile.path),
+            candidate = file,
             retainedCandidates = listOf(original),
-            expectedHash = junkFile.duplicate?.hash,
+            expectedHash = junkFile.duplicate.hash,
             identity = { it.canonicalPath },
             contentHash = { FileContentDigest.hashFile(it, checkCancellation = checkCancellation) },
         )

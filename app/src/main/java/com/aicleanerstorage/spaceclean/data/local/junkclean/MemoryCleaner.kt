@@ -2,25 +2,22 @@ package com.aicleanerstorage.spaceclean.data.local.junkclean
 
 import android.app.ActivityManager
 import android.content.Context
+import android.os.Build
+import android.os.Process
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
-import kotlinx.coroutines.delay
 
 internal object MemoryCleaner {
-    /**
-     * Samples the change in system-wide available memory; this does not measure disk space.
-     */
-    suspend fun clean(context: Context): JunkMemoryCleanModel {
-        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
-        val beforeMem = ActivityManager.MemoryInfo().also { activityManager.getMemoryInfo(it) }
-        val beforeAvail = beforeMem.availMem
-
-        delay(300L)
-
-        val afterMem = ActivityManager.MemoryInfo().also { activityManager.getMemoryInfo(it) }
-        val afterAvail = afterMem.availMem
-        val freed = (afterAvail - beforeAvail).coerceAtLeast(0)
-
-        return JunkMemoryCleanModel(freed)
+    fun clean(context: Context): JunkMemoryCleanModel {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val manager = context.getSystemService(ActivityManager::class.java)
+            manager.runningAppProcesses
+                .orEmpty()
+                .filter { it.pid != Process.myPid() && it.importance >= ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED }
+                .flatMap { it.pkgList.orEmpty().toList() }
+                .distinct()
+                .filter { it != context.packageName }
+                .forEach(manager::killBackgroundProcesses)
+        }
+        return JunkMemoryCleanModel(freedBytes = 0L)
     }
 }

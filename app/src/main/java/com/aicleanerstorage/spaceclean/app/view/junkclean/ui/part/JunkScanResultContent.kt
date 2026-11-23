@@ -340,7 +340,12 @@ private fun JunkItemCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = item.name.ifBlank { stringResource(R.string.unnamed_file) },
+            text =
+                if (item.file.duplicate?.let { it.hash == null } == true) {
+                    stringResource(R.string.duplicates_pending_verification, item.name)
+                } else {
+                    item.name.ifBlank { stringResource(R.string.unnamed_file) }
+                },
             color = Color(0xA62D3748),
             fontSize = 14.sp,
             lineHeight = 16.sp,
@@ -398,45 +403,12 @@ private fun displayGroups(groups: List<CategoryCleanGroup>): List<ResultDisplayR
         return ResultDisplayRow(titleRes = titleRes, group = group, categories = listOf(category))
     }
 
-    val residualGroup =
-        mergeDisplayGroup(
-            category = JunkCategory.RESIDUAL,
-            groups = groups,
-            categories = listOf(JunkCategory.RESIDUAL, JunkCategory.DUPLICATE),
-        )
-    val otherGroup =
-        mergeDisplayGroup(
-            category = JunkCategory.LARGE_FILE,
-            groups = groups,
-            categories = listOf(JunkCategory.LARGE_FILE),
-        )
-
     return listOf(
         row(R.string.junk_group_system_cache, JunkCategory.CACHE),
-        row(R.string.junk_group_ad_junk_files, JunkCategory.TEMP_FILE),
-        ResultDisplayRow(
-            R.string.junk_group_residual_junks,
-            residualGroup,
-            listOf(JunkCategory.RESIDUAL, JunkCategory.DUPLICATE),
-        ),
+        row(R.string.category_temp, JunkCategory.TEMP_FILE),
+        row(R.string.junk_group_residual_junks, JunkCategory.RESIDUAL),
+        row(R.string.nav_duplicate_files, JunkCategory.DUPLICATE),
         row(R.string.junk_group_obsolete_apks, JunkCategory.APK),
-        ResultDisplayRow(
-            R.string.junk_group_other_junk_files,
-            otherGroup,
-            listOf(JunkCategory.LARGE_FILE),
-        ),
+        row(R.string.junk_group_other_junk_files, JunkCategory.LARGE_FILE),
     )
 }
-
-private fun mergeDisplayGroup(
-    category: JunkCategory,
-    groups: List<CategoryCleanGroup>,
-    categories: List<JunkCategory>,
-): CategoryCleanGroup =
-    CategoryCleanGroup(
-        category = category,
-        items =
-            categories.flatMap { displayCategory ->
-                groups.firstOrNull { it.category == displayCategory }?.items.orEmpty()
-            },
-    )

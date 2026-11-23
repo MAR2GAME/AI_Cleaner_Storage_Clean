@@ -561,4 +561,6 @@
     <string name="settings_post_notifications">通知</string>
     <string name="settings_media_location_permission">照片位置</string>
     <string name="permission_media_location_desc">为了找出包含位置信息的照片，请授予照片位置权限。</string>
+    <string name="duplicates_skipped">已跳过 %1$d 个文件。文件可能已变化，或无法核验或删除副本。</string>
+    <string name="duplicates_pending_verification">待核验 · %1$s</string>
 </resources>

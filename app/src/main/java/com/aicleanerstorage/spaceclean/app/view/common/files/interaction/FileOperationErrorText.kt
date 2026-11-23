@@ -4,6 +4,8 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.permission.descriptionRes
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequiredException
+import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
 
 /**
  * 把文件操作错误统一映射成 UiText。
@@ -32,4 +34,13 @@ internal fun Throwable.toFileOperationError(fallback: FileOperationError): FileO
         FileOperationError.PermissionRequired(permission)
     } else {
         fallback
+    }
+
+internal fun FileDeleteSummaryModel.retryMessage(): UiText? =
+    when {
+        isComplete -> null
+        isAuthorizationCancelled ->
+            UiText.Res(R.string.cleanup_stopped_summary, listOf(deletedCount, FormatUtil.formatSize(freedBytes)))
+        processedCount == 0 -> FileOperationError.DeletionFailed.toUiText()
+        else -> UiText.Res(R.string.clean_result_files_failed, listOf(skippedCount))
     }

@@ -9,13 +9,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsAction
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsEvent
 import com.aicleanerstorage.spaceclean.app.view.permissions.interaction.ManagePermissionsViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
+import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
 
 @Composable
 fun ManagePermissionsRoute(
@@ -34,7 +34,7 @@ fun ManagePermissionsRoute(
         viewModel.dispatch(ManagePermissionsAction.StatusesChanged(statuses))
     }
 
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionGate = rememberPermissionGate()
 
     DisposableEffect(lifecycleOwner, viewModel) {
         val observer =
@@ -53,7 +53,7 @@ fun ManagePermissionsRoute(
         when (effect) {
             ManagePermissionsEvent.NavigateBack -> navigator.back()
             is ManagePermissionsEvent.OpenPermissionSettings ->
-                permissionPrompt.request(effect.permission) { refreshStatuses() }
+                permissionGate.openSettings(effect.permission)
         }
     }
 

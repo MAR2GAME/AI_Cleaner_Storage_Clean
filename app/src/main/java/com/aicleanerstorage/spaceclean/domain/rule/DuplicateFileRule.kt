@@ -27,40 +27,42 @@ internal object DuplicateFileRule {
         val modifiedMillis: Long,
     )
 
-    /**
-     * 按大小和内容哈希分组。
-     *
-     * 只对大小相同且大于 0 的文件做哈希；哈希为空的文件不参与分组。
-     *
-     * @param candidates 待分组文件。
-     * @param contentHash 内容哈希函数；返回 null 表示读取失败或文件过大。
-     * @return 重复文件组；每组按修改时间从新到旧排序，组间按可释放空间降序。
-     */
+    data class Group<T>(
+        val hash: String?,
+        val files: List<T>,
+    )
+
     fun <T> group(
         candidates: List<Candidate<T>>,
         contentHash: (T) -> String?,
-    ): List<List<T>> {
-        val uniqueFiles = candidates.filter { it.sizeBytes > 0L }.distinctBy { it.identity }
-        val hashGroups = mutableListOf<List<Candidate<T>>>()
-
-        uniqueFiles
+    ): List<Group<T>> =
+        candidates
+            .filter { it.sizeBytes > 0 }
+            .distinctBy { it.identity }
             .groupBy { it.sizeBytes }
             .values
             .filter { it.size > 1 }
-            .forEach { sameSizeFiles ->
-                val hashed = sameSizeFiles.map { file -> file to contentHash(file.value) }
-                hashed
-                    .filter { !it.second.isNullOrBlank() }
-                    .groupBy { it.second.orEmpty() }
-                    .values
-                    .map { group -> group.map { it.first } }
-                    .filter { it.size > 1 }
-                    .forEach { group -> hashGroups += group.sortedByDescending { it.modifiedMillis } }
-            }
+            .flatMap { groupSameSize(it.sortedByDescending { candidate -> candidate.modifiedMillis }, contentHash) }
+            .sortedByDescending { it.files.first().sizeBytes * (it.files.size - 1) }
+            .map { group -> Group(group.hash, group.files.map { it.value }) }
 
-        return hashGroups
-            .sortedByDescending { group -> group.drop(1).sumOf { it.sizeBytes } }
-            .map { group -> group.map { it.value } }
+    private fun <T> groupSameSize(
+        candidates: List<Candidate<T>>,
+        contentHash: (T) -> String?,
+    ): List<Group<Candidate<T>>> {
+        val hashes = candidates.associateWith { contentHash(it.value)?.takeIf(String::isNotBlank) }
+        val groups = mutableListOf<Group<Candidate<T>>>()
+        for ((hash, files) in candidates.groupBy(hashes::get)) {
+            if (hash != null && files.size > 1) groups += Group(hash, files)
+        }
+        for (names in candidates.groupBy { it.name.lowercase() }.values) {
+            val unreadable = names.filter { hashes[it] == null }
+            if (unreadable.isEmpty()) continue
+            val retained = names.firstOrNull { hashes[it] != null }
+            val possible = listOfNotNull(retained) + unreadable
+            if (possible.size > 1) groups += Group(null, possible)
+        }
+        return groups
     }
 
     /**
@@ -83,11 +85,11 @@ internal object DuplicateFileRule {
         identity: (T) -> String,
         contentHash: (T) -> String?,
     ): Boolean {
-        if (expectedHash.isNullOrBlank()) return false
+        val currentHash = contentHash(candidate)?.takeIf(String::isNotBlank) ?: return false
+        if (expectedHash != null && currentHash != expectedHash) return false
         val candidateId = identity(candidate)
-        if (contentHash(candidate) != expectedHash) return false
         return retainedCandidates.any { retained ->
-            identity(retained) != candidateId && contentHash(retained) == expectedHash
+            identity(retained) != candidateId && contentHash(retained) == currentHash
         }
     }
 }

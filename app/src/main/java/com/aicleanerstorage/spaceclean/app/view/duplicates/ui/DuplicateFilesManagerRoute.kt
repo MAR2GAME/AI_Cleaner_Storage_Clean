@@ -30,7 +30,7 @@ fun DuplicateFilesManagerRoute(
     val context = LocalContext.current
     val skippedMessage =
         if (uiState.skippedDeleteCount > 0) {
-            stringResource(R.string.clean_result_files_failed, uiState.skippedDeleteCount)
+            stringResource(R.string.duplicates_skipped, uiState.skippedDeleteCount)
         } else {
             null
         }

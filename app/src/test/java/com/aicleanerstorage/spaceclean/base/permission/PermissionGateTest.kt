@@ -76,9 +76,20 @@ class PermissionGateTest {
     fun `open settings forwards without requesting runtime permission`() {
         val gate = gate()
 
-        gate.openSettings(AppPermission.PostNotifications)
+        val permissions =
+            listOf(
+                AppPermission.StorageFiles,
+                AppPermission.MediaLocation,
+                AppPermission.UsageAccess,
+                AppPermission.Location,
+                AppPermission.NotificationListener,
+                AppPermission.PostNotifications,
+            )
+        permissions.forEach(gate::openSettings)
+        granted = true
+        permissions.forEach(gate::openSettings)
 
-        assertEquals(listOf(AppPermission.PostNotifications), openedSettings)
+        assertEquals(permissions + permissions, openedSettings)
         assertTrue(requested.isEmpty())
     }
 }

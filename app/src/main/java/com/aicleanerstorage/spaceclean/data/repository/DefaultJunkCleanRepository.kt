@@ -9,6 +9,7 @@ import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.ApkScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.CacheScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.DuplicateFileScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.JunkScanner
+import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.PublicJunkScanner
 import com.aicleanerstorage.spaceclean.data.local.junkclean.scanner.TempFileScanner
 import com.aicleanerstorage.spaceclean.data.local.storage.MediaDeletionAuthorization
 import com.aicleanerstorage.spaceclean.data.local.storage.PendingMediaDelete
@@ -56,6 +57,7 @@ internal class DefaultJunkCleanRepository(
         listOf(
             cacheScanner,
             tempFileScanner,
+            PublicJunkScanner(context),
             apkScanner,
             duplicateFileScanner,
         )
@@ -113,7 +115,7 @@ internal class DefaultJunkCleanRepository(
     override suspend fun cleanMemory(): Result<JunkMemoryCleanModel> =
         catching {
             withContext(Dispatchers.IO) {
-                JunkMemoryCleanModel(memoryCleaner.clean(context.applicationContext).freedBytes)
+                memoryCleaner.clean(context.applicationContext)
             }
         }
 

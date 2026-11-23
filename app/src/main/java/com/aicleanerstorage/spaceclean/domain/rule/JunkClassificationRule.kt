@@ -17,6 +17,11 @@ internal object JunkClassificationRule {
     private const val THIRTY_DAYS_MILLIS = 30L * 24 * 60 * 60 * 1000
 
     private val TEMP_EXTENSIONS = setOf("tmp", "temp", "log", "cache", "bak", "backup")
+    private val cacheDirectories =
+        setOf("cache", "code_cache", "adcache", "ads_cache", "ad_cache", "ads", "advertising", "ad_data", "ad_images", "ad_videos")
+    private val residualDirectories = setOf("trash", "trashes", ".trash", ".trashes", ".temp", ".tmp", "tmp", "temp")
+    private val residualSuffix = Regex("\\.(?:bak|backup|tmp|cache)[0-9]+$")
+
     private val APK_DUPLICATE_MARKERS = listOf("(1)", "(2)", "copy", "duplicate", "backup")
     private val APK_COPY_PATTERN = Regex(".*\\s\\(\\d+\\).*\\.apk$", RegexOption.IGNORE_CASE)
     private val APK_NUMBERED_PATTERN = Regex(".*_\\d+\\.apk$", RegexOption.IGNORE_CASE)
@@ -35,9 +40,25 @@ internal object JunkClassificationRule {
         if (candidate.source == JunkSource.AppCache) return JunkCategory.CACHE
         if (candidate.sizeBytes <= 0) return null
         val extension = candidate.name.substringAfterLast('.', "").lowercase(Locale.US)
+        publicJunkCategory(candidate)?.let { return it }
         return when {
             isJunkApk(candidate, extension, nowMillis) -> JunkCategory.APK
             isTempFile(candidate, extension) -> JunkCategory.TEMP_FILE
+            else -> null
+        }
+    }
+
+    fun publicJunkCategory(candidate: JunkCandidateModel): JunkCategory? {
+        val name = candidate.name.lowercase(Locale.ROOT)
+        val directories =
+            candidate.path
+                .substringBeforeLast('/')
+                .lowercase(Locale.ROOT)
+                .split('/')
+        return when {
+            directories.any(cacheDirectories::contains) || name.endsWith(".cache.db") -> JunkCategory.CACHE
+            candidate.sizeBytes < MIN_CANDIDATE_BYTES -> null
+            directories.any(residualDirectories::contains) || residualSuffix.containsMatchIn(name) -> JunkCategory.RESIDUAL
             else -> null
         }
     }

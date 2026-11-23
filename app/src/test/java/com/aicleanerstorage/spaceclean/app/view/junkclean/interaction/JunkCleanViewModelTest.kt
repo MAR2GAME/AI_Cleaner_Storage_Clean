@@ -153,6 +153,40 @@ class JunkCleanViewModelTest {
             gate.complete(Unit)
         }
 
+    @Test
+    fun cancelledAuthorizationKeepsOnlyUnprocessedFilesInPreview() =
+        runTest(dispatcher) {
+            val pending = cacheFile.copy(path = "/cache/pending", id = "pending")
+            val repository =
+                FakeCleanRepository(
+                    result = JunkScanResultModel(listOf(cacheFile, pending)),
+                    outcomes =
+                        listOf(
+                            JunkDeleteOutcomeModel(cacheFile, DeleteStatus.Deleted),
+                            JunkDeleteOutcomeModel(pending, DeleteStatus.AuthorizationCancelled),
+                        ),
+                )
+            val model = viewModel(repository)
+            model.dispatch(JunkCleanAction.Entered)
+            model.dispatch(JunkCleanAction.PermissionResultReceived(JunkOperation.Scan, granted = true))
+            advanceUntilIdle()
+            model.dispatch(JunkCleanAction.CleanClicked)
+            model.dispatch(JunkCleanAction.PermissionResultReceived(JunkOperation.Clean, granted = true))
+            advanceUntilIdle()
+
+            assertEquals(JunkCleanPhase.Preview, model.state.value.phase)
+            assertEquals(
+                listOf(pending),
+                model.state.value.session.lastScan
+                    ?.files,
+            )
+            assertEquals(
+                cacheFile.sizeBytes,
+                model.state.value.stoppedSummary
+                    ?.freedSpace,
+            )
+        }
+
     private fun viewModel(repository: JunkCleanRepository = FakeCleanRepository()): JunkCleanViewModel =
         JunkCleanViewModel(
             cleanRepository = repository,

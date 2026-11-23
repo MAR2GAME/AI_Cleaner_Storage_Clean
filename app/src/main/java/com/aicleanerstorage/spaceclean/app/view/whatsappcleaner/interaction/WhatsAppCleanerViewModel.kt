@@ -2,6 +2,7 @@
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.retryMessage
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
@@ -160,7 +161,17 @@ class WhatsAppCleanerViewModel(
     ) {
         try {
             val result = repository.delete(selectedFiles).getOrThrow()
-            if (result.deletedCount <= 0) error("WhatsApp clean unavailable")
+            if (!result.isComplete) {
+                val refreshed = buildScanResultState(repository.loadGroups())
+                setState {
+                    refreshed.copy(
+                        deletedBytes = result.freedBytes,
+                        deletedCount = result.deletedCount,
+                        error = result.retryMessage(),
+                    )
+                }
+                return
+            }
             delayRemainingCleaningAnimation(cleaningStartedAt)
             setState {
                 WhatsAppCleanerUiState(

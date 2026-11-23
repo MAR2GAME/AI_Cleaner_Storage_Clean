@@ -7,6 +7,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperations
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.openDetailIndex
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.retryMessage
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toFileOperationError
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toUiText
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.toggleId
@@ -165,11 +166,12 @@ class SimilarPhotosManagerViewModel(
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
             operation = { repository.delete(selectedFiles).getOrThrow() },
-            isSuccessful = { it.deletedCount > 0 },
-            onCompleteAnimation = { outcome, loaded ->
+            shouldShowResult = { it.isComplete },
+            onReloaded = { outcome, loaded ->
                 setState {
                     it.copy(
-                        phase = FileOperationPhase.CompleteAnimation,
+                        phase = if (outcome.isComplete) FileOperationPhase.CompleteAnimation else loaded.phase,
+                        error = outcome.retryMessage(),
                         groups = loaded.groups,
                         selectedIds = emptySet(),
                         deletedBytes = outcome.freedBytes,

@@ -41,6 +41,7 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.What
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXMutedText
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXSelectionCircle
 import com.aicleanerstorage.spaceclean.base.designsystem.component.CleanXText
+import com.aicleanerstorage.spaceclean.base.mvi.asString
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
 import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerCategory
 import com.aicleanerstorage.spaceclean.domain.model.whatsapp.WhatsAppCleanerGroup
@@ -70,6 +71,7 @@ internal fun WhatsAppScanResultContent(
         modifier = Modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        uiState.error?.let { Text(it.asString()) }
         uiState.groups.forEach { group ->
             GroupCard(
                 groupItem = group,

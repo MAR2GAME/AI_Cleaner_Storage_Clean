@@ -78,7 +78,7 @@ internal fun DuplicateFileGroupContent(
         Spacer(modifier = Modifier.height(6.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
-                group.name,
+                if (group.group.hash == null) stringResource(R.string.duplicates_pending_verification, group.name) else group.name,
                 color = FileManagerTextColor,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
@@ -87,11 +87,13 @@ internal fun DuplicateFileGroupContent(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.align(Alignment.TopCenter),
             )
-            DuplicateOutlineButton(
-                text = stringResource(R.string.file_auto_select),
-                onClick = onAutoSelect,
-                modifier = Modifier.align(Alignment.TopEnd),
-            )
+            if (group.group.hash != null) {
+                DuplicateOutlineButton(
+                    text = stringResource(R.string.file_auto_select),
+                    onClick = onAutoSelect,
+                    modifier = Modifier.align(Alignment.TopEnd),
+                )
+            }
         }
         Spacer(modifier = Modifier.height(34.dp))
 
@@ -125,7 +127,7 @@ internal fun DuplicateFileGroupContent(
                     DuplicateFileRow(
                         file = file,
                         selected = fileKey in selectedFileKeys,
-                        onToggleSelection = { onToggleFile(file) },
+                        onToggleSelection = if (group.group.hash == null && index == 0) null else ({ onToggleFile(file) }),
                     )
                     if (index != group.files.lastIndex) {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -159,7 +161,7 @@ private fun DuplicateDetailHero() {
 internal fun DuplicateFileRow(
     file: DuplicateFileEntry,
     selected: Boolean,
-    onToggleSelection: () -> Unit,
+    onToggleSelection: (() -> Unit)?,
 ) {
     Row(
         modifier =
@@ -193,10 +195,12 @@ internal fun DuplicateFileRow(
                 )
             }
         }
-        SelectionCircle(
-            selected = selected,
-            modifier = Modifier.clickable { onToggleSelection() },
-        )
+        if (onToggleSelection != null) {
+            SelectionCircle(
+                selected = selected,
+                modifier = Modifier.clickable(onClick = onToggleSelection),
+            )
+        }
     }
 }
 

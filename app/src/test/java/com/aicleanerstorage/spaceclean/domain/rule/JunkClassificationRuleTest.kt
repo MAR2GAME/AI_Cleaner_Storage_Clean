@@ -74,6 +74,16 @@ class JunkClassificationRuleTest {
         assertNull(JunkClassificationRule.categoryOf(candidate(path = "/storage/a.tmp", size = 1_023L), now))
     }
 
+    @Test
+    fun publicResiduesAndAdCachesExcludeOrdinaryDownloads() {
+        fun classify(path: String) = JunkClassificationRule.categoryOf(candidate(path, 2048L, now), now)
+        assertNull(classify("/storage/Download/合同.pdf"))
+        assertNull(classify("/storage/Download/adventure.jpg"))
+        assertEquals(JunkCategory.CACHE, classify("/storage/Download/adcache/image.bin"))
+        assertEquals(JunkCategory.RESIDUAL, classify("/storage/Documents/.trash/expired.bin"))
+        assertEquals(JunkCategory.RESIDUAL, classify("/storage/Documents/expired.bak2"))
+    }
+
     private fun candidate(
         path: String,
         size: Long,

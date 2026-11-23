@@ -478,4 +478,6 @@
     <string name="settings_post_notifications">การแจ้งเตือน</string>
     <string name="settings_media_location_permission">ตำแหน่งรูปภาพ</string>
     <string name="permission_media_location_desc">เพื่อค้นหารูปภาพที่มีข้อมูลตำแหน่ง โปรดอนุญาตการเข้าถึงตำแหน่งรูปภาพ</string>
+    <string name="duplicates_skipped">ข้าม %1$d ไฟล์ ไฟล์อาจมีการเปลี่ยนแปลง หรือไม่สามารถตรวจสอบหรือลบสำเนาได้</string>
+    <string name="duplicates_pending_verification">รอการตรวจสอบ · %1$s</string>
 </resources>

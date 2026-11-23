@@ -19,7 +19,6 @@ internal class DuplicateFileScanner : JunkScanner {
     override suspend fun scan(): List<JunkFileModel> =
         withContext(Dispatchers.IO) {
             val files = scanPublicFilesFromFileSystem(coroutineContext::ensureActive)
-            val hashes = mutableMapOf<String, String?>()
 
             val groups =
                 buildDuplicateFileGroups(
@@ -30,18 +29,18 @@ internal class DuplicateFileScanner : JunkScanner {
                                 File(item.path),
                                 maxBytes = MAX_HASH_FILE_SIZE_BYTES,
                                 checkCancellation = coroutineContext::ensureActive,
-                            ).also { hashes[item.path] = it }
+                            )
                     },
                 )
 
             groups
                 .flatMap { group ->
-                    val original = group.first()
-                    group.drop(1).map { file ->
+                    val original = group.files.first()
+                    group.files.drop(1).map { file ->
                         toJunkFile(file).copy(
                             duplicate =
                                 JunkDuplicateMetadataModel(
-                                    hash = hashes.getValue(file.path),
+                                    hash = group.hash,
                                     originalPath = original.path,
                                 ),
                         )
@@ -62,7 +61,7 @@ internal class DuplicateFileScanner : JunkScanner {
     internal fun buildDuplicateFileGroups(
         files: List<ScannedFile>,
         contentHash: (ScannedFile) -> String?,
-    ): List<List<ScannedFile>> =
+    ): List<DuplicateFileRule.Group<ScannedFile>> =
         DuplicateFileRule.group(
             candidates =
                 files.map { file ->

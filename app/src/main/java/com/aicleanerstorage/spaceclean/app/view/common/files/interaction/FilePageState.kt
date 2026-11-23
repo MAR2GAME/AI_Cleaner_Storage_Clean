@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.files.interaction
 
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.util.FormatUtil
+import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
 import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
 
 /**
@@ -20,6 +21,19 @@ data class FilePageState(
     val showStopDialog: Boolean = false,
     val blockedPhase: FileOperationPhase? = null,
 ) {
+    internal fun afterDelete(
+        outcome: FileDeleteSummaryModel,
+        refreshedItems: List<IndexedFileItem>,
+    ): FilePageState =
+        copy(
+            phase = if (outcome.isComplete) FileOperationPhase.CompleteAnimation else FileOperationPhase.Browsing,
+            items = refreshedItems,
+            selectedIds = emptySet(),
+            detailStartIndex = null,
+            deletedBytes = outcome.freedBytes,
+            error = outcome.retryMessage(),
+        )
+
     val selectedFiles: List<ManagedFileModel>
         get() = items.filter { it.id in selectedIds }.map { it.file }
 

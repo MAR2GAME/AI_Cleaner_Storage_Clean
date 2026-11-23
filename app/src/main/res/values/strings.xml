@@ -466,4 +466,6 @@
     <string name="settings_post_notifications">Notifications</string>
     <string name="settings_media_location_permission">Photo Location</string>
     <string name="permission_media_location_desc">To find photos that contain location data, please grant photo location access.</string>
+    <string name="duplicates_skipped">Skipped %1$d files. The files may have changed, or a matching copy could not be verified or removed.</string>
+    <string name="duplicates_pending_verification">Needs verification · %1$s</string>
 </resources>

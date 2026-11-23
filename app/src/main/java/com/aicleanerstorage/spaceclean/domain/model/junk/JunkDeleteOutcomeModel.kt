@@ -9,5 +9,7 @@ data class JunkDeleteOutcomeModel(
 ) {
     val deleted: Boolean get() = status == DeleteStatus.Deleted
 
+    val processed: Boolean get() = deleted || status == DeleteStatus.AlreadyAbsent
+
     val freedBytes: Long get() = if (deleted) file.sizeBytes else 0L
 }

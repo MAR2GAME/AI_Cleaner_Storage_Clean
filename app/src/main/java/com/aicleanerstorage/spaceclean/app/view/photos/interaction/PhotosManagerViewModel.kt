@@ -192,19 +192,12 @@ class PhotosManagerViewModel(
             },
             operationDelayMillis = deleteDelayMillis,
             completeDelayMillis = completeDelayMillis,
-            operation = { repository.delete(selectedFiles) },
-            isSuccessful = { (it.getOrNull()?.deletedCount ?: 0) > 0 },
-            onCompleteAnimation = { outcome, snapshot ->
+            operation = { repository.delete(selectedFiles).getOrThrow() },
+            shouldShowResult = { it.isComplete },
+            onReloaded = { outcome, snapshot ->
                 setState {
                     it.copy(
-                        page =
-                            it.page.copy(
-                                phase = FileOperationPhase.CompleteAnimation,
-                                items = snapshot.items,
-                                selectedIds = emptySet(),
-                                detailStartIndex = null,
-                                deletedBytes = outcome.getOrNull()?.freedBytes ?: 0L,
-                            ),
+                        page = it.page.afterDelete(outcome, snapshot.items),
                         tabs = buildPhotoTabs(snapshot.items),
                     )
                 }
