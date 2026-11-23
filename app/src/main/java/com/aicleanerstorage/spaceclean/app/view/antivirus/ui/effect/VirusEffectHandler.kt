@@ -16,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.openAppSetti
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.openDeveloperSettings
 import com.aicleanerstorage.spaceclean.app.view.antivirus.ui.effect.safeDelete
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.view.common.permission.virusDeepScanCopy
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -34,7 +35,7 @@ fun VirusEffectHandler(
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.virusDeepScanCopy() })
     CollectEffects(viewModel) { effect ->
         when (effect) {
             VirusScanEvent.NavigateBack -> currentNavigator.back()

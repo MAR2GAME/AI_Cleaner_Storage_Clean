@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.view.common.permission.whatsAppCopy
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
@@ -29,7 +30,7 @@ fun WhatsAppCleanerRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.whatsAppCopy() })
 
     fun gated(action: WhatsAppCleanerAction) {
         if (exiting) return

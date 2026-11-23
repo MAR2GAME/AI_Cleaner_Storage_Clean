@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.permission
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
+import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialogCopy
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
@@ -13,11 +14,13 @@ import com.aicleanerstorage.spaceclean.base.permission.rememberPermissionGate
  * 用法：`val prompt = rememberPermissionPrompt()`，然后在需要的地方
  * `prompt.request(permission) { result -> ... }`。
  *
+ * @param copy 按页面场景定制解释文案；null 时使用权限通用文案。
  * @param dialog 自定义解释弹窗；null 时使用通用 [PermissionDialog]。
  * @return 当前页面的权限提示控制器。
  */
 @Composable
 internal fun rememberPermissionPrompt(
+    copy: (@Composable (AppPermission) -> PermissionDialogCopy)? = null,
     dialog: (@Composable (AppPermission, () -> Unit, () -> Unit) -> Unit)? = null,
 ): PermissionPromptController {
     val gate = rememberPermissionGate()
@@ -29,7 +32,7 @@ internal fun rememberPermissionPrompt(
     controller.explaining?.let { permission ->
         if (dialog == null) {
             PermissionDialog(
-                copy = permission.dialogCopy(),
+                copy = copy?.invoke(permission) ?: permission.dialogCopy(),
                 onConfirm = controller::confirmExplanation,
                 onDismiss = controller::dismissExplanation,
             )

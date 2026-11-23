@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.junkCleanCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
@@ -31,7 +32,7 @@ fun JunkCleanRoute(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
 
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.junkCleanCopy() })
 
     LaunchedEffect(uiState.phase) {
         val checking = uiState.phase as? JunkCleanPhase.CheckingPermission ?: return@LaunchedEffect

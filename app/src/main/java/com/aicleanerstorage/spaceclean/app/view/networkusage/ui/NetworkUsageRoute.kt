@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.view.common.permission.networkUsageCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageAction
 import com.aicleanerstorage.spaceclean.app.view.networkusage.interaction.NetworkUsageEvent
@@ -35,7 +36,7 @@ fun NetworkUsageRoute(
     var exiting by remember { mutableStateOf(false) }
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val permissionPrompt = rememberPermissionPrompt()
+    val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.networkUsageCopy() })
     LaunchedEffect(uiState.permissionRequestPending) {
         if (uiState.permissionRequestPending) {
             viewModel.dispatch(NetworkUsageAction.PermissionRequestConsumed)
