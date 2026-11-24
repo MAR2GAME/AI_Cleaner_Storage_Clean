@@ -313,8 +313,8 @@ fun showThenContinue(
 | 开屏 | `openPageAdv` | Splash 完成通知权限、UMP 和最短展示时间后 | `OPEN` |
 | 返回前台 | `app_foreground_open` | 热启动通知点击，完成广告后再导航 | `OPEN` |
 | 首页底部 Banner | `openMainBottomAdv` | Home 底部 Banner 预留点位 | `BANNER`，暂时关闭 |
-| 新手引导完成 | `newGuideScanFinishAdv` | 扫描引导完成后进入 Home 前 | `INTER` |
-| 新手引导跳过 | `newGuideSkipAdv` | 用户跳过扫描引导后进入 Home 前 | `INTER` |
+| 新手引导扫描完成 | `newGuideScanFinishAdv` | 每轮扫描完成时请求，返回后停留在结果页 | `INTER` |
+| 新手引导继续 | `newGuideSkipAdv` | 点击「开始使用」时请求，返回后进入下一轮或首页 | `INTER` |
 | 清理完成 | `mainJunkCleanFinishAdv` | Junk 清理成功完成页 | `INTER` |
 | 文件管理完成 | `mainFileManageFinishAdv` | Photos、Videos、Audios、Large Files、Duplicates、Documents 等文件功能完成页 | `INTER` |
 | 通知清理完成 | `mainNotificationCleanFinishAdv` | Notification Cleaner 成功完成页 | `INTER` |
@@ -376,8 +376,8 @@ MainActivity 创建 Activity 级通知 Host
     -> 使用 AdActivity 展示 openPageAdv
     -> 广告页返回或启动失败
     -> 未完成两次新手引导时进入 OnboardingScan
-    -> 完成或跳过引导后分别使用 newGuideScanFinishAdv 或 newGuideSkipAdv
-    -> 广告页返回或启动失败后进入 Home
+    -> 扫描完成时请求 newGuideScanFinishAdv，回到结果页
+    -> 点击「开始使用」时请求 newGuideSkipAdv，继续到第二轮引导或 Home
 ```
 
 当前项目已有一个 `OnboardingScan` 页面和一个 `onboarding_scan_completed` 标记。参考项目实际使用两个“待完成”标记 `is_first_launch_1`、`is_second_launch_1`。要与参考项目的两次引导一致，需要把设置仓库扩展为两个标记：
@@ -389,7 +389,7 @@ fun markFirstOnboardingCompleted(): Result<Unit>
 fun markSecondOnboardingCompleted(): Result<Unit>
 ```
 
-建议将现有标记迁移为兼容读取，旧标记只用于判断历史用户是否已经完成，不覆盖两个新标记。第一次完成 Onboarding 写入 `is_first_launch_1=false`，第二次完成写入 `is_second_launch_1=false`。点击跳过使用 `newGuideSkipAdv`，正常扫描完成使用 `newGuideScanFinishAdv`。广告策略拒绝或启动失败也必须继续进入 Home。中途返回不消耗标记。Splash 根据两个标记决定进入下一次引导或 Home。现有单一 `isOnboardingScanCompleted()` 只能表达一次完成，不能满足“走 2 遍”。
+建议将现有标记迁移为兼容读取，旧标记只用于判断历史用户是否已经完成，不覆盖两个新标记。第一次完成 Onboarding 写入 `is_first_launch_1=false`，第二次完成写入 `is_second_launch_1=false`。结果页只有「开始使用」按钮，点击上报原事件 `click_continue_guidepage`。SDK 跳过展示或启动广告失败时也应执行该点位对应的后续动作。中途返回不消耗标记。Splash 根据两个标记决定进入下一次引导或 Home。现有单一 `isOnboardingScanCompleted()` 只能表达一次完成，不能满足“走 2 遍”。
 
 UMP 协调器使用同一个 `ConsentFlow` 串起信息更新和表单：
 

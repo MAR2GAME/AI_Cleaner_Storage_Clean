@@ -22,6 +22,7 @@ import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.Onboardin
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingEvent
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -31,7 +32,7 @@ fun OnboardingRoute(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var exiting by remember { mutableStateOf(false) }
+    var isAdPending by remember(viewModel) { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel) {
@@ -39,28 +40,23 @@ fun OnboardingRoute(
         viewModel.dispatch(OnboardingAction.Entered)
     }
     CollectEffects(viewModel) { effect ->
+        isAdPending = true
         when (effect) {
             OnboardingEvent.NotifyScanFinished -> Mar2Analytics.trackGuideScanResultEntered()
-            is OnboardingEvent.FinishOnboarding -> {
-                if (!exiting) {
-                    exiting = true
-                    Mar2Analytics.trackGuideContinueClicked()
-                    val activity = context.findActivity()
-                    val continueNavigation = { navigator.replace(effect.destination) }
-                    if (activity == null) {
-                        continueNavigation()
-                    } else {
-                        Mar2AdGateway.showInterstitial(
-                            activity = activity,
-                            areaKey = Mar2AdPlacementRegistry.NEW_GUIDE_SCAN_FINISH,
-                            fromRoute = "onboarding",
-                            toRoute = effect.destination.javaClass.simpleName,
-                            onContinue = continueNavigation,
-                        )
-                    }
-                }
-            }
+            is OnboardingEvent.FinishOnboarding -> Mar2Analytics.trackGuideContinueClicked()
         }
+        effect.requestOnboardingAd(
+            showAd = { areaKey, target, onContinue ->
+                val activity = context.findActivity()
+                if (activity == null) {
+                    onContinue()
+                } else {
+                    Mar2AdGateway.showInterstitial(activity, areaKey, "onboarding", target, onContinue)
+                }
+            },
+            onScanAdFinished = { isAdPending = false },
+            navigate = navigator::replace,
+        )
     }
 
     DisposableEffect(lifecycleOwner, viewModel) {
@@ -76,8 +72,21 @@ fun OnboardingRoute(
 
     OnboardingScanScreen(
         state = state,
-        onAction = { if (!exiting) viewModel.dispatch(it) },
+        onAction = { if (!isAdPending) viewModel.dispatch(it) },
     )
+}
+
+internal fun OnboardingEvent.requestOnboardingAd(
+    showAd: (areaKey: String, target: String, onContinue: () -> Unit) -> Unit,
+    onScanAdFinished: () -> Unit,
+    navigate: (AppDestination) -> Unit,
+) {
+    when (this) {
+        OnboardingEvent.NotifyScanFinished ->
+            showAd(Mar2AdPlacementRegistry.NEW_GUIDE_SCAN_FINISH, "onboarding", onScanAdFinished)
+        is OnboardingEvent.FinishOnboarding ->
+            showAd(Mar2AdPlacementRegistry.NEW_GUIDE_SKIP, destination.javaClass.simpleName) { navigate(destination) }
+    }
 }
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {
