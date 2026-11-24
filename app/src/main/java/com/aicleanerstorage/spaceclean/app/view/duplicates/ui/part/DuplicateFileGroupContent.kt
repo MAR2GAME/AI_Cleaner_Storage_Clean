@@ -76,22 +76,30 @@ internal fun DuplicateFileGroupContent(
         DuplicateDetailHero()
 
         Spacer(modifier = Modifier.height(6.dp))
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
-                if (group.group.hash == null) stringResource(R.string.duplicates_pending_verification, group.name) else group.name,
+                text =
+                    if (group.group.hash == null) {
+                        stringResource(R.string.duplicates_pending_verification, group.name)
+                    } else {
+                        group.name
+                    },
                 color = FileManagerTextColor,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier.weight(1f),
             )
             if (group.group.hash != null) {
+                Spacer(modifier = Modifier.width(8.dp))
                 DuplicateOutlineButton(
                     text = stringResource(R.string.file_auto_select),
                     onClick = onAutoSelect,
-                    modifier = Modifier.align(Alignment.TopEnd),
                 )
             }
         }
@@ -175,12 +183,21 @@ internal fun DuplicateFileRow(
             val pathPrefix = duplicateFilePathPrefix(file)
             val fileName = duplicateFileName(file)
             Text(
-                text = "Path:$pathPrefix\n$fileName",
+                text = "Path:$pathPrefix",
                 color = FileManagerTextColor,
                 fontSize = 18.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.Medium,
-                maxLines = 2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = fileName,
+                color = FileManagerTextColor,
+                fontSize = 18.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(8.dp))

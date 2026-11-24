@@ -4,7 +4,6 @@ import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 data class SettingsUiState(
     val temperatureUnit: String,
-    val versionLabel: String,
 )
 
 sealed interface SettingsAction {
@@ -27,8 +26,6 @@ sealed interface SettingsAction {
     data class RateDialogClosed(
         val ifOk: Boolean,
     ) : SettingsAction
-
-    data object Resumed : SettingsAction
 }
 
 sealed interface SettingsEvent {

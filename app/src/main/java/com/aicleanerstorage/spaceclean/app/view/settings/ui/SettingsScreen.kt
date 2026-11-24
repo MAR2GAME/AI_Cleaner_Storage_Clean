@@ -61,12 +61,6 @@ fun SettingsScreen(
             label = stringResource(R.string.settings_rate_us),
             onClick = { showRateDialog = true },
         )
-        SettingsDividerContent()
-        SettingsValueRow(
-            label = stringResource(R.string.settings_version),
-            value = state.versionLabel,
-            onClick = {},
-        )
     }
 
     if (showTemperatureDialog) {

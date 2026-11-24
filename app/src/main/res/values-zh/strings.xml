@@ -184,7 +184,6 @@
     <string name="settings_terms_of_service">服务条款</string>
     <string name="settings_privacy_policy">隐私政策</string>
     <string name="settings_rate_us">给我们评分</string>
-    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">存储</string>
     <string name="settings_usage_data_permission">使用数据</string>
     <string name="settings_location_permission">位置</string>

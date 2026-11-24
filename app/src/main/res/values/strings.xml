@@ -194,7 +194,6 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_rate_us">Rate Us</string>
-    <string name="settings_version">Version</string>
     <string name="settings_storage_permission">Storage Permissions</string>
     <string name="settings_usage_data_permission">Usage Data Permissions</string>
     <string name="settings_location_permission">Location Management</string>
