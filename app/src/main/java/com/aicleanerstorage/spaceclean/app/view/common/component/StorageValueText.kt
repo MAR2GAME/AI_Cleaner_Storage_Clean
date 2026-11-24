@@ -20,8 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * 瀛樺偍鐢ㄩ噺涓庢€婚噺鏂囨湰锛涙寜鍙敤瀹藉害鍔ㄦ€佺缉鏀剧敤閲忓瓧鍙枫€? *
- * @param usedText 宸茬敤瀹归噺鏂囨湰銆? * @param totalText 鎬诲閲忔枃鏈紝鍚墠缂€銆? * @param totalTextStyle 鎬婚噺鏂囨湰鏍峰紡銆? * @param color 鐢ㄩ噺鏂囨湰棰滆壊銆? */
+ * 存储用量与总量文本；按可用宽度动态缩放用量字号。
+ *
+ * @param usedText 已用容量文本。
+ * @param totalText 总容量文本，含前缀。
+ * @param totalTextStyle 总量文本样式。
+ * @param color 用量文本颜色。
+ */
 @Composable
 internal fun RowScope.StorageValueText(
     usedText: String,
