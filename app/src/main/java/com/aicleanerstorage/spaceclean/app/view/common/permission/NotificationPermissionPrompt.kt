@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.view.common.permission
 
-import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -10,15 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.NotificationPermissionGuideDialog
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
-import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import kotlinx.coroutines.delay
 
 private const val HOME_PROMPT_DELAY_MILLIS = 350L
@@ -40,7 +38,7 @@ fun NotificationPermissionPrompt(
     onActiveChanged: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
-    var hasPermission by remember { mutableStateOf(notificationsEnabled(context)) }
+    var hasPermission by remember { mutableStateOf(AppPermission.PostNotifications.isGranted(context)) }
     var splashAttempted by remember { mutableStateOf(false) }
     var homeAttempted by remember { mutableStateOf(false) }
     var showGuide by remember { mutableStateOf(false) }
@@ -72,7 +70,7 @@ fun NotificationPermissionPrompt(
         if (homeAttempted) return@LaunchedEffect
         homeAttempted = true
         delay(HOME_PROMPT_DELAY_MILLIS)
-        hasPermission = notificationsEnabled(context)
+        hasPermission = AppPermission.PostNotifications.isGranted(context)
         if (hasPermission) return@LaunchedEffect
         when {
             AppPermission.PostNotifications.requiresSettings(context) -> showGuide = true
@@ -116,8 +114,11 @@ private fun NotificationPermissionSplashEffect(
     }
 }
 
-internal fun shouldRequestOnSplash(onSplash: Boolean, attempted: Boolean, sdkInt: Int): Boolean =
-    onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
+internal fun shouldRequestOnSplash(
+    onSplash: Boolean,
+    attempted: Boolean,
+    sdkInt: Int,
+): Boolean = onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
 
 @Composable
 private fun NotificationPermissionGuide(
@@ -137,15 +138,13 @@ private fun NotificationPermissionResumeEffect(onPermissionChanged: (Boolean) ->
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME) {
-                    onPermissionChanged(notificationsEnabled(context))
+                    onPermissionChanged(AppPermission.PostNotifications.isGranted(context))
                 }
             }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 }
-
-private fun notificationsEnabled(context: Context): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()
 
 private fun reportNotificationPermissionResult(
     result: PermissionResult,

@@ -68,18 +68,15 @@ class NotificationCleanerViewModel(
         }
     }
 
-    private fun setBlockingEnabled(checked: Boolean): Boolean {
-        val hasAccess = repository.hasNotificationListenerAccess()
-        if (checked && !hasAccess) {
-            setState {
-                it.copy(hasAccess = false, enabled = false, isLoading = false, scanInProgress = false)
-            }
-            return true
+    private fun setBlockingEnabled(checked: Boolean) {
+        if (checked && !repository.hasNotificationListenerAccess()) {
+            // Route 已保证授权；这里兜住并发，让页面回到 Onboarding 重新引导，而不是静默成功。
+            refreshState()
+            return
         }
 
         repository.setNotificationBlockingEnabled(checked)
         refreshState()
-        return false
     }
 
     private fun togglePackage(packageName: String) {

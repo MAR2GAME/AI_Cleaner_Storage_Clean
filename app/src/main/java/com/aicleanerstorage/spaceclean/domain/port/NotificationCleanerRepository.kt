@@ -29,6 +29,9 @@ interface NotificationCleanerRepository {
     /**
      * 判断是否已授予通知监听权限。
      *
+     * 按系统授权列表里的**组件名**判定，不按包名：同名包下已失效的旧 listener
+     * 不算授权。
+     *
      * @return true 表示系统已启用本应用的 listener。
      */
     fun hasNotificationListenerAccess(): Boolean

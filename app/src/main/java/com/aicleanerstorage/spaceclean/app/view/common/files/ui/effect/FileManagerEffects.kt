@@ -6,6 +6,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
@@ -14,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOpe
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.mvi.resolve
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -84,9 +87,11 @@ fun FileManagerStartEffect(
 @Composable
 fun FileManagerCompletionAdEffect(
     phase: FileOperationPhase,
-    onCompleted: () -> Unit,
+    destination: AppDestination,
 ) {
-    LaunchedEffect(phase) {
-        if (phase == FileOperationPhase.CompleteAnimation) onCompleted()
-    }
+    Mar2CompletionAdEffect(
+        show = phase == FileOperationPhase.CompleteAnimation,
+        areaKey = Mar2AdPlacementRegistry.MAIN_FILE_MANAGE_FINISH,
+        destination = destination,
+    )
 }

@@ -1,9 +1,9 @@
 {
   "package": "com.aicleanerstorage.spaceclean",
   "ABTestName": "",
-  "PlayIntegrityID": 0,
+  "PlayIntegrityID": 216278718827,
   "highEcpm": 0,
-  "serverUrl": "https://example.invalid",
+  "serverUrl": "https://api.newminigame.online",
   "serverAppID": 0,
   "serverClientKey": "FILL_CLEANER_SERVER_CLIENT_KEY",
   "isAutoLogin": true,

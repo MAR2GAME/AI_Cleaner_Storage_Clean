@@ -18,7 +18,6 @@ import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Navigator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
-import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -71,18 +70,6 @@ internal fun AppNavHost(
     val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentEntry?.destination
-
-    fun showCompletionAd(areaKey: String) {
-        val host = activity ?: return
-        val route = currentDestination?.route.orEmpty()
-        Mar2AdGateway.showInterstitial(
-            activity = host,
-            areaKey = areaKey,
-            fromRoute = route,
-            toRoute = route,
-            onContinue = {},
-        )
-    }
 
     LaunchedEffect(pendingNotification, currentDestination) {
         val action = pendingNotification ?: return@LaunchedEffect
@@ -184,7 +171,6 @@ internal fun AppNavHost(
             JunkCleanRoute(
                 navigator = navigator,
                 viewModel = viewModel,
-                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_JUNK_CLEAN_FINISH) },
                 resultTools = { modifier, enabled ->
                     ToolFeatureBanners(
                         modifier = modifier,
@@ -241,21 +227,18 @@ internal fun AppNavHost(
             NetworkSpeedRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<NetworkSpeedViewModel>(),
-                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_NETWORK_SPEED_FINISH) },
             )
         }
         composable<AppDestination.WhatsAppCleaner> {
             WhatsAppCleanerRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<WhatsAppCleanerViewModel>(),
-                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_WHATSAPP_CLEAN_FINISH) },
             )
         }
         composable<AppDestination.NotificationCleaner> {
             NotificationCleanerRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<NotificationCleanerViewModel>(),
-                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_NOTIFICATION_CLEAN_FINISH) },
             )
         }
 
@@ -263,7 +246,6 @@ internal fun AppNavHost(
         fileManagerRoutes(
             navController = navController,
             navigator = navigator,
-            onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_FILE_MANAGE_FINISH) },
         )
 
         // ---- Settings ----

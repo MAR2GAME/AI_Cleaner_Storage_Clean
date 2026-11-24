@@ -9,12 +9,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import com.aicleanerstorage.spaceclean.app.view.common.permission.junkCleanCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel
 import com.aicleanerstorage.spaceclean.app.view.junkclean.ui.effect.JunkCleanEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
@@ -26,14 +29,14 @@ fun JunkCleanRoute(
     navigator: AppNavigator,
     viewModel: JunkCleanViewModel,
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
-    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    Mar2CompletionAdEffect(
+        show = uiState.phase == JunkCleanPhase.CompleteAnimation,
+        areaKey = Mar2AdPlacementRegistry.MAIN_JUNK_CLEAN_FINISH,
+        destination = AppDestination.JunkClean,
+    )
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
-
-    LaunchedEffect(uiState.phase) {
-        if (uiState.phase == JunkCleanPhase.CompleteAnimation) onCompleted()
-    }
 
     val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.junkCleanCopy() })
 

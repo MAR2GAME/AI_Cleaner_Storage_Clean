@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.common.permission.whatsAppCopy
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
@@ -26,15 +28,16 @@ import kotlinx.coroutines.launch
 fun WhatsAppCleanerRoute(
     navigator: AppNavigator,
     viewModel: WhatsAppCleanerViewModel,
-    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(state.phase) {
-        if (state.phase == WhatsAppCleanerPhase.CompleteAnimation) onCompleted()
-    }
+    Mar2CompletionAdEffect(
+        show = state.phase == WhatsAppCleanerPhase.CompleteAnimation,
+        areaKey = Mar2AdPlacementRegistry.MAIN_WHATSAPP_CLEAN_FINISH,
+        destination = AppDestination.WhatsAppCleaner,
+    )
     val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.whatsAppCopy() })
 
     fun gated(action: WhatsAppCleanerAction) {

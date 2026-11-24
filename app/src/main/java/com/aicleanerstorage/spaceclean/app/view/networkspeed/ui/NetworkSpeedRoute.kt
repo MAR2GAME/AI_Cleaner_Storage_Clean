@@ -12,6 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedAction
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedEvent
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
@@ -19,6 +21,7 @@ import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.Network
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedRoute
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedScreen
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -27,17 +30,17 @@ import kotlinx.coroutines.launch
 fun NetworkSpeedRoute(
     navigator: AppNavigator,
     viewModel: NetworkSpeedViewModel,
-    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(uiState.phase) {
-        if (uiState.phase == NetworkSpeedPhase.Result) onCompleted()
-    }
+    Mar2CompletionAdEffect(
+        show = uiState.phase == NetworkSpeedPhase.Result,
+        areaKey = Mar2AdPlacementRegistry.MAIN_NETWORK_SPEED_FINISH,
+        destination = AppDestination.NetworkSpeed,
+    )
 
     fun handleBack() {
         if (exiting) return

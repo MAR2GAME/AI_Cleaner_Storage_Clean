@@ -13,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.videos.interaction.VideosManagerViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -20,10 +21,9 @@ fun VideosManagerRoute(
     navigator: AppNavigator,
     viewModel: VideosManagerViewModel,
     permissionState: FileManagerPermissionState,
-    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+    FileManagerCompletionAdEffect(uiState.phase, AppDestination.VideosManager)
 
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState

@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.data.local.network
 
-import android.app.AppOpsManager
 import android.app.usage.NetworkStats
 import android.app.usage.NetworkStatsManager
 import android.content.Context
@@ -10,9 +9,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.TrafficStats
 import android.net.wifi.WifiManager
-import android.os.Build
-import android.os.Process
 import android.text.format.Formatter
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkDeviceModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkScanResultModel
 import com.aicleanerstorage.spaceclean.domain.model.network.NetworkSpeedModel
@@ -34,20 +32,7 @@ import java.net.InetAddress
 import java.util.Calendar
 
 internal object NetworkToolboxDataSource {
-    fun hasUsageAccess(context: Context): Boolean =
-        runCatching {
-            val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-            val op = AppOpsManager.OPSTR_GET_USAGE_STATS
-            val uid = Process.myUid()
-            val mode =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    appOps.unsafeCheckOpNoThrow(op, uid, context.packageName)
-                } else {
-                    @Suppress("DEPRECATION")
-                    appOps.checkOpNoThrow(op, uid, context.packageName)
-                }
-            mode == AppOpsManager.MODE_ALLOWED
-        }.getOrDefault(false)
+    fun hasUsageAccess(context: Context): Boolean = AppPermission.UsageAccess.isGranted(context)
 
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivity = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

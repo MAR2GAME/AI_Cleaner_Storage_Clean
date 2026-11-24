@@ -45,7 +45,10 @@ fun PermissionRequestEffect(
 
         if (settingsOnly || permission.requiresSettings(context)) {
             awaitingSettings = permission
-            gate.openSettings(permission)
+            if (!gate.openSettings(permission)) {
+                awaitingSettings = null
+                latestOnResult(PermissionResult.RequiresSettings)
+            }
             return@LaunchedEffect
         }
 

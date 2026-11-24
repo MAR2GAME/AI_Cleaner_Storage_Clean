@@ -1,6 +1,7 @@
 package com.aicleanerstorage.spaceclean.base.permission
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -19,7 +20,10 @@ class PermissionGateTest {
                     requested += permission
                     afterSystemUi = onDone
                 },
-                openSettings = { permission -> openedSettings += permission },
+                openSettings = { permission ->
+                    openedSettings += permission
+                    true
+                },
             )
         }
 
@@ -54,7 +58,7 @@ class PermissionGateTest {
         var result: Boolean? = null
         val gate =
             PermissionGate(hasPermission = { granted }).apply {
-                attach(launchSystemUi = { _, onDone -> onDone() }, openSettings = {})
+                attach(launchSystemUi = { _, onDone -> onDone() }, openSettings = { true })
             }
 
         gate.request(AppPermission.StorageFiles) { result = it }
@@ -85,11 +89,17 @@ class PermissionGateTest {
                 AppPermission.NotificationListener,
                 AppPermission.PostNotifications,
             )
-        permissions.forEach(gate::openSettings)
+        permissions.forEach { gate.openSettings(it) }
         granted = true
-        permissions.forEach(gate::openSettings)
+        permissions.forEach { gate.openSettings(it) }
 
         assertEquals(permissions + permissions, openedSettings)
         assertTrue(requested.isEmpty())
+    }
+
+    @Test
+    fun `open settings reports whether the system ui was launched`() {
+        assertTrue(gate().openSettings(AppPermission.UsageAccess))
+        assertFalse(PermissionGate(hasPermission = { false }).openSettings(AppPermission.UsageAccess))
     }
 }

@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.app.di
 
-import android.content.ComponentName
 import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.background.AppRuntimeService
 import com.aicleanerstorage.spaceclean.app.background.BatterySamplingSync
@@ -10,7 +9,6 @@ import com.aicleanerstorage.spaceclean.data.local.battery.BatteryHistorySampler
 import com.aicleanerstorage.spaceclean.data.local.files.DirectoryFileDataSource
 import com.aicleanerstorage.spaceclean.data.local.files.FileDeletionDataSource
 import com.aicleanerstorage.spaceclean.data.local.network.NetworkSpeedEndpoints
-import com.aicleanerstorage.spaceclean.data.local.notificationcleaner.StorageCleanNotificationListener
 import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
 import com.aicleanerstorage.spaceclean.data.local.security.TrustlookVirusScanner
 import com.aicleanerstorage.spaceclean.data.local.storage.MediaDeletionAuthorization
@@ -99,7 +97,6 @@ val dataModule: Module =
             val context = androidContext()
             DefaultNotificationCleanerRepository(
                 context = context,
-                listener = ComponentName(context, StorageCleanNotificationListener::class.java),
                 retainContent = false,
                 preferences = get(named("notification")),
             )

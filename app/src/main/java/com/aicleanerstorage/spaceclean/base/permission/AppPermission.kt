@@ -60,15 +60,7 @@ enum class AppPermission {
             MediaLocation -> context.hasPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
             Location -> context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             UsageAccess -> isUsageAccessGranted(context)
-            NotificationListener ->
-                Settings.Secure
-                    .getString(context.contentResolver, "enabled_notification_listeners")
-                    ?.split(':')
-                    ?.any { listener ->
-                        android.content.ComponentName
-                            .unflattenFromString(listener)
-                            ?.packageName == context.packageName
-                    } == true
+            NotificationListener -> NotificationListenerAccess.isGranted(context)
             Overlay -> isOverlayGranted(context)
             PostNotifications ->
                 NotificationManagerCompat.from(context).areNotificationsEnabled()
@@ -126,8 +118,7 @@ enum class AppPermission {
             MediaLocation -> listOf(appSettingsAction(context))
             Location -> listOf(appSettingsAction(context))
             UsageAccess -> listOf(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS), appSettingsAction(context))
-            NotificationListener ->
-                listOf(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), appSettingsAction(context))
+            NotificationListener -> notificationListenerSettingsIntents(context)
             Overlay ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     listOf(
@@ -140,7 +131,12 @@ enum class AppPermission {
                 } else {
                     listOf(appSettingsAction(context))
                 }
-            PostNotifications -> listOf(appSettingsAction(context))
+            PostNotifications ->
+                listOf(
+                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
+                    appSettingsAction(context),
+                )
         }
 
     /**
@@ -171,8 +167,10 @@ enum class AppPermission {
      * @param context 用于重新查询权限状态。
      * @return 已授予返回 [PermissionResult.Granted]，否则返回 [PermissionResult.RequiresSettings]。
      */
-    fun resultAfterSettings(context: Context): PermissionResult =
-        if (isGranted(context)) PermissionResult.Granted else PermissionResult.RequiresSettings
+    fun resultAfterSettings(context: Context): PermissionResult {
+        if (isGranted(context)) return PermissionResult.Granted
+        return PermissionResult.RequiresSettings
+    }
 }
 
 /**
@@ -197,6 +195,27 @@ internal fun appSettingsAction(context: Context): Intent =
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.parse("package:${context.packageName}"),
     )
+
+/**
+ * 通知监听只能逐个组件授权：优先直达本应用监听服务的详情页，
+ * 系统没有该页面（或 API 30 以下）时回落到通知使用权列表。
+ */
+private fun notificationListenerSettingsIntents(context: Context): List<Intent> =
+    buildList {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            NotificationListenerAccess.ownComponents(context).firstOrNull()?.let { component ->
+                add(
+                    Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS)
+                        .putExtra(
+                            Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
+                            component.flattenToString(),
+                        ),
+                )
+            }
+        }
+        add(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        add(appSettingsAction(context))
+    }
 
 /** Usage Access 不是运行时权限，只能通过 AppOps 查询。 */
 private fun isUsageAccessGranted(context: Context): Boolean =

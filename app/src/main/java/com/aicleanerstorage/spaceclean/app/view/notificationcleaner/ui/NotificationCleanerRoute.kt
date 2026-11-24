@@ -12,8 +12,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerPage
@@ -22,6 +24,7 @@ import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.Notificat
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.NotificationPermissionGuideDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
@@ -32,18 +35,17 @@ import kotlinx.coroutines.launch
 fun NotificationCleanerRoute(
     navigator: AppNavigator,
     viewModel: NotificationCleanerViewModel,
-    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    Mar2CompletionAdEffect(
+        show = state.page == NotificationCleanerPage.Complete && state.completionResultVisible,
+        areaKey = Mar2AdPlacementRegistry.MAIN_NOTIFICATION_CLEAN_FINISH,
+        destination = AppDestination.NotificationCleaner,
+    )
 
-    LaunchedEffect(state.page, state.completionResultVisible) {
-        if (state.page == NotificationCleanerPage.Complete && state.completionResultVisible) {
-            onCompleted()
-        }
-    }
     val permissionPrompt =
         rememberPermissionPrompt { permission, onConfirm, onDismiss ->
             if (permission == AppPermission.NotificationListener) {

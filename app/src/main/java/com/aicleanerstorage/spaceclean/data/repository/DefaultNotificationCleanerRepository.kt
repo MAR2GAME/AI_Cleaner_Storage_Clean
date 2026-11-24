@@ -1,6 +1,5 @@
 package com.aicleanerstorage.spaceclean.data.repository
 
-import android.content.ComponentName
 import android.content.Context
 import com.aicleanerstorage.spaceclean.data.local.notificationcleaner.NotificationCleanerDataSource
 import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
@@ -12,7 +11,6 @@ import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 /** 用通知监听服务与偏好存储实现通知拦截、记录和会话快照。 */
 internal class DefaultNotificationCleanerRepository(
     context: Context,
-    private val listener: ComponentName?,
     private val retainContent: Boolean,
     preferences: PreferencesDataSource,
 ) : NotificationCleanerRepository {
@@ -23,7 +21,7 @@ internal class DefaultNotificationCleanerRepository(
         if (!retainContent) dataSource.clearStoredContent(appContext)
     }
 
-    override fun shouldBlock(packageName: String) = dataSource.shouldBlock(appContext, listener, packageName)
+    override fun shouldBlock(packageName: String) = dataSource.shouldBlock(appContext, packageName)
 
     override fun recordBlockedNotification(posted: PostedNotificationModel) =
         dataSource.recordBlockedNotification(
@@ -31,7 +29,7 @@ internal class DefaultNotificationCleanerRepository(
             if (retainContent) posted else posted.copy(title = "", text = ""),
         )
 
-    override fun hasNotificationListenerAccess(): Boolean = dataSource.hasNotificationListenerAccess(appContext, listener)
+    override fun hasNotificationListenerAccess(): Boolean = dataSource.hasNotificationListenerAccess(appContext)
 
     override fun notificationSnapshot(includeApps: Boolean): NotificationCleanerSnapshotModel {
         val hasAccess = hasNotificationListenerAccess()
@@ -49,7 +47,7 @@ internal class DefaultNotificationCleanerRepository(
         val blocked = dataSource.blockedNotifications(appContext)
         return NotificationCleanerSnapshotModel(
             hasAccess = true,
-            enabled = dataSource.isEnabled(appContext, listener),
+            enabled = dataSource.isEnabled(appContext),
             blockedCount = blocked.size,
             blockedCountsByPackage = blocked.groupingBy { it.packageName }.eachCount(),
             blockedNotifications = blocked,

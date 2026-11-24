@@ -90,6 +90,21 @@ class NotificationCleanerViewModelTest {
         }
 
     @Test
+    fun `enabling blocking without access keeps onboarding`() =
+        runTest(dispatcher) {
+            val repository = FakeRepository(hasAccess = false)
+            val viewModel = viewModel(repository)
+            advanceUntilIdle()
+
+            viewModel.dispatch(NotificationCleanerAction.BlockingEnableRequested)
+            advanceUntilIdle()
+
+            assertEquals(NotificationCleanerPage.Onboarding, viewModel.state.value.page)
+            assertEquals(false, viewModel.state.value.enabled)
+            assertEquals(false, repository.enabled)
+        }
+
+    @Test
     fun `back exits when nothing is running`() =
         runTest(dispatcher) {
             val viewModel = viewModel(FakeRepository(hasAccess = true))

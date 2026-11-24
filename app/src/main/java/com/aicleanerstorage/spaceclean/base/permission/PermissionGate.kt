@@ -23,7 +23,7 @@ class PermissionGate internal constructor(
     private val hasPermission: (AppPermission) -> Boolean,
 ) {
     private var systemUiLauncher: ((AppPermission, () -> Unit) -> Unit)? = null
-    private var settingsLauncher: ((AppPermission) -> Unit)? = null
+    private var settingsLauncher: ((AppPermission) -> Boolean)? = null
     private var pendingPermission: AppPermission? = null
     private var pendingResult: ((Boolean) -> Unit)? = null
 
@@ -42,16 +42,12 @@ class PermissionGate internal constructor(
         if (launcher == null) finish() else launcher(permission, ::finish)
     }
 
-    /** 只跳设置页，不发起运行时申请；用于系统已经不会再弹的场景。 */
-    fun openSettings(permission: AppPermission) {
-        settingsLauncher?.invoke(permission)
-    }
-
-    /** 是否该先解释再申请；只对运行时权限有意义，设置类权限恒为 false。 */
+    /** 只跳设置页，不发起运行时申请；返回是否真的拉起了系统界面，调用方必须收口。 */
+    fun openSettings(permission: AppPermission): Boolean = settingsLauncher?.invoke(permission) ?: false
 
     internal fun attach(
         launchSystemUi: (AppPermission, () -> Unit) -> Unit,
-        openSettings: (AppPermission) -> Unit,
+        openSettings: (AppPermission) -> Boolean,
     ) {
         systemUiLauncher = launchSystemUi
         settingsLauncher = openSettings

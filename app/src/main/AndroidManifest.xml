@@ -50,6 +50,10 @@
         android:supportsRtl="true"
         android:name="com.aicleanerstorage.spaceclean.app.MyApp"
         android:theme="@style/Theme.StorageClean">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3643549411810853~5913258493"
+            tools:replace="android:value" />
         <activity
             android:name="com.aicleanerstorage.spaceclean.app.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

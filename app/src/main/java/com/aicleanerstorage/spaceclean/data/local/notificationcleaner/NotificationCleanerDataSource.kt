@@ -1,12 +1,11 @@
 package com.aicleanerstorage.spaceclean.data.local.notificationcleaner
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings
 import androidx.core.content.edit
+import com.aicleanerstorage.spaceclean.base.permission.NotificationListenerAccess
 import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSource
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockedNotificationModel
@@ -25,10 +24,7 @@ internal class NotificationCleanerDataSource(
     private val defaultPackages =
         listOf("com.tencent.wemeet.app", "com.google.android.youtube", "com.spotify.music")
 
-    fun isEnabled(
-        context: Context,
-        listener: ComponentName?,
-    ): Boolean = preferences.getBoolean(keyEnabled, false) && hasNotificationListenerAccess(context, listener)
+    fun isEnabled(context: Context): Boolean = preferences.getBoolean(keyEnabled, false) && hasNotificationListenerAccess(context)
 
     fun setEnabled(
         context: Context,
@@ -119,18 +115,10 @@ internal class NotificationCleanerDataSource(
 
     fun shouldBlock(
         context: Context,
-        listener: ComponentName?,
         packageName: String,
-    ): Boolean = packageName != context.packageName && isEnabled(context, listener) && packageName in selectedPackages(context)
+    ): Boolean = packageName != context.packageName && isEnabled(context) && packageName in selectedPackages(context)
 
-    fun hasNotificationListenerAccess(
-        context: Context,
-        listener: ComponentName?,
-    ): Boolean {
-        if (listener == null) return false
-        val flat = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
-        return flat?.split(':')?.any { ComponentName.unflattenFromString(it) == listener } == true
-    }
+    fun hasNotificationListenerAccess(context: Context): Boolean = NotificationListenerAccess.isGranted(context)
 
     @Synchronized
     private fun saveBlockedNotification(

@@ -13,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosAction
 import com.aicleanerstorage.spaceclean.app.view.similarphotos.interaction.SimilarPhotosManagerViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -20,10 +21,9 @@ fun SimilarPhotosManagerRoute(
     navigator: AppNavigator,
     viewModel: SimilarPhotosManagerViewModel,
     permissionState: FileManagerPermissionState,
-    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+    FileManagerCompletionAdEffect(uiState.phase, AppDestination.SimilarPhotosManager)
 
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState

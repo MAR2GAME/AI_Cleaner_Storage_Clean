@@ -15,6 +15,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManager
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyAction
 import com.aicleanerstorage.spaceclean.app.view.photoprivacy.interaction.PhotoPrivacyManagerViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
@@ -49,12 +50,11 @@ fun PhotoPrivacyManagerRoute(
     navigator: AppNavigator,
     viewModel: PhotoPrivacyManagerViewModel,
     permissionState: FileManagerPermissionState,
-    onCompleted: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val permissionPrompt = rememberPermissionPrompt()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+    FileManagerCompletionAdEffect(uiState.phase, AppDestination.PhotoPrivacyManager)
 
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState

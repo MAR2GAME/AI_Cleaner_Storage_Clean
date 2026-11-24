@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216278718827",
+    "project_id": "ai-cleaner-storage-clean",
+    "storage_bucket": "ai-cleaner-storage-clean.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216278718827:android:ab449ed46844fc2542942e",
+        "android_client_info": {
+          "package_name": "com.aicleanerstorage.spaceclean"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwQVVdtOj-Z-u9AJDNU-l4ixexqCj7_Gw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
