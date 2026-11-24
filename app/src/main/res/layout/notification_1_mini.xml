@@ -7,14 +7,24 @@
     android:layout_height="wrap_content"
     >
 
+    <!--
+      SDK 的 iv_push 使用 mipmap/ic_push_*；部分 OEM 图标主题会把 mipmap 内容图重绘成纯色块。
+      保留 iv_push 供 SDK 设置（隐藏即可），实际展示改用 drawable 的铃铛图标。
+    -->
     <ImageView
-        android:src="@mipmap/ic_push_photos"
+        android:src="@drawable/ic_notification_cleaner"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:contentDescription="@null"
-        android:id="@+id/iv_push"
+        android:id="@+id/iv_brand_icon"
         android:layout_width="35dp"
         android:layout_height="35dp">
+    </ImageView>
+    <ImageView
+        android:id="@+id/iv_push"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone">
     </ImageView>
     <TextView
         android:id="@+id/tv_detail"
@@ -22,7 +32,7 @@
         android:maxWidth="140dp"
         android:textStyle="bold"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/iv_push"
+        android:layout_toEndOf="@id/iv_brand_icon"
         android:layout_toStartOf="@id/notification_action"
         android:lines="2"
         android:ellipsize="end"
