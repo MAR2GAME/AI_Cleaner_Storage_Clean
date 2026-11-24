@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,7 +31,9 @@ internal fun shouldRequestOnSplash(
     onSplash: Boolean,
     attempted: Boolean,
     sdkInt: Int,
-): Boolean = onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
+): Boolean {
+    return onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
+}
 
 @Composable
 internal fun NotificationPermissionPrompt(
@@ -42,8 +45,11 @@ internal fun NotificationPermissionPrompt(
     val context = LocalContext.current
     val activity = context.findActivity()
     val state by coordinator.state.collectAsStateWithLifecycle()
-    var showGuide by remember { mutableStateOf(false) }
-    var guideSource by remember { mutableStateOf<NotificationPermissionRequestSource?>(null) }
+    var showGuide by rememberSaveable { mutableStateOf(false) }
+    var guideSourceName by rememberSaveable { mutableStateOf<String?>(null) }
+    val guideSource = guideSourceName?.let { value ->
+        NotificationPermissionRequestSource.entries.firstOrNull { it.name == value }
+    }
     LaunchedEffect(showGuide) { onActiveChanged(showGuide) }
     LaunchedEffect(onSplash, onHome) { NotificationUtil.reportNotificationPermission() }
 
@@ -52,7 +58,7 @@ internal fun NotificationPermissionPrompt(
         coordinator = coordinator,
         onShowGuide = {
             showGuide = true
-            guideSource = NotificationPermissionRequestSource.Splash
+            guideSourceName = NotificationPermissionRequestSource.Splash.name
         },
     )
     NotificationPermissionHomeEffect(
@@ -62,7 +68,7 @@ internal fun NotificationPermissionPrompt(
         coordinator = coordinator,
         onShowGuide = {
             showGuide = true
-            guideSource = NotificationPermissionRequestSource.Home
+            guideSourceName = NotificationPermissionRequestSource.Home.name
         },
     )
     NotificationPermissionSystemUi(
@@ -72,7 +78,7 @@ internal fun NotificationPermissionPrompt(
         onDismissGuide = { showGuide = false },
         onShowGuide = {
             showGuide = true
-            guideSource = NotificationPermissionRequestSource.Home
+            guideSourceName = NotificationPermissionRequestSource.Home.name
         },
     )
 }

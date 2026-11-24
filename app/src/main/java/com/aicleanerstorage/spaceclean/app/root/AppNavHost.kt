@@ -79,8 +79,8 @@ internal fun AppNavHost(
         ) return@LaunchedEffect
         val continueNavigation = {
             Mar2AdGateway.suppressNextForegroundAd()
-            notificationRoutes.consume(action.id)
-            navigator.resetToRootForNotification(action.destination)
+            runCatching { navigator.resetToRootForNotification(action.destination) }
+                .onSuccess { notificationRoutes.consume(action.id) }
         }
         if (action.waitForForegroundAd && activity != null) {
             Mar2AdGateway.showForegroundAd(
