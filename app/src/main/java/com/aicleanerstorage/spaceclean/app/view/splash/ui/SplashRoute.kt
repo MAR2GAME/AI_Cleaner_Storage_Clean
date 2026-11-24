@@ -66,10 +66,12 @@ internal fun SplashRoute(
         }
     }
     SplashStartupEffect(
-        released = notificationPermissionReleased,
-        destination = pendingDestination,
-        started = startupStarted,
-        elapsedSinceStart = SystemClock.elapsedRealtime() - startupStartedAt,
+        input = SplashStartupInput(
+            released = notificationPermissionReleased,
+            destination = pendingDestination,
+            started = startupStarted,
+            elapsedSinceStart = SystemClock.elapsedRealtime() - startupStartedAt,
+        ),
         onStarted = { startupStarted = true },
         start = { destination -> startSplashFlow(context.findActivity(), destination, navigator) },
         scope = scope,
@@ -93,6 +95,13 @@ private fun SplashPauseEffect(splashPaused: Boolean, viewModel: SplashViewModel)
     LaunchedEffect(splashPaused) { viewModel.dispatch(SplashAction.PermissionPauseChanged(splashPaused)) }
 }
 
+private data class SplashStartupInput(
+    val released: Boolean,
+    val destination: AppDestination?,
+    val started: Boolean,
+    val elapsedSinceStart: Long,
+)
+
 @Composable
 private fun SplashExternalLinkEffect(
     active: Boolean,
@@ -114,20 +123,17 @@ private fun SplashExternalLinkEffect(
 
 @Composable
 private fun SplashStartupEffect(
-    released: Boolean,
-    destination: AppDestination?,
-    started: Boolean,
-    elapsedSinceStart: Long,
+    input: SplashStartupInput,
     onStarted: () -> Unit,
     start: (AppDestination) -> Unit,
     scope: kotlinx.coroutines.CoroutineScope,
 ) {
-    LaunchedEffect(released, destination) {
-        val target = destination ?: return@LaunchedEffect
-        if (!released || started) return@LaunchedEffect
+    LaunchedEffect(input.released, input.destination) {
+        val target = input.destination ?: return@LaunchedEffect
+        if (!input.released || input.started) return@LaunchedEffect
         onStarted()
         scope.launch {
-            delay((3_000L - elapsedSinceStart).coerceAtLeast(0L))
+            delay((3_000L - input.elapsedSinceStart).coerceAtLeast(0L))
             start(target)
         }
     }

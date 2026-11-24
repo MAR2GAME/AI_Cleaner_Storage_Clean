@@ -26,6 +26,12 @@ import kotlinx.coroutines.delay
 private const val HOME_PROMPT_DELAY_MILLIS = 350L
 private const val SPLASH_PERMISSION_TIMEOUT_MILLIS = 5_000L
 
+internal fun shouldRequestOnSplash(
+    onSplash: Boolean,
+    attempted: Boolean,
+    sdkInt: Int,
+): Boolean = onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
+
 @Composable
 internal fun NotificationPermissionPrompt(
     onSplash: Boolean,
@@ -39,12 +45,10 @@ internal fun NotificationPermissionPrompt(
     var showGuide by remember { mutableStateOf(false) }
     var guideSource by remember { mutableStateOf<NotificationPermissionRequestSource?>(null) }
     LaunchedEffect(showGuide) { onActiveChanged(showGuide) }
+    LaunchedEffect(onSplash, onHome) { NotificationUtil.reportNotificationPermission() }
 
     NotificationPermissionSplashEffect(
-        onSplash = onSplash,
-        activity = activity,
-        context = context,
-        state = state,
+        input = NotificationPermissionSplashInput(onSplash, activity, context, state),
         coordinator = coordinator,
         onShowGuide = {
             showGuide = true
@@ -62,12 +66,9 @@ internal fun NotificationPermissionPrompt(
         },
     )
     NotificationPermissionSystemUi(
-        state = state,
-        activity = activity,
+        input = NotificationPermissionSystemUiInput(state, activity, showGuide, guideSource),
         coordinator = coordinator,
         context = context,
-        showGuide = showGuide,
-        guideSource = guideSource,
         onDismissGuide = { showGuide = false },
         onShowGuide = {
             showGuide = true
@@ -80,14 +81,25 @@ private fun notificationAccess(context: Context): com.mar2sdk.core.notify.Notifi
     return NotificationUtil.getAccessState(context, AppNotificationUtil.getConfiguredChannelIds())
 }
 
+private data class NotificationPermissionSplashInput(
+    val onSplash: Boolean,
+    val activity: Activity?,
+    val context: Context,
+    val state: com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestState,
+)
+
+private data class NotificationPermissionSystemUiInput(
+    val state: com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestState,
+    val activity: Activity?,
+    val showGuide: Boolean,
+    val guideSource: NotificationPermissionRequestSource?,
+)
+
 @Composable
 private fun NotificationPermissionSystemUi(
-    state: com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestState,
-    activity: Activity?,
+    input: NotificationPermissionSystemUiInput,
     coordinator: NotificationPermissionRequestCoordinator,
     context: Context,
-    showGuide: Boolean,
-    guideSource: NotificationPermissionRequestSource?,
     onDismissGuide: () -> Unit,
     onShowGuide: () -> Unit,
 ) {
@@ -105,16 +117,16 @@ private fun NotificationPermissionSystemUi(
     ) {
         onDismissGuide()
         NotificationUtil.reportNotificationPermission()
-        if (guideSource == NotificationPermissionRequestSource.Splash) coordinator.releaseSplash()
+        if (input.guideSource == NotificationPermissionRequestSource.Splash) coordinator.releaseSplash()
     }
-    NotificationPermissionRequestEffect(state, activity, coordinator, runtimeLauncher, onShowGuide)
-    if (showGuide) NotificationPermissionGuideDialog(
+    NotificationPermissionRequestEffect(input.state, input.activity, coordinator, runtimeLauncher, onShowGuide)
+    if (input.showGuide) NotificationPermissionGuideDialog(
         onConfirm = {
             onDismissGuide()
             AppPermission.PostNotifications.settingsIntents(context).firstOrNull()?.let {
                 runCatching { settingsLauncher.launch(it) }
                     .onFailure {
-                        if (guideSource == NotificationPermissionRequestSource.Splash) {
+                        if (input.guideSource == NotificationPermissionRequestSource.Splash) {
                             coordinator.releaseSplash()
                         }
                     }
@@ -122,23 +134,20 @@ private fun NotificationPermissionSystemUi(
         },
         onDismiss = {
             onDismissGuide()
-            if (guideSource == NotificationPermissionRequestSource.Splash) coordinator.releaseSplash()
+            if (input.guideSource == NotificationPermissionRequestSource.Splash) coordinator.releaseSplash()
         },
     )
 }
 
 @Composable
 private fun NotificationPermissionSplashEffect(
-    onSplash: Boolean,
-    activity: Activity?,
-    context: Context,
-    state: com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestState,
+    input: NotificationPermissionSplashInput,
     coordinator: NotificationPermissionRequestCoordinator,
     onShowGuide: () -> Unit,
 ) {
-    LaunchedEffect(onSplash, activity, state.splashRequestUsed, state.splashReleased) {
-        if (!onSplash || activity == null || state.splashReleased) return@LaunchedEffect
-        val access = notificationAccess(context)
+    LaunchedEffect(input.onSplash, input.activity, input.state.splashRequestUsed, input.state.splashReleased) {
+        if (!input.onSplash || input.activity == null || input.state.splashReleased) return@LaunchedEffect
+        val access = notificationAccess(input.context)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || access.hasPermission) {
             coordinator.releaseSplash()
         } else if (access.needsSettings && access.runtimePermissionGranted) {
