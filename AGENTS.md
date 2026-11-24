@@ -127,8 +127,8 @@ UI 细节以 `docs/architecture.md` 为准，摘要：
 .\scripts\check-rules.cmd    # 执行策略受限时
 ```
 
-当前门禁覆盖：domain 纯净、分层方向、data 可见性/契约、view 不 import data/root、`ui/part` 无状态、domain 模型命名、错误分支 KDoc、单文件公开类型、命名、UiText、CollectEffects、BackHandler、effect 位置、返回键 dispatch、Composable 参数上限、函数长度、端口无 StateFlow、package/目录、语言包 key。任何一项不通过退出码非 0。
+当前门禁覆盖：domain 纯净、分层方向、data 可见性/契约、view 不 import data/root、`ui/part` 无状态、domain 模型命名、错误分支 KDoc、单文件公开类型、命名、UiText、CollectEffects、BackHandler、effect 位置、返回键 dispatch、Composable 参数上限、函数长度、端口无 StateFlow、package/目录、语言包 key/占位符。任何一项不通过退出码非 0。
 
-函数长度以普通函数 40 行、Composable 60 行为限；存量超限登记在 `scripts/function-length-baseline.txt`，只拒绝新增超限函数，拆分后应从 baseline 删除对应行。语言包门禁硬性校验 key 对齐，并输出翻译覆盖率（不阻塞）。`ktlint` 的 filename 规则按 `docs/rules/exceptions.md` E3 关闭，文件名/类型一致性仍由 `publicTypes` 检查。
+函数长度以普通函数 40 行、Composable 60 行为限；存量超限登记在 `scripts/function-length-baseline.txt`，只拒绝新增超限函数，拆分后应从 baseline 删除对应行。语言包门禁硬性校验 key 对齐、格式占位符一致与空值，并输出翻译覆盖率（不阻塞）；占位符不一致会在运行期抛 `IllegalFormatException`，因此阻塞。`ktlint` 的 filename 规则按 `docs/rules/exceptions.md` E3 关闭，文件名/类型一致性仍由 `publicTypes` 检查。
 
 新克隆执行一次 `.\scripts\install-hooks.ps1` 启用 `pre-commit`；钩子可被 `git commit --no-verify` 绕过，CI 必须跑同一脚本兜底。

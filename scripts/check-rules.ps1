@@ -206,6 +206,7 @@ if (Test-CheckEnabled 'localeParity') {
     $defaultXml = [xml](Get-Content -LiteralPath $defaultFile -Raw -Encoding UTF8)
     foreach ($node in $defaultXml.resources.string) { $defaultText[$node.name] = $node.InnerText }
     $missingTotal = 0
+    $parityFailures = 0
     $coverage = @()
     Get-ChildItem -LiteralPath $resDir -Directory | Where-Object { $_.Name -like 'values-*' } | ForEach-Object {
         $file = Join-Path $_.FullName 'strings.xml'
@@ -225,13 +226,29 @@ if (Test-CheckEnabled 'localeParity') {
                 if (-not $defaultText.ContainsKey($node.name)) { continue }
                 $total++
                 if ($node.InnerText -ne $defaultText[$node.name]) { $translated++ }
+                # Placeholder drift is a runtime crash (IllegalFormatException), so it blocks.
+                $englishSlots = @([regex]::Matches($defaultText[$node.name], '%\d+\$[sd]') | ForEach-Object { $_.Value } | Sort-Object)
+                $localSlots = @([regex]::Matches([string]$node.InnerText, '%\d+\$[sd]') | ForEach-Object { $_.Value } | Sort-Object)
+                if (($englishSlots -join ',') -ne ($localSlots -join ',')) {
+                    $parityFailures++
+                    Add-Failure 'localeParity' ("{0} placeholder mismatch in {1}: default [{2}] got [{3}]" -f $_.Name, $node.name, ($englishSlots -join ','), ($localSlots -join ','))
+                } elseif ([string]::IsNullOrWhiteSpace([string]$node.InnerText) -and -not [string]::IsNullOrWhiteSpace($defaultText[$node.name])) {
+                    $parityFailures++
+                    Add-Failure 'localeParity' ("{0} empty value for {1}" -f $_.Name, $node.name)
+                }
+                # A raw apostrophe or quote breaks aapt2 (must be \' or \"); catch it before the build.
+                if ([string]$node.InnerText -match '(?<!\\)[''"]') {
+                    $parityFailures++
+                    Add-Failure 'localeParity' ("{0} unescaped quote in {1}" -f $_.Name, $node.name)
+                }
             }
             if ($total -gt 0) { $coverage += ("{0}={1:P0}" -f $_.Name, ($translated / $total)) }
         } catch {
+            $parityFailures++
             Add-Failure 'localeParity' ("{0} cannot be parsed as XML" -f $_.Name)
         }
     }
-    if ($missingTotal -eq 0) { Add-Pass 'localeParity' }
+    if ($missingTotal -eq 0 -and $parityFailures -eq 0) { Add-Pass 'localeParity' }
     if ($coverage.Count -gt 0) { Write-Host ("translation coverage: {0}" -f ($coverage -join ', ')) }
 }
 
