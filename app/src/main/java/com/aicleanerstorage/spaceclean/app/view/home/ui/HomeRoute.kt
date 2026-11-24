@@ -20,6 +20,7 @@ import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeEvent
 import com.aicleanerstorage.spaceclean.app.view.home.interaction.HomeViewModel
 import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeRoute
 import com.aicleanerstorage.spaceclean.app.view.home.ui.HomeScreen
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.designsystem.component.openGooglePlayRatePage
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -74,6 +75,7 @@ fun HomeRoute(
             HomeEvent.ExitApp -> context.findActivity()?.finish()
             HomeEvent.RateApp -> openGooglePlayRatePage(context)
             is HomeEvent.Navigate -> {
+                Mar2Analytics.trackCoreFeatureClicked(effect.destination)
                 navigator.navigate(effect.destination)
             }
         }

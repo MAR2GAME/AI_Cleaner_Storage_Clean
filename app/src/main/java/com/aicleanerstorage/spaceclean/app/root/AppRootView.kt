@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.permission.NotificationPermissionPrompt
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
 
@@ -36,6 +37,16 @@ fun AppRootView(
             home,
             permissionUiActive || pendingNotification != null,
         )
+    }
+
+    val route = currentEntry?.destination?.route
+    var previousRoute by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(route) {
+        val currentRoute = route ?: return@LaunchedEffect
+        if (currentRoute != previousRoute) {
+            Mar2Analytics.trackRouteEntered(currentRoute, previousRoute)
+            previousRoute = currentRoute
+        }
     }
 
     AppNavHost(

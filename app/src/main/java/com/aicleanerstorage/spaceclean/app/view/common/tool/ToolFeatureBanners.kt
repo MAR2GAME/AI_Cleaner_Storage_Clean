@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aicleanerstorage.spaceclean.R
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import kotlin.random.Random
 
@@ -169,6 +170,7 @@ fun handleToolFeatureBannerClick(
     destination: AppDestination,
     onNavigateTool: (AppDestination) -> Unit,
 ) {
+    Mar2Analytics.trackCoreFeatureClicked(destination)
     onNavigateTool(destination)
 }
 

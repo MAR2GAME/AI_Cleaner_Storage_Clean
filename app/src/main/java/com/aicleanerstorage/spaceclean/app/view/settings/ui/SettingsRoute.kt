@@ -7,6 +7,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsEvent
 import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsViewModel
 import com.aicleanerstorage.spaceclean.app.view.settings.ui.SettingsScreen
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.designsystem.component.openGooglePlayRatePage
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -33,9 +34,11 @@ fun SettingsRoute(
             SettingsEvent.NavigateBack -> navigator.back()
             SettingsEvent.OpenTerms ->
                 openLink(termsUrl) {
+                    Mar2Analytics.trackTermsOpened("about")
                 }
             SettingsEvent.OpenPrivacy ->
                 openLink(privacyUrl) {
+                    Mar2Analytics.trackPrivacyOpened("about")
                 }
             SettingsEvent.RateApp -> openGooglePlayRatePage(context)
             is SettingsEvent.Navigate -> navigator.navigate(effect.destination)

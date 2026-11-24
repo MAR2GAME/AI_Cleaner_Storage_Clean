@@ -18,6 +18,7 @@ import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.Notifi
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.base.permission.PermissionRequestEffect
 import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import kotlinx.coroutines.delay
 
 private const val HOME_PROMPT_DELAY_MILLIS = 350L
@@ -52,6 +53,7 @@ fun NotificationPermissionPrompt(
         pendingPermission = null
         settingsOnly = false
         hasPermission = result == PermissionResult.Granted
+        reportNotificationPermissionResult(result, viaSettings)
         if (!viaSettings && result == PermissionResult.PermanentlyDenied && onHome) {
             showGuide = true
         }
@@ -83,15 +85,12 @@ fun NotificationPermissionPrompt(
 
     NotificationPermissionResumeEffect { granted -> hasPermission = granted }
 
-    NotificationPermissionGuide(
-        visible = showGuide,
-        onConfirm = {
-            showGuide = false
-            settingsOnly = true
-            pendingPermission = AppPermission.PostNotifications
-        },
-        onDismiss = { showGuide = false },
-    )
+    val confirmGuide = {
+        showGuide = false
+        settingsOnly = true
+        pendingPermission = AppPermission.PostNotifications
+    }
+    NotificationPermissionGuide(showGuide, confirmGuide, { showGuide = false })
 }
 
 @Composable
@@ -146,3 +145,12 @@ private fun NotificationPermissionResumeEffect(onPermissionChanged: (Boolean) ->
 }
 
 private fun notificationsEnabled(context: Context): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+private fun reportNotificationPermissionResult(
+    result: PermissionResult,
+    viaSettings: Boolean,
+) {
+    if (!viaSettings && result != PermissionResult.RequiresSettings) {
+        Mar2Analytics.trackNotificationPermissionResult(result == PermissionResult.Granted)
+    }
+}

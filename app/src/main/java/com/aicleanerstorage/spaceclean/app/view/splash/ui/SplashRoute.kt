@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashAction
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashEvent
 import com.aicleanerstorage.spaceclean.app.view.splash.interaction.SplashViewModel
@@ -46,6 +47,7 @@ internal fun SplashRoute(
     var externalLinkActive by remember { mutableStateOf(false) }
     var startupStarted by remember { mutableStateOf(false) }
     val startupStartedAt = remember { SystemClock.elapsedRealtime() }
+    var splashReported by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(splashPaused) {
@@ -84,7 +86,13 @@ internal fun SplashRoute(
 
     SplashScreen(
         state = state,
-        onAction = viewModel::dispatch,
+        onAction = { action ->
+            if (action == SplashAction.VisualFinished && !splashReported) {
+                splashReported = true
+                Mar2Analytics.trackSplashDisplayed(SystemClock.elapsedRealtime() - startupStartedAt)
+            }
+            viewModel.dispatch(action)
+        },
     )
 }
 

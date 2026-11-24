@@ -17,11 +17,11 @@ import android.content.Context
 import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingAction
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingEvent
 import com.aicleanerstorage.spaceclean.app.view.onboarding.interaction.OnboardingScanViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 
 @Composable
@@ -34,13 +34,17 @@ fun OnboardingRoute(
     var exiting by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel) { viewModel.dispatch(OnboardingAction.Entered) }
+    LaunchedEffect(viewModel) {
+        Mar2Analytics.trackGuideScanningEntered()
+        viewModel.dispatch(OnboardingAction.Entered)
+    }
     CollectEffects(viewModel) { effect ->
         when (effect) {
-            OnboardingEvent.NotifyScanFinished -> Unit
+            OnboardingEvent.NotifyScanFinished -> Mar2Analytics.trackGuideScanResultEntered()
             is OnboardingEvent.FinishOnboarding -> {
                 if (!exiting) {
                     exiting = true
+                    Mar2Analytics.trackGuideContinueClicked()
                     val activity = context.findActivity()
                     val continueNavigation = { navigator.replace(effect.destination) }
                     if (activity == null) {
