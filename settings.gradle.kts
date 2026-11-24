@@ -35,7 +35,9 @@ dependencyResolutionManagement {
         maven(url = "https://android-sdk.is.com/")
         maven(url = "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")
         maven(url = "https://artifact.bytedance.com/repository/pangle")
-        maven(url = "https://artifacts.applovin.com/android")
+        maven(url = "https://artifacts.applovin.com/android") {
+            content { includeGroupAndSubgroups("com.applovin") }
+        }
         maven(url = "https://jfrog.anythinktech.com/artifactory/overseas_sdk") {
             content { includeGroup("com.anythink.sdk") }
         }

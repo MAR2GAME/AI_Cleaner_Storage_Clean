@@ -112,11 +112,12 @@ private fun NotificationPermissionSplashEffect(
     onRequest: () -> Unit,
 ) {
     LaunchedEffect(onSplash) {
-        if (!onSplash || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return@LaunchedEffect
-        if (attempted) return@LaunchedEffect
-        onRequest()
+        if (shouldRequestOnSplash(onSplash, attempted, Build.VERSION.SDK_INT)) onRequest()
     }
 }
+
+internal fun shouldRequestOnSplash(onSplash: Boolean, attempted: Boolean, sdkInt: Int): Boolean =
+    onSplash && !attempted && sdkInt >= Build.VERSION_CODES.TIRAMISU
 
 @Composable
 private fun NotificationPermissionGuide(
