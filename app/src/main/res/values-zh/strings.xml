@@ -350,7 +350,7 @@
     <string name="onboarding_get_started">开始使用</string>
     <string name="onboarding_checking_device_info">正在检查设备\n信息...</string>
     <string name="onboarding_device_info_disclaimer">显示的设备信息基于系统提供的数据，可能与官方规格有所不同。例如，由于系统预留空间或硬件配置差异，存储容量或内存可能会略有不同。</string>
-    <string name="splash_accept_prefix">继续即表示你接受我们的</string>
+    <string name="splash_accept_prefix">继续即表示你接受我们的 </string>
 
     <!-- Toolbox -->
     <string name="app_usage">应用使用详情</string>
@@ -563,8 +563,8 @@
     <string name="permission_media_location_desc">为了找出包含位置信息的照片，请授予照片位置权限。</string>
     <string name="duplicates_skipped">已跳过 %1$d 个文件。文件可能已变化，或无法核验或删除副本。</string>
     <string name="duplicates_pending_verification">待核验 · %1$s</string>
-    <string name="common_notification_action_1">Photos</string>
-    <string name="common_notification_action_2">Files</string>
-    <string name="common_notification_action_3">Videos</string>
-    <string name="common_notification_action_4">Recovered</string>
+    <string name="common_notification_action_1">照片</string>
+    <string name="common_notification_action_2">文件</string>
+    <string name="common_notification_action_3">视频</string>
+    <string name="common_notification_action_4">已恢复</string>
 </resources>
