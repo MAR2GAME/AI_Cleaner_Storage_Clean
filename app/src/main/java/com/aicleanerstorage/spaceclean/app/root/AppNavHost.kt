@@ -72,23 +72,32 @@ internal fun AppNavHost(
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentEntry?.destination
 
+    fun showCompletionAd(areaKey: String) {
+        val host = activity ?: return
+        val route = currentDestination?.route.orEmpty()
+        Mar2AdGateway.showInterstitial(
+            activity = host,
+            areaKey = areaKey,
+            fromRoute = route,
+            toRoute = route,
+            onContinue = {},
+        )
+    }
+
     LaunchedEffect(pendingNotification, currentDestination) {
         val action = pendingNotification ?: return@LaunchedEffect
         if (currentDestination?.hasRoute<AppDestination.Splash>() == true ||
             currentDestination?.hasRoute<AppDestination.OnboardingScan>() == true
         ) return@LaunchedEffect
         val continueNavigation = {
+            Mar2AdGateway.suppressNextForegroundAd()
             notificationRoutes.consume(action.id)
-            navigator.resetToRoot(action.destination)
+            navigator.resetToRootForNotification(action.destination)
         }
         if (action.waitForForegroundAd && activity != null) {
-            Mar2AdGateway.show(
+            Mar2AdGateway.showForegroundAd(
                 activity = activity,
-                areaKey = Mar2AdPlacementRegistry.FOREGROUND,
-                format = com.mar2sdk.core.ad.status.AdFormat.OPEN,
-                trigger = com.mar2sdk.core.ad.policy.ScreenAdTrigger.RETURN,
-                fromRoute = "main",
-                toRoute = action.destination.javaClass.simpleName,
+                currentRoute = currentDestination?.route.orEmpty(),
                 onContinue = continueNavigation,
             )
         } else {
@@ -175,6 +184,7 @@ internal fun AppNavHost(
             JunkCleanRoute(
                 navigator = navigator,
                 viewModel = viewModel,
+                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_JUNK_CLEAN_FINISH) },
                 resultTools = { modifier, enabled ->
                     ToolFeatureBanners(
                         modifier = modifier,
@@ -231,23 +241,30 @@ internal fun AppNavHost(
             NetworkSpeedRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<NetworkSpeedViewModel>(),
+                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_NETWORK_SPEED_FINISH) },
             )
         }
         composable<AppDestination.WhatsAppCleaner> {
             WhatsAppCleanerRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<WhatsAppCleanerViewModel>(),
+                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_WHATSAPP_CLEAN_FINISH) },
             )
         }
         composable<AppDestination.NotificationCleaner> {
             NotificationCleanerRoute(
                 navigator = navigator,
                 viewModel = koinViewModel<NotificationCleanerViewModel>(),
+                onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_NOTIFICATION_CLEAN_FINISH) },
             )
         }
 
         // ---- FileManager ----
-        fileManagerRoutes(navController, navigator)
+        fileManagerRoutes(
+            navController = navController,
+            navigator = navigator,
+            onCompleted = { showCompletionAd(Mar2AdPlacementRegistry.MAIN_FILE_MANAGE_FINISH) },
+        )
 
         // ---- Settings ----
         composable<AppDestination.Settings> {

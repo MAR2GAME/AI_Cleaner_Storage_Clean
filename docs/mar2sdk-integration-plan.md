@@ -311,7 +311,7 @@ fun showThenContinue(
 | 分类 | areaKey | 宿主调用位置 | 请求格式 |
 | --- | --- | --- | --- |
 | 开屏 | `openPageAdv` | Splash 完成通知权限、UMP 和最短展示时间后 | `OPEN` |
-| 返回前台 | `foreGroundAdv` | 热启动通知点击，完成广告后再导航 | `OPEN` |
+| 返回前台 | `app_foreground_open` | 热启动通知点击，完成广告后再导航 | `OPEN` |
 | 首页底部 Banner | `openMainBottomAdv` | Home 底部 Banner 预留点位 | `BANNER`，暂时关闭 |
 | 新手引导完成 | `newGuideScanFinishAdv` | 扫描引导完成后进入 Home 前 | `INTER` |
 | 新手引导跳过 | `newGuideSkipAdv` | 用户跳过扫描引导后进入 Home 前 | `INTER` |
@@ -525,7 +525,7 @@ Route       = notification_content.json 中的 Route
 Mar2SDK.NotificationActionId
 ```
 
-`MainActivity` 在 `onCreate` 和 `onNewIntent` 中都调用同一个解析函数。冷启动的通知先进入 Splash，Home 就绪后消费。热启动的通知在 Home 已就绪时先展示 `foreGroundAdv`，广告页返回后再导航。
+`MainActivity` 在 `onCreate` 和 `onNewIntent` 中都调用同一个解析函数。冷启动的通知先进入 Splash，Home 就绪后消费。热启动的通知在 Home 已就绪时先展示 `app_foreground_open`，广告页返回后再导航。
 
 核心模型：
 
@@ -575,13 +575,10 @@ private fun handleNotificationIntent(incoming: Intent, warmDelivery: Boolean) {
 在 `NotificationRouteHost` 中，`WAITING_FOREGROUND_AD` 阶段调用：
 
 ```kotlin
-Mar2AdGateway.show(
+Mar2AdGateway.showForegroundAd(
     activity = activity,
-    areaKey = "foreGroundAdv",
-    format = AdFormat.OPEN,
-    trigger = ScreenAdTrigger.RETURN,
-    fromRoute = "main",
-    toRoute = pending.destination.routeKey,
+    currentRoute = "main",
+    onContinue = { continueNotificationRoute() },
 )
 ```
 
@@ -654,7 +651,7 @@ fun mar2VersionLabel(appVersionName: String): String {
 `ad_config.json` 至少保留：
 
 - `openPageAdv`，用于 Splash。
-- `foreGroundAdv`，用于通知点击后的返回广告。
+- `app_foreground_open`，用于通知点击后的返回广告。
 - 当前原有打点对应的各个 `main*Adv` 和 `return*Adv`。
 - `ad_native: {}` 和 `ad_banner: {}`，表示暂时不启用原生和 Banner。
 
@@ -735,7 +732,7 @@ log_config
 
 - 买量版本和审核版本各安装一次，分别核对 RemoteConfig 分组。
 - Splash 开屏使用 `AdActivity`，日志和 Activity 栈中不能出现旧 Banner 或原生展示入口。
-- 通知点击返回广告使用 `foreGroundAdv` 和 `AdActivity`。
+- 通知点击返回广告使用 `app_foreground_open` 和 `AdActivity`。
 - 原有广告位 key 和打点事件名称仍然存在。
 - Banner 和原生广告暂时不展示。
 

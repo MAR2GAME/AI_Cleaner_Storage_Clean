@@ -2,6 +2,7 @@
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedAction
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedEvent
+import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedPhase
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.interaction.NetworkSpeedViewModel
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedRoute
 import com.aicleanerstorage.spaceclean.app.view.networkspeed.ui.NetworkSpeedScreen
@@ -25,12 +27,17 @@ import kotlinx.coroutines.launch
 fun NetworkSpeedRoute(
     navigator: AppNavigator,
     viewModel: NetworkSpeedViewModel,
+    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.phase) {
+        if (uiState.phase == NetworkSpeedPhase.Result) onCompleted()
+    }
 
     fun handleBack() {
         if (exiting) return

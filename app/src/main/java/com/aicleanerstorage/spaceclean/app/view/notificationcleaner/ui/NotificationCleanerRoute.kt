@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerEvent
+import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerPage
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerViewModel
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui.NotificationCleanerScreen
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.NotificationPermissionGuideDialog
@@ -30,11 +32,18 @@ import kotlinx.coroutines.launch
 fun NotificationCleanerRoute(
     navigator: AppNavigator,
     viewModel: NotificationCleanerViewModel,
+    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.page, state.completionResultVisible) {
+        if (state.page == NotificationCleanerPage.Complete && state.completionResultVisible) {
+            onCompleted()
+        }
+    }
     val permissionPrompt =
         rememberPermissionPrompt { permission, onConfirm, onDismiss ->
             if (permission == AppPermission.NotificationListener) {

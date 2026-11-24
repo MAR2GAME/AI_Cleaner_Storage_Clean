@@ -26,9 +26,14 @@ fun JunkCleanRoute(
     navigator: AppNavigator,
     viewModel: JunkCleanViewModel,
     resultTools: @Composable (modifier: Modifier, enabled: Boolean) -> Unit,
+    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var exitStarted by remember(viewModel) { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.phase) {
+        if (uiState.phase == JunkCleanPhase.CompleteAnimation) onCompleted()
+    }
 
     val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.junkCleanCopy() })
 

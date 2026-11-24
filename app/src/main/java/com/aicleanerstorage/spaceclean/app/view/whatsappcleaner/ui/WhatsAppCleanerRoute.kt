@@ -12,6 +12,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermis
 import com.aicleanerstorage.spaceclean.app.view.common.permission.whatsAppCopy
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerEvent
+import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerPhase
 import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.interaction.WhatsAppCleanerViewModel
 import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
@@ -25,11 +26,15 @@ import kotlinx.coroutines.launch
 fun WhatsAppCleanerRoute(
     navigator: AppNavigator,
     viewModel: WhatsAppCleanerViewModel,
+    onCompleted: () -> Unit = {},
 ) {
     val routeScope = rememberCoroutineScope()
     var exiting by remember { mutableStateOf(false) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect(state.phase) {
+        if (state.phase == WhatsAppCleanerPhase.CompleteAnimation) onCompleted()
+    }
     val permissionPrompt = rememberPermissionPrompt(copy = { permission -> permission.whatsAppCopy() })
 
     fun gated(action: WhatsAppCleanerAction) {

@@ -2,12 +2,18 @@ package com.aicleanerstorage.spaceclean.app.integration
 
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
-/** Mar2SDK 广告位名称，与 feature/add-ads-sdk 保持一致。 */
+/** Mar2SDK 广告位名称 */
 object Mar2AdPlacementRegistry {
     const val OPEN_PAGE = "openPageAdv"
-    const val FOREGROUND = "foreGroundAdv"
+    const val APP_FOREGROUND_OPEN = "app_foreground_open"
     const val NEW_GUIDE_SCAN_FINISH = "newGuideScanFinishAdv"
     const val NEW_GUIDE_SKIP = "newGuideSkipAdv"
+
+    const val MAIN_JUNK_CLEAN_FINISH = "mainJunkCleanFinishAdv"
+    const val MAIN_FILE_MANAGE_FINISH = "mainFileManageFinishAdv"
+    const val MAIN_NOTIFICATION_CLEAN_FINISH = "mainNotificationCleanFinishAdv"
+    const val MAIN_WHATSAPP_CLEAN_FINISH = "mainWhatsappCleanFinishAdv"
+    const val MAIN_NETWORK_SPEED_FINISH = "mainNetworkSpeedFinishAdv"
 
     private const val MAIN_JUNK_CLEAN = "mainJunkCleanAdv"
     private const val MAIN_FILE_MANAGE = "mainFileManageAdv"

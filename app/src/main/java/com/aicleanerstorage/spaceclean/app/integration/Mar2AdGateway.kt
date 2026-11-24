@@ -9,6 +9,8 @@ import com.mar2sdk.core.ad.AdConfig
 import com.mar2sdk.core.ad.policy.ScreenAdContext
 import com.mar2sdk.core.ad.policy.ScreenAdTrigger
 import com.mar2sdk.core.ad.status.AdFormat
+import com.mar2sdk.impl.AreaKeys
+import com.mar2sdk.impl.AppOpenAdManager
 
 /** 统一调用 impl 模块的 AdActivity，并在广告页结束后继续业务动作。 */
 object Mar2AdGateway {
@@ -63,8 +65,33 @@ object Mar2AdGateway {
         onContinue = onContinue,
     )
 
+    fun showForegroundAd(
+        activity: Activity,
+        currentRoute: String,
+        onContinue: () -> Unit,
+    ) {
+        val format = AdConfig.adUnits[AreaKeys.KEY_APP_FOREGROUND_OPEN]?.format
+        if (format != AdFormat.OPEN && format != AdFormat.OPEN_INTER) {
+            onContinue()
+            return
+        }
+        show(
+            activity = activity,
+            areaKey = AreaKeys.KEY_APP_FOREGROUND_OPEN,
+            format = format,
+            trigger = ScreenAdTrigger.RETURN,
+            fromRoute = currentRoute,
+            toRoute = currentRoute,
+            onContinue = onContinue,
+        )
+    }
+
     fun startForegroundNotificationIfAllowed() {
         runCatching { Core.startFGS() }
+    }
+
+    fun suppressNextForegroundAd() {
+        runCatching { AppOpenAdManager.suppressNextForegroundAd() }
     }
 }
 

@@ -10,6 +10,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveHome
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.mvi.resolve
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
@@ -77,5 +78,15 @@ fun FileManagerStartEffect(
     LaunchedEffect(permissionState.granted, permissionState.leavingPage) {
         if (!permissionState.granted || permissionState.leavingPage) return@LaunchedEffect
         latestStartIfNeeded()
+    }
+}
+
+@Composable
+fun FileManagerCompletionAdEffect(
+    phase: FileOperationPhase,
+    onCompleted: () -> Unit,
+) {
+    LaunchedEffect(phase) {
+        if (phase == FileOperationPhase.CompleteAnimation) onCompleted()
     }
 }

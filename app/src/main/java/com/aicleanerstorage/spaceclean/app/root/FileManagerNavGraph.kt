@@ -45,6 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun NavGraphBuilder.fileManagerRoutes(
     navController: NavHostController,
     navigator: AppNavigator,
+    onCompleted: () -> Unit = {},
 ) {
     composable<AppDestination.PhotosManager> { entry ->
         val rootEntry = remember(entry) { navController.getBackStackEntry<AppDestination.PhotosManager>() }
@@ -62,6 +63,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -102,6 +104,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -144,6 +147,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -164,6 +168,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -204,6 +209,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -244,6 +250,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -284,6 +291,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -323,6 +331,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }
@@ -343,6 +352,7 @@ internal fun NavGraphBuilder.fileManagerRoutes(
                 navigator = navigator,
                 viewModel = viewModel,
                 permissionState = permissionState,
+                onCompleted = onCompleted,
             )
         }
     }

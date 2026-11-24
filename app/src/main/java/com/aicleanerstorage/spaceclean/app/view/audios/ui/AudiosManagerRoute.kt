@@ -1,6 +1,7 @@
 ﻿package com.aicleanerstorage.spaceclean.app.view.audios.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.audios.interaction.AudiosManagerViewModel
@@ -8,6 +9,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerCompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
@@ -18,8 +20,11 @@ fun AudiosManagerRoute(
     navigator: AppNavigator,
     viewModel: AudiosManagerViewModel,
     permissionState: FileManagerPermissionState,
+    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState
     val isDetailMode = displayState.detailStartIndex != null

@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerCompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
@@ -48,10 +49,13 @@ fun PhotoPrivacyManagerRoute(
     navigator: AppNavigator,
     viewModel: PhotoPrivacyManagerViewModel,
     permissionState: FileManagerPermissionState,
+    onCompleted: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val permissionPrompt = rememberPermissionPrompt()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
 

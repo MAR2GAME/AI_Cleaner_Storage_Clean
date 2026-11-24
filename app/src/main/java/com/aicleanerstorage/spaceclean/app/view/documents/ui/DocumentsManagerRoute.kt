@@ -2,6 +2,7 @@
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.Lifecycle
@@ -12,6 +13,7 @@ import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileMan
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FilePageAction
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerCompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
@@ -23,9 +25,12 @@ fun DocumentsManagerRoute(
     navigator: AppNavigator,
     viewModel: DocumentsManagerViewModel,
     permissionState: FileManagerPermissionState,
+    onCompleted: () -> Unit = {},
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(page = uiState.page.copy(phase = it)) } ?: uiState
     val latestPermissionGranted by rememberUpdatedState(permissionState.granted)

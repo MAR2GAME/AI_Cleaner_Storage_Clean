@@ -43,6 +43,10 @@ class Mar2Navigator(
         }
     }
 
+    fun resetToRootForNotification(destination: AppDestination) {
+        delegate.resetToRoot(destination)
+    }
+
     override fun back(): Boolean {
         val source = currentFeature() ?: return delegate.back()
         val area = Mar2AdPlacementRegistry.returnArea(source) ?: return delegate.back()

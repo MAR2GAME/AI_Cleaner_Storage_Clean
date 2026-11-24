@@ -35,7 +35,7 @@
         "*"
       ]
     },
-    "foreGroundAdv": {
+    "app_foreground_open": {
       "rate": 1,
       "1HMax": 4,
       "24HMax": 20,

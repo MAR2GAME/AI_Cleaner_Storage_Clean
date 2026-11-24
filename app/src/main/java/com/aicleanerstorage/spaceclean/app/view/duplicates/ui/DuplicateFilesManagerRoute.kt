@@ -11,6 +11,7 @@ import com.aicleanerstorage.spaceclean.R
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerFlowState
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
+import com.aicleanerstorage.spaceclean.app.view.common.files.ui.effect.FileManagerCompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogParams
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.part.FileManagerFlowDialogs
@@ -23,23 +24,23 @@ fun DuplicateFilesManagerRoute(
     navigator: AppNavigator,
     viewModel: DuplicateFilesManagerViewModel,
     permissionState: FileManagerPermissionState,
+    onCompleted: () -> Unit = {},
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    FileManagerCompletionAdEffect(uiState.phase, onCompleted)
+
     val flowState = FileManagerFlowState(uiState.showStopDialog, uiState.blockedPhase)
     val displayState = flowState.blockedPhase?.let { uiState.copy(phase = it) } ?: uiState
-    val context = LocalContext.current
     val skippedMessage =
         if (uiState.skippedDeleteCount > 0) {
             stringResource(R.string.duplicates_skipped, uiState.skippedDeleteCount)
         } else {
             null
         }
-    LaunchedEffect(uiState.skippedDeleteCount, skippedMessage) {
-        if (skippedMessage != null) {
-            Toast.makeText(context, skippedMessage, Toast.LENGTH_LONG).show()
-            viewModel.dispatch(DuplicateFilesAction.SkippedDeleteCountConsumed)
-        }
-    }
+    DuplicateSkippedDeleteToastEffect(
+        message = skippedMessage,
+        onConsumed = { viewModel.dispatch(DuplicateFilesAction.SkippedDeleteCountConsumed) },
+    )
 
     DuplicateFilesManagerScreen(
         state = displayState.copy(permissionGranted = permissionState.granted),
@@ -78,4 +79,17 @@ fun DuplicateFilesManagerRoute(
             onDeleteReady = { viewModel.dispatch(DuplicateFilesAction.DeleteConfirmed) },
         ),
     )
+}
+
+@Composable
+private fun DuplicateSkippedDeleteToastEffect(
+    message: String?,
+    onConsumed: () -> Unit,
+) {
+    val context = LocalContext.current
+    LaunchedEffect(message) {
+        if (message == null) return@LaunchedEffect
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        onConsumed()
+    }
 }
