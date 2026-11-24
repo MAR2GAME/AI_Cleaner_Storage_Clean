@@ -23,6 +23,8 @@ sealed interface SettingsAction {
     data object PrivacyClicked : SettingsAction
 
     data object RateAppClicked : SettingsAction
+
+    data object Resumed : SettingsAction
 }
 
 sealed interface SettingsEvent {

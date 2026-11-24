@@ -112,7 +112,10 @@ private fun observeAdLifecycle(
         when (event) {
             Lifecycle.Event.ON_PAUSE -> paused = true
             Lifecycle.Event.ON_RESUME -> if (paused) continueOnce()
-            Lifecycle.Event.ON_DESTROY -> continueOnce()
+            Lifecycle.Event.ON_DESTROY -> {
+                continued = true
+                activity.lifecycle.removeObserver(observer)
+            }
             else -> Unit
         }
     }

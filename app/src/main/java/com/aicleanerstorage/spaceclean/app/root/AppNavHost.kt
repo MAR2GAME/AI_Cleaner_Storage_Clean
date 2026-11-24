@@ -63,6 +63,7 @@ internal fun AppNavHost(
     navController: NavHostController,
     splashPaused: Boolean,
     notificationPermissionUiActive: Boolean,
+    splashNotificationPermissionReleased: Boolean,
     notificationRoutes: NotificationRouteCoordinator,
 ) {
     val activity = LocalContext.current.findActivity()
@@ -130,6 +131,7 @@ internal fun AppNavHost(
             SplashRoute(
                 navigator = navigator,
                 splashPaused = splashPaused,
+                notificationPermissionReleased = splashNotificationPermissionReleased,
             )
         }
 

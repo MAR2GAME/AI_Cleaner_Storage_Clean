@@ -1,0 +1,37 @@
+{
+  "apps": [
+    {
+      "appName": "Safe Test (Harmless)",
+      "packageName": "com.aicleanerstorage.testres.clean",
+      "risk": "safe"
+    },
+    {
+      "appName": "PUA Test (Harmless)",
+      "packageName": "com.aicleanerstorage.testres.pua",
+      "threatName": "Android.PUA.Harmless.Test",
+      "description": "Fake PUA fixture (no real behavior)",
+      "risk": "threat"
+    },
+    {
+      "appName": "Fake Trojan Demo",
+      "packageName": "com.example.fake.trojan",
+      "threatName": "Android.Trojan.Fake.Test",
+      "description": "Fake app threat with an uninstalled package name",
+      "risk": "threat"
+    },
+    {
+      "appName": "Fake Adware Demo",
+      "packageName": "com.example.fake.adware",
+      "threatName": "Android.Adware.Fake.Test",
+      "description": "Another fake threat so the result list can be scrolled",
+      "risk": "threat"
+    }
+  ],
+  "files": [
+    {
+      "apkPath": "/sdcard/Download/Fake.Trojan.Test.apk",
+      "threatName": "Android.Trojan.Fake.File",
+      "description": "Fake file threat for deep scan"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestCoordinator
 import com.mar2sdk.core.notify.NotificationUtil
 import com.mar2sdk.impl.AppOpenAdManager
 import com.aicleanerstorage.spaceclean.app.root.AppRootView
@@ -19,14 +20,19 @@ class MainActivity : ComponentActivity() {
     private val batterySamplingControl: BatterySamplingControl by inject()
     private val mediaDeletionRequester: ActivityMediaDeletionRequester by inject()
     private val notificationRoutes = NotificationRouteCoordinator()
+    private val notificationPermissionRequests = NotificationPermissionRequestCoordinator()
     private var hostResumed = false
     private var currentRoute: String? = null
     private var pageAllowsForegroundAd = false
     private var operationPending = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        com.mar2sdk.core.notify.NotificationRouteIntent.ensureActionId(intent)
+        notificationPermissionRequests.onHostCreated(savedInstanceState != null)
+        notificationPermissionRequests.restoreState(savedInstanceState?.getBundle(KEY_PERMISSION_REQUESTS))
+        notificationRoutes.restoreState(savedInstanceState?.getBundle(KEY_NOTIFICATION_ROUTES))
         super.onCreate(savedInstanceState)
-        handleNotificationIntent(intent, warmDelivery = false)
+        handleNotificationIntent(intent)
         mediaDeletionRequester.attach(activityResultRegistry)
         enableEdgeToEdge()
         batterySamplingControl.reconcile()
@@ -35,6 +41,7 @@ class MainActivity : ComponentActivity() {
             StorageCleanAppTheme(themeKey = BuildConfig.PRODUCT_THEME_KEY) {
                 AppRootView(
                     notificationRoutes = notificationRoutes,
+                    notificationPermissionRequests = notificationPermissionRequests,
                     onHostStateChanged = ::updateAdHostState,
                 )
             }
@@ -67,15 +74,16 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onNewIntent(intent: android.content.Intent) {
+        com.mar2sdk.core.notify.NotificationRouteIntent.ensureActionId(intent)
         super.onNewIntent(intent)
         setIntent(intent)
-        handleNotificationIntent(intent, warmDelivery = true)
+        handleNotificationIntent(intent)
     }
 
-    private fun handleNotificationIntent(intent: android.content.Intent?, warmDelivery: Boolean) {
+    private fun handleNotificationIntent(intent: android.content.Intent?) {
         if (intent == null) return
         NotificationUtil.trackAppOpen(intent)
-        notificationRoutes.accept(intent, warmDelivery)
+        notificationRoutes.accept(intent)
         reportAdHostState()
     }
 
@@ -98,5 +106,16 @@ class MainActivity : ComponentActivity() {
             pageAllowsAd = pageAllowsForegroundAd,
             operationPending = operationPending || notificationRoutes.pending.value != null,
         )
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBundle(KEY_PERMISSION_REQUESTS, notificationPermissionRequests.saveState())
+        outState.putBundle(KEY_NOTIFICATION_ROUTES, notificationRoutes.saveState())
+        super.onSaveInstanceState(outState)
+    }
+
+    private companion object {
+        const val KEY_PERMISSION_REQUESTS = "notification_permission_requests"
+        const val KEY_NOTIFICATION_ROUTES = "notification_routes"
     }
 }

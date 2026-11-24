@@ -12,8 +12,9 @@ import com.mar2sdk.impl.AppOpenAdManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 
-class MyApp : Application() {
+open class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Core.init(this, if (BuildConfig.DEBUG) AppMod.DEBUG else AppMod.RELEASE)
@@ -21,9 +22,12 @@ class MyApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MyApp)
-            modules(dataModule, presentationModule)
+            modules(*appModules().toTypedArray())
         }
     }
+
+    /** Koin 装配入口；debug 源集可覆盖返回值，向测试构建追加假扫描器。 */
+    protected open fun appModules(): List<Module> = listOf(dataModule, presentationModule)
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)

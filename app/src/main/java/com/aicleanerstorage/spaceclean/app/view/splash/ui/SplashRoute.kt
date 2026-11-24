@@ -39,29 +39,22 @@ import kotlinx.coroutines.launch
 internal fun SplashRoute(
     navigator: AppNavigator,
     splashPaused: Boolean,
+    notificationPermissionReleased: Boolean = true,
     viewModel: SplashViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     var externalLinkActive by remember { mutableStateOf(false) }
     var startupStarted by remember { mutableStateOf(false) }
+    var pendingDestination by remember { mutableStateOf<AppDestination?>(null) }
     val startupStartedAt = remember { SystemClock.elapsedRealtime() }
     var splashReported by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(splashPaused) {
-        viewModel.dispatch(SplashAction.PermissionPauseChanged(splashPaused))
-    }
+    SplashPauseEffect(splashPaused, viewModel)
     CollectEffects(viewModel) { effect ->
         when (effect) {
-            is SplashEvent.Navigate -> if (!startupStarted) {
-                startupStarted = true
-                scope.launch {
-                    delay((3_000L - (SystemClock.elapsedRealtime() - startupStartedAt)).coerceAtLeast(0L))
-                    startSplashFlow(context.findActivity(), effect.destination, navigator)
-                }
-            }
+            is SplashEvent.Navigate -> pendingDestination = effect.destination
             SplashEvent.OpenTerms -> {
                 externalLinkActive = true
                 ExternalLinkUtil.open(context, BuildConfig.TERMS_OF_SERVICE_URL)
@@ -72,17 +65,16 @@ internal fun SplashRoute(
             }
         }
     }
-    DisposableEffect(lifecycleOwner, viewModel) {
-        val observer =
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME && externalLinkActive) {
-                    externalLinkActive = false
-                    viewModel.dispatch(SplashAction.ExternalLinkStateChanged(active = false))
-                }
-            }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
+    SplashStartupEffect(
+        released = notificationPermissionReleased,
+        destination = pendingDestination,
+        started = startupStarted,
+        elapsedSinceStart = SystemClock.elapsedRealtime() - startupStartedAt,
+        onStarted = { startupStarted = true },
+        start = { destination -> startSplashFlow(context.findActivity(), destination, navigator) },
+        scope = scope,
+    )
+    SplashExternalLinkEffect(externalLinkActive, viewModel) { externalLinkActive = false }
 
     SplashScreen(
         state = state,
@@ -94,6 +86,51 @@ internal fun SplashRoute(
             viewModel.dispatch(action)
         },
     )
+}
+
+@Composable
+private fun SplashPauseEffect(splashPaused: Boolean, viewModel: SplashViewModel) {
+    LaunchedEffect(splashPaused) { viewModel.dispatch(SplashAction.PermissionPauseChanged(splashPaused)) }
+}
+
+@Composable
+private fun SplashExternalLinkEffect(
+    active: Boolean,
+    viewModel: SplashViewModel,
+    clear: () -> Unit,
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, active) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && active) {
+                clear()
+                viewModel.dispatch(SplashAction.ExternalLinkStateChanged(active = false))
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+}
+
+@Composable
+private fun SplashStartupEffect(
+    released: Boolean,
+    destination: AppDestination?,
+    started: Boolean,
+    elapsedSinceStart: Long,
+    onStarted: () -> Unit,
+    start: (AppDestination) -> Unit,
+    scope: kotlinx.coroutines.CoroutineScope,
+) {
+    LaunchedEffect(released, destination) {
+        val target = destination ?: return@LaunchedEffect
+        if (!released || started) return@LaunchedEffect
+        onStarted()
+        scope.launch {
+            delay((3_000L - elapsedSinceStart).coerceAtLeast(0L))
+            start(target)
+        }
+    }
 }
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {

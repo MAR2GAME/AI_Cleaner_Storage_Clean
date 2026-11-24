@@ -24,6 +24,7 @@ class SettingsViewModel(
             SettingsAction.TermsClicked -> sendEvent(SettingsEvent.OpenTerms)
             SettingsAction.PrivacyClicked -> sendEvent(SettingsEvent.OpenPrivacy)
             SettingsAction.RateAppClicked -> sendEvent(SettingsEvent.RateApp)
+            SettingsAction.Resumed -> setState { it.copy(versionLabel = mar2VersionLabel(BuildConfig.VERSION_NAME)) }
         }
     }
 }

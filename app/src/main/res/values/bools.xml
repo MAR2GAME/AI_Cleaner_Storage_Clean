@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Crashlytics 20.x 只在开启 native symbol 上传时才注入 build id；
+      App 没有自研 native 代码，这里关闭校验，避免缺 build id 时启动即崩。
+    -->
+    <bool name="com.crashlytics.RequireBuildId">false</bool>
+</resources>

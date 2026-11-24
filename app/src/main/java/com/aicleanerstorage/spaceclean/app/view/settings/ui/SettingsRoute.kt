@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsAction
 import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsEvent
 import com.aicleanerstorage.spaceclean.app.view.settings.interaction.SettingsViewModel
 import com.aicleanerstorage.spaceclean.app.view.settings.ui.SettingsScreen
@@ -21,6 +25,15 @@ fun SettingsRoute(
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.dispatch(SettingsAction.Resumed)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     fun openLink(
         url: String,

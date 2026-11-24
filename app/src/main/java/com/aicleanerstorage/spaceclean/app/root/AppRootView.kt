@@ -14,16 +14,19 @@ import com.aicleanerstorage.spaceclean.app.view.common.permission.NotificationPe
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestCoordinator
 
 @Composable
-fun AppRootView(
+internal fun AppRootView(
     notificationRoutes: NotificationRouteCoordinator,
+    notificationPermissionRequests: NotificationPermissionRequestCoordinator,
     onHostStateChanged: (route: String?, pageAllowsAd: Boolean, operationPending: Boolean) -> Unit,
 ) {
     val navController = rememberNavController()
     var permissionUiActive by remember { mutableStateOf(false) }
     val currentEntry by navController.currentBackStackEntryAsState()
     val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
+    val permissionRequestState by notificationPermissionRequests.state.collectAsStateWithLifecycle()
     val onHome = currentEntry?.destination?.hasRoute<AppDestination.Main>() == true
     val onSplash =
         currentEntry == null ||
@@ -53,11 +56,13 @@ fun AppRootView(
         navController = navController,
         splashPaused = permissionUiActive,
         notificationPermissionUiActive = permissionUiActive,
+        splashNotificationPermissionReleased = permissionRequestState.splashReleased,
         notificationRoutes = notificationRoutes,
     )
     NotificationPermissionPrompt(
         onSplash = onSplash,
         onHome = onHome,
+        coordinator = notificationPermissionRequests,
         onActiveChanged = { permissionUiActive = it },
     )
 }

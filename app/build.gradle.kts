@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 apply(from = "product-config.gradle")
@@ -29,9 +30,18 @@ android {
         versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("boolean", "FAKE_VIRUS_SCAN", "false")
     }
 
     buildTypes {
+        debug {
+            // -PfakeVirusScan=true 时才用 testres 里的假扫描器，默认仍走真实云扫描。
+            buildConfigField(
+                "boolean",
+                "FAKE_VIRUS_SCAN",
+                providers.gradleProperty("fakeVirusScan").getOrElse("false"),
+            )
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = !disableReleaseResourceShrink
@@ -40,6 +50,10 @@ android {
                 "proguard-rules.pro",
             )
         }
+    }
+    sourceSets {
+        // 只有 debug 构建会把 testres 的假扫描 fixture 打进 APK，release 不包含。
+        getByName("debug").assets.srcDir(rootProject.file("testres/fake-virus-fixtures"))
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
