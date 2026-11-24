@@ -21,6 +21,7 @@ import com.aicleanerstorage.spaceclean.domain.model.junk.JunkFileModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkMemoryCleanModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanProgressModel
 import com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.JunkCleanRepository
 import com.aicleanerstorage.spaceclean.domain.rule.JunkScanRule
 import kotlinx.coroutines.CancellationException
@@ -41,11 +42,13 @@ import java.util.concurrent.atomic.AtomicLong
  * @param context 用于扫描缓存/APK/文件和内存清理。
  * @param requester 系统删除授权契约；为 null 时登记待授权请求。
  * @param authorization 待授权请求的登记表。
+ * @param settings 应用设置；用于记录“完成过清理”，失败不影响删除结果。
  */
 internal class DefaultJunkCleanRepository(
     private val context: Context,
     private val requester: MediaDeletionRequester?,
     private val authorization: MediaDeletionAuthorization,
+    private val settings: AppSettingsRepository,
 ) : JunkCleanRepository {
     private val cacheScanner = CacheScanner(context)
     private val tempFileScanner = TempFileScanner()
@@ -132,7 +135,12 @@ internal class DefaultJunkCleanRepository(
     ): Result<List<JunkDeleteOutcomeModel>> =
         catching {
             withContext(Dispatchers.IO) {
-                work.withLock { deleteFilesLocked(files, shouldStop) }
+                val expected = files.distinctBy { it.path }.size
+                work.withLock { deleteFilesLocked(files, shouldStop) }.also { outcomes ->
+                    if (expected > 0 && outcomes.size == expected && outcomes.all { it.processed }) {
+                        settings.markCleanupCompleted()
+                    }
+                }
             }
         }
 

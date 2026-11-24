@@ -17,11 +17,13 @@ import com.aicleanerstorage.spaceclean.base.permission.PermissionResult
  *
  * @param gate 权限查询与系统界面入口。
  * @param requiresSettings 该权限是否只能通过设置页授予。
+ * @param onEvent 文件权限流程的业务事实回调；由 Route 接线到埋点。
  */
 @Stable
 internal class PermissionPromptController(
     private val gate: PermissionGate,
     private val requiresSettings: (AppPermission) -> Boolean = { false },
+    private val onEvent: (PermissionPromptEvent) -> Unit = {},
 ) {
     /** 正在展示解释弹窗的权限；null 表示没有。 */
     var explaining by mutableStateOf<AppPermission?>(null)
@@ -37,6 +39,7 @@ internal class PermissionPromptController(
 
     private var callback: ((PermissionResult) -> Unit)? = null
     private var explainBeforeSettings = false
+    private var activePermission: AppPermission? = null
 
     /**
      * 发起一次权限请求。
@@ -55,6 +58,7 @@ internal class PermissionPromptController(
             onResult(PermissionResult.Granted)
             return
         }
+        activePermission = permission
         callback = onResult
         if (requiresSettings(permission)) {
             explainBeforeSettings = true
@@ -68,6 +72,7 @@ internal class PermissionPromptController(
     /** 用户确认解释弹窗，进入系统界面。 */
     fun confirmExplanation() {
         val permission = explaining ?: return
+        trackDialogResult(accepted = true)
         explaining = null
         requestingSettingsOnly = explainBeforeSettings || requiresSettings(permission)
         requesting = permission
@@ -75,6 +80,7 @@ internal class PermissionPromptController(
 
     /** 用户取消解释弹窗。 */
     fun dismissExplanation() {
+        trackDialogResult(accepted = false)
         finish(PermissionResult.Denied)
     }
 
@@ -98,12 +104,23 @@ internal class PermissionPromptController(
     }
 
     private fun finish(result: PermissionResult) {
+        val permission = activePermission
         explaining = null
         requesting = null
         requestingSettingsOnly = false
         explainBeforeSettings = false
+        activePermission = null
+        if (permission == AppPermission.StorageFiles) {
+            onEvent(PermissionPromptEvent.PermissionResult(permission, result == PermissionResult.Granted))
+        }
         val current = callback ?: return
         callback = null
         current(result)
+    }
+
+    private fun trackDialogResult(accepted: Boolean) {
+        if (activePermission == AppPermission.StorageFiles) {
+            onEvent(PermissionPromptEvent.DialogResult(accepted))
+        }
     }
 }

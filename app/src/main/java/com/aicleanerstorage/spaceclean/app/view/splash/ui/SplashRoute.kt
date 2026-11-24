@@ -1,5 +1,9 @@
 package com.aicleanerstorage.spaceclean.app.view.splash.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.os.SystemClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -9,10 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -28,12 +28,12 @@ import com.aicleanerstorage.spaceclean.base.mvi.CollectEffects
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.util.ExternalLinkUtil
-import org.koin.androidx.compose.koinViewModel
 import com.mar2sdk.core.Core
-import com.mar2sdk.core.ad.status.AdFormat
 import com.mar2sdk.core.ad.policy.ScreenAdTrigger
+import com.mar2sdk.core.ad.status.AdFormat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun SplashRoute(
@@ -57,21 +57,24 @@ internal fun SplashRoute(
             is SplashEvent.Navigate -> pendingDestination = effect.destination
             SplashEvent.OpenTerms -> {
                 externalLinkActive = true
+                Mar2Analytics.trackTermsOpened(Mar2Analytics.LAUNCH_PAGE)
                 ExternalLinkUtil.open(context, BuildConfig.TERMS_OF_SERVICE_URL)
             }
             SplashEvent.OpenPrivacy -> {
                 externalLinkActive = true
+                Mar2Analytics.trackPrivacyOpened(Mar2Analytics.LAUNCH_PAGE)
                 ExternalLinkUtil.open(context, BuildConfig.PRIVACY_POLICY_URL)
             }
         }
     }
     SplashStartupEffect(
-        input = SplashStartupInput(
-            released = notificationPermissionReleased,
-            destination = pendingDestination,
-            started = startupStarted,
-            elapsedSinceStart = SystemClock.elapsedRealtime() - startupStartedAt,
-        ),
+        input =
+            SplashStartupInput(
+                released = notificationPermissionReleased,
+                destination = pendingDestination,
+                started = startupStarted,
+                elapsedSinceStart = SystemClock.elapsedRealtime() - startupStartedAt,
+            ),
         onStarted = { startupStarted = true },
         start = { destination -> startSplashFlow(context.findActivity(), destination, navigator) },
         scope = scope,
@@ -91,7 +94,10 @@ internal fun SplashRoute(
 }
 
 @Composable
-private fun SplashPauseEffect(splashPaused: Boolean, viewModel: SplashViewModel) {
+private fun SplashPauseEffect(
+    splashPaused: Boolean,
+    viewModel: SplashViewModel,
+) {
     LaunchedEffect(splashPaused) { viewModel.dispatch(SplashAction.PermissionPauseChanged(splashPaused)) }
 }
 
@@ -110,12 +116,13 @@ private fun SplashExternalLinkEffect(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, active) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && active) {
-                clear()
-                viewModel.dispatch(SplashAction.ExternalLinkStateChanged(active = false))
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME && active) {
+                    clear()
+                    viewModel.dispatch(SplashAction.ExternalLinkStateChanged(active = false))
+                }
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
@@ -139,11 +146,12 @@ private fun SplashStartupEffect(
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
 
 private fun startSplashFlow(
     activity: Activity?,
@@ -170,25 +178,28 @@ private fun startConsent(
     onContinue: () -> Unit,
 ) {
     var finished = false
+
     fun finish(cancelled: Boolean) {
         if (finished) return
         finished = true
         runCatching { Core.endConsentFlow(flow, cancelled) }
         onContinue()
     }
+
     fun showForm() {
         runCatching {
             Core.showSplashConsent(activity, flow) { finish(cancelled = false) }
         }.onFailure { finish(cancelled = true) }
     }
-    val cached = runCatching {
-        Core.initConsent(activity, flow) { success ->
-            if (success) showForm() else finish(cancelled = true)
+    val cached =
+        runCatching {
+            Core.initConsent(activity, flow) { success ->
+                if (success) showForm() else finish(cancelled = true)
+            }
+        }.getOrElse {
+            finish(cancelled = true)
+            return
         }
-    }.getOrElse {
-        finish(cancelled = true)
-        return
-    }
     if (cached) showForm()
 }
 

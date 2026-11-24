@@ -24,6 +24,10 @@ sealed interface SettingsAction {
 
     data object RateAppClicked : SettingsAction
 
+    data class RateDialogClosed(
+        val ifOk: Boolean,
+    ) : SettingsAction
+
     data object Resumed : SettingsAction
 }
 
@@ -39,4 +43,8 @@ sealed interface SettingsEvent {
     data object OpenPrivacy : SettingsEvent
 
     data object RateApp : SettingsEvent
+
+    data class TrackRatePopup(
+        val ifOk: Boolean,
+    ) : SettingsEvent
 }

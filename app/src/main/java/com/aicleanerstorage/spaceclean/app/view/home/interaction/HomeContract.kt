@@ -54,6 +54,10 @@ sealed interface HomeAction {
 
     data object RateAppClicked : HomeAction
 
+    data class RateDialogClosed(
+        val ifOk: Boolean,
+    ) : HomeAction
+
     data object ExitPromptViewClicked : HomeAction
 }
 
@@ -61,6 +65,10 @@ sealed interface HomeEvent {
     data object ExitApp : HomeEvent
 
     data object RateApp : HomeEvent
+
+    data class TrackRatePopup(
+        val ifOk: Boolean,
+    ) : HomeEvent
 
     data class Navigate(
         val destination: AppDestination,

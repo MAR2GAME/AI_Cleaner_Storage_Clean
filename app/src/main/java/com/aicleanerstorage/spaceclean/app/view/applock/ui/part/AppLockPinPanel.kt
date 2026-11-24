@@ -106,7 +106,14 @@ private fun PinDots(
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
         repeat(4) { index ->
-            Box(Modifier.size(24.dp).background(if (index < length) Color(0xFF282927) else Color.Transparent, CircleShape))
+            Image(
+                painter =
+                    painterResource(
+                        if (index < length) R.drawable.pin_dot_selected else R.drawable.pin_dot_unselected,
+                    ),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }

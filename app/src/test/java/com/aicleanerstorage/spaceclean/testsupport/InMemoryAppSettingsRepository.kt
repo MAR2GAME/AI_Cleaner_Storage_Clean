@@ -13,6 +13,7 @@ internal class InMemoryAppSettingsRepository(
     private var firstOnboardingPending = true
     private var secondOnboardingPending = true
     private var duplicateWarningAccepted = false
+    private var cleanupCompleted = false
 
     override fun readTemperatureUnit() = temperatureUnit
 
@@ -61,6 +62,13 @@ internal class InMemoryAppSettingsRepository(
     override fun markSecondOnboardingCompleted(): Result<Unit> {
         secondOnboardingPending = false
         onboardingCompleted = true
+        return Result.success(Unit)
+    }
+
+    override fun hasCompletedCleanup() = cleanupCompleted
+
+    override fun markCleanupCompleted(): Result<Unit> {
+        cleanupCompleted = true
         return Result.success(Unit)
     }
 

@@ -17,6 +17,7 @@ import com.aicleanerstorage.spaceclean.domain.model.files.DuplicateFileSelection
 import com.aicleanerstorage.spaceclean.domain.model.files.FileDeleteSummaryModel
 import com.aicleanerstorage.spaceclean.domain.model.files.FileKind
 import com.aicleanerstorage.spaceclean.domain.model.files.ManagedFileModel
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.ManagedFileRepository
 import com.aicleanerstorage.spaceclean.domain.rule.DuplicateFileSelectionRule
 import com.aicleanerstorage.spaceclean.domain.rule.FileClassificationRule
@@ -34,10 +35,12 @@ import kotlinx.coroutines.withContext
  *
  * @param context 用于访问 MediaStore、文件系统和权限的上下文。
  * @param deletion 删除数据源；负责状态复核、重复文件保留校验和系统授权。
+ * @param settings 应用设置；用于记录“完成过清理”，失败不影响删除结果。
  */
 internal class DefaultManagedFileRepository(
     context: Context,
     private val deletion: FileDeletionDataSource,
+    private val settings: AppSettingsRepository,
 ) : ManagedFileRepository {
     private val context = context.applicationContext
 
@@ -109,17 +112,23 @@ internal class DefaultManagedFileRepository(
 
     override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =
         catching {
-            deletion.delete(files).toSummary()
+            deletion.delete(files).toSummary().also { summary ->
+                if (summary.processedCount > 0) settings.markCleanupCompleted()
+            }
         }
 
     override suspend fun deleteDuplicates(selections: List<DuplicateFileSelectionModel>): Result<FileDeleteSummaryModel> =
         catching {
-            deletion.deleteDuplicates(selections).toSummary()
+            deletion.deleteDuplicates(selections).toSummary().also { summary ->
+                if (summary.processedCount > 0) settings.markCleanupCompleted()
+            }
         }
 
     override suspend fun removeLocationData(files: List<ManagedFileModel>): Result<Int> =
         catching {
-            FileLocationMetadata.removeLocationData(context, files)
+            FileLocationMetadata.removeLocationData(context, files).also { count ->
+                if (count > 0) settings.markCleanupCompleted()
+            }
         }
 
     private suspend fun queryImages(): List<ManagedFileModel> =

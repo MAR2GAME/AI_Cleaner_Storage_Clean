@@ -100,4 +100,98 @@ class PermissionPromptControllerTest {
         controller.completeRequest(PermissionResult.RequiresSettings)
         assertEquals(PermissionResult.RequiresSettings, result)
     }
+
+    @Test
+    fun `already granted storage permission reports nothing`() {
+        val events = mutableListOf<PermissionPromptEvent>()
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { true },
+                onEvent = events::add,
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+
+        assertEquals(emptyList<PermissionPromptEvent>(), events)
+    }
+
+    @Test
+    fun `confirming storage explanation reports popup then agree`() {
+        val events = mutableListOf<PermissionPromptEvent>()
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { true },
+                onEvent = events::add,
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+        controller.confirmExplanation()
+        controller.completeRequest(PermissionResult.Granted)
+
+        assertEquals(
+            listOf(
+                PermissionPromptEvent.DialogResult(accepted = true),
+                PermissionPromptEvent.PermissionResult(AppPermission.StorageFiles, accepted = true),
+            ),
+            events,
+        )
+    }
+
+    @Test
+    fun `dismissing storage explanation reports popup and disagree`() {
+        val events = mutableListOf<PermissionPromptEvent>()
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { true },
+                onEvent = events::add,
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+        controller.dismissExplanation()
+
+        assertEquals(
+            listOf(
+                PermissionPromptEvent.DialogResult(accepted = false),
+                PermissionPromptEvent.PermissionResult(AppPermission.StorageFiles, accepted = false),
+            ),
+            events,
+        )
+    }
+
+    @Test
+    fun `runtime storage denial reports disagree`() {
+        val events = mutableListOf<PermissionPromptEvent>()
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { false },
+                onEvent = events::add,
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+        controller.completeRequest(PermissionResult.Denied)
+
+        assertEquals(
+            listOf(PermissionPromptEvent.PermissionResult(AppPermission.StorageFiles, accepted = false)),
+            events,
+        )
+    }
+
+    @Test
+    fun `non storage permission reports nothing`() {
+        val events = mutableListOf<PermissionPromptEvent>()
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { false },
+                onEvent = events::add,
+            )
+
+        controller.request(AppPermission.Location) {}
+        controller.completeRequest(PermissionResult.Granted)
+
+        assertEquals(emptyList<PermissionPromptEvent>(), events)
+    }
 }

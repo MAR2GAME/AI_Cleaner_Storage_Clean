@@ -85,6 +85,7 @@ fun SettingsScreen(
         SettingsRateDialog(
             onDismiss = { showRateDialog = false },
             onRate = { onAction(SettingsAction.RateAppClicked) },
+            onResult = { ifOk -> onAction(SettingsAction.RateDialogClosed(ifOk)) },
         )
     }
 }

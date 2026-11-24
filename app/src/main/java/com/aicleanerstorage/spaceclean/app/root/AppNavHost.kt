@@ -1,5 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.root
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,20 +12,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import com.aicleanerstorage.spaceclean.BuildConfig
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Navigator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
-import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
@@ -55,7 +54,6 @@ import com.aicleanerstorage.spaceclean.app.view.whatsappcleaner.ui.WhatsAppClean
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.MAIN_TAB_REQUEST
 import com.aicleanerstorage.spaceclean.base.navigation.MainTabRequest
-import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -76,11 +74,14 @@ internal fun AppNavHost(
         val action = pendingNotification ?: return@LaunchedEffect
         if (currentDestination?.hasRoute<AppDestination.Splash>() == true ||
             currentDestination?.hasRoute<AppDestination.OnboardingScan>() == true
-        ) return@LaunchedEffect
+        ) {
+            return@LaunchedEffect
+        }
         val continueNavigation = {
             Mar2AdGateway.suppressNextForegroundAd()
             runCatching { navigator.resetToRootForNotification(action.destination) }
                 .onSuccess { notificationRoutes.consume(action.id) }
+            Unit
         }
         if (action.waitForForegroundAd && activity != null) {
             Mar2AdGateway.showForegroundAd(
@@ -268,8 +269,9 @@ internal fun AppNavHost(
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }

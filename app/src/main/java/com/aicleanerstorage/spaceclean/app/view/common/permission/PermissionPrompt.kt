@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.permission
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialogCopy
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
@@ -28,7 +29,16 @@ internal fun rememberPermissionPrompt(
     val context = LocalContext.current
     val controller =
         remember(gate, context) {
-            PermissionPromptController(gate) { permission -> permission.requiresSettings(context) }
+            PermissionPromptController(
+                gate = gate,
+                requiresSettings = { permission -> permission.requiresSettings(context) },
+                onEvent = { event ->
+                    when (event) {
+                        is PermissionPromptEvent.DialogResult -> Mar2Analytics.trackFileManagerPopup(event.accepted)
+                        is PermissionPromptEvent.PermissionResult -> Mar2Analytics.trackFilePermissionResult(event.accepted)
+                    }
+                },
+            )
         }
 
     PermissionRequestEffect(

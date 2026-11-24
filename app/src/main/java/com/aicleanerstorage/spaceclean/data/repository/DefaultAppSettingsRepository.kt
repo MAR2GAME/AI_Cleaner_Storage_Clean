@@ -43,14 +43,17 @@ internal class DefaultAppSettingsRepository(
     override fun isSecondOnboardingPending(): Boolean =
         !isOnboardingScanCompleted() && preferences.getBoolean(KEY_SECOND_ONBOARDING_PENDING, true)
 
-    override fun markFirstOnboardingCompleted(): Result<Unit> =
-        save { putBoolean(KEY_FIRST_ONBOARDING_PENDING, false) }
+    override fun markFirstOnboardingCompleted(): Result<Unit> = save { putBoolean(KEY_FIRST_ONBOARDING_PENDING, false) }
 
     override fun markSecondOnboardingCompleted(): Result<Unit> =
         save {
             putBoolean(KEY_SECOND_ONBOARDING_PENDING, false)
             putBoolean(KEY_ONBOARDING_SCAN_COMPLETED, true)
         }
+
+    override fun hasCompletedCleanup(): Boolean = preferences.getBoolean(KEY_CLEANUP_COMPLETED, false)
+
+    override fun markCleanupCompleted(): Result<Unit> = save { putBoolean(KEY_CLEANUP_COMPLETED, true) }
 
     override fun isDuplicateFilesWarningAccepted(): Boolean = preferences.getBoolean(KEY_DUPLICATE_FILES_WARNING_ACCEPTED, false)
 
@@ -75,5 +78,6 @@ private const val KEY_NOTIFICATION_CLEANER_EXIT_PROMPT_SHOWN = "notification_bar
 private const val KEY_ONBOARDING_SCAN_COMPLETED = "onboarding_scan_completed"
 private const val KEY_FIRST_ONBOARDING_PENDING = "is_first_launch_1"
 private const val KEY_SECOND_ONBOARDING_PENDING = "is_second_launch_1"
+private const val KEY_CLEANUP_COMPLETED = "cleanup_completed"
 private const val KEY_DUPLICATE_FILES_WARNING_ACCEPTED = "duplicate_files_warning_accepted"
 private const val KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED = "background_battery_sampling_enabled"

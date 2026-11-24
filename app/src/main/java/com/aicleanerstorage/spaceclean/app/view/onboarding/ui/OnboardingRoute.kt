@@ -1,5 +1,8 @@
 package com.aicleanerstorage.spaceclean.app.view.onboarding.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -7,14 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.platform.LocalContext
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
@@ -43,7 +43,12 @@ fun OnboardingRoute(
         isAdPending = true
         when (effect) {
             OnboardingEvent.NotifyScanFinished -> Mar2Analytics.trackGuideScanResultEntered()
-            is OnboardingEvent.FinishOnboarding -> Mar2Analytics.trackGuideContinueClicked()
+            is OnboardingEvent.FinishOnboarding ->
+                if (effect.skipped) {
+                    Mar2Analytics.trackGuideSkipClicked()
+                } else {
+                    Mar2Analytics.trackGuideContinueClicked()
+                }
         }
         effect.requestOnboardingAd(
             showAd = { areaKey, target, onContinue ->
@@ -89,8 +94,9 @@ internal fun OnboardingEvent.requestOnboardingAd(
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }

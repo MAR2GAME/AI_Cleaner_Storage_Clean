@@ -9,8 +9,8 @@ import com.mar2sdk.core.ad.AdConfig
 import com.mar2sdk.core.ad.policy.ScreenAdContext
 import com.mar2sdk.core.ad.policy.ScreenAdTrigger
 import com.mar2sdk.core.ad.status.AdFormat
-import com.mar2sdk.impl.AreaKeys
 import com.mar2sdk.impl.AppOpenAdManager
+import com.mar2sdk.impl.AreaKeys
 
 /** 统一调用 impl 模块的 AdActivity，并在广告页结束后继续业务动作。 */
 object Mar2AdGateway {
@@ -33,19 +33,20 @@ object Mar2AdGateway {
             return
         }
         val continueOnce = observeAdLifecycle(componentActivity, onContinue)
-        val started = runCatching {
-            com.mar2sdk.impl.AdActivity.showAd(
-                activity,
-                ScreenAdContext(
-                    areaKey = areaKey,
-                    adFormat = format,
-                    adPlatform = AdConfig.defaultPlatform,
-                    trigger = trigger,
-                    fromRoute = fromRoute,
-                    toRoute = toRoute,
-                ),
-            )
-        }.getOrDefault(false)
+        val started =
+            runCatching {
+                com.mar2sdk.impl.AdActivity.showAd(
+                    activity,
+                    ScreenAdContext(
+                        areaKey = areaKey,
+                        adFormat = format,
+                        adPlatform = AdConfig.defaultPlatform,
+                        trigger = trigger,
+                        fromRoute = fromRoute,
+                        toRoute = toRoute,
+                    ),
+                )
+            }.getOrDefault(false)
         if (!started) continueOnce()
     }
 
@@ -102,23 +103,25 @@ private fun observeAdLifecycle(
     var paused = false
     var continued = false
     lateinit var observer: LifecycleEventObserver
+
     fun continueOnce() {
         if (continued) return
         continued = true
         activity.lifecycle.removeObserver(observer)
         onContinue()
     }
-    observer = LifecycleEventObserver { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_PAUSE -> paused = true
-            Lifecycle.Event.ON_RESUME -> if (paused) continueOnce()
-            Lifecycle.Event.ON_DESTROY -> {
-                continued = true
-                activity.lifecycle.removeObserver(observer)
+    observer =
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> paused = true
+                Lifecycle.Event.ON_RESUME -> if (paused) continueOnce()
+                Lifecycle.Event.ON_DESTROY -> {
+                    continued = true
+                    activity.lifecycle.removeObserver(observer)
+                }
+                else -> Unit
             }
-            else -> Unit
         }
-    }
     activity.lifecycle.addObserver(observer)
     return ::continueOnce
 }

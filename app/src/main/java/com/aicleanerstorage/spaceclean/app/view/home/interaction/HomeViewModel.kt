@@ -64,6 +64,10 @@ class HomeViewModel(
             }
             HomeAction.ExitConfirmed -> sendEvent(HomeEvent.ExitApp)
             HomeAction.RateAppClicked -> sendEvent(HomeEvent.RateApp)
+            is HomeAction.RateDialogClosed -> {
+                dismissAutoRateDialog()
+                sendEvent(HomeEvent.TrackRatePopup(action.ifOk))
+            }
             HomeAction.ExitPromptViewClicked -> {
                 consumeExitPromptForNavigation()?.let { sendEvent(HomeEvent.Navigate(it)) }
             }

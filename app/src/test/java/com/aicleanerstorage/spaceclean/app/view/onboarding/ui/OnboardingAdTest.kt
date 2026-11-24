@@ -23,7 +23,13 @@ class OnboardingAdTest {
             assertEquals(true, scanFinished)
             assertEquals(emptyList<AppDestination>(), destinations)
 
-            OnboardingEvent.FinishOnboarding(target).requestOnboardingAd(showAd, { error("Unexpected scan callback") }, destinations::add)
+            OnboardingEvent
+                .FinishOnboarding(target, skipped = false)
+                .requestOnboardingAd(
+                    showAd,
+                    { error("Unexpected scan callback") },
+                    destinations::add,
+                )
             assertEquals(listOf("newGuideScanFinishAdv", "newGuideSkipAdv"), requests)
             assertEquals(emptyList<AppDestination>(), destinations)
             continueAfterAd()

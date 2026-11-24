@@ -93,6 +93,20 @@ interface AppSettingsRepository {
     fun markSecondOnboardingCompleted(): Result<Unit>
 
     /**
+     * 判断用户是否完成过至少一次有效清理。
+     *
+     * @return true 表示通知权限提示可以使用“清理后”场景标记。
+     */
+    fun hasCompletedCleanup(): Boolean
+
+    /**
+     * 记录一次有效清理完成。
+     *
+     * @return 写入结果；failure 表示持久化失败。
+     */
+    fun markCleanupCompleted(): Result<Unit>
+
+    /**
      * 判断重复文件删除警告是否已接受。
      *
      * @return true 表示用户已接受风险提示。

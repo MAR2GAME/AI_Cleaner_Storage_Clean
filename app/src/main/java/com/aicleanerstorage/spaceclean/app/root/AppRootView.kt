@@ -6,20 +6,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aicleanerstorage.spaceclean.app.view.common.permission.NotificationPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
-import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestCoordinator
+import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.view.common.permission.NotificationPermissionPrompt
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 
 @Composable
 internal fun AppRootView(
     notificationRoutes: NotificationRouteCoordinator,
     notificationPermissionRequests: NotificationPermissionRequestCoordinator,
+    hasCompletedCleanup: () -> Boolean,
     onHostStateChanged: (route: String?, pageAllowsAd: Boolean, operationPending: Boolean) -> Unit,
 ) {
     val navController = rememberNavController()
@@ -64,5 +65,6 @@ internal fun AppRootView(
         onHome = onHome,
         coordinator = notificationPermissionRequests,
         onActiveChanged = { permissionUiActive = it },
+        hasCompletedCleanup = hasCompletedCleanup,
     )
 }

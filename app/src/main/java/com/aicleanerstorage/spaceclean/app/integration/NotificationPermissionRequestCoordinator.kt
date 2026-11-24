@@ -38,30 +38,37 @@ internal class NotificationPermissionRequestCoordinator {
         if (!runtimePermissionRequired || runtimePermissionGranted || current.pendingRequestId != null) {
             return null
         }
-        val sourceUsed = when (source) {
-            NotificationPermissionRequestSource.Splash -> current.splashRequestUsed
-            NotificationPermissionRequestSource.Home -> current.homeRequestUsed
-        }
+        val sourceUsed =
+            when (source) {
+                NotificationPermissionRequestSource.Splash -> current.splashRequestUsed
+                NotificationPermissionRequestSource.Home -> current.homeRequestUsed
+            }
         if (sourceUsed) return null
         val requestId = current.requestId + 1L
-        mutableState.value = current.copy(
-            requestId = requestId,
-            pendingRequestId = requestId,
-            pendingSource = source,
-            splashRequestUsed = current.splashRequestUsed || source == NotificationPermissionRequestSource.Splash,
-            homeRequestUsed = current.homeRequestUsed || source == NotificationPermissionRequestSource.Home,
-        )
+        mutableState.value =
+            current.copy(
+                requestId = requestId,
+                pendingRequestId = requestId,
+                pendingSource = source,
+                splashRequestUsed = current.splashRequestUsed || source == NotificationPermissionRequestSource.Splash,
+                homeRequestUsed = current.homeRequestUsed || source == NotificationPermissionRequestSource.Home,
+            )
         return requestId
     }
 
-    fun complete(requestId: Long?, source: NotificationPermissionRequestSource) {
+    fun complete(
+        requestId: Long?,
+        source: NotificationPermissionRequestSource,
+    ): Boolean {
         val current = state.value
-        if (requestId == null || current.pendingRequestId != requestId) return
-        mutableState.value = current.copy(
-            pendingRequestId = null,
-            pendingSource = null,
-            splashReleased = current.splashReleased || source == NotificationPermissionRequestSource.Splash,
-        )
+        if (requestId == null || current.pendingRequestId != requestId) return false
+        mutableState.value =
+            current.copy(
+                pendingRequestId = null,
+                pendingSource = null,
+                splashReleased = current.splashReleased || source == NotificationPermissionRequestSource.Splash,
+            )
+        return true
     }
 
     fun releaseSplash() {
@@ -70,29 +77,34 @@ internal class NotificationPermissionRequestCoordinator {
         }
     }
 
-    fun saveState(): Bundle = Bundle().apply {
-        val current = state.value
-        putLong(KEY_REQUEST_ID, current.requestId)
-        current.pendingRequestId?.let { putLong(KEY_PENDING_REQUEST_ID, it) }
-        current.pendingSource?.let { putString(KEY_PENDING_SOURCE, it.name) }
-        putBoolean(KEY_SPLASH_USED, current.splashRequestUsed)
-        putBoolean(KEY_HOME_USED, current.homeRequestUsed)
-        putBoolean(KEY_SPLASH_RELEASED, current.splashReleased)
-    }
+    fun saveState(): Bundle =
+        Bundle().apply {
+            val current = state.value
+            putLong(KEY_REQUEST_ID, current.requestId)
+            current.pendingRequestId?.let { putLong(KEY_PENDING_REQUEST_ID, it) }
+            current.pendingSource?.let { putString(KEY_PENDING_SOURCE, it.name) }
+            putBoolean(KEY_SPLASH_USED, current.splashRequestUsed)
+            putBoolean(KEY_HOME_USED, current.homeRequestUsed)
+            putBoolean(KEY_SPLASH_RELEASED, current.splashReleased)
+        }
 
     fun restoreState(savedState: Bundle?) {
         if (savedState == null) return
-        mutableState.value = NotificationPermissionRequestState(
-            requestId = savedState.getLong(KEY_REQUEST_ID),
-            pendingRequestId = savedState.takeIf { it.containsKey(KEY_PENDING_REQUEST_ID) }
-                ?.getLong(KEY_PENDING_REQUEST_ID),
-            pendingSource = savedState.getString(KEY_PENDING_SOURCE)?.let { value ->
-                NotificationPermissionRequestSource.entries.firstOrNull { it.name == value }
-            },
-            splashRequestUsed = savedState.getBoolean(KEY_SPLASH_USED),
-            homeRequestUsed = savedState.getBoolean(KEY_HOME_USED),
-            splashReleased = savedState.getBoolean(KEY_SPLASH_RELEASED),
-        )
+        mutableState.value =
+            NotificationPermissionRequestState(
+                requestId = savedState.getLong(KEY_REQUEST_ID),
+                pendingRequestId =
+                    savedState
+                        .takeIf { it.containsKey(KEY_PENDING_REQUEST_ID) }
+                        ?.getLong(KEY_PENDING_REQUEST_ID),
+                pendingSource =
+                    savedState.getString(KEY_PENDING_SOURCE)?.let { value ->
+                        NotificationPermissionRequestSource.entries.firstOrNull { it.name == value }
+                    },
+                splashRequestUsed = savedState.getBoolean(KEY_SPLASH_USED),
+                homeRequestUsed = savedState.getBoolean(KEY_HOME_USED),
+                splashReleased = savedState.getBoolean(KEY_SPLASH_RELEASED),
+            )
     }
 
     private companion object {

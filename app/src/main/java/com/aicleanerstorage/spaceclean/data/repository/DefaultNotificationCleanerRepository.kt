@@ -6,6 +6,7 @@ import com.aicleanerstorage.spaceclean.data.local.preferences.PreferencesDataSou
 import com.aicleanerstorage.spaceclean.domain.model.notification.BlockableNotificationAppModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.NotificationCleanerSnapshotModel
 import com.aicleanerstorage.spaceclean.domain.model.notification.PostedNotificationModel
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.NotificationCleanerRepository
 
 /** 用通知监听服务与偏好存储实现通知拦截、记录和会话快照。 */
@@ -13,6 +14,7 @@ internal class DefaultNotificationCleanerRepository(
     context: Context,
     private val retainContent: Boolean,
     preferences: PreferencesDataSource,
+    private val settings: AppSettingsRepository,
 ) : NotificationCleanerRepository {
     private val appContext = context.applicationContext
     private val dataSource = NotificationCleanerDataSource(preferences)
@@ -60,7 +62,10 @@ internal class DefaultNotificationCleanerRepository(
         dataSource.setEnabled(appContext, enabled)
     }
 
-    override fun clearBlockedNotifications(): Int = dataSource.clearBlockedNotifications(appContext)
+    override fun clearBlockedNotifications(): Int =
+        dataSource.clearBlockedNotifications(appContext).also { count ->
+            if (count > 0) settings.markCleanupCompleted()
+        }
 
     override fun selectedNotificationPackages(): Set<String> = dataSource.selectedPackages(appContext)
 

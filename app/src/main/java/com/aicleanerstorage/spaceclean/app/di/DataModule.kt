@@ -59,11 +59,17 @@ val dataModule: Module =
             DefaultManagedFileRepository(
                 context = context,
                 deletion = FileDeletionDataSource(context, get<MediaDeletionRequester>(), get()),
+                settings = get<AppSettingsRepository>(),
             )
         }
         single<ManagedFileRepository> { get<DefaultManagedFileRepository>() }
         single {
-            DefaultJunkCleanRepository(androidContext(), get<MediaDeletionRequester>(), get())
+            DefaultJunkCleanRepository(
+                androidContext(),
+                get<MediaDeletionRequester>(),
+                get(),
+                get<AppSettingsRepository>(),
+            )
         }
         single<JunkCleanRepository> { get<DefaultJunkCleanRepository>() }
         single<BatterySamplingControl> {
@@ -99,6 +105,7 @@ val dataModule: Module =
                 context = context,
                 retainContent = false,
                 preferences = get(named("notification")),
+                settings = get<AppSettingsRepository>(),
             )
         }
         single<BatteryHistoryRepository> { DefaultBatteryHistoryRepository(androidContext()) }

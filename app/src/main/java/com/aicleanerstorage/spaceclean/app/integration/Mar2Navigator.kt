@@ -6,8 +6,8 @@ import androidx.navigation.NavHostController
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.NavControllerAppNavigator
-import com.mar2sdk.core.ad.status.AdFormat
 import com.mar2sdk.core.ad.policy.ScreenAdTrigger
+import com.mar2sdk.core.ad.status.AdFormat
 
 class Mar2Navigator(
     private val navController: NavHostController,
@@ -50,6 +50,9 @@ class Mar2Navigator(
     override fun back(): Boolean {
         val source = currentFeature() ?: return delegate.back()
         val area = Mar2AdPlacementRegistry.returnArea(source) ?: return delegate.back()
+        val backTargetIsMain =
+            navController.previousBackStackEntry?.destination?.hasRoute<AppDestination.Main>() == true
+        if (!ReturnAdPolicy.shouldShowReturnAd(source, backTargetIsMain)) return delegate.back()
         val current = navController.currentBackStackEntry ?: return false
         if (activity == null) return delegate.back()
         Mar2AdGateway.show(
@@ -64,44 +67,49 @@ class Mar2Navigator(
         return true
     }
 
-    private fun navigateWithAd(destination: AppDestination, area: String?, onContinue: () -> Unit) {
+    private fun navigateWithAd(
+        destination: AppDestination,
+        area: String?,
+        onContinue: () -> Unit,
+    ) {
         val host = activity
-        if (area == null || host == null) onContinue() else Mar2AdGateway.showInterstitial(
-            activity = host,
-            areaKey = area,
-            fromRoute = "main",
-            toRoute = destination.javaClass.simpleName,
-            onContinue = onContinue,
-        )
-    }
-
-    private fun currentFeature(): AppDestination? = with(navController) {
-        when {
-            currentDestination?.hasRoute<AppDestination.JunkClean>() == true -> AppDestination.JunkClean
-            currentDestination?.hasRoute<AppDestination.AntiVirus>() == true -> AppDestination.AntiVirus
-            currentDestination?.hasRoute<AppDestination.VirusQuickScan>() == true -> AppDestination.AntiVirus
-            currentDestination?.hasRoute<AppDestination.VirusDeepScan>() == true -> AppDestination.AntiVirus
-            currentDestination?.hasRoute<AppDestination.VirusResult>() == true -> AppDestination.AntiVirus
-            currentDestination?.hasRoute<AppDestination.NoVirusResult>() == true -> AppDestination.AntiVirus
-            currentDestination?.hasRoute<AppDestination.AppLock>() == true -> AppDestination.AppLock
-            currentDestination?.hasRoute<AppDestination.DeviceInfo>() == true -> AppDestination.DeviceInfo
-            currentDestination?.hasRoute<AppDestination.BatteryInfo>() == true -> AppDestination.BatteryInfo
-            currentDestination?.hasRoute<AppDestination.AppUsage>() == true -> AppDestination.AppUsage
-            currentDestination?.hasRoute<AppDestination.NetworkUsage>() == true -> AppDestination.NetworkUsage
-            currentDestination?.hasRoute<AppDestination.NetworkScan>() == true -> AppDestination.NetworkScan
-            currentDestination?.hasRoute<AppDestination.NetworkSpeed>() == true -> AppDestination.NetworkSpeed
-            currentDestination?.hasRoute<AppDestination.NotificationCleaner>() == true -> AppDestination.NotificationCleaner
-            currentDestination?.hasRoute<AppDestination.WhatsAppCleaner>() == true -> AppDestination.WhatsAppCleaner
-            currentDestination?.hasRoute<AppDestination.PhotosManager>() == true -> AppDestination.PhotosManager
-            currentDestination?.hasRoute<AppDestination.SimilarPhotosManager>() == true -> AppDestination.SimilarPhotosManager
-            currentDestination?.hasRoute<AppDestination.PhotoPrivacyManager>() == true -> AppDestination.PhotoPrivacyManager
-            currentDestination?.hasRoute<AppDestination.ScreenshotsManager>() == true -> AppDestination.ScreenshotsManager
-            currentDestination?.hasRoute<AppDestination.VideosManager>() == true -> AppDestination.VideosManager
-            currentDestination?.hasRoute<AppDestination.AudiosManager>() == true -> AppDestination.AudiosManager
-            currentDestination?.hasRoute<AppDestination.LargeFilesManager>() == true -> AppDestination.LargeFilesManager
-            currentDestination?.hasRoute<AppDestination.DuplicateFilesManager>() == true -> AppDestination.DuplicateFilesManager
-            currentDestination?.hasRoute<AppDestination.DocumentsManager>() == true -> AppDestination.DocumentsManager
-            else -> null
+        if (area == null || host == null) {
+            onContinue()
+        } else {
+            Mar2AdGateway.showInterstitial(
+                activity = host,
+                areaKey = area,
+                fromRoute = "main",
+                toRoute = destination.javaClass.simpleName,
+                onContinue = onContinue,
+            )
         }
     }
+
+    private fun currentFeature(): AppDestination? =
+        with(navController) {
+            when {
+                currentDestination?.hasRoute<AppDestination.JunkClean>() == true -> AppDestination.JunkClean
+                currentDestination?.hasRoute<AppDestination.AntiVirus>() == true -> AppDestination.AntiVirus
+                currentDestination?.hasRoute<AppDestination.AppLock>() == true -> AppDestination.AppLock
+                currentDestination?.hasRoute<AppDestination.DeviceInfo>() == true -> AppDestination.DeviceInfo
+                currentDestination?.hasRoute<AppDestination.BatteryInfo>() == true -> AppDestination.BatteryInfo
+                currentDestination?.hasRoute<AppDestination.AppUsage>() == true -> AppDestination.AppUsage
+                currentDestination?.hasRoute<AppDestination.NetworkUsage>() == true -> AppDestination.NetworkUsage
+                currentDestination?.hasRoute<AppDestination.NetworkScan>() == true -> AppDestination.NetworkScan
+                currentDestination?.hasRoute<AppDestination.NetworkSpeed>() == true -> AppDestination.NetworkSpeed
+                currentDestination?.hasRoute<AppDestination.NotificationCleaner>() == true -> AppDestination.NotificationCleaner
+                currentDestination?.hasRoute<AppDestination.WhatsAppCleaner>() == true -> AppDestination.WhatsAppCleaner
+                currentDestination?.hasRoute<AppDestination.PhotosManager>() == true -> AppDestination.PhotosManager
+                currentDestination?.hasRoute<AppDestination.SimilarPhotosManager>() == true -> AppDestination.SimilarPhotosManager
+                currentDestination?.hasRoute<AppDestination.PhotoPrivacyManager>() == true -> AppDestination.PhotoPrivacyManager
+                currentDestination?.hasRoute<AppDestination.ScreenshotsManager>() == true -> AppDestination.ScreenshotsManager
+                currentDestination?.hasRoute<AppDestination.VideosManager>() == true -> AppDestination.VideosManager
+                currentDestination?.hasRoute<AppDestination.AudiosManager>() == true -> AppDestination.AudiosManager
+                currentDestination?.hasRoute<AppDestination.LargeFilesManager>() == true -> AppDestination.LargeFilesManager
+                currentDestination?.hasRoute<AppDestination.DuplicateFilesManager>() == true -> AppDestination.DuplicateFilesManager
+                currentDestination?.hasRoute<AppDestination.DocumentsManager>() == true -> AppDestination.DocumentsManager
+                else -> null
+            }
+        }
 }

@@ -10,9 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.permission.junkCleanCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
-import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanAction
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanPhase
 import com.aicleanerstorage.spaceclean.app.view.junkclean.interaction.JunkCleanViewModel

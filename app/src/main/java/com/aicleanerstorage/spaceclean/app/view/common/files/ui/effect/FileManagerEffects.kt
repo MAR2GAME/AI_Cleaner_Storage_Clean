@@ -9,14 +9,14 @@ import androidx.compose.ui.platform.LocalContext
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
 import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileManagerEvent
+import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.FileManagerPermissionState
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveBack
 import com.aicleanerstorage.spaceclean.app.view.common.files.ui.leaveHome
-import com.aicleanerstorage.spaceclean.app.view.common.files.interaction.FileOperationPhase
 import com.aicleanerstorage.spaceclean.base.mvi.UiText
 import com.aicleanerstorage.spaceclean.base.mvi.resolve
-import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
 import kotlinx.coroutines.flow.Flow
 
 @Composable

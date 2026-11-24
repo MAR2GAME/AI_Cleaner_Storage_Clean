@@ -5,20 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.aicleanerstorage.spaceclean.BuildConfig
-import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
-import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestCoordinator
-import com.mar2sdk.core.notify.NotificationUtil
-import com.mar2sdk.impl.AppOpenAdManager
+import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.permission.ActivityMediaDeletionRequester
 import com.aicleanerstorage.spaceclean.app.root.AppRootView
 import com.aicleanerstorage.spaceclean.base.designsystem.theme.StorageCleanAppTheme
+import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.BatterySamplingControl
+import com.mar2sdk.core.notify.NotificationUtil
+import com.mar2sdk.impl.AppOpenAdManager
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     private val batterySamplingControl: BatterySamplingControl by inject()
     private val mediaDeletionRequester: ActivityMediaDeletionRequester by inject()
+    private val settingsRepository: AppSettingsRepository by inject()
     private val notificationRoutes = NotificationRouteCoordinator()
     private val notificationPermissionRequests = NotificationPermissionRequestCoordinator()
     private var hostResumed = false
@@ -27,7 +29,8 @@ class MainActivity : ComponentActivity() {
     private var operationPending = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        com.mar2sdk.core.notify.NotificationRouteIntent.ensureActionId(intent)
+        com.mar2sdk.core.notify.NotificationRouteIntent
+            .ensureActionId(intent)
         notificationPermissionRequests.onHostCreated(savedInstanceState != null)
         notificationPermissionRequests.restoreState(savedInstanceState?.getBundle(KEY_PERMISSION_REQUESTS))
         notificationRoutes.restoreState(savedInstanceState?.getBundle(KEY_NOTIFICATION_ROUTES))
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 AppRootView(
                     notificationRoutes = notificationRoutes,
                     notificationPermissionRequests = notificationPermissionRequests,
+                    hasCompletedCleanup = settingsRepository::hasCompletedCleanup,
                     onHostStateChanged = ::updateAdHostState,
                 )
             }
@@ -74,7 +78,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onNewIntent(intent: android.content.Intent) {
-        com.mar2sdk.core.notify.NotificationRouteIntent.ensureActionId(intent)
+        com.mar2sdk.core.notify.NotificationRouteIntent
+            .ensureActionId(intent)
         super.onNewIntent(intent)
         setIntent(intent)
         handleNotificationIntent(intent)

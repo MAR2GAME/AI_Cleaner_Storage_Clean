@@ -128,6 +128,7 @@ fun HomeScreen(
         SettingsRateDialog(
             onDismiss = { onAction(HomeAction.AutoRateDismissed) },
             onRate = { onAction(HomeAction.RateAppClicked) },
+            onResult = { ifOk -> onAction(HomeAction.RateDialogClosed(ifOk)) },
         )
     }
 }

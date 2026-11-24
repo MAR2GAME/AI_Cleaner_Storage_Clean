@@ -125,14 +125,25 @@ private fun TemperatureOption(
 fun SettingsRateDialog(
     onDismiss: () -> Unit,
     onRate: () -> Unit,
+    onResult: (ifOk: Boolean) -> Unit = {},
 ) {
     var rating by remember { mutableIntStateOf(0) }
     var showFeedback by remember { mutableStateOf(false) }
+    var reported by remember { mutableStateOf(false) }
 
-    fun close() = onDismiss()
+    fun report(ifOk: Boolean) {
+        if (reported) return
+        reported = true
+        onResult(ifOk)
+    }
+
+    fun close(ifOk: Boolean) {
+        report(ifOk)
+        onDismiss()
+    }
 
     Dialog(
-        onDismissRequest = { close() },
+        onDismissRequest = { close(false) },
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
@@ -148,7 +159,7 @@ fun SettingsRateDialog(
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { close() },
+                            onClick = { close(false) },
                         ),
             )
             if (showFeedback) {
@@ -170,7 +181,7 @@ fun SettingsRateDialog(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        RateFeedbackContent(onDismiss = { close() })
+                        RateFeedbackContent(onDismiss = { close(false) })
                     }
                 }
             } else {
@@ -179,7 +190,7 @@ fun SettingsRateDialog(
                     onRatingChange = { rating = it },
                     onSubmit = {
                         if (rating >= 4) {
-                            close()
+                            close(true)
                             onRate()
                         } else {
                             showFeedback = true

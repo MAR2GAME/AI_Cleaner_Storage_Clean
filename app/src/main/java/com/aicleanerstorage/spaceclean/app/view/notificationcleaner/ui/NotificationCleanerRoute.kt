@@ -2,7 +2,6 @@ package com.aicleanerstorage.spaceclean.app.view.notificationcleaner.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,9 +12,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdPlacementRegistry
+import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
-import com.aicleanerstorage.spaceclean.app.integration.Mar2CompletionAdEffect
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerAction
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerEvent
 import com.aicleanerstorage.spaceclean.app.view.notificationcleaner.interaction.NotificationCleanerPage

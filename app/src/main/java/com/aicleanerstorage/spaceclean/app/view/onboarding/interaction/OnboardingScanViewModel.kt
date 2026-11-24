@@ -22,7 +22,8 @@ class OnboardingScanViewModel(
         when (action) {
             OnboardingAction.Entered -> startScanProgress()
             OnboardingAction.RefreshRequested -> refresh()
-            OnboardingAction.GetStartedClicked -> completeOnboarding()
+            OnboardingAction.GetStartedClicked -> completeOnboarding(skipped = false)
+            OnboardingAction.SkipClicked -> completeOnboarding(skipped = true)
             is OnboardingLoaded, is OnboardingProgressUpdated -> setState { OnboardingReducer.reduce(it, action) }
         }
     }
@@ -61,17 +62,23 @@ class OnboardingScanViewModel(
         }
     }
 
-    private fun completeOnboarding() {
+    private fun completeOnboarding(skipped: Boolean) {
         if (completionSubmitted || !currentState.complete) return
         completionSubmitted = true
-        val destination = if (settingsRepository.isFirstOnboardingPending()) {
-            settingsRepository.markFirstOnboardingCompleted()
-            com.aicleanerstorage.spaceclean.base.navigation.AppDestination.OnboardingScan
-        } else {
-            settingsRepository.markSecondOnboardingCompleted()
-            com.aicleanerstorage.spaceclean.base.navigation.AppDestination.Main()
-        }
-        sendEvent(OnboardingEvent.FinishOnboarding(destination))
+        val destination =
+            if (skipped) {
+                settingsRepository.markOnboardingScanCompleted()
+                com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+                    .Main()
+            } else if (settingsRepository.isFirstOnboardingPending()) {
+                settingsRepository.markFirstOnboardingCompleted()
+                com.aicleanerstorage.spaceclean.base.navigation.AppDestination.OnboardingScan
+            } else {
+                settingsRepository.markSecondOnboardingCompleted()
+                com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+                    .Main()
+            }
+        sendEvent(OnboardingEvent.FinishOnboarding(destination, skipped))
     }
 }
 

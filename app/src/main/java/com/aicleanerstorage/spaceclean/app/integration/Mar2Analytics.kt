@@ -30,13 +30,13 @@ object Mar2Analytics {
     }
 
     fun trackCoreFeatureClicked(destination: AppDestination) {
-        featureDetails(destination)?.let { details ->
+        AnalyticsDetails.forDestination(destination)?.let { details ->
             log(CLICK_CORE_FEATURES_BTN, mapOf(DETAILS to details))
         }
     }
 
     fun trackCoreFeatureEntered(route: String) {
-        featureDetails(route)?.let { details ->
+        AnalyticsDetails.forRoute(route)?.let { details ->
             log(ENTER_CORE_FEATURES_PAGE, mapOf(DETAILS to details))
         }
     }
@@ -57,7 +57,10 @@ object Mar2Analytics {
         log(FILEMANAGER_POPUP, mapOf(IF_OK to ifOk))
     }
 
-    fun trackNotificationPopup(noticeFlag: Int, ifOk: Boolean) {
+    fun trackNotificationPopup(
+        noticeFlag: Int,
+        ifOk: Boolean,
+    ) {
         log(
             NOTIFICATION_POPUP,
             mapOf(
@@ -75,7 +78,10 @@ object Mar2Analytics {
         log(if (accepted) AGREE_PUSH_PERMISSION else DISAGREE_PUSH_PERMISSION)
     }
 
-    fun trackRouteEntered(route: String, previousRoute: String?) {
+    fun trackRouteEntered(
+        route: String,
+        previousRoute: String?,
+    ) {
         if (route.isMainRoute()) {
             trackHomeEntered(homeReferrer(previousRoute))
             return
@@ -86,62 +92,9 @@ object Mar2Analytics {
     private fun homeReferrer(previousRoute: String?): String? =
         when {
             previousRoute?.contains("AppDestination.OnboardingScan") == true -> GUIDE_PAGE
-            featureDetails(previousRoute) != null -> CORE_FEATURES
+            AnalyticsDetails.forRoute(previousRoute) != null -> CORE_FEATURES
             else -> null
         }
-
-    private fun featureDetails(destination: AppDestination): String? =
-        when (destination) {
-            AppDestination.JunkClean -> JUNK_CLEAN
-            AppDestination.AntiVirus -> VIRUS_ANTI
-            AppDestination.AppLock -> APP_LOCK
-            AppDestination.DeviceInfo -> DEVICE_INFO
-            AppDestination.BatteryInfo -> BATTERY_INFO
-            AppDestination.AppUsage -> APP_USAGE
-            AppDestination.NotificationCleaner -> NOTIFICATION_CLEAN
-            AppDestination.WhatsAppCleaner -> WHATSAPP_CLEAN
-            AppDestination.NetworkUsage -> NETWORK_USAGE
-            AppDestination.NetworkScan -> NETWORK_SCAN
-            AppDestination.NetworkSpeed -> NETWORK_SPEED
-            AppDestination.PhotosManager,
-            AppDestination.SimilarPhotosManager,
-            AppDestination.PhotoPrivacyManager,
-            AppDestination.ScreenshotsManager,
-            AppDestination.VideosManager,
-            AppDestination.AudiosManager,
-            AppDestination.LargeFilesManager,
-            AppDestination.DuplicateFilesManager,
-            AppDestination.DocumentsManager,
-            -> FILE_MANAGE
-            else -> null
-        }
-
-    private fun featureDetails(route: String?): String? {
-        val value = route ?: return null
-        return when {
-            value.contains("AppDestination.JunkClean") -> JUNK_CLEAN
-            value.contains("AppDestination.AntiVirus") -> VIRUS_ANTI
-            value.contains("AppDestination.AppLock") -> APP_LOCK
-            value.contains("AppDestination.DeviceInfo") -> DEVICE_INFO
-            value.contains("AppDestination.BatteryInfo") -> BATTERY_INFO
-            value.contains("AppDestination.AppUsage") -> APP_USAGE
-            value.contains("AppDestination.NotificationCleaner") -> NOTIFICATION_CLEAN
-            value.contains("AppDestination.WhatsAppCleaner") -> WHATSAPP_CLEAN
-            value.contains("AppDestination.NetworkUsage") -> NETWORK_USAGE
-            value.contains("AppDestination.NetworkScan") -> NETWORK_SCAN
-            value.contains("AppDestination.NetworkSpeed") -> NETWORK_SPEED
-            value.contains("AppDestination.PhotosManager") ||
-                value.contains("AppDestination.SimilarPhotosManager") ||
-                value.contains("AppDestination.PhotoPrivacyManager") ||
-                value.contains("AppDestination.ScreenshotsManager") ||
-                value.contains("AppDestination.VideosManager") ||
-                value.contains("AppDestination.AudiosManager") ||
-                value.contains("AppDestination.LargeFilesManager") ||
-                value.contains("AppDestination.DuplicateFilesManager") ||
-                value.contains("AppDestination.DocumentsManager") -> FILE_MANAGE
-            else -> null
-        }
-    }
 
     private fun String.isMainRoute(): Boolean = contains("AppDestination.Main")
 
@@ -150,10 +103,11 @@ object Mar2Analytics {
         params: Map<String, Any?> = emptyMap(),
     ) {
         val cleanParams: Map<String, Any> =
-            params.mapNotNull { (key, value) ->
-                if (key.isBlank() || value == null) return@mapNotNull null
-                key to value
-            }.toMap()
+            params
+                .mapNotNull { (key, value) ->
+                    if (key.isBlank() || value == null) return@mapNotNull null
+                    key to value
+                }.toMap()
         runCatching { Core.log(eventName, cleanParams) }
     }
 
@@ -180,19 +134,13 @@ object Mar2Analytics {
     private const val DETAILS = "details"
     private const val IF_OK = "if_ok"
     private const val NOTICE_FLAG = "noticeflag"
+
+    /** 合规链接来源：启动页。 */
+    const val LAUNCH_PAGE = "launchpage"
+
+    /** 合规链接来源：设置页。 */
+    const val ABOUT = "about"
+
     private const val GUIDE_PAGE = "guidepage"
     private const val CORE_FEATURES = "corefeatures"
-
-    private const val JUNK_CLEAN = "junkClean"
-    private const val VIRUS_ANTI = "virusAnti"
-    private const val APP_LOCK = "appLock"
-    private const val FILE_MANAGE = "fileManage"
-    private const val DEVICE_INFO = "deviceInfo"
-    private const val BATTERY_INFO = "batteryInfo"
-    private const val APP_USAGE = "appUsage"
-    private const val NOTIFICATION_CLEAN = "notificationClean"
-    private const val WHATSAPP_CLEAN = "whatsappClean"
-    private const val NETWORK_USAGE = "networkUsage"
-    private const val NETWORK_SCAN = "networkScan"
-    private const val NETWORK_SPEED = "networkSpeed"
 }
