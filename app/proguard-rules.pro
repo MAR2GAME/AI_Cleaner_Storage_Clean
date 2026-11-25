@@ -66,11 +66,6 @@
 -keep class com.aicleanerstorage.spaceclean.app.background.AppRuntimeService { public <init>(); }
 -keep class com.aicleanerstorage.spaceclean.data.notificationcleaner.StorageCleanNotificationListener { public <init>(); }
 
--keep class com.aicleanerstorage.spaceclean.junkcc.** { *; }
--keep class com.aicleanerstorage.spaceclean.junkcc.R { *; }
--keep class com.aicleanerstorage.spaceclean.junkcc.R$* { *; }
-
-
 # Local Trustlook cloud scan AAR. Keep conservatively because it is a binary SDK.
 -keep class com.trustlook.** { *; }
 -dontwarn com.trustlook.**

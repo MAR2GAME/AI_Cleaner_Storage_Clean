@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">ไฟล์</string>
     <string name="common_notification_action_3">วิดีโอ</string>
     <string name="common_notification_action_4">กู้คืนแล้ว</string>
+    <string name="settings_version">เวอร์ชัน</string>
 </resources>

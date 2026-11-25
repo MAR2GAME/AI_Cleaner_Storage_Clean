@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">ファイル</string>
     <string name="common_notification_action_3">動画</string>
     <string name="common_notification_action_4">復元済み</string>
+    <string name="settings_version">バージョン</string>
 </resources>

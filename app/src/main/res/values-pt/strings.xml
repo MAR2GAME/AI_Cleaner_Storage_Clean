@@ -487,4 +487,5 @@
     <string name="common_notification_action_2">Arquivos</string>
     <string name="common_notification_action_3">Vídeos</string>
     <string name="common_notification_action_4">Recuperados</string>
+    <string name="settings_version">Versão</string>
 </resources>

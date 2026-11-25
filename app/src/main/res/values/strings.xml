@@ -472,4 +472,5 @@
     <string name="common_notification_action_2">Files</string>
     <string name="common_notification_action_3">Videos</string>
     <string name="common_notification_action_4">Recovered</string>
+    <string name="settings_version">Version</string>
 </resources>

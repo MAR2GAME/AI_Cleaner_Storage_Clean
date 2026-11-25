@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">Dateien</string>
     <string name="common_notification_action_3">Videodateien</string>
     <string name="common_notification_action_4">Wiederhergestellt</string>
+    <string name="settings_version">Version</string>
 </resources>

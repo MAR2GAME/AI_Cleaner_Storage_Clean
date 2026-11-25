@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.aicleanerstorage.spaceclean.BuildConfig
 import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Navigator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationRouteCoordinator
+import com.aicleanerstorage.spaceclean.app.integration.NotificationRoutePhase
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
 import com.aicleanerstorage.spaceclean.app.view.applock.ui.AppLockRoute
 import com.aicleanerstorage.spaceclean.app.view.appusage.interaction.AppUsageViewModel
@@ -69,28 +71,52 @@ internal fun AppNavHost(
     val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentEntry?.destination
+    var inFlightForegroundAdId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pendingNotification, currentDestination) {
-        val action = pendingNotification ?: return@LaunchedEffect
+        val pending = pendingNotification ?: return@LaunchedEffect
+        val action = pending.action
         if (currentDestination?.hasRoute<AppDestination.Splash>() == true ||
             currentDestination?.hasRoute<AppDestination.OnboardingScan>() == true
         ) {
             return@LaunchedEffect
         }
-        val continueNavigation = {
-            Mar2AdGateway.suppressNextForegroundAd()
+        val continueNavigation: () -> Unit = navigation@{
+            if (!notificationRoutes.beginNavigation(action.id)) return@navigation
             runCatching { navigator.resetToRootForNotification(action.destination) }
                 .onSuccess { notificationRoutes.consume(action.id) }
             Unit
         }
-        if (action.waitForForegroundAd && activity != null) {
-            Mar2AdGateway.showForegroundAd(
-                activity = activity,
-                currentRoute = currentDestination?.route.orEmpty(),
-                onContinue = continueNavigation,
-            )
-        } else {
-            continueNavigation()
+        when (pending.phase) {
+            NotificationRoutePhase.WAITING_FOREGROUND_AD -> {
+                if (activity == null) {
+                    notificationRoutes.skipForegroundAd(action.id)
+                    continueNavigation()
+                    return@LaunchedEffect
+                }
+                if (!notificationRoutes.beginForegroundAd(action.id)) return@LaunchedEffect
+                inFlightForegroundAdId = action.id
+                Mar2AdGateway.showForegroundAd(
+                    activity = activity,
+                    currentRoute = currentDestination?.route.orEmpty(),
+                    onContinue = {
+                        if (inFlightForegroundAdId == action.id) {
+                            inFlightForegroundAdId = null
+                            notificationRoutes.foregroundAdFinished(action.id)
+                            continueNavigation()
+                        }
+                    },
+                )
+            }
+
+            NotificationRoutePhase.SHOWING_FOREGROUND_AD -> {
+                if (inFlightForegroundAdId == action.id) return@LaunchedEffect
+                notificationRoutes.foregroundAdFinished(action.id)
+                continueNavigation()
+            }
+
+            NotificationRoutePhase.PENDING_NAVIGATION -> continueNavigation()
+            NotificationRoutePhase.NAVIGATING -> Unit
         }
     }
 

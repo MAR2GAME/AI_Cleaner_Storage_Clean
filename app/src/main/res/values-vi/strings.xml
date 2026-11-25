@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">Tệp</string>
     <string name="common_notification_action_3">Video</string>
     <string name="common_notification_action_4">Đã khôi phục</string>
+    <string name="settings_version">Phiên bản</string>
 </resources>

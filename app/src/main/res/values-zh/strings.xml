@@ -567,4 +567,5 @@
     <string name="common_notification_action_2">文件</string>
     <string name="common_notification_action_3">视频</string>
     <string name="common_notification_action_4">已恢复</string>
+    <string name="settings_version">版本</string>
 </resources>

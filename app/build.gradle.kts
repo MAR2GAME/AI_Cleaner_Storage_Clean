@@ -26,8 +26,6 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "FAKE_VIRUS_SCAN", "false")
@@ -49,6 +47,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     sourceSets {

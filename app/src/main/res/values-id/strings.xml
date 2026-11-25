@@ -485,4 +485,5 @@
     <string name="common_notification_action_2">File</string>
     <string name="common_notification_action_3">Video</string>
     <string name="common_notification_action_4">Dipulihkan</string>
+    <string name="settings_version">Versi</string>
 </resources>

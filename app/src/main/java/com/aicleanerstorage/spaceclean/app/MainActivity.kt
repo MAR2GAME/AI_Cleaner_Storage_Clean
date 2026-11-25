@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         notificationPermissionRequests.restoreState(savedInstanceState?.getBundle(KEY_PERMISSION_REQUESTS))
         notificationRoutes.restoreState(savedInstanceState?.getBundle(KEY_NOTIFICATION_ROUTES))
         super.onCreate(savedInstanceState)
-        handleNotificationIntent(intent)
+        handleNotificationIntent(intent, warmDelivery = false)
         mediaDeletionRequester.attach(activityResultRegistry)
         enableEdgeToEdge()
         batterySamplingControl.reconcile()
@@ -82,13 +82,24 @@ class MainActivity : ComponentActivity() {
             .ensureActionId(intent)
         super.onNewIntent(intent)
         setIntent(intent)
-        handleNotificationIntent(intent)
+        handleNotificationIntent(intent, warmDelivery = true)
     }
 
-    private fun handleNotificationIntent(intent: android.content.Intent?) {
+    private fun handleNotificationIntent(
+        intent: android.content.Intent?,
+        warmDelivery: Boolean,
+    ) {
         if (intent == null) return
         NotificationUtil.trackAppOpen(intent)
-        notificationRoutes.accept(intent)
+        val startupComplete =
+            currentRoute?.let { route ->
+                !route.contains("AppDestination.Splash") &&
+                    !route.contains("AppDestination.OnboardingScan")
+            } == true
+        notificationRoutes.accept(
+            intent = intent,
+            waitForForegroundAd = warmDelivery && startupComplete,
+        )
         reportAdHostState()
     }
 

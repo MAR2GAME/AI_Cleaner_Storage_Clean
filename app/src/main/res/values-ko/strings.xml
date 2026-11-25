@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">파일</string>
     <string name="common_notification_action_3">동영상</string>
     <string name="common_notification_action_4">복구됨</string>
+    <string name="settings_version">버전</string>
 </resources>

@@ -484,4 +484,5 @@
     <string name="common_notification_action_2">Fichiers</string>
     <string name="common_notification_action_3">Vidéos</string>
     <string name="common_notification_action_4">Récupérés</string>
+    <string name="settings_version">Version</string>
 </resources>
