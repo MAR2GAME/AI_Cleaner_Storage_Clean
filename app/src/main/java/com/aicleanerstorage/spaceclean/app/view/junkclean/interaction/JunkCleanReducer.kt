@@ -280,9 +280,9 @@ object JunkCleanReducer {
         )
     }
 
-    private fun buildPreviewGroups(result: com.aicleanerstorage.spaceclean.domain.model.junk.JunkScanResultModel) =
+    private fun buildPreviewGroups(result: JunkScanResultModel) =
         result.categoryBreakdown.map { (category, files) ->
-            CategoryCleanGroup(category, files.map { CleanItem(file = it, isChecked = it.category == JunkCategory.CACHE) })
+            CategoryCleanGroup(category, files.map { CleanItem(file = it) })
         }
 
     private fun defaultEmptyCheckedCategories(groups: List<CategoryCleanGroup>): Set<JunkCategory> {

@@ -91,6 +91,8 @@ class MainActivity : ComponentActivity() {
     ) {
         if (intent == null) return
         NotificationUtil.trackAppOpen(intent)
+        // Cold notifications are owned by Splash and its openPageAdv; only a warm click that
+        // already has a complete route queues app_foreground_open before routing.
         val startupComplete =
             currentRoute?.let { route ->
                 !route.contains("AppDestination.Splash") &&

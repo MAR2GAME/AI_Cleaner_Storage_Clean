@@ -9,12 +9,10 @@ class SplashViewModel(
 ) : MviViewModel<SplashUiState, SplashAction, SplashEvent>(SplashUiState()) {
     override fun onAction(intent: SplashAction) {
         val destination =
-            if (
-                settingsRepository.isFirstOnboardingPending() || settingsRepository.isSecondOnboardingPending()
-            ) {
-                AppDestination.OnboardingScan
-            } else {
+            if (settingsRepository.isOnboardingScanCompleted()) {
                 AppDestination.Main()
+            } else {
+                AppDestination.OnboardingScan
             }
         val transition = SplashReducer.reduce(currentState, intent, destination)
         setState { transition.state }

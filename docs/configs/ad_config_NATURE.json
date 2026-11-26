@@ -36,7 +36,7 @@
       ]
     },
     "app_foreground_open": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 4,
       "24HMax": 20,
       "interval": 30,
@@ -153,7 +153,7 @@
       ]
     },
     "mainFileManageAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -166,7 +166,7 @@
       ]
     },
     "mainNotificationCleanAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -179,7 +179,7 @@
       ]
     },
     "mainWhatsappCleanAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -192,7 +192,7 @@
       ]
     },
     "mainVirusAntiAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -205,7 +205,7 @@
       ]
     },
     "mainAppLockAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -218,7 +218,7 @@
       ]
     },
     "mainDeviceInfoAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,
@@ -231,7 +231,7 @@
       ]
     },
     "mainBatteryInfoAdv": {
-      "rate": 0,
+      "rate": 1,
       "1HMax": 5,
       "24HMax": 5,
       "interval": 0,

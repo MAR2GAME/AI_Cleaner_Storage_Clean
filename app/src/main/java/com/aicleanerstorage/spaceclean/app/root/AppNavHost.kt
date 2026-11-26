@@ -12,7 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.currentStateAsState
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -70,14 +73,33 @@ internal fun AppNavHost(
     val navigator = remember(navController, activity) { Mar2Navigator(navController, activity) }
     val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
     val currentEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = currentEntry?.destination
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val hostLifecycleState by lifecycleOwner.lifecycle.currentStateAsState()
+    val entryLifecycleState by
+        (currentEntry?.lifecycle ?: lifecycleOwner.lifecycle).currentStateAsState()
     var inFlightForegroundAdId by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(pendingNotification, currentDestination) {
+    LaunchedEffect(
+        pendingNotification,
+        currentEntry,
+        entryLifecycleState,
+        hostLifecycleState,
+        notificationPermissionUiActive,
+    ) {
         val pending = pendingNotification ?: return@LaunchedEffect
+        val destination = currentEntry?.destination ?: return@LaunchedEffect
         val action = pending.action
-        if (currentDestination?.hasRoute<AppDestination.Splash>() == true ||
-            currentDestination?.hasRoute<AppDestination.OnboardingScan>() == true
+        if (destination.hasRoute<AppDestination.Splash>() ||
+            destination.hasRoute<AppDestination.OnboardingScan>()
+        ) {
+            return@LaunchedEffect
+        }
+        // Starting AdActivity while the host is still transitioning (Splash -> Main) or while a
+        // permission/system dialog is on top pauses the ad request before it commits; the SDK then
+        // closes the loading page immediately. Wait until the real destination is RESUMED.
+        if (notificationPermissionUiActive ||
+            entryLifecycleState != Lifecycle.State.RESUMED ||
+            hostLifecycleState != Lifecycle.State.RESUMED
         ) {
             return@LaunchedEffect
         }
@@ -98,7 +120,7 @@ internal fun AppNavHost(
                 inFlightForegroundAdId = action.id
                 Mar2AdGateway.showForegroundAd(
                     activity = activity,
-                    currentRoute = currentDestination?.route.orEmpty(),
+                    currentRoute = destination.route.orEmpty(),
                     onContinue = {
                         if (inFlightForegroundAdId == action.id) {
                             inFlightForegroundAdId = null

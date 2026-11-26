@@ -311,10 +311,10 @@ fun showThenContinue(
 | 分类 | areaKey | 宿主调用位置 | 请求格式 |
 | --- | --- | --- | --- |
 | 开屏 | `openPageAdv` | Splash 完成通知权限、UMP 和最短展示时间后 | `OPEN` |
-| 返回前台 | `app_foreground_open` | 热启动通知点击，完成广告后再导航 | `OPEN` |
+| 返回前台 | `app_foreground_open` | 热启动通知点击，完成广告后再导航；冷启动由 Splash 的 `openPageAdv` 承接 | `OPEN` |
 | 首页底部 Banner | `openMainBottomAdv` | Home 底部 Banner 预留点位 | `BANNER`，暂时关闭 |
-| 新手引导扫描完成 | `newGuideScanFinishAdv` | 每轮扫描完成时请求，返回后停留在结果页 | `INTER` |
-| 新手引导继续 | `newGuideSkipAdv` | 点击「开始使用」时请求，返回后进入下一轮或首页 | `INTER` |
+| 新手引导扫描完成 | `newGuideScanFinishAdv` | 扫描完成时请求，返回后停留在结果页 | `INTER` |
+| 新手引导继续 | `newGuideSkipAdv` | 点击「开始使用」时请求，返回后进入首页 | `INTER` |
 | 清理完成 | `mainJunkCleanFinishAdv` | Junk 清理成功完成页 | `INTER` |
 | 文件管理完成 | `mainFileManageFinishAdv` | Photos、Videos、Audios、Large Files、Duplicates、Documents 等文件功能完成页 | `INTER` |
 | 通知清理完成 | `mainNotificationCleanFinishAdv` | Notification Cleaner 成功完成页 | `INTER` |
@@ -375,21 +375,12 @@ MainActivity 创建 Activity 级通知 Host
     -> 从 Splash 进入开始累计至少 3 秒
     -> 使用 AdActivity 展示 openPageAdv
     -> 广告页返回或启动失败
-    -> 未完成两次新手引导时进入 OnboardingScan
+    -> 未完成新手引导时进入 OnboardingScan
     -> 扫描完成时请求 newGuideScanFinishAdv，回到结果页
-    -> 点击「开始使用」时请求 newGuideSkipAdv，继续到第二轮引导或 Home
+    -> 点击「开始使用」时请求 newGuideSkipAdv，进入 Home
 ```
 
-当前项目已有一个 `OnboardingScan` 页面和一个 `onboarding_scan_completed` 标记。参考项目实际使用两个“待完成”标记 `is_first_launch_1`、`is_second_launch_1`。要与参考项目的两次引导一致，需要把设置仓库扩展为两个标记：
-
-```kotlin
-fun isFirstOnboardingPending(): Boolean
-fun isSecondOnboardingPending(): Boolean
-fun markFirstOnboardingCompleted(): Result<Unit>
-fun markSecondOnboardingCompleted(): Result<Unit>
-```
-
-建议将现有标记迁移为兼容读取，旧标记只用于判断历史用户是否已经完成，不覆盖两个新标记。第一次完成 Onboarding 写入 `is_first_launch_1=false`，第二次完成写入 `is_second_launch_1=false`。结果页只有「开始使用」按钮，点击上报原事件 `click_continue_guidepage`。SDK 跳过展示或启动广告失败时也应执行该点位对应的后续动作。中途返回不消耗标记。Splash 根据两个标记决定进入下一次引导或 Home。现有单一 `isOnboardingScanCompleted()` 只能表达一次完成，不能满足“走 2 遍”。
+当前项目复用 `OnboardingScan` 页面和 `onboarding_scan_completed` 标记：扫描完成请求 `newGuideScanFinishAdv`；点击「开始使用」或「跳过」后先请求 `newGuideSkipAdv`，返回后调用 `markOnboardingScanCompleted()` 并 `replace(Home)`。Splash 只根据 `isOnboardingScanCompleted()` 决定进入 `OnboardingScan` 还是 `Home`。两轮引导版本遗留的 `is_first_launch_1` 只用于兼容读取：完成过第一轮的旧安装视为已完成，不再重复引导。
 
 UMP 协调器使用同一个 `ConsentFlow` 串起信息更新和表单：
 
@@ -525,7 +516,7 @@ Route       = notification_content.json 中的 Route
 Mar2SDK.NotificationActionId
 ```
 
-`MainActivity` 在 `onCreate` 和 `onNewIntent` 中都调用同一个解析函数。冷启动的通知先进入 Splash，Home 就绪后消费。热启动的通知在 Home 已就绪时先展示 `app_foreground_open`，广告页返回后再导航。
+`MainActivity` 在 `onCreate` 和 `onNewIntent` 中都调用同一个解析函数。冷启动的通知先进入 Splash，由 Splash 的 `openPageAdv` 承接广告，广告关闭后再进入 Home 和目标页；冷启动不额外请求 `app_foreground_open`。热启动的通知在当前页 RESUMED 后先展示 `app_foreground_open`，广告页返回后再导航。
 
 核心模型：
 
@@ -651,7 +642,7 @@ fun mar2VersionLabel(appVersionName: String): String {
 `ad_config.json` 至少保留：
 
 - `openPageAdv`，用于 Splash。
-- `app_foreground_open`，用于通知点击后的返回广告。
+- `app_foreground_open`，用于热启动通知点击后的返回广告。
 - 当前原有打点对应的各个 `main*Adv` 和 `return*Adv`。
 - `ad_native: {}` 和 `ad_banner: {}`，表示暂时不启用原生和 Banner。
 
@@ -732,7 +723,7 @@ log_config
 
 - 买量版本和审核版本各安装一次，分别核对 RemoteConfig 分组。
 - Splash 开屏使用 `AdActivity`，日志和 Activity 栈中不能出现旧 Banner 或原生展示入口。
-- 通知点击返回广告使用 `app_foreground_open` 和 `AdActivity`。
+- 热启动通知点击返回广告使用 `app_foreground_open` 和 `AdActivity`；冷启动通知由 Splash 的 `openPageAdv` 承接。
 - 原有广告位 key 和打点事件名称仍然存在。
 - Banner 和原生广告暂时不展示。
 

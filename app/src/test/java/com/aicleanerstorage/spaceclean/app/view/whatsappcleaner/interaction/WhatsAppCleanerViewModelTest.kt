@@ -60,6 +60,24 @@ class WhatsAppCleanerViewModelTest {
         }
 
     @Test
+    fun `scan selects every whatsapp category by default`() =
+        runTest(dispatcher) {
+            val viewModel =
+                viewModel(
+                    files = listOf(cacheItem("doc.pdf")),
+                    bucket = WhatsAppFileBucketModel(WhatsAppCleanerGroup.File, WhatsAppCleanerCategory.Documents),
+                )
+
+            viewModel.dispatch(WhatsAppCleanerAction.ScanStartRequested)
+            advanceUntilIdle()
+
+            val state = viewModel.state.value
+            assertEquals(WhatsAppCleanerPhase.ScanResult, state.phase)
+            assertEquals(1, state.selectedCount)
+            assertEquals(100L, state.selectedBytes)
+        }
+
+    @Test
     fun `cleaning selected files reaches the result phase`() =
         runTest(dispatcher) {
             val viewModel =
@@ -121,9 +139,10 @@ class WhatsAppCleanerViewModelTest {
     private fun viewModel(
         files: List<ManagedFileModel> = emptyList(),
         deleteResult: Result<FileDeleteSummaryModel>? = null,
+        bucket: WhatsAppFileBucketModel = WhatsAppFileBucketModel(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images),
     ): WhatsAppCleanerViewModel =
         WhatsAppCleanerViewModel(
-            repository = FakeWhatsAppCleanerRepository(files, deleteResult),
+            repository = FakeWhatsAppCleanerRepository(files, deleteResult, bucket),
             ioDispatcher = dispatcher,
         )
 
@@ -143,12 +162,13 @@ class WhatsAppCleanerViewModelTest {
     private class FakeWhatsAppCleanerRepository(
         private val files: List<ManagedFileModel>,
         private val deleteResult: Result<FileDeleteSummaryModel>?,
+        private val bucket: WhatsAppFileBucketModel,
     ) : WhatsAppCleanerRepository {
         override suspend fun loadGroups(): Map<WhatsAppFileBucketModel, List<ManagedFileModel>> =
             if (files.isEmpty()) {
                 emptyMap()
             } else {
-                mapOf(WhatsAppFileBucketModel(WhatsAppCleanerGroup.Cache, WhatsAppCleanerCategory.Images) to files)
+                mapOf(bucket to files)
             }
 
         override suspend fun delete(files: List<ManagedFileModel>): Result<FileDeleteSummaryModel> =

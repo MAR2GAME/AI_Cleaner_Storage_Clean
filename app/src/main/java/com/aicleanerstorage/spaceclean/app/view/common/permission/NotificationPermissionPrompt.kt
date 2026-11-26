@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestCoordinator
 import com.aicleanerstorage.spaceclean.app.integration.NotificationPermissionRequestSource
@@ -122,6 +123,7 @@ private fun NotificationPermissionSystemUi(
         rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission(),
         ) { granted ->
+            Mar2AdGateway.completeOriginalOperation()
             val pending = coordinator.state.value
             val requestId = pending.pendingRequestId
             val source = pending.pendingSource
@@ -141,6 +143,7 @@ private fun NotificationPermissionSystemUi(
         rememberLauncherForActivityResult(
             ActivityResultContracts.StartActivityForResult(),
         ) {
+            Mar2AdGateway.completeOriginalOperation()
             val granted = notificationAccess(context).hasPermission
             Mar2Analytics.trackNotificationPermissionResult(granted)
             onDismissGuide()
@@ -153,14 +156,12 @@ private fun NotificationPermissionSystemUi(
             onConfirm = {
                 Mar2Analytics.trackNotificationPopup(guideNoticeFlag(input), true)
                 onDismissGuide()
-                AppPermission.PostNotifications.settingsIntents(context).firstOrNull()?.let {
-                    runCatching { settingsLauncher.launch(it) }
-                        .onFailure {
-                            if (input.guideSource == NotificationPermissionRequestSource.Splash) {
-                                coordinator.releaseSplash()
-                            }
-                        }
-                }
+                launchNotificationSettings(
+                    context = context,
+                    launchSettings = settingsLauncher::launch,
+                    coordinator = coordinator,
+                    guideSource = input.guideSource,
+                )
             },
             onDismiss = {
                 Mar2Analytics.trackNotificationPopup(guideNoticeFlag(input), false)
@@ -169,6 +170,21 @@ private fun NotificationPermissionSystemUi(
             },
         )
     }
+}
+
+private fun launchNotificationSettings(
+    context: Context,
+    launchSettings: (android.content.Intent) -> Unit,
+    coordinator: NotificationPermissionRequestCoordinator,
+    guideSource: NotificationPermissionRequestSource?,
+) {
+    val intent = AppPermission.PostNotifications.settingsIntents(context).firstOrNull() ?: return
+    Mar2AdGateway.suppressNextForegroundAd()
+    runCatching { launchSettings(intent) }
+        .onFailure {
+            Mar2AdGateway.completeOriginalOperation()
+            if (guideSource == NotificationPermissionRequestSource.Splash) coordinator.releaseSplash()
+        }
 }
 
 @Composable
@@ -231,7 +247,9 @@ private fun NotificationPermissionRequestEffect(
         val requestId = input.state.pendingRequestId ?: return@LaunchedEffect
         val host = input.activity ?: return@LaunchedEffect
         val source = input.state.pendingSource ?: return@LaunchedEffect
+        Mar2AdGateway.suppressNextForegroundAd()
         NotificationUtil.reqNotiAccess(host, runtimeLauncher) { granted ->
+            Mar2AdGateway.completeOriginalOperation()
             if (coordinator.complete(requestId, source)) {
                 NotificationUtil.reportNotificationPermission()
                 val noticeFlag =

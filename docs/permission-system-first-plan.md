@@ -238,7 +238,7 @@ internal class PermissionPromptController(
 | 隐私图 | `StorageFiles` → `MediaLocation` | 依次补齐 | `PermissionRejected` |
 | 网络扫描 | `Location` | 开始扫描 | 停留，提示权限不足 |
 | 应用用量 / 网络用量 | `UsageAccess` | 加载数据 | 停留，提示权限不足 |
-| AppLock | `UsageAccess` / `Overlay` | 刷新状态 | 停留，刷新状态 |
+| AppLock | Manage 入口 `Overlay`；受保护操作 `UsageAccess`；开监控 `UsageAccess` + `Overlay` | 继续原动作 | 停留，刷新状态 |
 | 通知清理 | `NotificationListener` | 开启拦截 | 停留 |
 | 病毒深扫 | `StorageFiles` | 进入扫描 | 重置 pending，可重试 |
 | 管理权限页 | 各权限 | 刷新状态 | 刷新状态 |

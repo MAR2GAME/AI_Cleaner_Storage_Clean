@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.onboarding.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.domain.port.AppSettingsRepository
 import com.aicleanerstorage.spaceclean.domain.port.DeviceInfoRepository
 import kotlinx.coroutines.delay
@@ -65,20 +66,13 @@ class OnboardingScanViewModel(
     private fun completeOnboarding(skipped: Boolean) {
         if (completionSubmitted || !currentState.complete) return
         completionSubmitted = true
-        val destination =
-            if (skipped) {
-                settingsRepository.markOnboardingScanCompleted()
-                com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-                    .Main()
-            } else if (settingsRepository.isFirstOnboardingPending()) {
-                settingsRepository.markFirstOnboardingCompleted()
-                com.aicleanerstorage.spaceclean.base.navigation.AppDestination.OnboardingScan
-            } else {
-                settingsRepository.markSecondOnboardingCompleted()
-                com.aicleanerstorage.spaceclean.base.navigation.AppDestination
-                    .Main()
-            }
-        sendEvent(OnboardingEvent.FinishOnboarding(destination, skipped))
+        settingsRepository.markOnboardingScanCompleted()
+        sendEvent(
+            OnboardingEvent.FinishOnboarding(
+                destination = AppDestination.Main(),
+                skipped = skipped,
+            ),
+        )
     }
 }
 

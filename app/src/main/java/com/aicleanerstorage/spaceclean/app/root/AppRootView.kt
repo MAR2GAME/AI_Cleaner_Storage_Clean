@@ -6,7 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.currentStateAsState
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -25,7 +28,10 @@ internal fun AppRootView(
 ) {
     val navController = rememberNavController()
     var permissionUiActive by remember { mutableStateOf(false) }
+    val lifecycleOwner = LocalLifecycleOwner.current
     val currentEntry by navController.currentBackStackEntryAsState()
+    val entryLifecycleState by
+        (currentEntry?.lifecycle ?: lifecycleOwner.lifecycle).currentStateAsState()
     val pendingNotification by notificationRoutes.pending.collectAsStateWithLifecycle()
     val permissionRequestState by notificationPermissionRequests.state.collectAsStateWithLifecycle()
     val onHome = currentEntry?.destination?.hasRoute<AppDestination.Main>() == true
@@ -33,12 +39,12 @@ internal fun AppRootView(
         currentEntry == null ||
             currentEntry?.destination?.hasRoute<AppDestination.Splash>() == true
 
-    LaunchedEffect(currentEntry, permissionUiActive, pendingNotification) {
+    LaunchedEffect(currentEntry, entryLifecycleState, permissionUiActive, pendingNotification) {
         val route = currentEntry?.destination?.route
         val home = currentEntry?.destination?.hasRoute<AppDestination.Main>() == true
         onHostStateChanged(
             route,
-            home,
+            home && entryLifecycleState == Lifecycle.State.RESUMED,
             permissionUiActive || pendingNotification != null,
         )
     }

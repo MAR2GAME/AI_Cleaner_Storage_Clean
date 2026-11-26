@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.view.common.permission
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.aicleanerstorage.spaceclean.app.integration.Mar2AdGateway
 import com.aicleanerstorage.spaceclean.app.integration.Mar2Analytics
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialog
 import com.aicleanerstorage.spaceclean.base.designsystem.component.popups.PermissionDialogCopy
@@ -38,6 +39,8 @@ internal fun rememberPermissionPrompt(
                         is PermissionPromptEvent.PermissionResult -> Mar2Analytics.trackFilePermissionResult(event.accepted)
                     }
                 },
+                beforeSystemUi = Mar2AdGateway::suppressNextForegroundAd,
+                afterSystemUi = Mar2AdGateway::completeOriginalOperation,
             )
         }
 

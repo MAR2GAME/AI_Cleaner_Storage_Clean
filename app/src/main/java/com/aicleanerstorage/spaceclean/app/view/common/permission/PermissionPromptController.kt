@@ -24,6 +24,8 @@ internal class PermissionPromptController(
     private val gate: PermissionGate,
     private val requiresSettings: (AppPermission) -> Boolean = { false },
     private val onEvent: (PermissionPromptEvent) -> Unit = {},
+    private val beforeSystemUi: () -> Unit = {},
+    private val afterSystemUi: () -> Unit = {},
 ) {
     /** 正在展示解释弹窗的权限；null 表示没有。 */
     var explaining by mutableStateOf<AppPermission?>(null)
@@ -40,6 +42,7 @@ internal class PermissionPromptController(
     private var callback: ((PermissionResult) -> Unit)? = null
     private var explainBeforeSettings = false
     private var activePermission: AppPermission? = null
+    private var systemUiPending = false
 
     /**
      * 发起一次权限请求。
@@ -65,8 +68,36 @@ internal class PermissionPromptController(
             explaining = permission
         } else {
             requestingSettingsOnly = false
+            beginSystemUi()
             requesting = permission
         }
+    }
+
+    /**
+     * 依次申请多个权限，用于同一业务动作需要多项设置权限的场景。
+     *
+     * 全部授予后回调 true；任一权限未授予立即回调 false 并停止。调用方需保证当前
+     * 没有正在进行的请求。
+     *
+     * @param permissions 目标权限列表，重复项只申请一次。
+     * @param onResult 最终结果。
+     */
+    fun requestAll(
+        permissions: List<AppPermission>,
+        onResult: (Boolean) -> Unit,
+    ) {
+        val pending = permissions.distinct()
+
+        fun requestNext(index: Int) {
+            if (index >= pending.size) {
+                onResult(true)
+                return
+            }
+            request(pending[index]) { result ->
+                if (result == PermissionResult.Granted) requestNext(index + 1) else onResult(false)
+            }
+        }
+        requestNext(0)
     }
 
     /** 用户确认解释弹窗，进入系统界面。 */
@@ -75,6 +106,7 @@ internal class PermissionPromptController(
         trackDialogResult(accepted = true)
         explaining = null
         requestingSettingsOnly = explainBeforeSettings || requiresSettings(permission)
+        beginSystemUi()
         requesting = permission
     }
 
@@ -92,6 +124,7 @@ internal class PermissionPromptController(
      * @param result 复检得到的权限结果。
      */
     fun completeRequest(result: PermissionResult) {
+        endSystemUi()
         val permission = requesting
         val settingsOnly = requestingSettingsOnly
         requesting = null
@@ -103,7 +136,20 @@ internal class PermissionPromptController(
         finish(result)
     }
 
+    private fun beginSystemUi() {
+        if (systemUiPending) return
+        systemUiPending = true
+        beforeSystemUi()
+    }
+
+    private fun endSystemUi() {
+        if (!systemUiPending) return
+        systemUiPending = false
+        afterSystemUi()
+    }
+
     private fun finish(result: PermissionResult) {
+        endSystemUi()
         val permission = activePermission
         explaining = null
         requesting = null

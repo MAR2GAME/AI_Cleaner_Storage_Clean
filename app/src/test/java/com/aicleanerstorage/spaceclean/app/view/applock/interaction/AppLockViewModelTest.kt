@@ -17,7 +17,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -55,105 +54,67 @@ class AppLockViewModelTest {
         }
 
     @Test
-    fun `monitoring stays off while permissions are missing`() =
+    fun `monitoring change is applied because route owns permission gating`() =
         runTest(dispatcher) {
             val viewModel = viewModel()
             advanceUntilIdle()
 
-            viewModel.dispatch(
-                AppLockAction.StatusesChanged(
-                    mapOf(
-                        AppPermission.UsageAccess to true,
-                        AppPermission.Overlay to false,
-                    ),
-                ),
-            )
-            viewModel.dispatch(AppLockAction.MonitoringChanged(enabled = true))
-
-            assertFalse(viewModel.state.value.monitoringEnabled)
-        }
-
-    @Test
-    fun `monitoring starts when both permissions are granted`() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-            advanceUntilIdle()
-
-            viewModel.dispatch(
-                AppLockAction.StatusesChanged(
-                    mapOf(
-                        AppPermission.UsageAccess to true,
-                        AppPermission.Overlay to true,
-                    ),
-                ),
-            )
             viewModel.dispatch(AppLockAction.MonitoringChanged(enabled = true))
 
             assertTrue(viewModel.state.value.monitoringEnabled)
         }
 
     @Test
-    fun `pin setup is blocked until lock permissions are granted`() =
+    fun `pin setup starts for selected apps`() =
         runTest(dispatcher) {
-            val viewModel = viewModel(apps = listOf(AppLockAppModel("com.example.app", "Example", isLocked = true)))
-            val events = mutableListOf<AppLockEvent>()
-            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-                viewModel.event.toList(events)
-            }
+            val viewModel = viewModel(apps = listOf(lockedApp()))
             advanceUntilIdle()
 
-            viewModel.dispatch(
-                AppLockAction.StatusesChanged(
-                    mapOf(
-                        AppPermission.UsageAccess to false,
-                        AppPermission.Overlay to false,
-                    ),
-                ),
-            )
-            viewModel.dispatch(AppLockAction.PinCreationRequested)
-            advanceUntilIdle()
-
-            assertEquals(AppLockPage.SelectApps, viewModel.state.value.page)
-            assertEquals(listOf(AppLockEvent.OpenPermissionSettings(AppPermission.UsageAccess)), events)
-        }
-
-    @Test
-    fun `pin setup starts after both lock permissions are granted`() =
-        runTest(dispatcher) {
-            val viewModel = viewModel(apps = listOf(AppLockAppModel("com.example.app", "Example", isLocked = true)))
-            advanceUntilIdle()
-
-            viewModel.dispatch(
-                AppLockAction.StatusesChanged(
-                    mapOf(
-                        AppPermission.UsageAccess to true,
-                        AppPermission.Overlay to true,
-                    ),
-                ),
-            )
             viewModel.dispatch(AppLockAction.PinCreationRequested)
 
             assertEquals(AppLockPage.Pin, viewModel.state.value.page)
+            assertEquals(AppLockPinStep.Create, viewModel.state.value.pinStep)
         }
 
     @Test
-    fun `permission click opens the matching settings page`() =
+    fun `verifying the pin requests overlay permission`() =
         runTest(dispatcher) {
-            val viewModel = viewModel()
+            val viewModel = viewModel(apps = listOf(lockedApp()), pinSet = true, pinMatches = true)
             val events = mutableListOf<AppLockEvent>()
             backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
                 viewModel.event.toList(events)
             }
             advanceUntilIdle()
 
-            viewModel.dispatch(AppLockAction.PermissionClicked(AppPermission.Overlay))
+            repeat(4) { viewModel.dispatch(AppLockAction.PinDigitClicked('1')) }
             advanceUntilIdle()
 
-            assertEquals(listOf(AppLockEvent.OpenPermissionSettings(AppPermission.Overlay)), events)
+            assertEquals(AppLockPage.Manage, viewModel.state.value.page)
+            assertTrue(events.contains(AppLockEvent.RequestPermission(AppPermission.Overlay)))
         }
 
     @Test
-    fun `back on the manage page exits`() =
+    fun `creating the pin requests overlay permission`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel(apps = listOf(lockedApp()))
+            val events = mutableListOf<AppLockEvent>()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.event.toList(events)
+            }
+            advanceUntilIdle()
+
+            viewModel.dispatch(AppLockAction.PinCreationRequested)
+            repeat(4) { viewModel.dispatch(AppLockAction.PinDigitClicked('1')) }
+            advanceUntilIdle()
+            repeat(4) { viewModel.dispatch(AppLockAction.PinDigitClicked('1')) }
+            advanceUntilIdle()
+
+            assertEquals(AppLockPage.Manage, viewModel.state.value.page)
+            assertTrue(events.contains(AppLockEvent.RequestPermission(AppPermission.Overlay)))
+        }
+
+    @Test
+    fun `back exits the page`() =
         runTest(dispatcher) {
             val viewModel = viewModel()
             val events = mutableListOf<AppLockEvent>()
@@ -168,15 +129,23 @@ class AppLockViewModelTest {
             assertTrue(events.any { it is AppLockEvent.Exit })
         }
 
-    private fun viewModel(apps: List<AppLockAppModel> = emptyList()): AppLockViewModel =
+    private fun lockedApp(): AppLockAppModel = AppLockAppModel("com.example.app", "Example", isLocked = true)
+
+    private fun viewModel(
+        apps: List<AppLockAppModel> = emptyList(),
+        pinSet: Boolean = false,
+        pinMatches: Boolean = false,
+    ): AppLockViewModel =
         AppLockViewModel(
-            repository = FakeAppLockRepository(apps),
+            repository = FakeAppLockRepository(apps, pinSet, pinMatches),
             syncMonitoringService = {},
             ioDispatcher = dispatcher,
         )
 
     private class FakeAppLockRepository(
         private val apps: List<AppLockAppModel> = emptyList(),
+        private val pinSet: Boolean = false,
+        private val pinMatches: Boolean = false,
     ) : AppLockRepository {
         private val lockedCount = MutableStateFlow(0)
 
@@ -184,11 +153,11 @@ class AppLockViewModelTest {
 
         override fun currentLockedAppCount(): Int = 0
 
-        override fun isPinSet(): Boolean = false
+        override fun isPinSet(): Boolean = pinSet
 
         override fun savePin(pin: String) = Unit
 
-        override fun verifyPin(pin: String): Boolean = false
+        override fun verifyPin(pin: String): Boolean = pinMatches
 
         override fun lockedPackages(): Set<String> = emptySet()
 

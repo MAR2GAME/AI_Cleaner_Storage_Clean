@@ -194,4 +194,118 @@ class PermissionPromptControllerTest {
 
         assertEquals(emptyList<PermissionPromptEvent>(), events)
     }
+
+    @Test
+    fun `runtime permission suppresses and restores foreground ad`() {
+        var suppressed = 0
+        var completed = 0
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { false },
+                beforeSystemUi = { suppressed++ },
+                afterSystemUi = { completed++ },
+            )
+
+        controller.request(AppPermission.Location) {}
+
+        assertEquals(1, suppressed)
+        assertEquals(0, completed)
+
+        controller.completeRequest(PermissionResult.Granted)
+        assertEquals(1, completed)
+
+        controller.completeRequest(PermissionResult.Denied)
+        assertEquals(1, completed)
+    }
+
+    @Test
+    fun `explanation suppresses only when opening system settings`() {
+        var suppressed = 0
+        var completed = 0
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { true },
+                beforeSystemUi = { suppressed++ },
+                afterSystemUi = { completed++ },
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+        assertEquals(0, suppressed)
+
+        controller.confirmExplanation()
+        assertEquals(1, suppressed)
+        assertEquals(0, completed)
+
+        controller.completeRequest(PermissionResult.Granted)
+        assertEquals(1, completed)
+    }
+
+    @Test
+    fun `dismissed explanation does not suppress foreground ad`() {
+        var suppressed = 0
+        var completed = 0
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { false },
+                requiresSettings = { true },
+                beforeSystemUi = { suppressed++ },
+                afterSystemUi = { completed++ },
+            )
+
+        controller.request(AppPermission.StorageFiles) {}
+        controller.dismissExplanation()
+
+        assertEquals(0, suppressed)
+        assertEquals(0, completed)
+    }
+
+    @Test
+    fun `requestAll reports granted when every permission is already granted`() {
+        var result: Boolean? = null
+        val controller = PermissionPromptController(PermissionGate { true })
+
+        controller.requestAll(listOf(AppPermission.UsageAccess, AppPermission.Overlay)) { result = it }
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `requestAll continues with the next permission after a grant`() {
+        val granted = mutableSetOf<AppPermission>()
+        var result: Boolean? = null
+        val controller =
+            PermissionPromptController(
+                gate = PermissionGate { it in granted },
+                requiresSettings = { true },
+            )
+
+        controller.requestAll(listOf(AppPermission.UsageAccess, AppPermission.Overlay)) { result = it }
+
+        assertEquals(AppPermission.UsageAccess, controller.explaining)
+        controller.confirmExplanation()
+        granted += AppPermission.UsageAccess
+        controller.completeRequest(PermissionResult.Granted)
+        assertEquals(AppPermission.Overlay, controller.explaining)
+
+        granted += AppPermission.Overlay
+        controller.confirmExplanation()
+        controller.completeRequest(PermissionResult.Granted)
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `requestAll stops at the first denied permission`() {
+        var result: Boolean? = null
+        val controller = PermissionPromptController(PermissionGate { false }, requiresSettings = { true })
+
+        controller.requestAll(listOf(AppPermission.UsageAccess, AppPermission.Overlay)) { result = it }
+        controller.dismissExplanation()
+
+        assertEquals(false, result)
+        assertNull(controller.explaining)
+        assertNull(controller.requesting)
+    }
 }

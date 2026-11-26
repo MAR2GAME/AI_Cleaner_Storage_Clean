@@ -19,6 +19,7 @@ import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockActio
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockEvent
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockPermissions
 import com.aicleanerstorage.spaceclean.app.view.applock.interaction.AppLockViewModel
+import com.aicleanerstorage.spaceclean.app.view.applock.interaction.requiredPermissions
 import com.aicleanerstorage.spaceclean.app.view.common.permission.dialogCopy
 import com.aicleanerstorage.spaceclean.app.view.common.permission.rememberPermissionPrompt
 import com.aicleanerstorage.spaceclean.app.view.common.permission.ui.AppLockOverlayPermissionDialog
@@ -93,12 +94,27 @@ fun AppLockRoute(
         }
     }
 
+    fun dispatchWithPermissions(action: AppLockAction) {
+        val missing =
+            action.requiredPermissions(uiState.page).filterNot { permission ->
+                permission.isGranted(context)
+            }
+        if (missing.isEmpty()) {
+            viewModel.dispatch(action)
+            return
+        }
+        permissionPrompt.requestAll(missing) { granted ->
+            refreshPermissions()
+            if (granted) viewModel.dispatch(action)
+        }
+    }
+
     CollectEffects(viewModel) { effect ->
         when (effect) {
             AppLockEvent.Exit -> exitBack()
             is AppLockEvent.Navigate -> if (!exiting) navigator.navigate(effect.destination)
-            is AppLockEvent.OpenPermissionSettings ->
-                permissionPrompt.request(effect.permission) { refreshPermissions() }
+            is AppLockEvent.RequestPermission ->
+                if (!exiting) permissionPrompt.request(effect.permission) { refreshPermissions() }
         }
     }
 
@@ -109,7 +125,7 @@ fun AppLockRoute(
             when (action) {
                 is AppLockAction.PermissionClicked ->
                     permissionPrompt.request(action.permission) { refreshPermissions() }
-                else -> viewModel.dispatch(action)
+                else -> dispatchWithPermissions(action)
             }
         },
     )

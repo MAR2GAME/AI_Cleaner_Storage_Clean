@@ -170,6 +170,23 @@ class JunkCleanReducerTest {
     }
 
     @Test
+    fun `preview selects every scanned category by default`() {
+        val result =
+            JunkScanResultModel(
+                file("cache", 100L, JunkCategory.CACHE),
+                file("temp", 200L, JunkCategory.TEMP_FILE),
+                file("apk", 300L, JunkCategory.APK),
+                file("large", 400L, JunkCategory.LARGE_FILE),
+            )
+
+        val state = JunkCleanReducer.reduce(JunkCleanUiState(), JunkPreviewLoaded(result))
+
+        assertEquals(4, state.selectedSummary.checkedCount)
+        assertEquals(1000L, state.selectedSummary.checkedSize)
+        assertTrue(state.groups.flatMap { it.items }.all { it.isChecked })
+    }
+
+    @Test
     fun `item and category toggles update one selection summary`() {
         val preview =
             JunkCleanReducer.reduce(

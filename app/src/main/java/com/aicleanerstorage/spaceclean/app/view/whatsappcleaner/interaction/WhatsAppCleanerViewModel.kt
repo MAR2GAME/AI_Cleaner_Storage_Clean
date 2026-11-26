@@ -253,7 +253,7 @@ class WhatsAppCleanerViewModel(
                                 group = group,
                                 category = category,
                                 files = categoryFiles,
-                                selected = categoryFiles.isNotEmpty() && category.shouldSelectByDefault(group),
+                                selected = categoryFiles.isNotEmpty(),
                             )
                         },
                 )
@@ -273,9 +273,6 @@ class WhatsAppCleanerViewModel(
             selectedBytes = newGroups.sumOf { it.selectedBytes },
             selectedCount = newGroups.flatMap { it.children }.filter { it.selected }.sumOf { it.files.size },
         )
-
-    private fun WhatsAppCleanerCategory.shouldSelectByDefault(group: WhatsAppCleanerGroup): Boolean =
-        group == WhatsAppCleanerGroup.Cache || this == WhatsAppCleanerCategory.Other
 
     private companion object {
         private const val SCAN_DELAY_MILLIS = 650L

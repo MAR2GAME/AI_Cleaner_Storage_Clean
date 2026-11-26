@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
 import com.aicleanerstorage.spaceclean.base.navigation.AppNavigator
+import com.aicleanerstorage.spaceclean.base.navigation.MainTab
 import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 
 /**
@@ -65,15 +66,17 @@ class FileManagerPermissionState(
 }
 
 /**
- * 回到首页。
+ * 回到首页的文件管理页签。
  *
- * 先标记离开，避免返回过程中事件再次触发导航；`resetToRoot` 会清空文件管理流程。
+ * 文件管理流程都从 Main 的文件管理页签进入，若直接回到 [AppDestination.Main] 默认页签，
+ * 用户会丢失来源上下文；因此显式请求 [MainTab.Files]。先标记离开，避免返回过程中事件
+ * 再次触发导航；`resetToRoot` 会清空文件管理流程。
  *
  * @param router 应用导航器。
  */
 fun FileManagerPermissionState.leaveHome(router: AppNavigator) {
     markLeaving()
-    router.resetToRoot(AppDestination.Main())
+    router.resetToRoot(AppDestination.Main(initialTab = MainTab.Files))
 }
 
 /**

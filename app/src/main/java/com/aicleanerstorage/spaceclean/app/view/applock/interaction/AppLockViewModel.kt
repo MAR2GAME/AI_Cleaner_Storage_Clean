@@ -2,6 +2,7 @@ package com.aicleanerstorage.spaceclean.app.view.applock.interaction
 
 import androidx.lifecycle.viewModelScope
 import com.aicleanerstorage.spaceclean.base.mvi.MviViewModel
+import com.aicleanerstorage.spaceclean.base.permission.AppPermission
 import com.aicleanerstorage.spaceclean.domain.model.applock.AppLockAppModel
 import com.aicleanerstorage.spaceclean.domain.port.AppLockRepository
 import com.aicleanerstorage.spaceclean.domain.rule.AppLockPinRule
@@ -49,19 +50,9 @@ class AppLockViewModel(
             is AppLockAction.PackageToggled -> togglePackage(action.packageName)
             is AppLockAction.PinDigitClicked -> addPinDigit(action.digit)
             is AppLockAction.SearchQueryChanged -> updateSearchQuery(action.query)
-            is AppLockAction.MonitoringChanged ->
-                if (!action.enabled) {
-                    setMonitoringEnabled(false)
-                } else if (currentState.missingPermissions.isEmpty()) {
-                    setMonitoringEnabled(true)
-                } else {
-                    // 权限缺失时保持关闭，Manage 页会显示权限行
-                    setState { it.copy(monitoringEnabled = false) }
-                }
-
-            is AppLockAction.PermissionClicked ->
-                sendEvent(AppLockEvent.OpenPermissionSettings(action.permission))
-
+            is AppLockAction.MonitoringChanged -> setMonitoringEnabled(action.enabled)
+            // 权限入口统一由 Route 处理；这里保持 sealed action 穷尽即可。
+            is AppLockAction.PermissionClicked -> Unit
             is AppLockAction.StatusesChanged ->
                 setState { it.copy(statuses = action.statuses) }
             is AppLockAction.AutoLockChanged -> setAutoLockEnabled(action.enabled)
@@ -127,14 +118,7 @@ class AppLockViewModel(
 
     private fun togglePackage(packageName: String) {
         val current = currentState
-        val target = current.apps.firstOrNull { it.packageName == packageName } ?: return
-        if (!target.isLocked &&
-            current.page in setOf(AppLockPage.Manage, AppLockPage.Search) &&
-            current.missingPermissions.isNotEmpty()
-        ) {
-            sendEvent(AppLockEvent.OpenPermissionSettings(current.missingPermissions.first()))
-            return
-        }
+        if (current.apps.none { it.packageName == packageName }) return
         val updatedApps =
             current.apps.map { app ->
                 if (app.packageName == packageName) app.copy(isLocked = !app.isLocked) else app
@@ -150,10 +134,6 @@ class AppLockViewModel(
 
     private fun toggleAllApps() {
         val lock = !currentState.allAppsLocked
-        if (lock && currentState.missingPermissions.isNotEmpty()) {
-            sendEvent(AppLockEvent.OpenPermissionSettings(currentState.missingPermissions.first()))
-            return
-        }
         val updatedApps = currentState.apps.map { it.copy(isLocked = lock) }
         setState { it.copy(apps = updatedApps) }
         if (currentState.page == AppLockPage.Manage) {
@@ -164,11 +144,6 @@ class AppLockViewModel(
 
     private fun beginCreatePin() {
         if (!currentState.hasSelectedApps) return
-        val missing = currentState.missingPermissions.firstOrNull()
-        if (missing != null) {
-            sendEvent(AppLockEvent.OpenPermissionSettings(missing))
-            return
-        }
         cancelCompletePinJob()
         setState {
             it.copy(
@@ -293,6 +268,7 @@ class AppLockViewModel(
                     setState { AppLockReducer.pinCreated(it) }
                     loadApps()
                     syncMonitoringService()
+                    sendEvent(AppLockEvent.RequestPermission(AppPermission.Overlay))
                 } else {
                     showPinError()
                 }
@@ -302,6 +278,7 @@ class AppLockViewModel(
                 if (withContext(ioDispatcher) { repository.verifyPin(pin) }) {
                     setState { AppLockReducer.pinVerified(it) }
                     loadApps()
+                    sendEvent(AppLockEvent.RequestPermission(AppPermission.Overlay))
                 } else {
                     showPinError()
                 }

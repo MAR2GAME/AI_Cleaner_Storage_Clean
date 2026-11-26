@@ -33,23 +33,14 @@ internal class DefaultAppSettingsRepository(
     override fun saveNotificationCleanerExitPromptShown(): Result<Unit> =
         save { putBoolean(KEY_NOTIFICATION_CLEANER_EXIT_PROMPT_SHOWN, true) }
 
-    override fun isOnboardingScanCompleted(): Boolean = preferences.getBoolean(KEY_ONBOARDING_SCAN_COMPLETED, false)
+    override fun isOnboardingScanCompleted(): Boolean {
+        val completed = preferences.getBoolean(KEY_ONBOARDING_SCAN_COMPLETED, false)
+        // 兼容两轮引导版本：完成过第一轮的旧安装不再重复进入引导。
+        val legacyFirstRoundCompleted = !preferences.getBoolean(KEY_LEGACY_FIRST_ONBOARDING_PENDING, true)
+        return completed || legacyFirstRoundCompleted
+    }
 
     override fun markOnboardingScanCompleted(): Result<Unit> = save { putBoolean(KEY_ONBOARDING_SCAN_COMPLETED, true) }
-
-    override fun isFirstOnboardingPending(): Boolean =
-        !isOnboardingScanCompleted() && preferences.getBoolean(KEY_FIRST_ONBOARDING_PENDING, true)
-
-    override fun isSecondOnboardingPending(): Boolean =
-        !isOnboardingScanCompleted() && preferences.getBoolean(KEY_SECOND_ONBOARDING_PENDING, true)
-
-    override fun markFirstOnboardingCompleted(): Result<Unit> = save { putBoolean(KEY_FIRST_ONBOARDING_PENDING, false) }
-
-    override fun markSecondOnboardingCompleted(): Result<Unit> =
-        save {
-            putBoolean(KEY_SECOND_ONBOARDING_PENDING, false)
-            putBoolean(KEY_ONBOARDING_SCAN_COMPLETED, true)
-        }
 
     override fun hasCompletedCleanup(): Boolean = preferences.getBoolean(KEY_CLEANUP_COMPLETED, false)
 
@@ -76,8 +67,7 @@ private const val KEY_LAST_AUTO_RATE_PROMPT_AT = "last_auto_rate_prompt_at"
 private const val KEY_LAST_NOTIFICATION_PERMISSION_PROMPT_AT = "last_notification_permission_custom_prompt_at"
 private const val KEY_NOTIFICATION_CLEANER_EXIT_PROMPT_SHOWN = "notification_bar_exit_prompt_shown"
 private const val KEY_ONBOARDING_SCAN_COMPLETED = "onboarding_scan_completed"
-private const val KEY_FIRST_ONBOARDING_PENDING = "is_first_launch_1"
-private const val KEY_SECOND_ONBOARDING_PENDING = "is_second_launch_1"
+private const val KEY_LEGACY_FIRST_ONBOARDING_PENDING = "is_first_launch_1"
 private const val KEY_CLEANUP_COMPLETED = "cleanup_completed"
 private const val KEY_DUPLICATE_FILES_WARNING_ACCEPTED = "duplicate_files_warning_accepted"
 private const val KEY_BACKGROUND_BATTERY_SAMPLING_ENABLED = "background_battery_sampling_enabled"

@@ -94,6 +94,10 @@ object Mar2AdGateway {
     fun suppressNextForegroundAd() {
         runCatching { AppOpenAdManager.suppressNextForegroundAd() }
     }
+
+    fun completeOriginalOperation() {
+        runCatching { AppOpenAdManager.completeOriginalOperation() }
+    }
 }
 
 private fun observeAdLifecycle(
