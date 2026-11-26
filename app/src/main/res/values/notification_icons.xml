@@ -1,0 +1,6 @@
+<resources>
+    <item type="drawable" name="notification_photos">@drawable/ic_persistent_clean</item>
+    <item type="drawable" name="notification_files">@drawable/ic_persistent_file</item>
+    <item type="drawable" name="notification_videos">@drawable/ic_persistent_tools</item>
+    <item type="drawable" name="notification_recovered">@drawable/ic_persistent_battery</item>
+</resources>
