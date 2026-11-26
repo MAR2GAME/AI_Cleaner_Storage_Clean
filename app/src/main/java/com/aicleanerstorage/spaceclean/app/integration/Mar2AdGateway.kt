@@ -11,9 +11,33 @@ import com.mar2sdk.core.ad.policy.ScreenAdTrigger
 import com.mar2sdk.core.ad.status.AdFormat
 import com.mar2sdk.impl.AppOpenAdManager
 import com.mar2sdk.impl.AreaKeys
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.mar2sdk.core.ad.AdLoader as CoreAdLoader
 
 /** 统一调用 impl 模块的 AdActivity，并在广告页结束后继续业务动作。 */
 object Mar2AdGateway {
+    private val preloadScope = CoroutineScope(Dispatchers.Main.immediate)
+
+    /**
+     * Fills the SDK ad pools without blocking the caller. The SDK also preloads on foreground
+     * transitions; this call covers Activity recreation where no foreground event is emitted.
+     */
+    fun preloadAds() {
+        if (!AdConfig.isOpen) return
+        preloadScope.launch {
+            try {
+                CoreAdLoader.fillAd()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                // Preload failures must not affect the user flow.
+            }
+        }
+    }
+
     fun show(
         activity: Activity,
         areaKey: String,

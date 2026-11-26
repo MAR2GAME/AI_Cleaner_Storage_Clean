@@ -164,10 +164,12 @@ private fun startSplashFlow(
     }
     val flow = runCatching { Core.beginConsentFlow("startup") }.getOrNull()
     if (flow == null) {
+        Mar2AdGateway.preloadAds()
         showSplashAd(activity, destination, navigator)
         return
     }
     startConsent(activity, flow) {
+        Mar2AdGateway.preloadAds()
         showSplashAd(activity, destination, navigator)
     }
 }
