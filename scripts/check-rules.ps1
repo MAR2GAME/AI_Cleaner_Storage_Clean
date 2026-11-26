@@ -470,6 +470,51 @@ if (Test-CheckEnabled 'portStateFlow') {
         $stateFlowHits | Select-Object -First 20 | ForEach-Object { Add-Failure 'portStateFlow' ("{0}:{1} port must not expose StateFlow" -f (RelativePath $_.Path), $_.LineNumber) }
     }
 }
+
+# 22. painterResource only accepts <vector> XML or raster assets; anything else
+#     (shape/selector/layer-list/adaptive-icon XML) crashes at composition time.
+if (Test-CheckEnabled 'painterResourceType') {
+    $resDirs = @((Join-Path $root 'app/src/main/res'), (Join-Path $root 'junkcc/src/main/res')) |
+        Where-Object { Test-Path -LiteralPath $_ }
+    $resourceIndex = @{}
+    foreach ($resDir in $resDirs) {
+        Get-ChildItem -LiteralPath $resDir -Recurse -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Directory.Name -match '^(drawable|mipmap)' } |
+            ForEach-Object {
+                $key = $_.BaseName + '|' + ($_.Directory.Name -replace '-.*$', '')
+                if (-not $resourceIndex.ContainsKey($key)) { $resourceIndex[$key] = @() }
+                $resourceIndex[$key] += $_
+            }
+    }
+    $bad = @{}
+    foreach ($file in Get-KotlinFiles $src) {
+        $text = Get-Content -LiteralPath $file.FullName -Raw
+        foreach ($call in [regex]::Matches($text, 'painterResource\s*\(')) {
+            $cursor = $call.Index + $call.Length
+            $depth = 1
+            while ($cursor -lt $text.Length -and $depth -gt 0) {
+                if ($text[$cursor] -eq '(') { $depth++ } elseif ($text[$cursor] -eq ')') { $depth-- }
+                $cursor++
+            }
+            $arguments = $text.Substring($call.Index, $cursor - $call.Index)
+            foreach ($ref in [regex]::Matches($arguments, 'R\.(drawable|mipmap)\.([A-Za-z0-9_]+)')) {
+                $resKey = $ref.Groups[2].Value + '|' + $ref.Groups[1].Value
+                if (-not $resourceIndex.ContainsKey($resKey)) { continue }
+                foreach ($candidate in $resourceIndex[$resKey]) {
+                    if ($candidate.Extension -ne '.xml') { continue }
+                    $rootTag = [regex]::Match((Get-Content -LiteralPath $candidate.FullName -Raw), '<([A-Za-z][A-Za-z0-9_.:-]*)').Groups[1].Value
+                    if ($rootTag -eq 'vector') { continue }
+                    $line = ($text.Substring(0, $call.Index) -split "`n").Count
+                    $where = "{0}:{1}" -f (RelativePath $file.FullName), $line
+                    $bad[$where + '|' + $resKey] = ("{0} references {1}/{2} (<{3}>); only <vector> XML or raster assets are supported" -f $where, $ref.Groups[1].Value, $ref.Groups[2].Value, $rootTag)
+                }
+            }
+        }
+    }
+    if ($bad.Count -eq 0) { Add-Pass 'painterResourceType' } else {
+        $bad.Values | Select-Object -First 20 | ForEach-Object { Add-Failure 'painterResourceType' $_ }
+    }
+}
 if ($failures -gt 0) {
     Write-Host ("{0} failure(s)" -f $failures)
     exit 1

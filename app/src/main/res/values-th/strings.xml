@@ -480,9 +480,9 @@
     <string name="permission_media_location_desc">เพื่อค้นหารูปภาพที่มีข้อมูลตำแหน่ง โปรดอนุญาตการเข้าถึงตำแหน่งรูปภาพ</string>
     <string name="duplicates_skipped">ข้าม %1$d ไฟล์ ไฟล์อาจมีการเปลี่ยนแปลง หรือไม่สามารถตรวจสอบหรือลบสำเนาได้</string>
     <string name="duplicates_pending_verification">รอการตรวจสอบ · %1$s</string>
-    <string name="common_notification_action_1">รูปภาพ</string>
-    <string name="common_notification_action_2">ไฟล์</string>
-    <string name="common_notification_action_3">วิดีโอ</string>
-    <string name="common_notification_action_4">กู้คืนแล้ว</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">เวอร์ชัน</string>
 </resources>

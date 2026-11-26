@@ -563,9 +563,9 @@
     <string name="permission_media_location_desc">为了找出包含位置信息的照片，请授予照片位置权限。</string>
     <string name="duplicates_skipped">已跳过 %1$d 个文件。文件可能已变化，或无法核验或删除副本。</string>
     <string name="duplicates_pending_verification">待核验 · %1$s</string>
-    <string name="common_notification_action_1">照片</string>
-    <string name="common_notification_action_2">文件</string>
-    <string name="common_notification_action_3">视频</string>
-    <string name="common_notification_action_4">已恢复</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">版本</string>
 </resources>

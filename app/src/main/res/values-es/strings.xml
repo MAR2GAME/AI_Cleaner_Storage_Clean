@@ -492,9 +492,9 @@
     <string name="permission_media_location_desc">Para encontrar fotos con datos de ubicación, concede acceso a la ubicación de las fotos.</string>
     <string name="duplicates_skipped">Se omitieron %1$d archivos. Es posible que hayan cambiado o que no se haya podido verificar o eliminar una copia.</string>
     <string name="duplicates_pending_verification">Pendiente de verificación · %1$s</string>
-    <string name="common_notification_action_1">Fotos</string>
-    <string name="common_notification_action_2">Archivos</string>
-    <string name="common_notification_action_3">Vídeos</string>
-    <string name="common_notification_action_4">Recuperados</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Versión</string>
 </resources>

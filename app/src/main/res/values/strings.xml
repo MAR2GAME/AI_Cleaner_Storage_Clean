@@ -468,9 +468,9 @@
     <string name="permission_media_location_desc">To find photos that contain location data, please grant photo location access.</string>
     <string name="duplicates_skipped">Skipped %1$d files. The files may have changed, or a matching copy could not be verified or removed.</string>
     <string name="duplicates_pending_verification">Needs verification · %1$s</string>
-    <string name="common_notification_action_1">Photos</string>
-    <string name="common_notification_action_2">Files</string>
-    <string name="common_notification_action_3">Videos</string>
-    <string name="common_notification_action_4">Recovered</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Version</string>
 </resources>

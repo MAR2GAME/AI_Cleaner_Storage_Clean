@@ -480,9 +480,9 @@
     <string name="permission_media_location_desc">Pour trouver les photos contenant des données de localisation, autorisez l\'accès à la localisation des photos.</string>
     <string name="duplicates_skipped">%1$d fichiers ignorés. Ils ont pu changer, ou une copie n’a pas pu être vérifiée ou supprimée.</string>
     <string name="duplicates_pending_verification">À vérifier · %1$s</string>
-    <string name="common_notification_action_1">Mes photos</string>
-    <string name="common_notification_action_2">Fichiers</string>
-    <string name="common_notification_action_3">Vidéos</string>
-    <string name="common_notification_action_4">Récupérés</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Version</string>
 </resources>

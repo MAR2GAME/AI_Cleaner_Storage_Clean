@@ -480,9 +480,9 @@
     <string name="permission_media_location_desc">位置情報を含む写真を検索するには、写真の位置情報へのアクセスを許可してください。</string>
     <string name="duplicates_skipped">%1$d 件のファイルをスキップしました。ファイルが変更されたか、コピーを確認または削除できませんでした。</string>
     <string name="duplicates_pending_verification">要確認 · %1$s</string>
-    <string name="common_notification_action_1">写真</string>
-    <string name="common_notification_action_2">ファイル</string>
-    <string name="common_notification_action_3">動画</string>
-    <string name="common_notification_action_4">復元済み</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">バージョン</string>
 </resources>

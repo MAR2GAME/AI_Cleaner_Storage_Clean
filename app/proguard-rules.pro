@@ -59,6 +59,11 @@
     public static ** valueOf(java.lang.String);
 }
 
+# Kotlin serialization for type-safe navigation resolves enum and destination
+# serial names through Class.forName at runtime.
+-keep enum com.aicleanerstorage.spaceclean.base.navigation.MainTab { *; }
+-keep class com.aicleanerstorage.spaceclean.base.navigation.AppDestination$* { *; }
+
 # App code that is commonly reached through DI, manifest services, notifications,
 # or system callbacks. Avoid keeping feature/skin pages wholesale so R8 can still shrink.
 -keep class com.aicleanerstorage.spaceclean.app.MyApp { public <init>(); }

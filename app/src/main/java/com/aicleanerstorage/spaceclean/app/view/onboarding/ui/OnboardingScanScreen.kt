@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +43,7 @@ fun OnboardingScanScreen(
                 rows = rows,
                 storageInfo = state.storageInfo,
                 onGetStarted = { onAction(OnboardingAction.GetStartedClicked) },
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             )
             OnboardingSkipButton(
                 onClick = { onAction(OnboardingAction.SkipClicked) },
@@ -50,7 +53,10 @@ fun OnboardingScanScreen(
                         .padding(end = 16.dp),
             )
         } else {
-            OnboardingScanningContent(rows = rows)
+            OnboardingScanningContent(
+                rows = rows,
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            )
         }
     }
 }

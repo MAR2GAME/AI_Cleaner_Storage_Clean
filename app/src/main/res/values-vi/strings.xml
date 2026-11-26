@@ -480,9 +480,9 @@
     <string name="permission_media_location_desc">Để tìm ảnh có dữ liệu vị trí, vui lòng cấp quyền truy cập vị trí ảnh.</string>
     <string name="duplicates_skipped">Đã bỏ qua %1$d tệp. Tệp có thể đã thay đổi hoặc không thể xác minh hay xóa bản sao.</string>
     <string name="duplicates_pending_verification">Cần xác minh · %1$s</string>
-    <string name="common_notification_action_1">Ảnh</string>
-    <string name="common_notification_action_2">Tệp</string>
-    <string name="common_notification_action_3">Video</string>
-    <string name="common_notification_action_4">Đã khôi phục</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Phiên bản</string>
 </resources>

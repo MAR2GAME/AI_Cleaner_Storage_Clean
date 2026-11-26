@@ -127,6 +127,7 @@
                    "screenNoActionEffect":  true,
                    "composableParamLimit":  true,
                    "functionLengthLimit":  true,
-                   "portStateFlow":  true
+                   "portStateFlow":  true,
+                   "painterResourceType":  true
                }
 }

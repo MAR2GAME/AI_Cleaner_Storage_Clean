@@ -3,6 +3,7 @@ package com.aicleanerstorage.spaceclean.app.integration
 import android.content.Intent
 import android.os.Bundle
 import com.aicleanerstorage.spaceclean.base.navigation.AppDestination
+import com.aicleanerstorage.spaceclean.base.navigation.MainTab
 import com.mar2sdk.core.notify.NotificationRouteIntent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -130,10 +131,10 @@ class NotificationRouteCoordinator {
 private object NotificationRouteResolver {
     fun resolve(route: String?): AppDestination? =
         when (route?.trim()) {
-            "Photos", "Action1" -> AppDestination.PhotosManager
-            "Files", "Action2" -> AppDestination.DocumentsManager
-            "Videos", "Action3" -> AppDestination.VideosManager
-            "Recovered", "Action4" -> AppDestination.PhotosManager
+            "junk_files", "Action1" -> AppDestination.JunkClean
+            "file_manager", "Action2" -> AppDestination.Main(MainTab.Files)
+            "toolbox", "Action3" -> AppDestination.Main(MainTab.Toolbox)
+            "battery_info", "Action4" -> AppDestination.BatteryInfo
             "/junkClean" -> AppDestination.JunkClean
             "/virusAnti" -> AppDestination.AntiVirus
             "/appLock" -> AppDestination.AppLock
@@ -155,9 +156,11 @@ private object NotificationRouteResolver {
 
 private fun AppDestination.routeKey(): String =
     when (this) {
-        AppDestination.PhotosManager -> "Photos"
-        AppDestination.DocumentsManager -> "Files"
-        AppDestination.VideosManager -> "Videos"
+        is AppDestination.Main -> when (initialTab) {
+            MainTab.Home -> "home"
+            MainTab.Files -> "file_manager"
+            MainTab.Toolbox -> "toolbox"
+        }
         AppDestination.JunkClean -> "/junkClean"
         AppDestination.AntiVirus -> "/virusAnti"
         AppDestination.AppLock -> "/appLock"

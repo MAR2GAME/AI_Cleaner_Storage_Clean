@@ -481,9 +481,9 @@
     <string name="permission_media_location_desc">Untuk menemukan foto yang berisi data lokasi, izinkan akses lokasi foto.</string>
     <string name="duplicates_skipped">%1$d file dilewati. File mungkin telah berubah, atau salinannya tidak dapat diverifikasi atau dihapus.</string>
     <string name="duplicates_pending_verification">Perlu verifikasi · %1$s</string>
-    <string name="common_notification_action_1">Foto</string>
-    <string name="common_notification_action_2">File</string>
-    <string name="common_notification_action_3">Video</string>
-    <string name="common_notification_action_4">Dipulihkan</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Versi</string>
 </resources>

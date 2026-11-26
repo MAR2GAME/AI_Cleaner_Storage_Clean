@@ -480,9 +480,9 @@
     <string name="permission_media_location_desc">Um Fotos mit Standortdaten zu finden, erlaube bitte den Zugriff auf den Fotostandort.</string>
     <string name="duplicates_skipped">%1$d Dateien übersprungen. Die Dateien wurden möglicherweise geändert oder eine Kopie konnte nicht geprüft oder gelöscht werden.</string>
     <string name="duplicates_pending_verification">Prüfung ausstehend · %1$s</string>
-    <string name="common_notification_action_1">Fotos</string>
-    <string name="common_notification_action_2">Dateien</string>
-    <string name="common_notification_action_3">Videodateien</string>
-    <string name="common_notification_action_4">Wiederhergestellt</string>
+    <string name="common_notification_action_1">@string/junk_removal</string>
+    <string name="common_notification_action_2">@string/home_tab_file_manager</string>
+    <string name="common_notification_action_3">@string/home_tab_toolbox</string>
+    <string name="common_notification_action_4">@string/nav_battery_info</string>
     <string name="settings_version">Version</string>
 </resources>
